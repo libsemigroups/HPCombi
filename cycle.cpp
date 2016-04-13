@@ -2,6 +2,7 @@
 #include <chrono>
 #include <cstdlib>
 #include <array>
+#include <vector>
 #include <algorithm>
 #include <x86intrin.h>
 
@@ -18,7 +19,7 @@ Perm16 randperm() {
 }
 
 /* From Ruskey : Combinatoriaj Generation page 138 */
-Perm16 unrankSJT(int r, int n) {
+Perm16 unrankSJT(int n, int r) {
   int j, k, rem, c;
   array<int, 16> dir;
   Perm16 res = Perm16::one();
@@ -66,59 +67,63 @@ int nb_cycles(Perm16 p) {
   return _mm_popcnt_u32(_mm_movemask_epi8(x0.v));
 }
 
-using Statistic = array<unsigned long int, 16>;
+using Statistic = array<unsigned long int, 17>;
 
 std::ostream & operator<<(std::ostream & stream, Statistic const &term) {
   stream << "[" << unsigned(term[0]);
-  for (unsigned i=1; i < 16; i++) stream << "," << unsigned(term[i]);
+  for (unsigned i=1; i < 17; i++) stream << "," << unsigned(term[i]);
   stream << "]";
   return stream;
 }
 
 
-const int sz = 10000;
-
 constexpr unsigned int factorial(unsigned int n) {
   return n > 1 ? n * factorial(n-1) : 1;
 }
 
-int main() {
-  high_resolution_clock::time_point tstart, tfin;
 
+vector<Perm16> rand_perms(int sz) {
+  vector<Perm16> res(sz);
+  std::srand(std::time(0));
+  for (int i = 0; i < sz; i++) res[i] = randperm();
+  return res;
+}
+
+vector<Perm16> all_perms(int n) {
+  vector<Perm16> res(factorial(n));
+  for (unsigned int i = 0; i < res.size(); i++) res[i] = unrankSJT(n, i);
+  return res;
+}
+
+void timeit(vector<Perm16> v) {
+  high_resolution_clock::time_point tstart, tfin;
   Statistic stat = {}, stat_def = {};
 
-  std::srand(std::time(0));
-
-  // Perm16 v1, v = {5,0,2,7,3,6,1,4};
-  // Perm16 v = {1,14,0,9,4,15,2,10,5,12,11,3,13,7,8,6};
-  // array<Perm16, sz> vv;
-  Perm16* vv = (Perm16*) malloc(sz*sizeof(Perm16));
-
-  for (int i = 0; i<24; i++) {
-    cout << unrankSJT(i, 4) << endl;
-    assert(unrankSJT(i, 4).is_permutation(4));
-  }
-  for (int i = 0; i < sz; i++) vv[i] = randperm();
-  for (int i = 0; i < sz; i++) assert(nb_cycles(vv[i]) == nb_cycles_def(vv[i]));
-
-  cout << vv[0] << " " << nb_cycles(vv[0]) << " " << nb_cycles_def(vv[0]) << endl;
+  for (unsigned int i=0; i < v.size(); i++)
+    assert(nb_cycles(v[i]) == nb_cycles_def(v[i]));
 
   tstart = high_resolution_clock::now();
-  for (int i=0; i < sz; i++)
-    stat[nb_cycles(vv[i])]++;
+  for (unsigned int i=0; i < v.size(); i++)
+    stat[nb_cycles(v[i])]++;
   tfin = high_resolution_clock::now();
 
   auto tm = duration_cast<duration<double>>(tfin - tstart);
   cout << stat << " (time = " << tm.count() << "s)." << std::endl;
 
   tstart = high_resolution_clock::now();
-  for (int i=0; i < sz; i++)
-    stat_def[nb_cycles_def(vv[i])]++;
+  for (unsigned int i=0; i < v.size(); i++)
+    stat_def[nb_cycles_def(v[i])]++;
   tfin = high_resolution_clock::now();
 
   auto tm_def = duration_cast<duration<double>>(tfin - tstart);
   cout << stat_def << " (time = " << tm_def.count() << "s)." << std::endl;
   cout << "Speedup = " << tm_def.count()/tm.count() << endl;
+}
+
+int main() {
+
+  timeit(rand_perms(10000000));
+  timeit(all_perms(11));
 
   return EXIT_SUCCESS;
 }
