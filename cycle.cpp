@@ -82,7 +82,7 @@ uint8_t nb_cycles2(Perm16 p) {
   return _mm_popcnt_u32(_mm_movemask_epi8(x0));
 }
 
-/** This is by far the fastest implementation *38 **/
+/** This is by far the fastest implementation *38 the default implem up there **/
 uint8_t nb_cycles_unroll(Perm16 p) {
   Vect16 x0, x1 = Perm16::one;
   x0 = _mm_min_epi8(x1, x1.permuted(p));
