@@ -14,64 +14,21 @@ using namespace std;
 using namespace std::chrono;
 using namespace IVMPG;
 
-Perm16 randperm() {
-  Perm16 res = Perm16::one;
-  random_shuffle ( res.p.begin(), res.p.end() );
-  return res;
-}
-
-/* From Ruskey : Combinatoriaj Generation page 138 */
-Perm16 unrankSJT(int n, int r) {
-  int j, k, rem, c;
-  array<int, 16> dir;
-  Perm16 res = Perm16::one;
-  for (j=0; j<n; j++) res[j] = 0xFF;
-  for (j=n-1; j >= 0; j--) {
-    rem = r % (j + 1);
-    r = r / (j + 1);
-    if ((r & 1) != 0) {
-      k = -1; dir[j] = +1;
-    } else {
-      k = n; dir[j] = -1;
-    }
-    c = -1;
-    do {
-      k = k + dir[j];
-      if (res[k] == 0xFF) c++;
-    } while (c < rem);
-    res[k] = j;
-  }
-  return res;
-}
-
-uint8_t nb_cycles_def(Perm16 p) {
-  Vect16 v {};
-  int i, j, c = 0;
-  for (i = 0; i < 16; i++) {
-    if (v[i] == 0) {
-      for (j=i; v[j] == 0; j = p[j]) v[j] = 1;
-      c++;
-    }
-  }
-  return c;
-}
-
 
 constexpr unsigned int factorial(unsigned int n) {
   return n > 1 ? n * factorial(n-1) : 1;
 }
 
-
 vector<Perm16> rand_perms(int sz) {
   vector<Perm16> res(sz);
   std::srand(std::time(0));
-  for (int i = 0; i < sz; i++) res[i] = randperm();
+  for (int i = 0; i < sz; i++) res[i] = Perm16::random();
   return res;
 }
 
 vector<Perm16> all_perms(int n) {
   vector<Perm16> res(factorial(n));
-  for (unsigned int i = 0; i < res.size(); i++) res[i] = unrankSJT(n, i);
+  for (unsigned int i = 0; i < res.size(); i++) res[i] = Perm16::unrankSJT(n, i);
   return res;
 }
 
@@ -121,10 +78,17 @@ int main() {
   auto vrand = rand_perms(10000000);
 
   tstart = high_resolution_clock::now();
-  for (Perm16 v : vrand) assert(sort(v) == Perm16::one);
+  for (Perm16 v : vrand) assert(v.sorted() == Perm16::one);
   tfin = high_resolution_clock::now();
 
   auto tm = duration_cast<duration<double>>(tfin - tstart);
+  cout << "time = " << tm.count() << "s" << endl;
+
+  tstart = high_resolution_clock::now();
+  for (Perm16 v : vrand) assert(sort(v) == Perm16::one);
+  tfin = high_resolution_clock::now();
+
+  tm = duration_cast<duration<double>>(tfin - tstart);
   cout << "time = " << tm.count() << "s" << endl;
 
   tstart = high_resolution_clock::now();
