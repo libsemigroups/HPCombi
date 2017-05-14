@@ -8,29 +8,13 @@
 #include <algorithm>
 #include <x86intrin.h>
 
-#include"perm16.hpp"
+#include "perm16.hpp"
+#include "testtools.hpp"
 
 using namespace std;
 using namespace std::chrono;
 using namespace IVMPG;
 
-
-constexpr unsigned int factorial(unsigned int n) {
-  return n > 1 ? n * factorial(n-1) : 1;
-}
-
-vector<Perm16> rand_perms(int sz) {
-  vector<Perm16> res(sz);
-  std::srand(std::time(0));
-  for (int i = 0; i < sz; i++) res[i] = Perm16::random();
-  return res;
-}
-
-vector<Perm16> all_perms(int n) {
-  vector<Perm16> res(factorial(n));
-  for (unsigned int i = 0; i < res.size(); i++) res[i] = Perm16::unrankSJT(n, i);
-  return res;
-}
 
 // Sorting network Knuth AoCP3 Fig. 51 p 229.
 static const array<Perm16, 9> rounds =
@@ -67,8 +51,8 @@ Perm16 insertion_sort (Perm16 a){
 }
 
 int main() {
+  double sp_ref;
   // Perm16 a = { 5, 4,12,15,10, 8, 9, 2, 3,13,14, 0, 1, 7,11, 6};
-  high_resolution_clock::time_point tstart, tfin;
 
   for (Perm16 round : rounds) {
     assert(round.is_permutation());
@@ -77,37 +61,25 @@ int main() {
 
   auto vrand = rand_perms(10000000);
 
-  tstart = high_resolution_clock::now();
-  for (Perm16 v : vrand) assert(v.sorted() == Perm16::one);
-  tfin = high_resolution_clock::now();
-
-  auto tm = duration_cast<duration<double>>(tfin - tstart);
-  cout << "time = " << tm.count() << "s" << endl;
-
-  tstart = high_resolution_clock::now();
-  for (Perm16 v : vrand) assert(sort(v) == Perm16::one);
-  tfin = high_resolution_clock::now();
-
-  tm = duration_cast<duration<double>>(tfin - tstart);
-  cout << "time = " << tm.count() << "s" << endl;
-
-  tstart = high_resolution_clock::now();
-  for (Perm16 v : vrand) assert(insertion_sort(v) == Perm16::one);
-  tfin = high_resolution_clock::now();
-
-  tm = duration_cast<duration<double>>(tfin - tstart);
-  cout << "time = " << tm.count() << "s" << endl;
-
-  tstart = high_resolution_clock::now();
-  for (Perm16 v : vrand) {
-    Perm16 vv = v;
-    std::sort (vv.p.begin(), vv.p.end());
-    assert(vv == Perm16::one);
-  }
-  tfin = high_resolution_clock::now();
-
-  tm = duration_cast<duration<double>>(tfin - tstart);
-  cout << "time = " << tm.count() << "s" << endl;
+  cout << "Std lib: ";
+  sp_ref = timethat([vrand]() {
+      for (Perm16 v : vrand) {
+	std::sort (v.p.begin(), v.p.end());
+	assert(v == Perm16::one);
+      }
+    });
+  cout << "Method : ";
+  timethat([vrand]() {
+      for (Perm16 v : vrand) assert(v.sorted() == Perm16::one);
+    }, sp_ref);
+  cout << "Funct  : ";
+  timethat([vrand]() {
+      for (Perm16 v : vrand) assert(sort(v) == Perm16::one);
+    }, sp_ref);
+  cout << "Insert : ";
+  timethat([vrand]() {
+      for (Perm16 v : vrand) assert(insertion_sort(v) == Perm16::one);
+    }, sp_ref);
 
   return EXIT_SUCCESS;
 }

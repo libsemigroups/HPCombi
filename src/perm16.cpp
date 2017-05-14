@@ -54,8 +54,8 @@ Perm16 Perm16::unrankSJT(int n, int r) {
   int j, k, rem, c;
   std::array<int, 16> dir;
   Perm16 res = Perm16::one;
-  for (j=0; j < n; j++) res[j] = 0xFF;
-  for (j=n-1; j >= 0; j--) {
+  for (j=0; j < n; ++j) res[j] = 0xFF;
+  for (j=n-1; j >= 0; --j) {
     rem = r % (j + 1);
     r = r / (j + 1);
     if ((r & 1) != 0) {
@@ -66,7 +66,7 @@ Perm16 Perm16::unrankSJT(int n, int r) {
     c = -1;
     do {
       k = k + dir[j];
-      if (res[k] == 0xFF) c++;
+      if (res[k] == 0xFF) ++c;
     } while (c < rem);
     res[k] = j;
   }
@@ -75,9 +75,9 @@ Perm16 Perm16::unrankSJT(int n, int r) {
 
 
 std::ostream & operator<<(std::ostream & stream, Vect16 const &term) {
-  stream << "[" << std::setw(2) << unsigned(term[0]);
-  for (unsigned i=1; i < Vect16::Size; i++)
-    stream << "," << std::setw(2) << unsigned(term[i]);
+  stream << "[" << std::setw(2) << std::hex << unsigned(term[0]);
+  for (unsigned i=1; i < Vect16::Size; ++i)
+    stream << "," << std::setw(2) << std::hex << unsigned(term[i]);
   stream << "]";
   return stream;
 }

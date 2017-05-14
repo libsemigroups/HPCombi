@@ -45,6 +45,7 @@ struct alignas(16) Vect16 {
   Vect16(const Vect16 &x) { v = x.v; }
   Vect16(std::initializer_list<uint8_t> il);
   Vect16(__m128i x) { v = x; }
+  Vect16(epi8 x) { v8 = x; }
   operator __m128i() { return v; }
   operator const __m128i() const { return v; }
 
@@ -62,9 +63,10 @@ struct alignas(16) Vect16 {
   char less_partial(const Vect16 &b, int k) const;
   Vect16 permuted(const Vect16 &other) const;
   Vect16 sorted() const;
+  Vect16 revsorted() const;
 
-  template <char IDX_MODE>
-  uint64_t search_index(int bound) const;
+  template <char IDX_MODE> uint64_t search_index(int bound) const;
+
   uint64_t last_non_zero(int bnd = Size) const;
   uint64_t first_non_zero(int bnd = Size) const;
   uint64_t last_zero(int bnd = Size) const;
@@ -81,12 +83,15 @@ std::ostream & operator<<(std::ostream & stream, const Vect16 &term);
 struct Perm16 : public Vect16 {
   using vect = Vect16;
 
-  Perm16() {}  // : Vect16({0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15}) {};
+  Perm16() = default;  // : Vect16({0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15}) {};
   Perm16(const vect v) : vect(v) {}
   Perm16(std::initializer_list<uint8_t> il);
   Perm16 operator*(const Perm16&p) const { return permuted(p); }
+  Perm16 inverse() const;
+  Perm16 inverse_sort() const;
 
   static const Perm16 one;
+
   static Perm16 elementary_transposition(uint64_t i);
   static Perm16 random();
   static Perm16 unrankSJT(int n, int r);
@@ -99,7 +104,7 @@ struct Perm16 : public Vect16 {
 inline Vect16::Vect16(std::initializer_list<uint8_t> il) {
   assert(il.size() <= Size);
   std::copy(il.begin(), il.end(), this->p.begin());
-  for (uint64_t i = il.size(); i < Size; i++) this->p[i] = 0;
+  for (uint64_t i = il.size(); i < Size; ++i) this->p[i] = 0;
 }
 
 // Comparison mode for _mm_cmpestri
@@ -116,6 +121,9 @@ const char FIRST_NON_ZERO = (
 const char LAST_NON_ZERO = (
   _SIDD_UBYTE_OPS | _SIDD_CMP_EQUAL_ANY |
   _SIDD_MASKED_NEGATIVE_POLARITY | _SIDD_MOST_SIGNIFICANT);
+
+static constexpr const __m128i idv =
+    __m128i(epi8 {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15});
 
 inline uint64_t Vect16::first_diff(const Vect16 &b, size_t bound) const {
   return unsigned(_mm_cmpestri (v, bound, b.v, bound, FIRST_DIFF));
@@ -160,16 +168,13 @@ inline uint64_t Vect16::first_zero(int bnd) const {
   return search_index<FIRST_ZERO>(bnd);
 }
 inline bool Vect16::is_permutation(const size_t k) const {
-  static constexpr const __m128i idv =
-    __m128i(epi8 {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15});
   uint64_t diff = unsigned(_mm_cmpestri(v, Size, idv, Size, LAST_DIFF));
 
+    // (forall x in v, x in idv)  and  (forall x in idv, x in v)  and
+    // (v = idv  or  last diff index < Size)
   return
-    // all(x in idv for x in v)
     _mm_cmpestri(idv, Size, v, Size, FIRST_NON_ZERO) == Size &&
-     // all(x in v for x in idv)
     _mm_cmpestri(v, Size, idv, Size, FIRST_NON_ZERO) == Size &&
-    // v = idv    or    last diff index < Size
     (diff == Size || diff < k);
 }
 
@@ -184,10 +189,24 @@ inline Vect16 Vect16::sorted() const {
     Vect16 minab, maxab, blend, mask, b = res.permuted(round);
 
     mask = _mm_cmplt_epi8(round, Perm16::one);
-    minab = _mm_min_epi8(res, b);
-    maxab = _mm_max_epi8(res, b);
+    minab = _mm_min_epu8(res, b); // unsigned comparison
+    maxab = _mm_max_epu8(res, b); // unsigned comparison
 
     res = _mm_blendv_epi8(minab, maxab, mask);
+  }
+  return res;
+}
+
+inline Vect16 Vect16::revsorted() const {
+  Vect16 res = *this;
+  for (Vect16 round : sorting_rounds) {
+    Vect16 minab, maxab, blend, mask, b = res.permuted(round);
+
+    mask = _mm_cmplt_epi8(round, Perm16::one);
+    minab = _mm_min_epu8(res, b); // unsigned comparison
+    maxab = _mm_max_epu8(res, b); // unsigned comparison
+
+    res = _mm_blendv_epi8(maxab, minab, mask);
   }
   return res;
 }
@@ -196,7 +215,19 @@ inline Vect16 Vect16::sorted() const {
 inline Perm16::Perm16(std::initializer_list<uint8_t> il) {
   assert(il.size() <= vect::Size);
   std::copy(il.begin(), il.end(), this->p.begin());
-  for (uint64_t i = il.size(); i < vect::Size; i++) this->p[i] = i;
+  for (uint64_t i = il.size(); i < vect::Size; ++i) this->p[i] = i;
+}
+
+inline Perm16 Perm16::inverse() const {
+  Perm16 res;
+  for (uint64_t i = 0; i < vect::Size; ++i) res.p[this->p[i]] = i;
+  return res;
+}
+
+inline Perm16 Perm16::inverse_sort() const {
+  Vect16 res = (this->v8 << 4) + one.v8;
+  res = res.sorted().v8 & 0xf;
+  return res;
 }
 
 }  // namespace IVMPG
