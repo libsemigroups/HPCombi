@@ -15,7 +15,7 @@ using namespace std;
 using namespace std::chrono;
 using namespace IVMPG;
 
-const std::array<Vect16, 4> inverting_rounds =
+const std::array<Vect16, 3> inverting_rounds =
 //     0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15
   {{ { 0,  1,  2,  3,  8,  9, 10, 11,  4,  5,  6,  7, 12, 13, 14, 15},
      { 0,  1,  4,  5,  8,  9, 12, 13,  2,  3,  6,  7, 10, 11, 14, 15},
@@ -25,15 +25,12 @@ const char FIND_IN_PERM = (_SIDD_UBYTE_OPS | _SIDD_CMP_EQUAL_ANY |
 			   _SIDD_UNIT_MASK | _SIDD_NEGATIVE_POLARITY);
 
 Perm16 invPerm(Perm16 s) {
-  Vect16 res, resb;
-  resb.v = _mm_cmpestrm(s.v, 8, idv, 16, FIND_IN_PERM);
-  res.v8 = resb.v8 & 0x8;
-  uint8_t pow = 4;
+  Vect16 res;
+  res.v8 = -epi8(_mm_cmpestrm(s.v, 8, idv, 16, FIND_IN_PERM));
   for (Vect16 round : inverting_rounds) {
     s = s * round;
-    resb.v = _mm_cmpestrm(s.v, 8, idv, 16, FIND_IN_PERM);
-    res.v8 += resb.v8 & pow;
-    pow >>= 1;
+    res.v8 <<= 1;
+    res.v8 -= epi8(_mm_cmpestrm(s.v, 8, idv, 16, FIND_IN_PERM));
   }
   return res;
 }
@@ -52,7 +49,6 @@ int main() {
   assert(p.inverse() * p == Perm16::one);
 
   cout << endl << endl;
-
   uint_fast64_t sz = 10000000;
   auto sample = rand_perms(sz);
   auto inv = sample;
