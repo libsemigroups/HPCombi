@@ -89,12 +89,16 @@ struct Perm16 : public Vect16 {
   Perm16 operator*(const Perm16&p) const { return permuted(p); }
   Perm16 inverse() const;
   Perm16 inverse_sort() const;
+  Perm16 inverse_fast() const;
 
   static const Perm16 one;
 
   static Perm16 elementary_transposition(uint64_t i);
   static Perm16 random();
   static Perm16 unrankSJT(int n, int r);
+
+ private:
+  static const std::array<Perm16, 3> inverting_rounds;
 };
 
 /*****************************************************************************/
@@ -121,6 +125,8 @@ const char FIRST_NON_ZERO = (
 const char LAST_NON_ZERO = (
   _SIDD_UBYTE_OPS | _SIDD_CMP_EQUAL_ANY |
   _SIDD_MASKED_NEGATIVE_POLARITY | _SIDD_MOST_SIGNIFICANT);
+const char FIND_IN_PERM = (_SIDD_UBYTE_OPS | _SIDD_CMP_EQUAL_ANY |
+			   _SIDD_UNIT_MASK | _SIDD_NEGATIVE_POLARITY);
 
 static constexpr const __m128i idv =
     __m128i(epi8 {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15});
@@ -227,6 +233,18 @@ inline Perm16 Perm16::inverse() const {
 inline Perm16 Perm16::inverse_sort() const {
   Vect16 res = (this->v8 << 4) + one.v8;
   res = res.sorted().v8 & 0xf;
+  return res;
+}
+
+
+inline Perm16 Perm16::inverse_fast() const {
+  Perm16 res, s = *this;
+  res.v8 = -epi8(_mm_cmpestrm(s.v, 8, idv, 16, FIND_IN_PERM));
+  for (Perm16 round : inverting_rounds) {
+    s = s * round;
+    res.v8 <<= 1;
+    res.v8 -= epi8(_mm_cmpestrm(s.v, 8, idv, 16, FIND_IN_PERM));
+  }
   return res;
 }
 
