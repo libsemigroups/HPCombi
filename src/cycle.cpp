@@ -93,11 +93,10 @@ Vect16 cycle_type_ref(Perm16 p) {
 
 
 Vect16 evaluation(Vect16 v) {
-  Perm16 turn {1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,0};
   Vect16 res;
   res.v8 = -(Perm16::one.v8 == v.v8);
   for (int i = 0; i<15; i++) {
-    v = v.permuted(turn);
+    v = v.permuted(Perm16::left_cycle);
     res.v8 -= (Perm16::one.v8 == v.v8);
   }
   return res;
@@ -216,11 +215,10 @@ int main() {
   for (auto f : func) cout << f(p) << " ";
   cout << endl;
 
-  /*
   timeit(rand_perms(10000000));
   cout << endl;
 
   timeit(all_perms(11));
-  */
+
   return EXIT_SUCCESS;
 }

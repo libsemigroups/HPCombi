@@ -92,6 +92,7 @@ struct Perm16 : public Vect16 {
   Perm16 inverse_fast() const;
 
   static const Perm16 one;
+  static const Perm16 left_cycle;
 
   static Perm16 elementary_transposition(uint64_t i);
   static Perm16 random();
