@@ -92,7 +92,7 @@ Vect16 cycle_type_ref(Perm16 p) {
 }
 
 
-Vect16 evalutation(Vect16 v) {
+Vect16 evaluation(Vect16 v) {
   Perm16 turn {1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,0};
   Vect16 res;
   res.v8 = -(Perm16::one.v8 == v.v8);
@@ -104,7 +104,7 @@ Vect16 evalutation(Vect16 v) {
 }
 
 Vect16 cycle_type(Perm16 p) {
-  return (evalutation(cycles_mask_unroll(p))).revsorted();
+  return (evaluation(cycles_mask_unroll(p))).revsorted();
 }
 
 
@@ -136,6 +136,7 @@ inline uint8_t nb_cycles_type_mask(Perm16 p) {
 inline uint8_t nb_cycles_type_unroll(Perm16 p) {
   return _mm_popcnt_u32(_mm_movemask_epi8(cycle_type_unroll(p).v8 != 0));
 }
+
 
 auto func = {nb_cycles_ref, nb_cycles, nb_cycles2,
 	     nb_cycles_unroll, nb_cycles_type_unroll};
@@ -183,11 +184,18 @@ void timeit(vector<Perm16> v) {
   cout << "Loop 2   : " << endl; timef<nb_cycles2>(v, sp_ref);
   cout << "Unroll   : " << endl; timef<nb_cycles_unroll>(v, sp_ref);
   cout << endl;
-  cout << "RefType  : " << endl; sp_ref = timef<nb_cycles_type_ref>(v, sp_ref);
+  cout << "RefType  : " << endl; sp_ref = timef<nb_cycles_type_ref>(v, 0.);
   cout << "MaskType : " << endl; timef<nb_cycles_type_mask>(v, sp_ref);
   cout << "UnrollTyp: " << endl; timef<nb_cycles_type_unroll>(v, sp_ref);
 }
 
+
+
+
+// (-1)**(len(self)-len(self.to_cycles()))
+inline uint8_t sign_nb_cycles_unroll(Perm16 p, uint8_t n = 16) {
+  return (n - nb_cycles_unroll(p)) & 1;
+}
 
 int main() {
   std::srand(std::time(0));
@@ -198,18 +206,21 @@ int main() {
   cout << Perm16::one << endl
        << p << endl
        << cycles_mask_unroll(p) << endl
-       << evalutation(cycles_mask_unroll(p)) << " #= "
+       << evaluation(cycles_mask_unroll(p)) << " #= "
        << unsigned(nb_cycles_unroll(p)) << endl
        << cycle_type(p) << endl
        << cycle_type_unroll(p) << endl;
 
+  cout << "Sign = " << int(sign_nb_cycles_unroll(p)) << endl;
+
   for (auto f : func) cout << f(p) << " ";
   cout << endl;
 
+  /*
   timeit(rand_perms(10000000));
   cout << endl;
 
   timeit(all_perms(11));
-
+  */
   return EXIT_SUCCESS;
 }

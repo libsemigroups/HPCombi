@@ -15,26 +15,6 @@ using namespace std;
 using namespace std::chrono;
 using namespace IVMPG;
 
-const std::array<Vect16, 3> inverting_rounds =
-//     0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15
-  {{ { 0,  1,  2,  3,  8,  9, 10, 11,  4,  5,  6,  7, 12, 13, 14, 15},
-     { 0,  1,  4,  5,  8,  9, 12, 13,  2,  3,  6,  7, 10, 11, 14, 15},
-     { 0,  2,  4,  6,  8, 10, 12, 14,  1,  3,  5,  7,  9, 11, 13, 15} }};
-
-const char FIND_IN_PERM = (_SIDD_UBYTE_OPS | _SIDD_CMP_EQUAL_ANY |
-			   _SIDD_UNIT_MASK | _SIDD_NEGATIVE_POLARITY);
-
-Perm16 invPerm(Perm16 s) {
-  Vect16 res;
-  res.v8 = -epi8(_mm_cmpestrm(s.v, 8, idv, 16, FIND_IN_PERM));
-  for (Vect16 round : inverting_rounds) {
-    s = s * round;
-    res.v8 <<= 1;
-    res.v8 -= epi8(_mm_cmpestrm(s.v, 8, idv, 16, FIND_IN_PERM));
-  }
-  return res;
-}
-
 int main() {
   std::srand(std::time(0));
 
@@ -43,7 +23,7 @@ int main() {
   p = Perm16::random();
 
   cout << p << endl << p.inverse() << endl;
-  cout << invPerm(p) << endl;
+  cout << p.inverse_fast() << endl;
   assert(p.inverse() == p.inverse_sort());
   assert(p * p.inverse() == Perm16::one);
   assert(p.inverse() * p == Perm16::one);
@@ -75,7 +55,7 @@ int main() {
   cout << endl;
 
   tstart = high_resolution_clock::now();
-  for (uint_fast64_t i=0; i < sz; i++) inv3[i] = invPerm(sample[i]);
+  for (uint_fast64_t i=0; i < sz; i++) inv3[i] = sample[i].inverse_fast();
   tfin = high_resolution_clock::now();
   auto tmnew = duration_cast<duration<double>>(tfin - tstart);
   cout << "timenew  = " << tmnew.count() << "s";
