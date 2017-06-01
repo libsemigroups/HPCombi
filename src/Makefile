@@ -4,8 +4,10 @@ CXXFLAGS    = -std=c++11 -g -Wall -O3 -funroll-loops -mavx -mtune=native
 # -Winline -fcilkplus 
 # -Wall -Wno-missing-braces -Wno-unused-variable  -Wno-attributes
 
-TARGET = cycle sort inverse
+TARGET = cycle sort inverse essai
 all: $(TARGET)
+
+perm16.o: perm16.impl
 
 cycle.o: cycle.cpp perm16.hpp testtools.hpp
 cycle: cycle.o perm16.o testtools.o
@@ -17,6 +19,10 @@ sort: sort.o perm16.o testtools.o
 
 inverse.o: inverse.cpp perm16.hpp testtools.hpp
 inverse: inverse.o perm16.o testtools.o
+	$(CXX) $(LDFLAGS) $^ $(LOADLIBES) $(LDLIBS) -o $@
+
+essai.o: essai.cpp perm16.hpp testtools.hpp
+essai: essai.o perm16.o testtools.o
 	$(CXX) $(LDFLAGS) $^ $(LOADLIBES) $(LDLIBS) -o $@
 
 clean:

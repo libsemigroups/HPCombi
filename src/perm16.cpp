@@ -18,11 +18,25 @@
 #include <iostream>
 #include <iomanip>
 #include <algorithm>
+#include <random>
+
 
 namespace IVMPG {
 
 // Definition since previously *only* declared
 const constexpr size_t Vect16::Size;
+
+Vect16 Vect16::random(uint16_t m) {
+  Vect16 res;
+  std::random_device rd;
+
+  // Choose a random mean between 1 and 6
+  std::default_random_engine e1(rd());
+  std::uniform_int_distribution<int> uniform_dist(0, m-1);
+  for (size_t i=0; i<Size; i++)
+    res.p[i] = uniform_dist(e1);
+  return res;
+}
 
 // Sorting network Knuth AoCP3 Fig. 51 p 229.
 const std::array<Vect16, 9> Vect16::sorting_rounds =
@@ -38,17 +52,27 @@ const std::array<Vect16, 9> Vect16::sorting_rounds =
      { 0,  1,  2,  4,  3,  6,  5,  8,  7, 10,  9, 12, 11, 13, 14, 15}
     }};
 
-// Gather at the front numbers with 3-ith bit not set.
+// Gather at the front numbers with (3-i)-th bit not set.
 const std::array<Perm16, 3> Perm16::inverting_rounds =
 //     0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15
   {{ { 0,  1,  2,  3,  8,  9, 10, 11,  4,  5,  6,  7, 12, 13, 14, 15},
      { 0,  1,  4,  5,  8,  9, 12, 13,  2,  3,  6,  7, 10, 11, 14, 15},
      { 0,  2,  4,  6,  8, 10, 12, 14,  1,  3,  5,  7,  9, 11, 13, 15} }};
 
+const std::array<Vect16, 4> Vect16::summing_rounds =
+//     0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15
+  {{ { 1,255,  3,255,  5,255,  7,255,  9,255, 11,255, 13,255, 15,255},
+     { 2,255,255,255,  6,255,255,255, 10,255,255,255, 14,255,255,255},
+     { 4,255,255,255,255,255,255,255, 12,255,255,255,255,255,255,255},
+     { 8,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255},
+    }};
+
 const Perm16 Perm16::one =
      { 0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15};
 const Perm16 Perm16::left_cycle =
      { 1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15,  0};
+const Perm16 Perm16::right_cycle =
+     {15,  0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14};
 
 Perm16 Perm16::elementary_transposition(uint64_t i) {
   assert(i < vect::Size);

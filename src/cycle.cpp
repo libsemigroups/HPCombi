@@ -153,7 +153,7 @@ std::ostream & operator<<(std::ostream & stream, Statistic const &term) {
 
 
 
-template <uint8_t ncycles(Perm16 p)> double timef(vector<Perm16> v,
+template <uint8_t ncycles(Perm16 p)> double timef(vector<Perm16> &v,
 						  double reftime) {
   high_resolution_clock::time_point tstart, tfin;
   Statistic stat = {};

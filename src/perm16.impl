@@ -52,6 +52,19 @@ inline Vect16 Vect16::permuted(const Vect16 &other) const {
   return _mm_shuffle_epi8(v, other);
 }
 
+inline uint8_t Vect16::sum_ref() const {
+  uint8_t res = 0;
+  for (uint8_t i : this->p) res+=i;
+  return res;
+}
+
+inline uint8_t Vect16::sum() const {
+  Vect16 res = *this;
+  for (Vect16 round : Vect16::summing_rounds)
+    res.v += res.permuted(round).v;
+  return _mm_extract_epi8(res, 0);
+}
+
 template <char IDX_MODE>
 inline uint64_t Vect16::search_index(int bound) const {
   const __m128i zero {0, 0};
@@ -121,7 +134,8 @@ inline Perm16::Perm16(std::initializer_list<uint8_t> il) {
   for (uint64_t i = il.size(); i < vect::Size; ++i) this->p[i] = i;
 }
 
-inline Perm16 Perm16::inverse() const {
+
+inline Perm16 Perm16::inverse_ref() const {
   Perm16 res;
   for (uint64_t i = 0; i < vect::Size; ++i) res.p[this->p[i]] = i;
   return res;
@@ -133,8 +147,7 @@ inline Perm16 Perm16::inverse_sort() const {
   return res;
 }
 
-
-inline Perm16 Perm16::inverse_fast() const {
+inline Perm16 Perm16::inverse() const {
   Perm16 res, s = *this;
   res.v8 = -epi8(_mm_cmpestrm(s.v, 8, idv, 16, FIND_IN_PERM));
   for (Perm16 round : inverting_rounds) {
@@ -143,4 +156,35 @@ inline Perm16 Perm16::inverse_fast() const {
     res.v8 -= epi8(_mm_cmpestrm(s.v, 8, idv, 16, FIND_IN_PERM));
   }
   return res;
+}
+
+
+inline Vect16 Perm16::lehmer_ref() const {
+  Vect16 res = {{}};
+  for (int i=0; i<16; i++)
+    for (int j=i+1; j<16; j++)
+      if (p[i] > p[j]) res[i]++;
+  return res;
+};
+
+const Vect16 left_shift =
+     { 1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15,255};
+
+inline Vect16 Perm16::lehmer() const {
+  Vect16 vsh = *this, res = -Perm16::one.v8;
+  for (int i=1; i<16; i++) {
+    vsh = vsh.permuted(left_shift);
+    res.v8 -= (v8 >= vsh.v8);
+  }
+  return res;
+};
+inline uint8_t Perm16::length_ref() const {
+  uint8_t res = 0;
+  for (int i=0; i<16; i++)
+    for (int j=i+1; j<16; j++)
+      if (p[i] > p[j]) res++;
+  return res;
+}
+inline uint8_t Perm16::length() const {
+    return lehmer().sum();
 }

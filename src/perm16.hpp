@@ -64,6 +64,8 @@ struct alignas(16) Vect16 {
   Vect16 permuted(const Vect16 &other) const;
   Vect16 sorted() const;
   Vect16 revsorted() const;
+  uint8_t sum_ref() const;
+  uint8_t sum() const;
 
   template <char IDX_MODE> uint64_t search_index(int bound) const;
 
@@ -74,8 +76,11 @@ struct alignas(16) Vect16 {
 
   bool is_permutation(const size_t k = Size) const;
 
+  static Vect16 random(uint16_t m = 256);
+
  private:
   static const std::array<Vect16, 9> sorting_rounds;
+  static const std::array<Vect16, 4> summing_rounds;
 };
 
 std::ostream & operator<<(std::ostream & stream, const Vect16 &term);
@@ -86,17 +91,24 @@ struct Perm16 : public Vect16 {
   Perm16() = default;  // : Vect16({0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15}) {};
   Perm16(const vect v) : vect(v) {}
   Perm16(std::initializer_list<uint8_t> il);
+
   Perm16 operator*(const Perm16&p) const { return permuted(p); }
-  Perm16 inverse() const;
+  Perm16 inverse_ref() const;
   Perm16 inverse_sort() const;
-  Perm16 inverse_fast() const;
+  Perm16 inverse() const;
 
   static const Perm16 one;
   static const Perm16 left_cycle;
+  static const Perm16 right_cycle;
 
   static Perm16 elementary_transposition(uint64_t i);
   static Perm16 random();
   static Perm16 unrankSJT(int n, int r);
+
+  Vect16 lehmer_ref() const;
+  Vect16 lehmer() const;
+  uint8_t length_ref() const;
+  uint8_t length() const;
 
  private:
   static const std::array<Perm16, 3> inverting_rounds;

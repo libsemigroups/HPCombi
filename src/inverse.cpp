@@ -22,9 +22,10 @@ int main() {
 
   p = Perm16::random();
 
-  cout << p << endl << p.inverse() << endl;
-  cout << p.inverse_fast() << endl;
-  assert(p.inverse() == p.inverse_sort());
+  cout << p << endl << p.inverse_ref() << endl;
+  cout << p.inverse() << endl;
+  assert(p.inverse_ref() == p.inverse_sort());
+  assert(p.inverse_ref() == p.inverse());
   assert(p * p.inverse() == Perm16::one);
   assert(p.inverse() * p == Perm16::one);
 
@@ -38,7 +39,7 @@ int main() {
   high_resolution_clock::time_point tstart, tfin;
 
   tstart = high_resolution_clock::now();
-  for (uint_fast64_t i=0; i < sz; i++) inv[i] = sample[i].inverse();
+  for (uint_fast64_t i=0; i < sz; i++) inv[i] = sample[i].inverse_ref();
   tfin = high_resolution_clock::now();
   auto tmref = duration_cast<duration<double>>(tfin - tstart);
   cout << "timeref  = " << tmref.count() << "s" << endl;
@@ -55,7 +56,7 @@ int main() {
   cout << endl;
 
   tstart = high_resolution_clock::now();
-  for (uint_fast64_t i=0; i < sz; i++) inv3[i] = sample[i].inverse_fast();
+  for (uint_fast64_t i=0; i < sz; i++) inv3[i] = sample[i].inverse();
   tfin = high_resolution_clock::now();
   auto tmnew = duration_cast<duration<double>>(tfin - tstart);
   cout << "timenew  = " << tmnew.count() << "s";
