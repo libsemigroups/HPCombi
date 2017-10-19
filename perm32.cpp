@@ -15,12 +15,11 @@
  * vecteur de 16 byte représentant une permutation
  * supporte les commandees vectorielles du processeur
  **/
-using epu8 = int8_t __attribute__ ((vector_size (16)));
+using epu8 = uint8_t __attribute__ ((vector_size (16)));
 using perm32 = std::array<epu8, 2>;
 
-inline int8_t &set(perm32 &p, uint64_t i) { return *(&p[0][0] + i); }
-inline int8_t get (perm32 p,  uint64_t i) { return *(&p[0][0] + i); }
-
+inline uint8_t &set(perm32 &p, uint64_t i) { return *(&p[0][0] + i); }
+inline uint8_t get (perm32 p,  uint64_t i) { return *(&p[0][0] + i); }
 /**********************************************************************/
 /***************** Fonctions d'affichages *****************************/
 /**********************************************************************/
