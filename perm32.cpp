@@ -20,6 +20,7 @@ using perm32 = std::array<epu8, 2>;
 
 inline uint8_t &set(perm32 &p, uint64_t i) { return *(&p[0][0] + i); }
 inline uint8_t get (perm32 p,  uint64_t i) { return *(&p[0][0] + i); }
+
 /**********************************************************************/
 /***************** Fonctions d'affichages *****************************/
 /**********************************************************************/
@@ -98,7 +99,7 @@ inline bool eqperm32(perm32 p1, perm32 p2) {
          (_mm_movemask_epi8(_mm_cmpeq_epi8(p1[1], p2[1])) == 0xffff);
 }
 
-perm32 permute(const perm32 &v1, const perm32 &v2) {
+perm32 permute(perm32 v1, perm32 v2) {
   return {_mm_blendv_epi8(_mm_shuffle_epi8(v1[1], v2[0]),
 			  _mm_shuffle_epi8(v1[0], v2[0]),
 			  v2[0] < 16),
@@ -108,7 +109,7 @@ perm32 permute(const perm32 &v1, const perm32 &v2) {
 }
 
 
-perm32 permute_ref(const perm32 &v1, const perm32 &v2) {
+perm32 permute_ref(perm32 v1, perm32 v2) {
   perm32 res;
   for (uint64_t i=0; i<32; i++) set(res, i) = get(v1, get(v2, i));
   return res;
