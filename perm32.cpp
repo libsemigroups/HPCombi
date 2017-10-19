@@ -15,15 +15,12 @@
  * vecteur de 16 byte représentant une permutation
  * supporte les commandees vectorielles du processeur
  **/
-using epu8 = int8_t __attribute__ ((vector_size (16)));
+using epu8 = uint8_t __attribute__ ((vector_size (16)));
 using perm32 = std::array<epu8, 2>;
 
-inline int8_t &set(perm32 &p, uint64_t i) {
-  return *(&p[0][0] + i);
-}
-inline int8_t get(perm32 p, uint64_t i) {
-  return *(&p[0][0] + i);
-}
+inline uint8_t &set(perm32 &p, uint64_t i) { return *(&p[0][0] + i); }
+inline uint8_t get (perm32 p,  uint64_t i) { return *(&p[0][0] + i); }
+
 /**********************************************************************/
 /***************** Fonctions d'affichages *****************************/
 /**********************************************************************/
@@ -35,8 +32,8 @@ std::ostream & operator<<(std::ostream & stream, perm32 const &p) {
   using namespace std;
   stream << "[" << setw(2) << hex << unsigned(get(p, 0));
   for (unsigned i=1; i < 32; ++i)
-    stream << "," << setw(2) << hex << unsigned(get(p, i)) << dec;
-  stream << "]";
+    stream << "," << setw(2) << unsigned(get(p, i));
+  stream << dec << "]";
   return stream;
 }
 
@@ -102,7 +99,7 @@ inline bool eqperm32(perm32 p1, perm32 p2) {
          (_mm_movemask_epi8(_mm_cmpeq_epi8(p1[1], p2[1])) == 0xffff);
 }
 
-perm32 permute(const perm32 &v1, const perm32 &v2) {
+perm32 permute(perm32 v1, perm32 v2) {
   return {_mm_blendv_epi8(_mm_shuffle_epi8(v1[1], v2[0]),
 			  _mm_shuffle_epi8(v1[0], v2[0]),
 			  v2[0] < 16),
@@ -112,7 +109,7 @@ perm32 permute(const perm32 &v1, const perm32 &v2) {
 }
 
 
-perm32 permute_ref(const perm32 &v1, const perm32 &v2) {
+perm32 permute_ref(perm32 v1, perm32 v2) {
   perm32 res;
   for (uint64_t i=0; i<32; i++) set(res, i) = get(v1, get(v2, i));
   return res;
@@ -142,12 +139,14 @@ int main() {
 		     check_ref.begin(),
 		     [](perm32 p) {return permute_ref(p, p);});
     }, 0.0);
+
   cout << "Fast : ";
   timethat([&vrand, &check]() {
       std::transform(vrand.begin(), vrand.end(),
 		     check.begin(),
 		     [](perm32 p) {return permute(p, p);});
     }, sp_ref);
+
   cout << "Checking : "; cout.flush();
   for (unsigned int i=0; i < vrand.size(); i++)
     assert(eqperm32(check_ref[i], check[i]));
