@@ -138,11 +138,13 @@ int main() {
       for (unsigned int i=0; i < vrand.size(); i++)
 	check_ref[i] = permute_ref(vrand[i], vrand[i]);
     }, 0.0);
+
   cout << "Fast : ";
   timethat([&vrand, &check]() {
       for (unsigned int i=0; i < vrand.size(); i++)
 	check[i] = permute(vrand[i], vrand[i]);
     }, sp_ref);
+
   cout << "Checking : "; cout.flush();
   for (unsigned int i=0; i < vrand.size(); i++)
     assert(eqperm32(check_ref[i], check[i]));
