@@ -148,8 +148,9 @@ int main() {
     }, sp_ref);
 
   cout << "Checking : "; cout.flush();
-  for (unsigned int i=0; i < vrand.size(); i++)
-    assert(eqperm32(check_ref[i], check[i]));
+  assert(std::mismatch(check_ref.begin(), check_ref.end(),
+		       check.begin(), eqperm32) ==
+	 std::make_pair(check_ref.end(), check.end()));
   cout << "Ok !" << endl;
 }
 
