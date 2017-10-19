@@ -18,12 +18,9 @@
 using epu8 = int8_t __attribute__ ((vector_size (16)));
 using perm32 = std::array<epu8, 2>;
 
-inline int8_t &set(perm32 &p, uint64_t i) {
-  return *(&p[0][0] + i);
-}
-inline int8_t get(perm32 p, uint64_t i) {
-  return *(&p[0][0] + i);
-}
+inline int8_t &set(perm32 &p, uint64_t i) { return *(&p[0][0] + i); }
+inline int8_t get (perm32 p,  uint64_t i) { return *(&p[0][0] + i); }
+
 /**********************************************************************/
 /***************** Fonctions d'affichages *****************************/
 /**********************************************************************/
@@ -35,8 +32,8 @@ std::ostream & operator<<(std::ostream & stream, perm32 const &p) {
   using namespace std;
   stream << "[" << setw(2) << hex << unsigned(get(p, 0));
   for (unsigned i=1; i < 32; ++i)
-    stream << "," << setw(2) << hex << unsigned(get(p, i)) << dec;
-  stream << "]";
+    stream << "," << setw(2) << unsigned(get(p, i));
+  stream << dec << "]";
   return stream;
 }
 
