@@ -7,8 +7,6 @@
 #include <iostream>
 #include <iomanip>
 
-using namespace std;
-
 /**********************************************************************/
 /************** Défnitions des types et convertisseurs ****************/
 /**********************************************************************/
@@ -17,7 +15,7 @@ using namespace std;
  * vecteur de 16 byte représentant une permutation
  * supporte les commandees vectorielles du processeur
  **/
-using epu8 = int8_t __attribute__ ((vector_size (16), __may_alias__));
+using epu8 = int8_t __attribute__ ((vector_size (16)));
 using perm32 = std::array<epu8, 2>;
 
 inline int8_t &set(perm32 &p, uint64_t i) {
@@ -33,7 +31,8 @@ inline int8_t get(perm32 p, uint64_t i) {
 /** Affichage perm32
  * Définition de l'opérateur d'affichage << pour le type perm32
  **/
-ostream & operator<<(ostream & stream, perm32 const &p) {
+std::ostream & operator<<(std::ostream & stream, perm32 const &p) {
+  using namespace std;
   stream << "[" << setw(2) << hex << unsigned(get(p, 0));
   for (unsigned i=1; i < 32; ++i)
     stream << "," << setw(2) << hex << unsigned(get(p, i)) << dec;
@@ -57,7 +56,7 @@ const perm32 permid {
 
 perm32 random_perm32() {
     perm32 res = permid;
-    random_shuffle(&set(res, 0), &set(res, 32));
+    std::random_shuffle(&set(res, 0), &set(res, 32));
     return res;
 }
 
@@ -81,14 +80,12 @@ std::vector<perm32> rand_perms(int sz) {
  **/
 template<typename Func>
 double timethat(Func fun, double reftime = 0) {
-  std::chrono::high_resolution_clock::time_point tstart, tfin;
-
-  tstart = std::chrono::high_resolution_clock::now();
+  using namespace std::chrono;
+  auto tstart = high_resolution_clock::now();
   fun();
-  tfin = std::chrono::high_resolution_clock::now();
+  auto tfin = high_resolution_clock::now();
 
-  auto tm = std::chrono::duration_cast<
-    std::chrono::duration<double>>(tfin - tstart);
+  auto tm = duration_cast<duration<double>>(tfin - tstart);
   std::cout << "time = " << std::setprecision(3) << tm.count() << "s";
   if (reftime != 0) std::cout << ", speedup = " << reftime/tm.count();
   std::cout << std::endl;
@@ -123,7 +120,8 @@ perm32 permute_ref(const perm32 &v1, const perm32 &v2) {
 
 
 int main() {
-  std::srand(std::time(0));
+  using namespace std;
+  srand(time(0));
   perm32 v1 = random_perm32();
   perm32 v2 = random_perm32();
   cout << permid << endl;
