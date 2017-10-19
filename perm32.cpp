@@ -140,13 +140,15 @@ int main() {
 
   cout << "Ref :  ";
   double sp_ref = timethat([&vrand, &check_ref]() {
-      for (unsigned int i=0; i < vrand.size(); i++)
-	check_ref[i] = permute_ref(vrand[i], vrand[i]);
+      std::transform(vrand.begin(), vrand.end(),
+		     check_ref.begin(),
+		     [](perm32 p) {return permute_ref(p, p);});
     }, 0.0);
   cout << "Fast : ";
   timethat([&vrand, &check]() {
-      for (unsigned int i=0; i < vrand.size(); i++)
-	check[i] = permute(vrand[i], vrand[i]);
+      std::transform(vrand.begin(), vrand.end(),
+		     check.begin(),
+		     [](perm32 p) {return permute(p, p);});
     }, sp_ref);
   cout << "Checking : "; cout.flush();
   for (unsigned int i=0; i < vrand.size(); i++)
