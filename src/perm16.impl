@@ -147,7 +147,7 @@ inline Perm16 Perm16::inverse_sort() const {
   return res;
 }
 
-inline Perm16 Perm16::inverse() const {
+inline Perm16 Perm16::inverse_find() const {
   Perm16 res, s = *this;
   res.v8 = -epi8(_mm_cmpestrm(s.v, 8, idv, 16, FIND_IN_PERM));
   for (Perm16 round : inverting_rounds) {
@@ -157,6 +157,48 @@ inline Perm16 Perm16::inverse() const {
   }
   return res;
 }
+
+inline Perm16 Perm16::inverse_pow() const {
+  Perm16 newpow = *this, res;
+  newpow = newpow * newpow;
+  newpow = newpow * newpow;
+  newpow = newpow * newpow; // Here: newpow = *this ^ 8
+  for (int i=9; i<=16; i++) {
+    Perm16 oldpow = newpow;
+    newpow = oldpow * *this;
+    res.v = _mm_blendv_epi8(res, oldpow, newpow.v8 == one.v8);
+  }
+  return res;
+}
+
+/*
+
+inline Perm16 Perm16::inverse_pow() const {
+  Perm16 newpow = one, res;
+  for (int i=0; i<16; i++) {
+    Perm16 oldpow = newpow;
+    newpow = oldpow * *this;
+    res.v = _mm_blendv_epi8(res, oldpow, newpow.v8 == one.v8);
+  }
+  return res;
+}
+
+inline Perm16 Perm16::inverse_pow2() const {
+  Perm16 newpow = one, res;
+  vect mask = {};
+  static vect maskfin =
+    {0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff};
+  while (mask != maskfin) {
+    Perm16 oldpow = newpow;
+    newpow = oldpow * *this;
+    vect ok;
+    ok.v8 = newpow.v8 == one.v8;
+    mask.v8 = mask.v8 & ok.v8;
+    res.v = _mm_blendv_epi8(res, oldpow, ok);
+  }
+  return res;
+}
+*/
 
 
 inline Vect16 Perm16::lehmer_ref() const {

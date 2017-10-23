@@ -95,7 +95,9 @@ struct Perm16 : public Vect16 {
   Perm16 operator*(const Perm16&p) const { return permuted(p); }
   Perm16 inverse_ref() const;
   Perm16 inverse_sort() const;
-  Perm16 inverse() const;
+  Perm16 inverse_find() const;
+  Perm16 inverse_pow() const;
+  inline Perm16 inverse() { return inverse_pow(); };
 
   static const Perm16 one;
   static const Perm16 left_cycle;
