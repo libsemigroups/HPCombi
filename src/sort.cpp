@@ -32,7 +32,7 @@ static const array<Perm16, 9> rounds =
 
 Vect16 sort(Vect16 a) {
   for (Perm16 round : rounds) {
-    Vect16 minab, maxab, blend, mask, b = a.permuted(round);
+    Vect16 minab, maxab, mask, b = a.permuted(round);
 
     mask = _mm_cmplt_epi8(round, Perm16::one);
     minab = _mm_min_epi8(a, b);
@@ -48,6 +48,15 @@ Perm16 insertion_sort (Perm16 a){
     for (int j = i; j > 0 && a[j] < a[j-1]; j--)
       std::swap(a[j], a[j-1]);
   return a;
+}
+
+Perm16 radix_sort(Perm16 a) {
+  Vect16 stat = {}, res;
+  for (int i = 0; i < 16; i++) stat[a[i]]++;
+  int c = 0;
+  for (int i = 0; i < 16; i++)
+    for (int j = 0; j < stat[i]; j++) res[c++]=i;
+  return res;
 }
 
 int main() {
@@ -68,17 +77,21 @@ int main() {
 	assert(v == Perm16::one);
       }
     });
-  cout << "Method : ";
+  cout << "Method  : ";
   timethat([vrand]() {
       for (Perm16 v : vrand) assert(v.sorted() == Perm16::one);
     }, sp_ref);
-  cout << "Funct  : ";
+  cout << "Funct   : ";
   timethat([vrand]() {
       for (Perm16 v : vrand) assert(sort(v) == Perm16::one);
     }, sp_ref);
-  cout << "Insert : ";
+  cout << "Insert  : ";
   timethat([vrand]() {
       for (Perm16 v : vrand) assert(insertion_sort(v) == Perm16::one);
+    }, sp_ref);
+  cout << "Radix16 : ";
+  timethat([vrand]() {
+      for (Perm16 v : vrand) assert(radix_sort(v) == Perm16::one);
     }, sp_ref);
 
   return EXIT_SUCCESS;
