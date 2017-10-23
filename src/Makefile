@@ -1,5 +1,4 @@
-CXX = g++-5
-CXXFLAGS    = -std=c++11 -g -Wall -O3 -funroll-loops -mavx -mtune=native
+CXXFLAGS    = -std=c++11 -g -Wall -mavx -mtune=native -O3 -funroll-loops 
 # CXXFLAGS    = -std=c++11 -g -Wall -mavx -mtune=native
 # -Winline -fcilkplus 
 # -Wall -Wno-missing-braces -Wno-unused-variable  -Wno-attributes
