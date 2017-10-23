@@ -189,7 +189,29 @@ void timeit(vector<Perm16> v) {
 }
 
 
-
+void democycle(Perm16 p) {
+    Vect16 x0, x1 = Perm16::one;
+    cout << "one " << x1 << endl;
+    cout << "sig " << p << endl;
+    cout << "perm" << x1.permuted(p) << endl;
+    x0 = _mm_min_epi8(x1, x1.permuted(p));
+    cout << "min "<< x0 << endl;
+    p = p*p;
+    cout << "p^2 " << p << endl;
+    cout << "pe^2" << x0.permuted(p) << endl;
+    x1 = _mm_min_epi8(x0, x0.permuted(p));
+    cout << "min " << x1 << endl;
+    p = p*p;
+    cout << "p^4 " << p << endl;
+    cout << "pe^4" << x1.permuted(p) << endl;
+    x0 = _mm_min_epi8(x1, x1.permuted(p));
+    cout << "min " << x0 << endl;
+    p = p*p;
+    cout << "p^8 " << p << endl;
+    cout << "pe^8" << x0.permuted(p) << endl;
+    x1 = _mm_min_epi8(x0, x0.permuted(p));
+    cout << "min " << x1 << endl;
+}
 
 // (-1)**(len(self)-len(self.to_cycles()))
 inline uint8_t sign_nb_cycles_unroll(Perm16 p, uint8_t n = 16) {
@@ -200,6 +222,7 @@ int main() {
   std::srand(std::time(0));
 
   Perm16 p = { 5, 4,12,15,10, 8, 9, 2, 3,13,14, 0, 1, 7,11, 6};
+  // p = { 13, 6, 11, 14, 5, 2, 12, 4, 9, 1, 7, 0, 8, 10, 3, 15};
 
   p = Perm16::random();
   cout << Perm16::one << endl
