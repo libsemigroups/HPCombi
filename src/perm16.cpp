@@ -66,19 +66,11 @@ const std::array<Vect16, 4> Vect16::summing_rounds =
      { 8,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255},
     }};
 
-
-constexpr const Perm16 Perm16::one =
-  Vect16(epu8 {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15});
-constexpr const Perm16 Perm16::left_cycle =
-  Vect16(epu8 {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 0});
-constexpr const Perm16 Perm16::right_cycle =
-  Vect16(epu8 {15, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14});
-
 Perm16 Perm16::elementary_transposition(uint64_t i) {
   assert(i < vect::Size);
   Perm16 res {}; res[i] = i+1; res[i+1] = i; return res; }
 Perm16 Perm16::random() {
-  Perm16 res = Perm16::one;
+  Perm16 res = Perm16::one();
   std::random_shuffle(res.begin(), res.end());
   return res;
 }
@@ -86,7 +78,7 @@ Perm16 Perm16::random() {
 Perm16 Perm16::unrankSJT(int n, int r) {
   int j, k, rem, c;
   std::array<int, 16> dir;
-  Perm16 res = Perm16::one;
+  Perm16 res = Perm16::one();
   for (j=0; j < n; ++j) res[j] = 0xFF;
   for (j=n-1; j >= 0; --j) {
     rem = r % (j + 1);

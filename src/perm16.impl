@@ -119,7 +119,7 @@ inline Vect16 Vect16::sorted() const {
   for (Vect16 round : sorting_rounds) {
     Vect16 minab, maxab, blend, mask, b = res.permuted(round);
 
-    mask = _mm_cmplt_epi8(round, Perm16::one);
+    mask = _mm_cmplt_epi8(round, Perm16::one());
     minab = _mm_min_epu8(res, b); // unsigned comparison
     maxab = _mm_max_epu8(res, b); // unsigned comparison
 
@@ -133,7 +133,7 @@ inline Vect16 Vect16::revsorted() const {
   for (Vect16 round : sorting_rounds) {
     Vect16 minab, maxab, blend, mask, b = res.permuted(round);
 
-    mask = _mm_cmplt_epi8(round, Perm16::one);
+    mask = _mm_cmplt_epi8(round, Perm16::one());
     minab = _mm_min_epu8(res, b); // unsigned comparison
     maxab = _mm_max_epu8(res, b); // unsigned comparison
 
@@ -156,7 +156,7 @@ inline Perm16 Perm16::inverse_ref() const {
 }
 
 inline Perm16 Perm16::inverse_sort() const {
-  Vect16 res = (v << 4) + one.v;
+  Vect16 res = (v << 4) + one().v;
   res = res.sorted().v & 0xf;
   return res;
 }
@@ -177,10 +177,8 @@ inline Perm16 Perm16::inverse_find() const {
 
 namespace power_helper {
   template <> struct Monoid<Perm16> {
-    static constexpr Perm16 one =
-      Vect16(epu8 {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15});
-    static Perm16 mult(Perm16 a, Perm16 b) {
-      return a * b; };
+    static constexpr const Perm16 one = Perm16::one();
+    static Perm16 mult(Perm16 a, Perm16 b) { return a * b; };
   };
 };
 
@@ -191,7 +189,7 @@ inline Perm16 Perm16::inverse_pow() const {
   for (int i=9; i<=16; i++) {
     Perm16 oldpow = newpow;
     newpow = oldpow * *this;
-    res.v = _mm_blendv_epi8(res, oldpow, newpow.v == one.v);
+    res.v = _mm_blendv_epi8(res, oldpow, newpow.v == one().v);
   }
   return res;
 }
@@ -208,7 +206,7 @@ const Vect16 left_shift =
      { 1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15,255};
 
 inline Vect16 Perm16::lehmer() const {
-  Vect16 vsh = *this, res = -Perm16::one.v;
+  Vect16 vsh = *this, res = -Perm16::one().v;
   for (int i=1; i<16; i++) {
     vsh = vsh.permuted(left_shift);
     res.v -= (v >= vsh.v);

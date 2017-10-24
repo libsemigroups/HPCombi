@@ -56,7 +56,7 @@ int main() {
 
   assert( &p[0] == &(p.as_array()[0]) );
   
-  cout << Perm16::one << endl;
+  cout << Perm16::one() << endl;
   cout << p << endl << endl;
   cout << int(p.length()) << endl;
   cout << int(p.length_ref()) << endl;

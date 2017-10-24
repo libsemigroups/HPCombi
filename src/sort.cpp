@@ -34,7 +34,7 @@ Vect16 sort(Vect16 a) {
   for (Perm16 round : rounds) {
     Vect16 minab, maxab, mask, b = a.permuted(round);
 
-    mask = _mm_cmplt_epi8(round, Perm16::one);
+    mask = _mm_cmplt_epi8(round, Perm16::one());
     minab = _mm_min_epi8(a, b);
     maxab = _mm_max_epi8(a, b);
 
@@ -65,7 +65,7 @@ int main() {
 
   for (Perm16 round : rounds) {
     assert(round.is_permutation());
-    assert (round*round==Perm16::one);
+    assert (round*round==Perm16::one());
   }
 
   auto vrand = rand_perms(10000000);
@@ -74,24 +74,24 @@ int main() {
   sp_ref = timethat([vrand]() {
       for (Perm16 v : vrand) {
 	std::sort (v.begin(), v.end());
-	assert(v == Perm16::one);
+	assert(v == Perm16::one());
       }
     });
   cout << "Method  : ";
   timethat([vrand]() {
-      for (Perm16 v : vrand) assert(v.sorted() == Perm16::one);
+      for (Perm16 v : vrand) assert(v.sorted() == Perm16::one());
     }, sp_ref);
   cout << "Funct   : ";
   timethat([vrand]() {
-      for (Perm16 v : vrand) assert(sort(v) == Perm16::one);
+      for (Perm16 v : vrand) assert(sort(v) == Perm16::one());
     }, sp_ref);
   cout << "Insert  : ";
   timethat([vrand]() {
-      for (Perm16 v : vrand) assert(insertion_sort(v) == Perm16::one);
+      for (Perm16 v : vrand) assert(insertion_sort(v) == Perm16::one());
     }, sp_ref);
   cout << "Radix16 : ";
   timethat([vrand]() {
-      for (Perm16 v : vrand) assert(radix_sort(v) == Perm16::one);
+      for (Perm16 v : vrand) assert(radix_sort(v) == Perm16::one());
     }, sp_ref);
 
   return EXIT_SUCCESS;

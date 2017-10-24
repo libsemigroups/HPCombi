@@ -27,10 +27,10 @@ int main() {
   assert(p.inverse_ref() == p.inverse_sort());
   assert(p.inverse_ref() == p.inverse_find());
   assert(p.inverse_ref() == p.inverse_pow());
-  assert(p * p.inverse_find() == Perm16::one);
-  assert(p.inverse_find() * p == Perm16::one);
-  assert(p * p.inverse_pow() == Perm16::one);
-  assert(p.inverse_pow() * p == Perm16::one);
+  assert(p * p.inverse_find() == Perm16::one());
+  assert(p.inverse_find() * p == Perm16::one());
+  assert(p * p.inverse_pow() == Perm16::one());
+  assert(p.inverse_pow() * p == Perm16::one());
 
   cout << endl << endl;
 

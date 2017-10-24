@@ -98,9 +98,18 @@ struct Perm16 : public Vect16 {
   Perm16 inverse_pow() const;
   inline Perm16 inverse() { return inverse_pow(); };
 
-  static const Perm16 one;
-  static const Perm16 left_cycle;
-  static const Perm16 right_cycle;
+  // It's not possible to have a static constexpr member of same type as class
+  // being defined (see https://stackoverflow.com/questions/11928089/)
+  // therefore we chose to have functions.
+  static const constexpr Perm16 one() {
+    return Vect16(epu8 {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15});
+  };
+  static const constexpr Perm16 left_cycle() {
+    return Vect16(epu8 {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15});
+  };
+  static const constexpr Perm16 right_cycle() {
+    return Vect16(epu8 {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 0});
+  };
 
   static Perm16 elementary_transposition(uint64_t i);
   static Perm16 random();

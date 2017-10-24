@@ -30,19 +30,19 @@ uint8_t nb_cycles_ref(Perm16 p) {
 
 
 uint8_t nb_cycles(Perm16 p) {
-  Vect16 x0, x1 = Perm16::one;
+  Vect16 x0, x1 = Perm16::one();
   Perm16 pp = p;
   do {
     x0 = x1;
     x1 = _mm_min_epi8(x0, x0.permuted(pp));
     pp = pp*pp;
   } while (x0 != x1);
-  x0.v = (Perm16::one.v == x1.v);
+  x0.v = (Perm16::one().v == x1.v);
   return _mm_popcnt_u32(_mm_movemask_epi8(x0));
 }
 
 uint8_t nb_cycles2(Perm16 p) {
-  Vect16 x0, x1 = Perm16::one;
+  Vect16 x0, x1 = Perm16::one();
   Perm16 pp = p;
   do {
     x0 = _mm_min_epi8(x1, x1.permuted(pp));
@@ -50,13 +50,13 @@ uint8_t nb_cycles2(Perm16 p) {
     x1 = _mm_min_epi8(x0, x0.permuted(pp));
     pp = pp*pp;
   } while (x0 != x1);
-  x0.v = (Perm16::one.v == x1.v);
+  x0.v = (Perm16::one().v == x1.v);
   return _mm_popcnt_u32(_mm_movemask_epi8(x0));
 }
 
 /** This is by far the fastest implementation *38 the default implem up there **/
 inline Vect16 cycles_mask_unroll(Perm16 p) {
-  Vect16 x0, x1 = Perm16::one;
+  Vect16 x0, x1 = Perm16::one();
   x0 = _mm_min_epi8(x1, x1.permuted(p));
   p = p*p;
   x1 = _mm_min_epi8(x0, x0.permuted(p));
@@ -69,7 +69,7 @@ inline Vect16 cycles_mask_unroll(Perm16 p) {
 
 inline uint8_t nb_cycles_unroll(Perm16 p) {
   Perm16 res;
-  res.v = (Perm16::one.v == cycles_mask_unroll(p).v);
+  res.v = (Perm16::one().v == cycles_mask_unroll(p).v);
   return _mm_popcnt_u32(_mm_movemask_epi8(res));
 }
 
@@ -94,10 +94,10 @@ Vect16 cycle_type_ref(Perm16 p) {
 
 Vect16 evaluation(Vect16 v) {
   Vect16 res;
-  res.v = -(Perm16::one.v == v.v);
+  res.v = -(Perm16::one().v == v.v);
   for (int i = 0; i<15; i++) {
-    v = v.permuted(Perm16::left_cycle);
-    res.v -= (Perm16::one.v == v.v);
+    v = v.permuted(Perm16::left_cycle());
+    res.v -= (Perm16::one().v == v.v);
   }
   return res;
 }
@@ -110,7 +110,7 @@ Vect16 cycle_type(Perm16 p) {
 
 inline Vect16 cycle_type_unroll(Perm16 p) {
   Perm16 pp = p;
-  Vect16 one16 = Perm16::one.v * 16;
+  Vect16 one16 = Perm16::one().v * 16;
   Vect16 res = one16;
 
   res = _mm_min_epu8(res, Vect16(res.v + 1).permuted(pp));
@@ -190,7 +190,7 @@ void timeit(vector<Perm16> v) {
 
 
 void democycle(Perm16 p) {
-    Vect16 x0, x1 = Perm16::one;
+    Vect16 x0, x1 = Perm16::one();
     cout << "one " << x1 << endl;
     cout << "sig " << p << endl;
     cout << "perm" << x1.permuted(p) << endl;
@@ -225,7 +225,7 @@ int main() {
   // p = { 13, 6, 11, 14, 5, 2, 12, 4, 9, 1, 7, 0, 8, 10, 3, 15};
 
   p = Perm16::random();
-  cout << Perm16::one << endl
+  cout << Perm16::one() << endl
        << p << endl
        << cycles_mask_unroll(p) << endl
        << evaluation(cycles_mask_unroll(p)) << " #= "
