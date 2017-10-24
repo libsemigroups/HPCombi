@@ -1,3 +1,5 @@
+LINK.o = $(LINK.cc)  # default linker is c++
+
 CXXFLAGS    = -std=c++14 -g -Wall -mavx -mtune=native -O3 -funroll-loops -flax-vector-conversions
 # CXXFLAGS    = -std=c++11 -g -Wall -mavx -mtune=native
 # -Winline -fcilkplus 
@@ -6,23 +8,18 @@ CXXFLAGS    = -std=c++14 -g -Wall -mavx -mtune=native -O3 -funroll-loops -flax-v
 TARGET = cycle sort inverse essai
 all: $(TARGET)
 
-perm16.o: perm16.cpp perm16.impl
+testtools.o: testtools.cpp testtools.hpp perm16.hpp perm16.impl power.hpp
+perm16.o: perm16.hpp perm16.impl power.hpp
+cycle.o: cycle.cpp perm16.hpp perm16.impl power.hpp testtools.hpp
+essai.o: essai.cpp perm16.hpp perm16.impl power.hpp testtools.hpp
+inverse.o: inverse.cpp perm16.hpp perm16.impl power.hpp testtools.hpp
+perm16.o: perm16.cpp perm16.hpp perm16.impl power.hpp
+sort.o: sort.cpp perm16.hpp perm16.impl power.hpp testtools.hpp
 
-cycle.o: cycle.cpp perm16.hpp testtools.hpp
 cycle: cycle.o perm16.o testtools.o
-	$(CXX) $(LDFLAGS) $^ $(LOADLIBES) $(LDLIBS) -o $@
-
-sort.o: sort.cpp perm16.hpp testtools.hpp
 sort: sort.o perm16.o testtools.o
-	$(CXX) $(LDFLAGS) $^ $(LOADLIBES) $(LDLIBS) -o $@
-
-inverse.o: inverse.cpp perm16.hpp testtools.hpp
 inverse: inverse.o perm16.o testtools.o
-	$(CXX) $(LDFLAGS) $^ $(LOADLIBES) $(LDLIBS) -o $@
-
-essai.o: essai.cpp perm16.hpp testtools.hpp
 essai: essai.o perm16.o testtools.o
-	$(CXX) $(LDFLAGS) $^ $(LOADLIBES) $(LDLIBS) -o $@
 
 clean:
 	rm -rf $(TARGET) *.o
