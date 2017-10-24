@@ -1,3 +1,19 @@
+//****************************************************************************//
+//       Copyright (C) 2016 Florent Hivert <Florent.Hivert@lri.fr>,           //
+//                                                                            //
+//  Distributed under the terms of the GNU General Public License (GPL)       //
+//                                                                            //
+//    This code is distributed in the hope that it will be useful,            //
+//    but WITHOUT ANY WARRANTY; without even the implied warranty of          //
+//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU       //
+//   General Public License for more details.                                 //
+//                                                                            //
+//  The full text of the GPL is available at:                                 //
+//                                                                            //
+//                  http://www.gnu.org/licenses/                              //
+//****************************************************************************//
+
+#include <x86intrin.h>
 #include <iostream>
 #include <iomanip>
 #include <chrono>
@@ -6,7 +22,6 @@
 #include <array>
 #include <vector>
 #include <algorithm>
-#include <x86intrin.h>
 
 #include "perm16.hpp"
 #include "testtools.hpp"
@@ -20,7 +35,7 @@ using Statistic = array<uint64_t, 256>;
 
 
 template <uint8_t (Perm16::*fun)() const>
-double timef(vector<Perm16> &v, double reftime, int nloop = 1) {
+double timef(const vector<Perm16> &v, double reftime, int nloop = 1) {
   high_resolution_clock::time_point tstart, tfin;
   Statistic stat = {};
   uint_fast64_t sz = v.size();
@@ -30,7 +45,7 @@ double timef(vector<Perm16> &v, double reftime, int nloop = 1) {
       stat[(v[i].*fun)()]++;
   tfin = high_resolution_clock::now();
 
-  for (int i=0; i<=120; i++) cout << stat[i] / nloop << " ";
+  for (int i=0; i <= 120; i++) cout << stat[i] / nloop << " ";
   cout << endl;
   auto tm = duration_cast<duration<double>>(tfin - tstart);
   cout << "time = " << tm.count() << "s";
@@ -39,7 +54,7 @@ double timef(vector<Perm16> &v, double reftime, int nloop = 1) {
   return tm.count();
 }
 
-void timeit(vector<Perm16> &v, int nloop = 1) {
+void timeit(const vector<Perm16> &v, int nloop = 1) {
   double ref;
 
   cout << "Reference: ";
@@ -52,10 +67,10 @@ void timeit(vector<Perm16> &v, int nloop = 1) {
 int main() {
   std::srand(std::time(0));
 
-  Perm16 p = { 5, 4,12,15,10, 8, 9, 2, 3,13,14, 0, 1, 7,11, 6};
+  Perm16 p = {  5,  4, 12, 15, 10,  8,  9,  2,  3, 13, 14,  0,  1,  7, 11,  6};
 
-  assert( &p[0] == &(p.as_array()[0]) );
-  
+  assert(&p[0] == &(p.as_array()[0]));
+
   cout << Perm16::one() << endl;
   cout << p << endl << endl;
   cout << int(p.length()) << endl;

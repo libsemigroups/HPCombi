@@ -6,7 +6,7 @@ CXXFLAGS    = -std=c++14 -g -Wall -mavx -mtune=native -O3 -funroll-loops -flax-v
 TARGET = cycle sort inverse essai
 all: $(TARGET)
 
-perm16.o: perm16.impl
+perm16.o: perm16.cpp perm16.impl
 
 cycle.o: cycle.cpp perm16.hpp testtools.hpp
 cycle: cycle.o perm16.o testtools.o
@@ -26,3 +26,7 @@ essai: essai.o perm16.o testtools.o
 
 clean:
 	rm -rf $(TARGET) *.o
+
+lint:
+	cpplint.py --filter=-build/namespaces --extensions=hpp,cpp,impl \
+	    *.cpp *.hpp *.impl

@@ -49,7 +49,7 @@ inline constexpr T pow(const T x) {
         (exp % 2 == 0) ?
             M::mult(pow<exp/2>(x), pow<exp/2>(x)) :
             M::mult(x, M::mult(pow<(exp-1)/2>(x),
-			       pow<(exp-1)/2>(x)));
+                               pow<(exp-1)/2>(x)));
 }
 
 
@@ -59,10 +59,11 @@ namespace power_helper {
 /** Default class for numeric multiplicative monoids
  */
 
-  template <typename T> struct Monoid {
-    static constexpr T one = 1;
-    static constexpr T mult(T a, T b) { return a * b; };
-  };
+template <typename T> struct Monoid {
+  static constexpr T one = 1;
+  static constexpr T mult(T a, T b) { return a * b; }
 };
 
-#endif // POWER_HPP_
+};  // namespace power_helper
+
+#endif  // POWER_HPP_

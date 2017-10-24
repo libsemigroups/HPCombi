@@ -13,6 +13,7 @@
 //                  http://www.gnu.org/licenses/                              //
 //****************************************************************************//
 
+#include <algorithm>
 
 /*****************************************************************************/
 /** Implementation part for inline functions *********************************/
@@ -120,8 +121,8 @@ inline Vect16 Vect16::sorted() const {
     Vect16 minab, maxab, blend, mask, b = res.permuted(round);
 
     mask = _mm_cmplt_epi8(round, Perm16::one());
-    minab = _mm_min_epu8(res, b); // unsigned comparison
-    maxab = _mm_max_epu8(res, b); // unsigned comparison
+    minab = _mm_min_epu8(res, b);  // unsigned comparison
+    maxab = _mm_max_epu8(res, b);  // unsigned comparison
 
     res = _mm_blendv_epi8(minab, maxab, mask);
   }
@@ -134,8 +135,8 @@ inline Vect16 Vect16::revsorted() const {
     Vect16 minab, maxab, blend, mask, b = res.permuted(round);
 
     mask = _mm_cmplt_epi8(round, Perm16::one());
-    minab = _mm_min_epu8(res, b); // unsigned comparison
-    maxab = _mm_max_epu8(res, b); // unsigned comparison
+    minab = _mm_min_epu8(res, b);  // unsigned comparison
+    maxab = _mm_max_epu8(res, b);  // unsigned comparison
 
     res = _mm_blendv_epi8(maxab, minab, mask);
   }
@@ -176,17 +177,19 @@ inline Perm16 Perm16::inverse_find() const {
 #include "power.hpp"
 
 namespace power_helper {
-  template <> struct Monoid<Perm16> {
-    static constexpr const Perm16 one = Perm16::one();
-    static Perm16 mult(Perm16 a, Perm16 b) { return a * b; };
-  };
+
+template <> struct Monoid<Perm16> {
+  static constexpr const Perm16 one = Perm16::one();
+  static Perm16 mult(Perm16 a, Perm16 b) { return a * b; }
 };
+
+};  // namespace power_helper
 
 
 inline Perm16 Perm16::inverse_pow() const {
   Perm16 res;
   Perm16 newpow = pow<8>(*this);
-  for (int i=9; i<=16; i++) {
+  for (int i=9; i <= 16; i++) {
     Perm16 oldpow = newpow;
     newpow = oldpow * *this;
     res.v = _mm_blendv_epi8(res, oldpow, newpow.v == one().v);
@@ -196,27 +199,27 @@ inline Perm16 Perm16::inverse_pow() const {
 
 inline Vect16 Perm16::lehmer_ref() const {
   Vect16 res = {{}};
-  for (int i=0; i<16; i++)
-    for (int j=i+1; j<16; j++)
+  for (int i=0; i < 16; i++)
+    for (int j=i+1; j < 16; j++)
       if (v[i] > v[j]) res[i]++;
   return res;
-};
+}
 
 const Vect16 left_shift =
-     { 1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15,255};
+     { 1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15, 255};
 
 inline Vect16 Perm16::lehmer() const {
   Vect16 vsh = *this, res = -Perm16::one().v;
-  for (int i=1; i<16; i++) {
+  for (int i=1; i < 16; i++) {
     vsh = vsh.permuted(left_shift);
     res.v -= (v >= vsh.v);
   }
   return res;
-};
+}
 inline uint8_t Perm16::length_ref() const {
   uint8_t res = 0;
-  for (int i=0; i<16; i++)
-    for (int j=i+1; j<16; j++)
+  for (int i=0; i < 16; i++)
+    for (int j=i+1; j < 16; j++)
       if (v[i] > v[j]) res++;
   return res;
 }

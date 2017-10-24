@@ -15,6 +15,7 @@
 
 #include <iostream>
 #include <iomanip>
+#include <vector>
 #include "testtools.hpp"
 
 namespace IVMPG {
@@ -28,7 +29,8 @@ std::vector<Perm16> rand_perms(int sz) {
 
 std::vector<Perm16> all_perms(int n) {
   std::vector<Perm16> res(factorial(n));
-  for (unsigned int i = 0; i < res.size(); i++) res[i] = Perm16::unrankSJT(n, i);
+  for (unsigned int i = 0; i < res.size(); i++)
+    res[i] = Perm16::unrankSJT(n, i);
   return res;
 }
 

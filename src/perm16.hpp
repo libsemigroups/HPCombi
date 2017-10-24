@@ -19,10 +19,10 @@
 #include <x86intrin.h>
 #include <cassert>
 #include <cstdint>
-#include <functional>  // less<>
-#include <algorithm>
 #include <array>
 #include <ostream>
+#include <functional>  // less<>
+#include <algorithm>
 
 
 namespace IVMPG {
@@ -48,7 +48,7 @@ struct alignas(16) Vect16 {
   constexpr uint8_t operator[](uint64_t i) const { return v[i]; }
   constexpr uint8_t & operator[](uint64_t i) { return v[i]; }
 
-  constexpr std::array<uint8_t, 16> &as_array () {
+  constexpr std::array<uint8_t, 16> &as_array() {
     return reinterpret_cast<std::array<unsigned char, 16>&>(v); }
 
   auto begin() { return as_array().begin(); }
@@ -96,20 +96,20 @@ struct Perm16 : public Vect16 {
   Perm16 inverse_sort() const;
   Perm16 inverse_find() const;
   Perm16 inverse_pow() const;
-  inline Perm16 inverse() { return inverse_pow(); };
+  inline Perm16 inverse() { return inverse_pow(); }
 
   // It's not possible to have a static constexpr member of same type as class
   // being defined (see https://stackoverflow.com/questions/11928089/)
   // therefore we chose to have functions.
   static const constexpr Perm16 one() {
     return Vect16(epu8 {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15});
-  };
+  }
   static const constexpr Perm16 left_cycle() {
     return Vect16(epu8 {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15});
-  };
+  }
   static const constexpr Perm16 right_cycle() {
     return Vect16(epu8 {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 0});
-  };
+  }
 
   static Perm16 elementary_transposition(uint64_t i);
   static Perm16 random();
@@ -124,7 +124,7 @@ struct Perm16 : public Vect16 {
   static const std::array<Perm16, 3> inverting_rounds;
 };
 
-#include"perm16.impl"
+#include "perm16.impl"
 
 }  // namespace IVMPG
 

@@ -1,3 +1,18 @@
+//****************************************************************************//
+//       Copyright (C) 2016 Florent Hivert <Florent.Hivert@lri.fr>,           //
+//                                                                            //
+//  Distributed under the terms of the GNU General Public License (GPL)       //
+//                                                                            //
+//    This code is distributed in the hope that it will be useful,            //
+//    but WITHOUT ANY WARRANTY; without even the implied warranty of          //
+//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU       //
+//   General Public License for more details.                                 //
+//                                                                            //
+//  The full text of the GPL is available at:                                 //
+//                                                                            //
+//                  http://www.gnu.org/licenses/                              //
+//****************************************************************************//
+
 #include <iostream>
 #include <iomanip>
 #include <chrono>
@@ -6,7 +21,6 @@
 #include <array>
 #include <vector>
 #include <algorithm>
-#include <x86intrin.h>
 
 #include "perm16.hpp"
 #include "testtools.hpp"
@@ -54,7 +68,8 @@ uint8_t nb_cycles2(Perm16 p) {
   return _mm_popcnt_u32(_mm_movemask_epi8(x0));
 }
 
-/** This is by far the fastest implementation *38 the default implem up there **/
+/** This is by far the fastest implementation !
+ *  42 the default implem up there **/
 inline Vect16 cycles_mask_unroll(Perm16 p) {
   Vect16 x0, x1 = Perm16::one();
   x0 = _mm_min_epi8(x1, x1.permuted(p));
@@ -81,7 +96,7 @@ Vect16 cycle_type_ref(Perm16 p) {
     if (v[i] == 0) {
       uint8_t lc = 0;
       for (j=i; v[j] == 0; j = p[j]) {
-	v[j] = 1; lc++;
+        v[j] = 1; lc++;
       }
       res[c] = lc;
       c++;
@@ -95,7 +110,7 @@ Vect16 cycle_type_ref(Perm16 p) {
 Vect16 evaluation(Vect16 v) {
   Vect16 res;
   res.v = -(Perm16::one().v == v.v);
-  for (int i = 0; i<15; i++) {
+  for (int i = 0; i < 15; i++) {
     v = v.permuted(Perm16::left_cycle());
     res.v -= (Perm16::one().v == v.v);
   }
@@ -138,7 +153,7 @@ inline uint8_t nb_cycles_type_unroll(Perm16 p) {
 
 
 auto func = {nb_cycles_ref, nb_cycles, nb_cycles2,
-	     nb_cycles_unroll, nb_cycles_type_unroll};
+             nb_cycles_unroll, nb_cycles_type_unroll};
 
 
 
@@ -153,8 +168,8 @@ std::ostream & operator<<(std::ostream & stream, Statistic const &term) {
 
 
 
-template <uint8_t ncycles(Perm16 p)> double timef(vector<Perm16> &v,
-						  double reftime) {
+template <uint8_t ncycles(Perm16 p)> double timef(const vector<Perm16> &v,
+                                                  double reftime) {
   high_resolution_clock::time_point tstart, tfin;
   Statistic stat = {};
   uint_fast64_t sz = v.size();
@@ -221,7 +236,7 @@ inline uint8_t sign_nb_cycles_unroll(Perm16 p, uint8_t n = 16) {
 int main() {
   std::srand(std::time(0));
 
-  Perm16 p = { 5, 4,12,15,10, 8, 9, 2, 3,13,14, 0, 1, 7,11, 6};
+  Perm16 p = {  5,  4, 12, 15, 10,  8,  9,  2,  3, 13, 14,  0,  1,  7, 11,  6};
   // p = { 13, 6, 11, 14, 5, 2, 12, 4, 9, 1, 7, 0, 8, 10, 3, 15};
 
   p = Perm16::random();

@@ -32,7 +32,7 @@ Vect16 Vect16::random(uint16_t bnd) {
 
   std::default_random_engine e1(rd());
   std::uniform_int_distribution<int> uniform_dist(0, bnd-1);
-  for (size_t i=0; i<Size; i++)
+  for (size_t i=0; i < Size; i++)
     res.v[i] = uniform_dist(e1);
   return res;
 }
@@ -58,12 +58,13 @@ const std::array<Perm16, 3> Perm16::inverting_rounds =
      { 0,  1,  4,  5,  8,  9, 12, 13,  2,  3,  6,  7, 10, 11, 14, 15},
      { 0,  2,  4,  6,  8, 10, 12, 14,  1,  3,  5,  7,  9, 11, 13, 15} }};
 
+const uint8_t FF = 0xff;
 const std::array<Vect16, 4> Vect16::summing_rounds =
 //     0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15
-  {{ { 1,255,  3,255,  5,255,  7,255,  9,255, 11,255, 13,255, 15,255},
-     { 2,255,255,255,  6,255,255,255, 10,255,255,255, 14,255,255,255},
-     { 4,255,255,255,255,255,255,255, 12,255,255,255,255,255,255,255},
-     { 8,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255},
+  {{ { 1, FF,  3, FF,  5, FF,  7, FF,  9, FF, 11, FF, 13, FF, 15, FF},
+     { 2, FF, FF, FF,  6, FF, FF, FF, 10, FF, FF, FF, 14, FF, FF, FF},
+     { 4, FF, FF, FF, FF, FF, FF, FF, 12, FF, FF, FF, FF, FF, FF, FF},
+     { 8, FF, FF, FF, FF, FF, FF, FF, FF, FF, FF, FF, FF, FF, FF, FF},
     }};
 
 Perm16 Perm16::elementary_transposition(uint64_t i) {

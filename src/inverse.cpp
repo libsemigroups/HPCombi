@@ -1,3 +1,19 @@
+//****************************************************************************//
+//       Copyright (C) 2016 Florent Hivert <Florent.Hivert@lri.fr>,           //
+//                                                                            //
+//  Distributed under the terms of the GNU General Public License (GPL)       //
+//                                                                            //
+//    This code is distributed in the hope that it will be useful,            //
+//    but WITHOUT ANY WARRANTY; without even the implied warranty of          //
+//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU       //
+//   General Public License for more details.                                 //
+//                                                                            //
+//  The full text of the GPL is available at:                                 //
+//                                                                            //
+//                  http://www.gnu.org/licenses/                              //
+//****************************************************************************//
+
+#include <x86intrin.h>
 #include <iostream>
 #include <iomanip>
 #include <chrono>
@@ -6,7 +22,6 @@
 #include <array>
 #include <vector>
 #include <algorithm>
-#include <x86intrin.h>
 
 #include "perm16.hpp"
 #include "testtools.hpp"
@@ -18,7 +33,7 @@ using namespace IVMPG;
 int main() {
   std::srand(std::time(0));
 
-  Perm16 p = { 5, 4,12,15,10, 8, 9, 2, 3,13,14, 0, 1, 7,11, 6};
+  Perm16 p = {  5,  4, 12, 15, 10,  8,  9,  2,  3, 13, 14,  0,  1,  7, 11,  6};
 
   p = Perm16::random();
 
@@ -82,6 +97,5 @@ int main() {
   cout << ", speedup = " << tmref.count()/tmpow.count();
   cout << endl;
 
-  
   return EXIT_SUCCESS;
 }
