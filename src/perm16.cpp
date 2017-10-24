@@ -1,5 +1,5 @@
 //****************************************************************************//
-//       Copyright (C) 2014 Florent Hivert <Florent.Hivert@lri.fr>,           //
+//       Copyright (C) 2016 Florent Hivert <Florent.Hivert@lri.fr>,           //
 //                                                                            //
 //  Distributed under the terms of the GNU General Public License (GPL)       //
 //                                                                            //
@@ -26,15 +26,14 @@ namespace IVMPG {
 // Definition since previously *only* declared
 const constexpr size_t Vect16::Size;
 
-Vect16 Vect16::random(uint16_t m) {
+Vect16 Vect16::random(uint16_t bnd) {
   Vect16 res;
   std::random_device rd;
 
-  // Choose a random mean between 1 and 6
   std::default_random_engine e1(rd());
-  std::uniform_int_distribution<int> uniform_dist(0, m-1);
+  std::uniform_int_distribution<int> uniform_dist(0, bnd-1);
   for (size_t i=0; i<Size; i++)
-    res.p[i] = uniform_dist(e1);
+    res.v[i] = uniform_dist(e1);
   return res;
 }
 
@@ -69,18 +68,18 @@ const std::array<Vect16, 4> Vect16::summing_rounds =
 
 
 constexpr const Perm16 Perm16::one =
-  Vect16(epi8 {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15});
+  Vect16(epu8 {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15});
 constexpr const Perm16 Perm16::left_cycle =
-  Vect16(epi8 {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 0});
+  Vect16(epu8 {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 0});
 constexpr const Perm16 Perm16::right_cycle =
-  Vect16(epi8 {15, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14});
+  Vect16(epu8 {15, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14});
 
 Perm16 Perm16::elementary_transposition(uint64_t i) {
   assert(i < vect::Size);
   Perm16 res {}; res[i] = i+1; res[i+1] = i; return res; }
 Perm16 Perm16::random() {
   Perm16 res = Perm16::one;
-  std::random_shuffle(res.p.begin(), res.p.end());
+  std::random_shuffle(res.begin(), res.end());
   return res;
 }
 // From Ruskey : Combinatorial Generation page 138

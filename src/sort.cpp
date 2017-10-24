@@ -73,7 +73,7 @@ int main() {
   cout << "Std lib: ";
   sp_ref = timethat([vrand]() {
       for (Perm16 v : vrand) {
-	std::sort (v.p.begin(), v.p.end());
+	std::sort (v.begin(), v.end());
 	assert(v == Perm16::one);
       }
     });

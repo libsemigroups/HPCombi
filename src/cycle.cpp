@@ -37,7 +37,7 @@ uint8_t nb_cycles(Perm16 p) {
     x1 = _mm_min_epi8(x0, x0.permuted(pp));
     pp = pp*pp;
   } while (x0 != x1);
-  x0.v8 = (Perm16::one.v8 == x1.v8);
+  x0.v = (Perm16::one.v == x1.v);
   return _mm_popcnt_u32(_mm_movemask_epi8(x0));
 }
 
@@ -50,7 +50,7 @@ uint8_t nb_cycles2(Perm16 p) {
     x1 = _mm_min_epi8(x0, x0.permuted(pp));
     pp = pp*pp;
   } while (x0 != x1);
-  x0.v8 = (Perm16::one.v8 == x1.v8);
+  x0.v = (Perm16::one.v == x1.v);
   return _mm_popcnt_u32(_mm_movemask_epi8(x0));
 }
 
@@ -69,7 +69,7 @@ inline Vect16 cycles_mask_unroll(Perm16 p) {
 
 inline uint8_t nb_cycles_unroll(Perm16 p) {
   Perm16 res;
-  res.v8 = (Perm16::one.v8 == cycles_mask_unroll(p).v8);
+  res.v = (Perm16::one.v == cycles_mask_unroll(p).v);
   return _mm_popcnt_u32(_mm_movemask_epi8(res));
 }
 
@@ -87,17 +87,17 @@ Vect16 cycle_type_ref(Perm16 p) {
       c++;
     }
   }
-  sort(res.p.begin(), res.p.begin() + c);
+  sort(p.begin(), p.begin() + c);
   return res;
 }
 
 
 Vect16 evaluation(Vect16 v) {
   Vect16 res;
-  res.v8 = -(Perm16::one.v8 == v.v8);
+  res.v = -(Perm16::one.v == v.v);
   for (int i = 0; i<15; i++) {
     v = v.permuted(Perm16::left_cycle);
-    res.v8 -= (Perm16::one.v8 == v.v8);
+    res.v -= (Perm16::one.v == v.v);
   }
   return res;
 }
@@ -110,30 +110,30 @@ Vect16 cycle_type(Perm16 p) {
 
 inline Vect16 cycle_type_unroll(Perm16 p) {
   Perm16 pp = p;
-  Vect16 one16 = Perm16::one.v8 * 16;
+  Vect16 one16 = Perm16::one.v * 16;
   Vect16 res = one16;
 
-  res = _mm_min_epu8(res, Vect16(res.v8 + 1).permuted(pp));
+  res = _mm_min_epu8(res, Vect16(res.v + 1).permuted(pp));
   pp = pp*pp;
-  res = _mm_min_epu8(res, Vect16(res.v8 + 2).permuted(pp));
+  res = _mm_min_epu8(res, Vect16(res.v + 2).permuted(pp));
   pp = pp*pp;
-  res = _mm_min_epu8(res, Vect16(res.v8 + 4).permuted(pp));
+  res = _mm_min_epu8(res, Vect16(res.v + 4).permuted(pp));
   pp = pp*pp;
-  res = _mm_min_epu8(res, Vect16(res.v8 + 8).permuted(pp));
+  res = _mm_min_epu8(res, Vect16(res.v + 8).permuted(pp));
   res = res.permuted(p);
 
-  res = (res.v8 - one16.v8 + 1) & ((res.v8 & 0xf0) == one16.v8);
+  res = (res.v - one16.v + 1) & ((res.v & 0xf0) == one16.v);
   return res.revsorted();
 }
 
 inline uint8_t nb_cycles_type_ref(Perm16 p) {
-  return _mm_popcnt_u32(_mm_movemask_epi8(cycle_type_ref(p).v8 != 0));
+  return _mm_popcnt_u32(_mm_movemask_epi8(cycle_type_ref(p).v != 0));
 }
 inline uint8_t nb_cycles_type_mask(Perm16 p) {
-  return _mm_popcnt_u32(_mm_movemask_epi8(cycle_type(p).v8 != 0));
+  return _mm_popcnt_u32(_mm_movemask_epi8(cycle_type(p).v != 0));
 }
 inline uint8_t nb_cycles_type_unroll(Perm16 p) {
-  return _mm_popcnt_u32(_mm_movemask_epi8(cycle_type_unroll(p).v8 != 0));
+  return _mm_popcnt_u32(_mm_movemask_epi8(cycle_type_unroll(p).v != 0));
 }
 
 

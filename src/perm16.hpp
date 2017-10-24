@@ -1,5 +1,5 @@
 //****************************************************************************//
-//       Copyright (C) 2014 Florent Hivert <Florent.Hivert@lri.fr>,           //
+//       Copyright (C) 2016 Florent Hivert <Florent.Hivert@lri.fr>,           //
 //                                                                            //
 //  Distributed under the terms of the GNU General Public License (GPL)       //
 //                                                                            //
@@ -27,33 +27,32 @@
 
 namespace IVMPG {
 
-using vect16 = std::array<uint8_t, 16>;
-using epi8 = uint8_t __attribute__ ((vector_size (16)));
+using epu8 = uint8_t __attribute__ ((vector_size (16)));
 
 
 struct alignas(16) Vect16 {
   static const constexpr size_t Size = 16;
-
-  union {
-    vect16 p;
-    __m128i v;
-    epi8 v8;
-  };
+  epu8 v;
 
   // Overload the default copy constructor and operator= : 10% speedup
   Vect16() = default;
-  constexpr Vect16(const Vect16 &x) : v8(x.v8) {}
-  constexpr Vect16(__m128i x) : v(x) {}
-  constexpr Vect16(epi8 x) : v8(x) {}
+  constexpr Vect16(const Vect16 &x) : v(x.v) {}
+  constexpr Vect16(epu8 x) : v(x) {}
   Vect16(std::initializer_list<uint8_t> il);
-  operator __m128i() { return v; }
-  operator const __m128i() const { return v; }
+  constexpr operator epu8() { return v; }
+  constexpr operator const epu8() const { return v; }
 
   Vect16 & operator=(const Vect16 &x) {v = x.v; return *this;}
-  Vect16 & operator=(const __m128i &vv) {v = vv; return *this;}
+  Vect16 & operator=(const epu8 &vv) {v = vv; return *this;}
 
-  uint8_t operator[](uint64_t i) const { return p[i]; }
-  uint8_t & operator[](uint64_t i) { return p[i]; }
+  constexpr uint8_t operator[](uint64_t i) const { return v[i]; }
+  constexpr uint8_t & operator[](uint64_t i) { return v[i]; }
+
+  constexpr std::array<uint8_t, 16> &as_array () {
+    return reinterpret_cast<std::array<unsigned char, 16>&>(v); }
+
+  auto begin() { return as_array().begin(); }
+  auto end() { return as_array().end(); }
 
   uint64_t first_diff(const Vect16 &b, size_t bound = Size) const;
 
@@ -76,7 +75,7 @@ struct alignas(16) Vect16 {
 
   bool is_permutation(const size_t k = Size) const;
 
-  static Vect16 random(uint16_t m = 256);
+  static Vect16 random(uint16_t bnd = 256);
 
  private:
   static const std::array<Vect16, 9> sorting_rounds;
@@ -127,7 +126,7 @@ template<>
 struct hash<IVMPG::Vect16> {
   inline size_t operator () (const IVMPG::Vect16 &ar) const {
     uint64_t v1 = _mm_extract_epi64(ar.v, 1);
-    return (v1*IVMPG::prime) >> 54;
+    return (v1*IVMPG::prime) >> 52;
 
     // Timing for a 1024 hash table with SET_STATISTIC defined
     //////////////////////////////////////////////////////////
@@ -150,7 +149,8 @@ struct less<IVMPG::Vect16> {
   // 10% faster than calling the lexicographic comparison operator !
   inline size_t operator() (const IVMPG::Vect16 &v1,
                             const IVMPG::Vect16 &v2) const {
-    return v1.v[0] == v2.v[0] ? v1.v[1] < v2.v[1] : v1.v[0] < v2.v[0];
+    __m128 v1v = __m128(v1.v), v2v = __m128(v2.v);
+    return v1v[0] == v2v[0] ? v1v[1] < v2v[1] : v1v[0] < v2v[0];
   }
 };
 

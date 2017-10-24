@@ -54,6 +54,8 @@ int main() {
 
   Perm16 p = { 5, 4,12,15,10, 8, 9, 2, 3,13,14, 0, 1, 7,11, 6};
 
+  assert( &p[0] == &(p.as_array()[0]) );
+  
   cout << Perm16::one << endl;
   cout << p << endl << endl;
   cout << int(p.length()) << endl;
