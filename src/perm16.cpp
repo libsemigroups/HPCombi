@@ -67,12 +67,13 @@ const std::array<Vect16, 4> Vect16::summing_rounds =
      { 8,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255},
     }};
 
-const Perm16 Perm16::one =
-     { 0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15};
-const Perm16 Perm16::left_cycle =
-     { 1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15,  0};
-const Perm16 Perm16::right_cycle =
-     {15,  0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14};
+
+constexpr const Perm16 Perm16::one =
+  Vect16(epi8 {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15});
+constexpr const Perm16 Perm16::left_cycle =
+  Vect16(epi8 {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 0});
+constexpr const Perm16 Perm16::right_cycle =
+  Vect16(epi8 {15, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14});
 
 Perm16 Perm16::elementary_transposition(uint64_t i) {
   assert(i < vect::Size);

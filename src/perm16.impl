@@ -23,7 +23,7 @@ const char LAST_NON_ZERO = (
   _SIDD_UBYTE_OPS | _SIDD_CMP_EQUAL_ANY |
   _SIDD_MASKED_NEGATIVE_POLARITY | _SIDD_MOST_SIGNIFICANT);
 const char FIND_IN_PERM = (_SIDD_UBYTE_OPS | _SIDD_CMP_EQUAL_ANY |
-			   _SIDD_UNIT_MASK | _SIDD_NEGATIVE_POLARITY);
+                           _SIDD_UNIT_MASK | _SIDD_NEGATIVE_POLARITY);
 
 static constexpr const __m128i idv =
     __m128i(epi8 {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15});
@@ -134,7 +134,6 @@ inline Perm16::Perm16(std::initializer_list<uint8_t> il) {
   for (uint64_t i = il.size(); i < vect::Size; ++i) this->p[i] = i;
 }
 
-
 inline Perm16 Perm16::inverse_ref() const {
   Perm16 res;
   for (uint64_t i = 0; i < vect::Size; ++i) res.p[this->p[i]] = i;
@@ -158,11 +157,27 @@ inline Perm16 Perm16::inverse_find() const {
   return res;
 }
 
+
+#include "power.hpp"
+
+namespace power_helper {
+  template <> struct Monoid<Perm16> {
+    static constexpr Perm16 one =
+      Vect16(epi8 {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15});
+    static Perm16 mult(Perm16 a, Perm16 b) {
+      return a * b; };
+  };
+};
+
+
 inline Perm16 Perm16::inverse_pow() const {
-  Perm16 newpow = *this, res;
+  Perm16 res;
+  /*  Perm16 newpow = *this;
   newpow = newpow * newpow;
   newpow = newpow * newpow;
   newpow = newpow * newpow; // Here: newpow = *this ^ 8
+  */
+  Perm16 newpow = pow<8>(*this);
   for (int i=9; i<=16; i++) {
     Perm16 oldpow = newpow;
     newpow = oldpow * *this;
