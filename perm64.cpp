@@ -31,9 +31,9 @@ inline uint8_t get (perm64 p,  uint64_t i) { return *(&p[0][0] + i); }
 std::ostream & operator<<(std::ostream & stream, perm64 const &p) {
     using namespace std;
     stream << "[" << setw(2) << hex << unsigned(get(p, 0));
-    for (unsigned i=1; i < 64; ++i)
+    for (unsigned i=1; i < 32; ++i)
         stream << "," << setw(2) << unsigned(get(p, i));
-    stream << dec << "]";
+    stream << dec << "...]";
     return stream;
 }
 
@@ -98,17 +98,46 @@ template<typename Func>
 
 inline bool eqperm64(perm64 p1, perm64 p2) {
     for (uint64_t i = 0; i < 4; i++)
-	if (_mm_movemask_epi8(_mm_cmpeq_epi8(p1[0], p2[0])) != 0xffff) return false;
+	if (_mm_movemask_epi8(_mm_cmpeq_epi8(p1[i], p2[i])) != 0xffff) return false;
     return true;
 }
 
-perm64 permute(perm64 v1, perm64 v2) {
+perm64 permute_1(perm64 v1, perm64 v2) {
     perm64 res = {};
     for (uint64_t i = 0; i < 4; i++) {
 	for (uint64_t j = 0; j < 4; j++) {
-	    res[j] = _mm_blendv_epi8(res[j], _mm_shuffle_epi8(v1[i], v2[j]), v2[j] < 16);
+	    res[j] = _mm_blendv_epi8(res[j], _mm_shuffle_epi8(v1[i], v2[j]), v2[j] <= 15);
 	    v2[j] -= 16;
 	}
+    }
+    return res;
+}
+
+perm64 permute_2(perm64 v1, perm64 v2) {
+    perm64 res;
+    for (uint64_t j = 0; j < 4; j++) {
+	res[j] = _mm_shuffle_epi8(v1[0], v2[j]);
+	v2[j] -= 16;
+    }
+    for (uint64_t i = 1; i < 4; i++) {
+	for (uint64_t j = 0; j < 4; j++) {
+	    res[j] = _mm_blendv_epi8(res[j], _mm_shuffle_epi8(v1[i], v2[j]), v2[j] <= 15);
+	    v2[j] -= 16;
+	}
+    }
+    return res;
+}
+
+perm64 permute_3(perm64 v1, perm64 v2) {
+    perm64 res;
+    for (uint64_t j = 0; j < 4; j++) {
+	res[j] = _mm_shuffle_epi8(v1[0], v2[j]);
+	v2[j] -= 16;
+	res[j] = _mm_blendv_epi8(res[j], _mm_shuffle_epi8(v1[1], v2[j]), v2[j] <= 15);
+	v2[j] -= 16;
+	res[j] = _mm_blendv_epi8(res[j], _mm_shuffle_epi8(v1[2], v2[j]), v2[j] <= 15);
+	v2[j] -= 16;
+	res[j] = _mm_blendv_epi8(res[j], _mm_shuffle_epi8(v1[3], v2[j]), v2[j] <= 15);
     }
     return res;
 }
@@ -128,17 +157,21 @@ int main() {
     perm64 v2 = random_perm64();
     cout << permid << endl;
     cout << v1 << endl;
-    cout << v2 << endl;
-    cout << permute(v1, v2) << endl;
-    cout << permute_ref(v1, v2) << endl;
+    cout << v2 << endl << endl;
+    cout << permute_ref(v1, v2) << endl << endl;
+    cout << permute_1(v1, v2) << endl;
+    cout << permute_2(v1, v2) << endl;
+    cout << permute_3(v1, v2) << endl;
 
     cout << "Sampling : "; cout.flush();
-    auto vrand = rand_perms(10000);
+    auto vrand = rand_perms(100000);
     cout << "Done !" << endl;
     std::vector<perm64> check_ref(vrand.size());
-    std::vector<perm64> check(vrand.size());
+    std::vector<perm64> check_1(vrand.size());
+    std::vector<perm64> check_2(vrand.size());
+    std::vector<perm64> check_3(vrand.size());
 
-    cout << "Ref :  ";
+    cout << "Ref  :  ";
     double sp_ref = timethat([&vrand, &check_ref]() {
             std::transform(vrand.begin(), vrand.end(), check_ref.begin(),
                            [](perm64 p) {
@@ -149,19 +182,45 @@ int main() {
         }, 0.0);
 
     cout << "Fast : ";
-    timethat([&vrand, &check]() {
-	    std::transform(vrand.begin(), vrand.end(), check.begin(),
+    timethat([&vrand, &check_1]() {
+	    std::transform(vrand.begin(), vrand.end(), check_1.begin(),
 			   [](perm64 p) {
                                for (int i=0; i < 800; i++)
-				   p = permute(p, p);
+				   p = permute_1(p, p);
+			       return p;
+			   });
+	}, sp_ref);
+
+    cout << "Fast2:  ";
+    timethat([&vrand, &check_2]() {
+	    std::transform(vrand.begin(), vrand.end(), check_2.begin(),
+			   [](perm64 p) {
+                               for (int i=0; i < 800; i++)
+				   p = permute_2(p, p);
+			       return p;
+			   });
+	}, sp_ref);
+
+    cout << "Fast3:  ";
+    timethat([&vrand, &check_3]() {
+	    std::transform(vrand.begin(), vrand.end(), check_3.begin(),
+			   [](perm64 p) {
+                               for (int i=0; i < 800; i++)
+				   p = permute_3(p, p);
 			       return p;
 			   });
 	}, sp_ref);
 
     cout << "Checking : "; cout.flush();
     assert(std::mismatch(check_ref.begin(), check_ref.end(),
-			 check.begin(), eqperm64) ==
-	   std::make_pair(check_ref.end(), check.end()));
+			 check_1.begin(), eqperm64) ==
+	   std::make_pair(check_ref.end(), check_1.end()));
+    assert(std::mismatch(check_ref.begin(), check_ref.end(),
+    			 check_2.begin(), eqperm64) ==
+	   std::make_pair(check_ref.end(), check_2.end()));
+    assert(std::mismatch(check_ref.begin(), check_ref.end(),
+    			 check_3.begin(), eqperm64) ==
+	   std::make_pair(check_ref.end(), check_3.end()));
     cout << "Ok !" << endl;
 }
 
