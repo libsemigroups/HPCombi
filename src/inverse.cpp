@@ -30,6 +30,23 @@ using namespace std;
 using namespace std::chrono;
 using namespace IVMPG;
 
+
+template<typename Func>
+double timecheck(Func fun,
+                 const std::vector<Perm16> &sample,
+                 std::vector<Perm16> &ref,
+                 double reftime = 0) {
+  std::vector<Perm16> cur(sample.size());
+  double time = timethat([&sample, &cur, fun]() {
+      std::transform(sample.begin(), sample.end(), cur.begin(), fun);
+    }, 10000, reftime);
+  if (ref.size() == 0) ref = std::move(cur);
+  else assert(cur == ref);
+  return time;
+}
+
+
+
 int main() {
   std::srand(std::time(0));
 
@@ -37,8 +54,8 @@ int main() {
 
   p = Perm16::random();
 
-  cout << p << endl << p.inverse_ref() << endl;
-  cout << p.inverse_pow() << endl;
+  //cout << p << endl << p.inverse_ref() << endl;
+  //cout << p.inverse_pow() << endl;
   assert(p.inverse_ref() == p.inverse_sort());
   assert(p.inverse_ref() == p.inverse_find());
   assert(p.inverse_ref() == p.inverse_pow());
@@ -47,55 +64,18 @@ int main() {
   assert(p * p.inverse_pow() == Perm16::one());
   assert(p.inverse_pow() * p == Perm16::one());
 
-  cout << endl << endl;
-
-  uint_fast64_t sz = 10000000;
+  uint_fast64_t sz = 10000;
   auto sample = rand_perms(sz);
-  auto inv = sample;
-  auto inv2 = sample;
-  auto inv3 = sample;
-  auto inv4 = sample;
-
-  high_resolution_clock::time_point tstart, tfin;
-
-  tstart = high_resolution_clock::now();
-  for (uint_fast64_t i=0; i < sz; i++) inv[i] = sample[i].inverse_ref();
-  tfin = high_resolution_clock::now();
-  auto tmref = duration_cast<duration<double>>(tfin - tstart);
-  cout << "timeref  = " << tmref.count() << "s" << endl;
-
-  tstart = high_resolution_clock::now();
-  for (uint_fast64_t i=0; i < sz; i++) inv2[i] = sample[i].inverse_sort();
-  tfin = high_resolution_clock::now();
-  auto tmsort = duration_cast<duration<double>>(tfin - tstart);
-  cout << "timesort = " << tmsort.count() << "s";
-
-  for (uint_fast64_t i=0; i < sz; i++) assert(inv[i] == inv2[i]);
-
-  cout << ", speedup = " << tmref.count()/tmsort.count();
-  cout << endl;
-
-  tstart = high_resolution_clock::now();
-  for (uint_fast64_t i=0; i < sz; i++) inv3[i] = sample[i].inverse_find();
-  tfin = high_resolution_clock::now();
-  auto tmnew = duration_cast<duration<double>>(tfin - tstart);
-  cout << "timefind = " << tmnew.count() << "s";
-
-  for (uint_fast64_t i=0; i < sz; i++) assert(inv[i] == inv3[i]);
-
-  cout << ", speedup = " << tmref.count()/tmnew.count();
-  cout << endl;
-
-  tstart = high_resolution_clock::now();
-  for (uint_fast64_t i=0; i < sz; i++) inv4[i] = sample[i].inverse_pow();
-  tfin = high_resolution_clock::now();
-  auto tmpow = duration_cast<duration<double>>(tfin - tstart);
-  cout << "timepow  = " << tmpow.count() << "s";
-
-  for (uint_fast64_t i=0; i < sz; i++) assert(inv[i] == inv4[i]);
-
-  cout << ", speedup = " << tmref.count()/tmpow.count();
-  cout << endl;
+  std::vector<Perm16> refres;
+  cout << "Ref :  ";
+  double tmref = timecheck([](Perm16 p) { return p.inverse_ref(); },
+                    sample, refres);
+  cout << "Sort : ";
+  timecheck([](Perm16 p) { return p.inverse_sort(); }, sample, refres, tmref);
+  cout << "Find : ";
+  timecheck([](Perm16 p) { return p.inverse_find(); }, sample, refres, tmref);
+  cout << "Pow :  ";
+  timecheck([](Perm16 p) { return p.inverse_pow(); }, sample, refres, tmref);
 
   return EXIT_SUCCESS;
 }

@@ -32,17 +32,17 @@ std::vector<Perm16> all_perms(int n);
 // using a template allows us to ignore the differences between functors,
 // function pointers and lambda
 template<typename Func>
-double timethat(Func fun, double reftime = 0) {
-  std::chrono::high_resolution_clock::time_point tstart, tfin;
+double timethat(Func fun, int rep = 1, double reftime = 0) {
+  using namespace std::chrono;
+  auto tstart = high_resolution_clock::now();
+  for (int i = 0; i < rep; i++) fun();
+  auto tfin = high_resolution_clock::now();
 
-  tstart = std::chrono::high_resolution_clock::now();
-  fun();
-  tfin = std::chrono::high_resolution_clock::now();
-
-  auto tm = std::chrono::duration_cast<
-    std::chrono::duration<double>>(tfin - tstart);
-  std::cout << "time = " << std::setprecision(3) << tm.count() << "s";
-  if (reftime != 0) std::cout << ", speedup = " << reftime/tm.count();
+  auto tm = duration_cast<duration<double>>(tfin - tstart);
+  std::cout << "time = " <<
+    std::fixed << std::setprecision(6) << tm.count() << "s";
+  if (reftime != 0)
+    std::cout << ", speedup = " << std::setprecision(3) << reftime/tm.count();
   std::cout << std::endl;
   return tm.count();
 }
