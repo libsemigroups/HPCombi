@@ -13,8 +13,8 @@
 //                  http://www.gnu.org/licenses/                              //
 //****************************************************************************//
 
-#ifndef POWER_HPP_
-#define POWER_HPP_
+#ifndef PERM16_POWER_HPP_INCLUDED
+#define PERM16_POWER_HPP_INCLUDED
 
 /** Forward declaration */
 namespace power_helper {
@@ -66,4 +66,4 @@ template <typename T> struct Monoid {
 
 };  // namespace power_helper
 
-#endif  // POWER_HPP_
+#endif  // PERM16_POWER_HPP_INCLUDED

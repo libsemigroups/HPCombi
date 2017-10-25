@@ -13,8 +13,8 @@
 //                  http://www.gnu.org/licenses/                              //
 //****************************************************************************//
 
-#ifndef PERM16_HPP_
-#define PERM16_HPP_
+#ifndef PERM16_PERM16_HPP_INCLUDED
+#define PERM16_PERM16_HPP_INCLUDED
 
 #include <x86intrin.h>
 #include <cassert>
@@ -124,7 +124,7 @@ struct Perm16 : public Vect16 {
   static const std::array<Perm16, 3> inverting_rounds;
 };
 
-#include "perm16.impl"
+#include "perm16_impl.hpp"
 
 }  // namespace IVMPG
 
@@ -165,4 +165,4 @@ struct less<IVMPG::Vect16> {
 
 }  // namespace std
 
-#endif   // PERM16_HPP_
+#endif   // PERM16_PERM16_HPP_INCLUDED

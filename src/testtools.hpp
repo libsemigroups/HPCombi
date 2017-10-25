@@ -13,8 +13,8 @@
 //                  http://www.gnu.org/licenses/                              //
 //****************************************************************************//
 
-#ifndef TESTTOOLS_HPP_
-#define TESTTOOLS_HPP_
+#ifndef PERM16_TESTTOOLS_HPP_INCLUDED
+#define PERM16_TESTTOOLS_HPP_INCLUDED
 
 #include <chrono>
 #include <vector>
@@ -48,4 +48,4 @@ double timethat(Func fun, double reftime = 0) {
 }
 
 }  // namespace IVMPG
-#endif  // TESTTOOLS_HPP_
+#endif  // PERM16_TESTTOOLS_HPP_INCLUDED
