@@ -186,7 +186,7 @@ template <> struct Monoid<Perm16> {
 };  // namespace power_helper
 
 
-inline Perm16 Perm16::inverse_pow() const {
+inline Perm16 Perm16::inverse_cycl() const {
   Perm16 res;
   Perm16 newpow = pow<8>(*this);
   for (int i=9; i <= 16; i++) {
@@ -196,6 +196,13 @@ inline Perm16 Perm16::inverse_pow() const {
   }
   return res;
 }
+
+inline Perm16 Perm16::inverse_pow() const {
+  // sage: reduce(lcm, range(1, 17))
+  // 720720
+  return pow<720719>(*this);
+}
+
 
 inline Vect16 Perm16::lehmer_ref() const {
   Vect16 res = {{}};

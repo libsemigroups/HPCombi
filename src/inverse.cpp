@@ -58,28 +58,33 @@ int main() {
 
   p = Perm16::random();
 
-  //cout << p << endl << p.inverse_ref() << endl;
-  //cout << p.inverse_pow() << endl;
+  cout << p << endl << p.inverse_ref() << endl;
+  cout << p.inverse_pow() << endl;
+
   assert(p.inverse_ref() == p.inverse_sort());
   assert(p.inverse_ref() == p.inverse_find());
+  assert(p.inverse_ref() == p.inverse_cycl());
   assert(p.inverse_ref() == p.inverse_pow());
   assert(p * p.inverse_find() == Perm16::one());
   assert(p.inverse_find() * p == Perm16::one());
-  assert(p * p.inverse_pow() == Perm16::one());
-  assert(p.inverse_pow() * p == Perm16::one());
+  assert(p * p.inverse_cycl() == Perm16::one());
+  assert(p.inverse_cycl() * p == Perm16::one());
+
 
   uint_fast64_t sz = 10000;
   auto sample = rand_perms(sz);
   std::vector<Perm16> refres;
-  cout << "Ref :  ";
+  cout << "Ref  : ";
   double tmref = timecheck([](Perm16 p) { return p.inverse_ref(); },
                     sample, refres);
   cout << "Sort : ";
   timecheck([](Perm16 p) { return p.inverse_sort(); }, sample, refres, tmref);
   cout << "Find : ";
   timecheck([](Perm16 p) { return p.inverse_find(); }, sample, refres, tmref);
-  cout << "Pow :  ";
+  cout << "Pow  : ";
   timecheck([](Perm16 p) { return p.inverse_pow(); }, sample, refres, tmref);
+  cout << "Cycl : ";
+  timecheck([](Perm16 p) { return p.inverse_cycl(); }, sample, refres, tmref);
 
   return EXIT_SUCCESS;
 }

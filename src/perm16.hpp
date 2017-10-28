@@ -96,7 +96,8 @@ struct Perm16 : public Vect16 {
   Perm16 inverse_sort() const;
   Perm16 inverse_find() const;
   Perm16 inverse_pow() const;
-  inline Perm16 inverse() { return inverse_pow(); }
+  Perm16 inverse_cycl() const;
+  inline Perm16 inverse() { return inverse_cycl(); }
 
   // It's not possible to have a static constexpr member of same type as class
   // being defined (see https://stackoverflow.com/questions/11928089/)
