@@ -42,11 +42,11 @@ namespace power_helper {
  *  Note: unfortunately boost::math::power is not enought general to handle
  *  monoids whose unit is not constructed as T(1).
  */
-template<typename T, typename M = power_helper::Monoid<T>>
-inline constexpr T square(const T x) { return M::mult(x, x); }
+template<typename T, typename M = power_helper::Monoid<T> >
+constexpr T square(const T x) { return M::mult(x, x); }
 
-template<unsigned exp, typename T, typename M = power_helper::Monoid<T>>
-inline constexpr T pow(const T x) {
+template<unsigned exp, typename T, typename M = power_helper::Monoid<T> >
+constexpr T pow(const T x) {
   return
     (exp == 0) ? M::one :
     (exp % 2 == 0) ? square<T, M>(pow<exp/2>(x)) :

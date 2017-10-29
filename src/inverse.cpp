@@ -40,12 +40,14 @@ double timecheck(Func fun,
   double time = timethat([&sample, &cur, fun]() {
       std::transform(sample.begin(), sample.end(), cur.begin(),
                      [fun](Perm16 p) -> Perm16 {
-                       for (int i=0; i<100; i++) p = fun(p);
+                       for (int i=0; i < 100; i++) p = fun(p);
                        return p;
                      });
     }, 100, reftime);
-  if (ref.size() == 0) ref = std::move(cur);
-  else assert(cur == ref);
+  if (ref.size() == 0)
+    ref = std::move(cur);
+  else
+    assert(cur == ref);
   return time;
 }
 

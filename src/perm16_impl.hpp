@@ -13,7 +13,11 @@
 //                  http://www.gnu.org/licenses/                              //
 //****************************************************************************//
 
+#include <experimental/numeric>  // lcm until c++17
 #include <algorithm>
+#include "power.hpp"
+
+namespace IVMPG {
 
 /*****************************************************************************/
 /** Implementation part for inline functions *********************************/
@@ -173,10 +177,13 @@ inline Perm16 Perm16::inverse_find() const {
   return res;
 }
 
+}  // namespace IVMPG
 
-#include "power.hpp"
 
+// We declare PERM16 as a correct Monoid
 namespace power_helper {
+
+using Perm16 = IVMPG::Perm16;
 
 template <> struct Monoid<Perm16> {
   static constexpr const Perm16 one = Perm16::one();
@@ -185,6 +192,7 @@ template <> struct Monoid<Perm16> {
 
 };  // namespace power_helper
 
+namespace IVMPG {
 
 inline Perm16 Perm16::inverse_cycl() const {
   Perm16 res;
@@ -197,12 +205,17 @@ inline Perm16 Perm16::inverse_cycl() const {
   return res;
 }
 
-inline Perm16 Perm16::inverse_pow() const {
-  // sage: reduce(lcm, range(1, 17))
-  // 720720
-  return pow<720719>(*this);
+static constexpr unsigned lcm_range(unsigned n) {
+  unsigned res = 1;
+  for (unsigned i = 1; i <= n; ++i) res = std::experimental::lcm(res, i);
+  return res;
+  // C++11 version:
+  // return n == 1 ? 1 : std::experimental::lcm(lcm_range(n-1), n);
 }
 
+inline Perm16 Perm16::inverse_pow() const {
+  return pow<lcm_range(16)-1>(*this);
+}
 
 inline Vect16 Perm16::lehmer_ref() const {
   Vect16 res = {{}};
@@ -233,3 +246,5 @@ inline uint8_t Perm16::length_ref() const {
 inline uint8_t Perm16::length() const {
     return lehmer().sum();
 }
+
+}  // namespace IVMPG

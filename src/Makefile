@@ -25,5 +25,4 @@ clean:
 	rm -rf $(TARGET) *.o
 
 lint:
-	cpplint.py --filter=-build/namespaces --extensions=hpp,cpp,impl \
-	    *.cpp *.hpp *.impl
+	cpplint.py --filter=-build/namespaces --extensions=hpp,cpp *.cpp *.hpp

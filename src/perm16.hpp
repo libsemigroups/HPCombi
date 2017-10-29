@@ -22,8 +22,6 @@
 #include <array>
 #include <ostream>
 #include <functional>  // less<>
-#include <algorithm>
-
 
 namespace IVMPG {
 
@@ -45,10 +43,10 @@ struct alignas(16) Vect16 {
   Vect16 & operator=(const Vect16 &x) {v = x.v; return *this;}
   Vect16 & operator=(const epu8 &vv) {v = vv; return *this;}
 
-  constexpr uint8_t operator[](uint64_t i) const { return v[i]; }
-  constexpr uint8_t & operator[](uint64_t i) { return v[i]; }
+  uint8_t operator[](uint64_t i) const { return v[i]; }
+  uint8_t & operator[](uint64_t i) { return v[i]; }
 
-  constexpr std::array<uint8_t, 16> &as_array() {
+  std::array<uint8_t, 16> &as_array() {
     return reinterpret_cast<std::array<unsigned char, 16>&>(v); }
 
   auto begin() { return as_array().begin(); }
@@ -125,10 +123,9 @@ struct Perm16 : public Vect16 {
   static const std::array<Perm16, 3> inverting_rounds;
 };
 
-#include "perm16_impl.hpp"
-
 }  // namespace IVMPG
 
+#include "perm16_impl.hpp"
 
 namespace std {
 
