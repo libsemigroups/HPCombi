@@ -32,7 +32,7 @@ using namespace IVMPG;
 
 
 // Sorting network Knuth AoCP3 Fig. 51 p 229.
-static const array<Perm16, 9> rounds =
+constexpr const array<epu8, 9> rounds =
     //   0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15
     {{ { 1,  0,  3,  2,  5,  4,  7,  6,  9,  8, 11, 10, 13, 12, 15, 14},
        { 2,  3,  0,  1,  6,  7,  4,  5, 10, 11,  8,  9, 14, 15, 12, 13},
@@ -58,6 +58,28 @@ Vect16 sort(Vect16 a) {
   return a;
 }
 
+struct RoundsMask {
+  // commented out due to a bug in gcc
+  /* constexpr */ RoundsMask() : arr() {
+    for (unsigned i = 0; i < rounds.size(); ++i)
+      arr[i] = rounds[i] < Perm16::one().v;
+  }
+  epu8 arr[rounds.size()];
+};
+
+const auto rounds_mask = RoundsMask();
+
+Vect16 sort_pair(Vect16 a) {
+  for (unsigned i = 0; i < rounds.size(); ++i) {
+    Vect16 minab, maxab, b = a.permuted(rounds[i]);
+    minab = _mm_min_epi8(a, b);
+    maxab = _mm_max_epi8(a, b);
+    a = _mm_blendv_epi8(minab, maxab, rounds_mask.arr[i]);
+  }
+  return a;
+}
+
+
 Perm16 insertion_sort(Perm16 a) {
   for (int i = 0; i < 16; i++)
     for (int j = i; j > 0 && a[j] < a[j-1]; j--)
@@ -75,7 +97,6 @@ Perm16 radix_sort(Perm16 a) {
 }
 
 int main() {
-  double sp_ref;
   // Perm16 a = { 5, 4,12,15,10, 8, 9, 2, 3,13,14, 0, 1, 7,11, 6};
 
   for (Perm16 round : rounds) {
@@ -83,31 +104,35 @@ int main() {
     assert(round*round == Perm16::one());
   }
 
-  auto vrand = rand_perms(10000000);
-
+  auto vrand = rand_perms(1000);
+  int rep = 10000;
   cout << "Std lib: ";
-  sp_ref = timethat([vrand]() {
+  double reftime = timethat([vrand]() {
       for (Perm16 v : vrand) {
         std::sort(v.begin(), v.end());
         assert(v == Perm16::one());
       }
-    });
-  cout << "Method  : ";
+    }, rep);
+  cout << "Method : ";
   timethat([vrand]() {
       for (Perm16 v : vrand) assert(v.sorted() == Perm16::one());
-    }, sp_ref);
-  cout << "Funct   : ";
+    }, rep, reftime);
+  cout << "Funct  : ";
   timethat([vrand]() {
       for (Perm16 v : vrand) assert(sort(v) == Perm16::one());
-    }, sp_ref);
-  cout << "Insert  : ";
+    }, rep, reftime);
+  cout << "Pair  : ";
+  timethat([vrand]() {
+      for (Perm16 v : vrand) assert(sort_pair(v) == Perm16::one());
+    }, rep, reftime);
+  cout << "Insert : ";
   timethat([vrand]() {
       for (Perm16 v : vrand) assert(insertion_sort(v) == Perm16::one());
-    }, sp_ref);
-  cout << "Radix16 : ";
+    }, rep, reftime);
+  cout << "Radix16: ";
   timethat([vrand]() {
       for (Perm16 v : vrand) assert(radix_sort(v) == Perm16::one());
-    }, sp_ref);
+    }, rep, reftime);
 
   return EXIT_SUCCESS;
 }
