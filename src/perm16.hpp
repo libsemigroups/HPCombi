@@ -76,7 +76,7 @@ struct alignas(16) Vect16 {
   static Vect16 random(uint16_t bnd = 256);
 
  private:
-  static const std::array<Vect16, 9> sorting_rounds;
+  static const std::array<epu8, 9> sorting_rounds;
   static const std::array<Vect16, 4> summing_rounds;
 };
 
@@ -87,6 +87,7 @@ struct Perm16 : public Vect16 {
 
   Perm16() = default;  // : Vect16({0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15}) {};
   constexpr Perm16(const vect v) : vect(v) {}
+  constexpr Perm16(const epu8 x) : vect(x) {}
   Perm16(std::initializer_list<uint8_t> il);
 
   Perm16 operator*(const Perm16&p) const { return permuted(p); }
@@ -101,13 +102,13 @@ struct Perm16 : public Vect16 {
   // being defined (see https://stackoverflow.com/questions/11928089/)
   // therefore we chose to have functions.
   static const constexpr Perm16 one() {
-    return Vect16(epu8 {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15});
+    return epu8 {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15};
   }
   static const constexpr Perm16 left_cycle() {
-    return Vect16(epu8 {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15});
+    return epu8 {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15};
   }
   static const constexpr Perm16 right_cycle() {
-    return Vect16(epu8 {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 0});
+    return epu8 {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 0};
   }
 
   static Perm16 elementary_transposition(uint64_t i);

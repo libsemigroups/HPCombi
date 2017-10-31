@@ -161,7 +161,7 @@ inline Perm16 Perm16::inverse_ref() const {
 }
 
 inline Perm16 Perm16::inverse_sort() const {
-  Vect16 res = (v << 4) + one().v;
+  Vect16 res = static_cast<epu8>(_mm_slli_epi32(v, 4)) + one().v;
   res = res.sorted().v & 0xf;
   return res;
 }
