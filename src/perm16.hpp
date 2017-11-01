@@ -32,15 +32,16 @@ struct alignas(16) Vect16 {
   static const constexpr size_t Size = 16;
   epu8 v;
 
-  // Overload the default copy constructor and operator= : 10% speedup
   Vect16() = default;
-  constexpr Vect16(const Vect16 &x) : v(x.v) {}
   constexpr Vect16(epu8 x) : v(x) {}
   Vect16(std::initializer_list<uint8_t> il);
   constexpr operator epu8() { return v; }
   constexpr operator const epu8() const { return v; }
 
-  Vect16 & operator=(const Vect16 &x) {v = x.v; return *this;}
+  // Overload the default copy constructor and operator= : 10% speedup
+  // But result in Non POD
+  // constexpr Vect16(const Vect16 &x) : v(x.v) {}
+  // Vect16 & operator=(const Vect16 &x) {v = x.v; return *this;}
   Vect16 & operator=(const epu8 &vv) {v = vv; return *this;}
 
   uint8_t operator[](uint64_t i) const { return v[i]; }
@@ -77,8 +78,9 @@ struct alignas(16) Vect16 {
 
  private:
   static const std::array<epu8, 9> sorting_rounds;
-  static const std::array<Vect16, 4> summing_rounds;
+  static const std::array<epu8, 4> summing_rounds;
 };
+
 
 std::ostream & operator<<(std::ostream & stream, const Vect16 &term);
 
@@ -133,8 +135,9 @@ namespace std {
 template<>
 struct hash<IVMPG::Vect16> {
   inline size_t operator () (const IVMPG::Vect16 &ar) const {
-    uint64_t v1 = _mm_extract_epi64(ar.v, 1);
-    return (v1*IVMPG::prime) >> 52;
+    unsigned long long v0 = _mm_extract_epi64(ar.v, 0);
+    unsigned long long v1 = _mm_extract_epi64(ar.v, 1);
+    return v1*IVMPG::prime + v0;
 
     // Timing for a 1024 hash table with SET_STATISTIC defined
     //////////////////////////////////////////////////////////

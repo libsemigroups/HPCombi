@@ -121,12 +121,12 @@ const uint64_t prime = 0x9e3779b97f4a7bb9;
 
 inline Vect16 Vect16::sorted() const {
   Vect16 res = *this;
-  for (Vect16 round : sorting_rounds) {
-    Vect16 minab, maxab, blend, mask, b = res.permuted(round);
+  for (auto round : sorting_rounds) {
+    Vect16 b = res.permuted(round);
 
-    mask = _mm_cmplt_epi8(round, Perm16::one());
-    minab = _mm_min_epu8(res, b);  // unsigned comparison
-    maxab = _mm_max_epu8(res, b);  // unsigned comparison
+    Vect16 mask = _mm_cmplt_epi8(round, Perm16::one());
+    Vect16 minab = _mm_min_epu8(res, b);  // unsigned comparison
+    Vect16 maxab = _mm_max_epu8(res, b);  // unsigned comparison
 
     res = _mm_blendv_epi8(minab, maxab, mask);
   }
@@ -135,12 +135,12 @@ inline Vect16 Vect16::sorted() const {
 
 inline Vect16 Vect16::revsorted() const {
   Vect16 res = *this;
-  for (Vect16 round : sorting_rounds) {
-    Vect16 minab, maxab, blend, mask, b = res.permuted(round);
+  for (auto round : sorting_rounds) {
+    Vect16 b = res.permuted(round);
 
-    mask = _mm_cmplt_epi8(round, Perm16::one());
-    minab = _mm_min_epu8(res, b);  // unsigned comparison
-    maxab = _mm_max_epu8(res, b);  // unsigned comparison
+    Vect16 mask = _mm_cmplt_epi8(round, Perm16::one());
+    Vect16 minab = _mm_min_epu8(res, b);  // unsigned comparison
+    Vect16 maxab = _mm_max_epu8(res, b);  // unsigned comparison
 
     res = _mm_blendv_epi8(maxab, minab, mask);
   }
