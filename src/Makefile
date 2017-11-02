@@ -5,21 +5,24 @@ CXXFLAGS    = -std=c++14 -g -Wall -mavx -mtune=native -O3 -funroll-loops -flax-v
 # -Winline -fcilkplus 
 # -Wall -Wno-missing-braces -Wno-unused-variable  -Wno-attributes
 
-TARGET = cycle sort inverse essai
+TARGET = cycle sort essai inverse
 all: $(TARGET)
 
 testtools.o: testtools.cpp testtools.hpp perm16.hpp perm16_impl.hpp power.hpp
-perm16.o: perm16.hpp perm16_impl.hpp power.hpp
-cycle.o: cycle.cpp perm16.hpp perm16_impl.hpp power.hpp testtools.hpp
-essai.o: essai.cpp perm16.hpp perm16_impl.hpp power.hpp testtools.hpp
-inverse.o: inverse.cpp perm16.hpp perm16_impl.hpp power.hpp testtools.hpp
 perm16.o: perm16.cpp perm16.hpp perm16_impl.hpp power.hpp
-sort.o: sort.cpp perm16.hpp perm16_impl.hpp power.hpp testtools.hpp
 
+cycle.o: cycle.cpp perm16.hpp perm16_impl.hpp power.hpp testtools.hpp
 cycle: cycle.o perm16.o testtools.o
+
+sort.o: sort.cpp perm16.hpp perm16_impl.hpp power.hpp testtools.hpp
 sort: sort.o perm16.o testtools.o
-inverse: inverse.o perm16.o testtools.o
+
+essai.o: essai.cpp perm16.hpp perm16_impl.hpp power.hpp testtools.hpp
 essai: essai.o perm16.o testtools.o
+
+inverse.o: inverse.cpp perm16.hpp perm16_impl.hpp power.hpp testtools.hpp
+inverse: inverse.o perm16.o testtools.o
+
 
 clean:
 	rm -rf $(TARGET) *.o
