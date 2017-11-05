@@ -79,11 +79,36 @@ inline uint8_t Vect16::sum_ref() const {
   return res;
 }
 
-inline uint8_t Vect16::sum() const {
+inline uint8_t Vect16::sum4() const {
   Vect16 res = *this;
   for (Vect16 round : Vect16::summing_rounds)
     res.v += res.permuted(round).v;
-  return _mm_extract_epi8(res, 0);
+  return res.v[0];
+}
+
+inline uint8_t Vect16::sum3() const {
+  Vect16 res = *this;
+  res.v += res.permuted(Vect16::summing_rounds[0]).v;
+  res.v += res.permuted(Vect16::summing_rounds[1]).v;
+  res.v += res.permuted(Vect16::summing_rounds[2]).v;
+  return res.v[0]+res.v[8];
+}
+
+inline Vect16 Vect16::eval16_ref() const {
+  Vect16 res;
+  for (int i = 0; i < 16; i++)
+    if (v[i] < 16) res[v[i]]++;
+  return res;
+}
+
+inline Vect16 Vect16::eval16_vect() const {
+  Vect16 res, vp = v;
+  res.v = -(Perm16::one().v == vp.v);
+  for (int i = 0; i < 15; i++) {
+    vp = vp.permuted(Perm16::left_cycle());
+    res.v -= (Perm16::one().v == vp.v);
+  }
+  return res;
 }
 
 template <char IDX_MODE>
@@ -225,17 +250,15 @@ inline Vect16 Perm16::lehmer_ref() const {
   return res;
 }
 
-const Vect16 left_shift =
-     { 1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15, 255};
-
 inline Vect16 Perm16::lehmer() const {
   Vect16 vsh = *this, res = -Perm16::one().v;
   for (int i=1; i < 16; i++) {
-    vsh = vsh.permuted(left_shift);
+    vsh = vsh.permuted(Perm16::left_shift_ff());
     res.v -= (v >= vsh.v);
   }
   return res;
 }
+
 inline uint8_t Perm16::length_ref() const {
   uint8_t res = 0;
   for (int i=0; i < 16; i++)
@@ -246,5 +269,48 @@ inline uint8_t Perm16::length_ref() const {
 inline uint8_t Perm16::length() const {
     return lehmer().sum();
 }
+
+inline uint8_t Perm16::nb_descent_ref() const {
+  uint8_t res = 0;
+  for (int i=0; i < 15; i++)
+    if (v[i] > v[i+1]) res++;
+  return res;
+}
+inline uint8_t Perm16::nb_descent() const {
+  Perm16 pdec = permuted(Perm16::left_shift());
+  pdec = (v > pdec.v);
+  return _mm_popcnt_u32(_mm_movemask_epi8(pdec));
+}
+
+inline uint8_t Perm16::nb_cycles_ref() const {
+  Vect16 b {};
+  int i, j, c = 0;
+  for (i = 0; i < 16; i++) {
+    if (b[i] == 0) {
+      for (j=i; b[j] == 0; j = v[j]) b[j] = 1;
+      c++;
+    }
+  }
+  return c;
+}
+
+inline Vect16 Perm16::cycles_mask_unroll() const {
+  Vect16 x0, x1 = Perm16::one();
+  Perm16 p = *this;
+  x0 = _mm_min_epi8(x1, x1.permuted(p));
+  p = p*p;
+  x1 = _mm_min_epi8(x0, x0.permuted(p));
+  p = p*p;
+  x0 = _mm_min_epi8(x1, x1.permuted(p));
+  p = p*p;
+  x1 = _mm_min_epi8(x0, x0.permuted(p));
+  return x1;
+}
+
+inline uint8_t Perm16::nb_cycles_unroll() const {
+  Vect16 res = Perm16::one().v == cycles_mask_unroll().v;
+  return _mm_popcnt_u32(_mm_movemask_epi8(res));
+}
+
 
 }  // namespace IVMPG

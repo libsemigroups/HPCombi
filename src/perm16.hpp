@@ -62,8 +62,11 @@ struct alignas(16) Vect16 {
   Vect16 permuted(const Vect16 &other) const;
   Vect16 sorted() const;
   Vect16 revsorted() const;
+
   uint8_t sum_ref() const;
-  uint8_t sum() const;
+  uint8_t sum4() const;
+  uint8_t sum3() const;
+  inline uint8_t sum() const { return sum3(); }
 
   template <char IDX_MODE> uint64_t search_index(int bound) const;
 
@@ -71,6 +74,9 @@ struct alignas(16) Vect16 {
   uint64_t first_non_zero(int bnd = Size) const;
   uint64_t last_zero(int bnd = Size) const;
   uint64_t first_zero(int bnd = Size) const;
+
+  Vect16 eval16_ref() const;
+  Vect16 eval16_vect() const;
 
   bool is_permutation(const size_t k = Size) const;
 
@@ -93,6 +99,7 @@ struct Perm16 : public Vect16 {
   Perm16(std::initializer_list<uint8_t> il);
 
   Perm16 operator*(const Perm16&p) const { return permuted(p); }
+
   Perm16 inverse_ref() const;
   Perm16 inverse_sort() const;
   Perm16 inverse_find() const;
@@ -112,6 +119,12 @@ struct Perm16 : public Vect16 {
   static const constexpr Perm16 right_cycle() {
     return epu8 {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 0};
   }
+  static const constexpr Perm16 left_shift_ff() {
+    return epu8 {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 0xff};
+  }
+  static const constexpr Perm16 left_shift() {
+    return epu8 {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 15};
+  }
 
   static Perm16 elementary_transposition(uint64_t i);
   static Perm16 random();
@@ -121,6 +134,14 @@ struct Perm16 : public Vect16 {
   Vect16 lehmer() const;
   uint8_t length_ref() const;
   uint8_t length() const;
+
+  uint8_t nb_descent_ref() const;
+  uint8_t nb_descent() const;
+
+  uint8_t nb_cycles_ref() const;
+  Vect16 cycles_mask_unroll() const;
+  uint8_t nb_cycles_unroll() const;
+  inline uint8_t nb_cycles() const { return nb_cycles_unroll(); }
 
  private:
   static const std::array<Perm16, 3> inverting_rounds;
