@@ -132,24 +132,14 @@ struct Perm16 : public Vect16 {
 
 namespace std {
 
+#define MASK_24 (((u_int32_t)1<<24)-1) /* i.e., (u_int32_t)0xffffff */
+
 template<>
 struct hash<IVMPG::Vect16> {
   inline size_t operator () (const IVMPG::Vect16 &ar) const {
-    unsigned long long v0 = _mm_extract_epi64(ar.v, 0);
-    unsigned long long v1 = _mm_extract_epi64(ar.v, 1);
-    return v1*IVMPG::prime + v0;
-
-    // Timing for a 1024 hash table with SET_STATISTIC defined
-    //////////////////////////////////////////////////////////
-    //                                          1 proc   8 proc  collision retry
-    // return ((v1*prime + v0)*prime) >> 52;   // 7.39027  1.68039    0.0783%
-    // return ((v1 + (v0 << 4))*prime) >> 52;  // 7.67103  1.69188    0.0877%
-    // return ((v1 + v0 )*prime) >> 52;        // 7.25443  1.63157    0.267%
-    // return (v1*prime) >> 52;                // 7.15018  1.61709    2.16%
-    // return 0;                               // 8.0689   2.09339  159.%
-
-    // Indexing acces is always slower.
-    // return (ar.v[1]*prime) >> 52;              // 1.68217
+    __int128 v0 = _mm_extract_epi64(ar.v, 0);
+    __int128 v1 = _mm_extract_epi64(ar.v, 1);
+    return ((v1*IVMPG::prime + v0)*IVMPG::prime) >> 64;
   }
 };
 
