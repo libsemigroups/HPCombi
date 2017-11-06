@@ -45,7 +45,7 @@ constexpr const array<epu8, 9> rounds =
        { 0,  1,  2,  4,  3,  6,  5,  8,  7, 10,  9, 12, 11, 13, 14, 15}
        }};
 
-Vect16 sort(Vect16 a) {
+inline Vect16 sort(Vect16 a) {
   for (Perm16 round : rounds) {
     Vect16 minab, maxab, mask, b = a.permuted(round);
 
@@ -69,7 +69,7 @@ struct RoundsMask {
 
 const auto rounds_mask = RoundsMask();
 
-Vect16 sort_pair(Vect16 a) {
+inline Vect16 sort_pair(Vect16 a) {
   for (unsigned i = 0; i < rounds.size(); ++i) {
     Vect16 minab, maxab, b = a.permuted(rounds[i]);
     minab = _mm_min_epi8(a, b);
@@ -79,15 +79,36 @@ Vect16 sort_pair(Vect16 a) {
   return a;
 }
 
+inline Vect16 sort_odd_even(Vect16 a) {
+  constexpr uint8_t FF=0xff;
+  static constexpr Perm16 even =
+    epu8 {1,0, 3,2, 5,4, 7,6, 9,8, 11,10, 13,12, 15,14};
+  static constexpr Perm16 odd =
+    epu8 {0, 2,1, 4,3, 6,5, 8,7, 10,9, 12,11, 14,13, 15};
+  static constexpr Perm16 mask =
+    epu8 {0,FF, 0,FF, 0,FF, 0,FF, 0,FF, 0,FF, 0,FF, 0,FF};
+  Vect16 b, minab, maxab;
+  for (unsigned i = 0; i < 8; ++i) {
+    b = a.permuted(even);
+    minab = _mm_min_epi8(a, b);
+    maxab = _mm_max_epi8(a, b);
+    a = _mm_blendv_epi8(minab, maxab, mask);
+    b = a.permuted(odd);
+    minab = _mm_min_epi8(a, b);
+    maxab = _mm_max_epi8(a, b);
+    a = _mm_blendv_epi8(maxab, minab, mask);
+  }
+  return a;
+}
 
-Perm16 insertion_sort(Perm16 a) {
+inline Perm16 insertion_sort(Perm16 a) {
   for (int i = 0; i < 16; i++)
     for (int j = i; j > 0 && a[j] < a[j-1]; j--)
       std::swap(a[j], a[j-1]);
   return a;
 }
 
-Perm16 radix_sort(Perm16 a) {
+inline Perm16 radix_sort(Perm16 a) {
   Vect16 stat = {}, res;
   for (int i = 0; i < 16; i++) stat[a[i]]++;
   int c = 0;
@@ -124,6 +145,10 @@ int main() {
   cout << "Pair  : ";
   timethat([vrand]() {
       for (Perm16 v : vrand) assert(sort_pair(v) == Perm16::one());
+    }, rep, reftime);
+  cout << "OddEv : ";
+  timethat([vrand]() {
+      for (Perm16 v : vrand) assert(sort_odd_even(v) == Perm16::one());
     }, rep, reftime);
   cout << "Insert : ";
   timethat([vrand]() {

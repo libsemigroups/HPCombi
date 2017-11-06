@@ -44,11 +44,13 @@ struct alignas(16) Vect16 {
   // Vect16 & operator=(const Vect16 &x) {v = x.v; return *this;}
   Vect16 & operator=(const epu8 &vv) {v = vv; return *this;}
 
-  uint8_t operator[](uint64_t i) const { return v[i]; }
+  const uint8_t & operator[](uint64_t i) const { return v[i]; }
   uint8_t & operator[](uint64_t i) { return v[i]; }
 
   std::array<uint8_t, 16> &as_array() {
     return reinterpret_cast<std::array<unsigned char, 16>&>(v); }
+  const std::array<uint8_t, 16> &as_array() const {
+    return reinterpret_cast<const std::array<unsigned char, 16>&>(v); }
 
   auto begin() { return as_array().begin(); }
   auto end() { return as_array().end(); }
@@ -62,8 +64,11 @@ struct alignas(16) Vect16 {
   Vect16 permuted(const Vect16 &other) const;
   Vect16 sorted() const;
   Vect16 revsorted() const;
+
   uint8_t sum_ref() const;
-  uint8_t sum() const;
+  uint8_t sum4() const;
+  uint8_t sum3() const;
+  inline uint8_t sum() const { return sum3(); }
 
   template <char IDX_MODE> uint64_t search_index(int bound) const;
 
@@ -71,6 +76,9 @@ struct alignas(16) Vect16 {
   uint64_t first_non_zero(int bnd = Size) const;
   uint64_t last_zero(int bnd = Size) const;
   uint64_t first_zero(int bnd = Size) const;
+
+  Vect16 eval16_ref() const;
+  Vect16 eval16_vect() const;
 
   bool is_permutation(const size_t k = Size) const;
 
@@ -93,6 +101,7 @@ struct Perm16 : public Vect16 {
   Perm16(std::initializer_list<uint8_t> il);
 
   Perm16 operator*(const Perm16&p) const { return permuted(p); }
+
   Perm16 inverse_ref() const;
   Perm16 inverse_sort() const;
   Perm16 inverse_find() const;
@@ -112,6 +121,12 @@ struct Perm16 : public Vect16 {
   static const constexpr Perm16 right_cycle() {
     return epu8 {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 0};
   }
+  static const constexpr Perm16 left_shift_ff() {
+    return epu8 {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 0xff};
+  }
+  static const constexpr Perm16 left_shift() {
+    return epu8 {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 15};
+  }
 
   static Perm16 elementary_transposition(uint64_t i);
   static Perm16 random();
@@ -121,6 +136,14 @@ struct Perm16 : public Vect16 {
   Vect16 lehmer() const;
   uint8_t length_ref() const;
   uint8_t length() const;
+
+  uint8_t nb_descent_ref() const;
+  uint8_t nb_descent() const;
+
+  uint8_t nb_cycles_ref() const;
+  Vect16 cycles_mask_unroll() const;
+  uint8_t nb_cycles_unroll() const;
+  inline uint8_t nb_cycles() const { return nb_cycles_unroll(); }
 
  private:
   static const std::array<Perm16, 3> inverting_rounds;
@@ -132,24 +155,14 @@ struct Perm16 : public Vect16 {
 
 namespace std {
 
+#define MASK_24 (((u_int32_t)1<<24)-1) /* i.e., (u_int32_t)0xffffff */
+
 template<>
 struct hash<IVMPG::Vect16> {
   inline size_t operator () (const IVMPG::Vect16 &ar) const {
-    unsigned long long v0 = _mm_extract_epi64(ar.v, 0);
-    unsigned long long v1 = _mm_extract_epi64(ar.v, 1);
-    return v1*IVMPG::prime + v0;
-
-    // Timing for a 1024 hash table with SET_STATISTIC defined
-    //////////////////////////////////////////////////////////
-    //                                          1 proc   8 proc  collision retry
-    // return ((v1*prime + v0)*prime) >> 52;   // 7.39027  1.68039    0.0783%
-    // return ((v1 + (v0 << 4))*prime) >> 52;  // 7.67103  1.69188    0.0877%
-    // return ((v1 + v0 )*prime) >> 52;        // 7.25443  1.63157    0.267%
-    // return (v1*prime) >> 52;                // 7.15018  1.61709    2.16%
-    // return 0;                               // 8.0689   2.09339  159.%
-
-    // Indexing acces is always slower.
-    // return (ar.v[1]*prime) >> 52;              // 1.68217
+    __int128 v0 = _mm_extract_epi64(ar.v, 0);
+    __int128 v1 = _mm_extract_epi64(ar.v, 1);
+    return ((v1*IVMPG::prime + v0)*IVMPG::prime) >> 64;
   }
 };
 
