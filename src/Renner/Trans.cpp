@@ -58,15 +58,17 @@ int main() {
   using google::dense_hash_set;
   using google::sparse_hash_set;
 
-  dense_hash_set<Vect16, hash<Vect16>, eqVect16> res;
-  res.set_empty_key({FE,FE,FE,FE,FE,FE,FE,FE,FE,FE,FE,FE,FE,FE,FE,FE});
-  //sparse_hash_set<Vect16, hash<Vect16>, eqVect16> res;
+
+  // sparse_hash_set<Vect16, hash<Vect16>, eqVect16> res;
+  // dense_hash_set<Vect16, hash<Vect16>, eqVect16> res;
+  // res.set_empty_key({FE,FE,FE,FE,FE,FE,FE,FE,FE,FE,FE,FE,FE,FE,FE,FE});
+  // res.resize(500000000);
+
+  unordered_set<Vect16> res;
+  res.reserve(500000000);
 
   res.insert(id);
-  res.resize(500000000);
 
-  // unordered_set<Vect16> res;
-  //res.reserve(250000000);
 
   vector<Vect16> todo, newtodo;
   todo.push_back(id);

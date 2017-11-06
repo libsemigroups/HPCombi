@@ -73,7 +73,7 @@ struct eqVect16
 int main() {
   //vector<Vect16> gens {gene, genf, s1e, s1f, s2, s3, s4, s5};
   // vector<Vect16> gens {gene, genf, s1e, s1f};
-  //vector<Vect16> gens {gene, genf, s1e, s1f, s2, s3, s4, s5, s6};
+  vector<Vect16> gens {gene, genf, s1e, s1f, s2, s3, s4, s5, s6};
   // vector<Vect16> gens {gene, s1e, s2, s3, s4, s5, s6};
   //const Vect16 toFind =
   //  {FF,FF,FF,FF,FF,FF,FF,FF,  FF, FF, FF, FF, FF, 13, 14, 15};
@@ -83,15 +83,15 @@ int main() {
   using google::dense_hash_set;
   using google::sparse_hash_set;
 
+  // sparse_hash_set<Vect16, hash<Vect16>, eqVect16> res;
   dense_hash_set<Vect16, hash<Vect16>, eqVect16> res;
   res.set_empty_key({FE,FE,FE,FE,FE,FE,FE,FE,FE,FE,FE,FE,FE,FE,FE,FE});
-  //sparse_hash_set<Vect16, hash<Vect16>, eqVect16> res;
-
-  res.insert(id);
   res.resize(250000000);
 
   // unordered_set<Vect16> res;
-  //res.reserve(250000000);
+  // res.reserve(250000000);
+
+  res.insert(id);
 
   vector<Vect16> todo, newtodo;
   todo.push_back(id);
