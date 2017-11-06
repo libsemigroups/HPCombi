@@ -44,11 +44,13 @@ struct alignas(16) Vect16 {
   // Vect16 & operator=(const Vect16 &x) {v = x.v; return *this;}
   Vect16 & operator=(const epu8 &vv) {v = vv; return *this;}
 
-  uint8_t operator[](uint64_t i) const { return v[i]; }
+  const uint8_t & operator[](uint64_t i) const { return v[i]; }
   uint8_t & operator[](uint64_t i) { return v[i]; }
 
   std::array<uint8_t, 16> &as_array() {
     return reinterpret_cast<std::array<unsigned char, 16>&>(v); }
+  const std::array<uint8_t, 16> &as_array() const {
+    return reinterpret_cast<const std::array<unsigned char, 16>&>(v); }
 
   auto begin() { return as_array().begin(); }
   auto end() { return as_array().end(); }
