@@ -186,6 +186,9 @@ inline Perm16 Perm16::inverse_ref() const {
 }
 
 inline Perm16 Perm16::inverse_sort() const {
+  // G++-7 compile this shift by 3 additions.
+  // Vect16 res = (v << 4) + one().v;
+  // I call directly the shift intrinsic
   Vect16 res = static_cast<epu8>(_mm_slli_epi32(v, 4)) + one().v;
   res = res.sorted().v & 0xf;
   return res;
