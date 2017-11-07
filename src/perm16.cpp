@@ -37,9 +37,9 @@ Vect16 Vect16::random(uint16_t bnd) {
 }
 
 // Sorting network Knuth AoCP3 Fig. 51 p 229.
-constexpr const std::array<epu8, 9> Vect16::sorting_rounds =
+constexpr const std::array<epu8, 9> Vect16::sorting_rounds = {{
     //     0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15
-  { epu8 { 1,  0,  3,  2,  5,  4,  7,  6,  9,  8, 11, 10, 13, 12, 15, 14},
+    epu8 { 1,  0,  3,  2,  5,  4,  7,  6,  9,  8, 11, 10, 13, 12, 15, 14},
     epu8 { 2,  3,  0,  1,  6,  7,  4,  5, 10, 11,  8,  9, 14, 15, 12, 13},
     epu8 { 4,  5,  6,  7,  0,  1,  2,  3, 12, 13, 14, 15,  8,  9, 10, 11},
     epu8 { 8,  9, 10, 11, 12, 13, 14, 15,  0,  1,  2,  3,  4,  5,  6,  7},
@@ -48,22 +48,24 @@ constexpr const std::array<epu8, 9> Vect16::sorting_rounds =
     epu8 { 0,  1,  4,  5,  2,  3,  8,  9,  6,  7, 12, 13, 10, 11, 14, 15},
     epu8 { 0,  1,  2,  6,  4,  8,  3, 10,  5, 12,  7, 11,  9, 13, 14, 15},
     epu8 { 0,  1,  2,  4,  3,  6,  5,  8,  7, 10,  9, 12, 11, 13, 14, 15}
-  };
+  }};
 
 // Gather at the front numbers with (3-i)-th bit not set.
-const std::array<Perm16, 3> Perm16::inverting_rounds =
+const std::array<Perm16, 3> Perm16::inverting_rounds = {{
     //     0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15
-  { epu8 { 0,  1,  2,  3,  8,  9, 10, 11,  4,  5,  6,  7, 12, 13, 14, 15},
+    epu8 { 0,  1,  2,  3,  8,  9, 10, 11,  4,  5,  6,  7, 12, 13, 14, 15},
     epu8 { 0,  1,  4,  5,  8,  9, 12, 13,  2,  3,  6,  7, 10, 11, 14, 15},
-    epu8 { 0,  2,  4,  6,  8, 10, 12, 14,  1,  3,  5,  7,  9, 11, 13, 15} };
+    epu8 { 0,  2,  4,  6,  8, 10, 12, 14,  1,  3,  5,  7,  9, 11, 13, 15}
+  }};
 
 const uint8_t FF = 0xff;
-constexpr const std::array<epu8, 4> Vect16::summing_rounds =
+constexpr const std::array<epu8, 4> Vect16::summing_rounds = {{
     //     0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15
-  { epu8 { 1, FF,  3, FF,  5, FF,  7, FF,  9, FF, 11, FF, 13, FF, 15, FF},
+    epu8 { 1, FF,  3, FF,  5, FF,  7, FF,  9, FF, 11, FF, 13, FF, 15, FF},
     epu8 { 2, FF, FF, FF,  6, FF, FF, FF, 10, FF, FF, FF, 14, FF, FF, FF},
     epu8 { 4, FF, FF, FF, FF, FF, FF, FF, 12, FF, FF, FF, FF, FF, FF, FF},
-    epu8 { 8, FF, FF, FF, FF, FF, FF, FF, FF, FF, FF, FF, FF, FF, FF, FF} };
+    epu8 { 8, FF, FF, FF, FF, FF, FF, FF, FF, FF, FF, FF, FF, FF, FF, FF}
+  }};
 
 Perm16 Perm16::elementary_transposition(uint64_t i) {
   assert(i < vect::Size);

@@ -49,8 +49,8 @@ template<unsigned exp, typename T, typename M = power_helper::Monoid<T> >
 constexpr T pow(const T x) {
   return
     (exp == 0) ? M::one :
-    (exp % 2 == 0) ? square<T, M>(pow<exp/2>(x)) :
-    M::mult(x, square<T, M>(pow<(exp-1)/2>(x)));
+    (exp % 2 == 0) ? square<T, M>(pow<unsigned(exp/2), T, M>(x)) :
+    M::mult(x, square<T, M>(pow<unsigned(exp/2), T, M>(x)));
 }
 
 
