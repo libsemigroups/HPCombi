@@ -20,10 +20,17 @@
 #include <algorithm>
 #include <random>
 
+namespace power_helper {
+
+// Definitions since previously *only* declared
+constexpr const Perm16 power_helper::Monoid<Perm16>::one;
+
+};  // namespace power_helper
+
 namespace IVMPG {
 
-// Definition since previously *only* declared
-const constexpr size_t Vect16::Size;
+// Definitions since previously *only* declared
+constexpr const size_t Vect16::Size;
 
 Vect16 Vect16::random(uint16_t bnd) {
   Vect16 res;
