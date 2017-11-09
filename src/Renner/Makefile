@@ -5,7 +5,7 @@ CXXFLAGS    = -std=c++14 -O3 -g -Wall -mavx -mtune=native -funroll-loops -flax-v
 # -Winline -fcilkplus 
 # -Wall -Wno-missing-braces -Wno-unused-variable  -Wno-attributes
 
-TARGET = Renner
+TARGET = Renner RD Trans
 all: $(TARGET)
 
 perm16.o: perm16.cpp perm16.hpp perm16_impl.hpp power.hpp

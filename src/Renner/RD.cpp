@@ -100,10 +100,7 @@ int main() {
     for (auto v : todo) {
       for (auto g : gens) {
         auto el = act0(v, g);
-        if (res.find(el) == res.end()) {
-          res.insert(el);
-          newtodo.push_back(el);
-        }
+        if (res.insert(el).second) newtodo.push_back(el);
         //        if (el == toFind) cout << v << endl;
       }
     }

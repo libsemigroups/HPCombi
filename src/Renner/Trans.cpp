@@ -58,12 +58,12 @@ int main() {
 
 
   // sparse_hash_set<Vect16, hash<Vect16>, eqVect16> res;
-  // dense_hash_set<Vect16, hash<Vect16>, eqVect16> res;
-  // res.set_empty_key({FE,FE,FE,FE,FE,FE,FE,FE,FE,FE,FE,FE,FE,FE,FE,FE});
-  // res.resize(500000000);
+  dense_hash_set<Vect16, hash<Vect16>, eqVect16> res;
+  res.set_empty_key({FE,FE,FE,FE,FE,FE,FE,FE,FE,FE,FE,FE,FE,FE,FE,FE});
+  res.resize(500000000);
 
-  unordered_set<Vect16> res;
-  res.reserve(500000000);
+  //unordered_set<Vect16> res;
+  //res.reserve(500000000);
 
   res.insert(id);
 
@@ -76,21 +76,14 @@ int main() {
     for (auto v : todo) {
       for (auto g : gens) {
         auto el = act1(v, g);
-        if (res.find(el) == res.end()) {
-          res.insert(el);
-          newtodo.push_back(el);
-        }
-        //        if (el == toFind) cout << v << endl;
+        if (res.insert(el).second) newtodo.push_back(el);
       }
     }
     std::swap(todo, newtodo);
     cout << lg << ", todo = " << todo.size() << ", res = " << res.size() <<
       ", #Bucks = " << res.bucket_count() << endl;
-    // cout << "Trouve " << (res.find(toFind) != res.end()) << endl;
-    // if (res.find(toFind) != res.end()) break;
   }
   cout << "res =  " << res.size() << endl;
-  // for (auto v : res)  cout << v << endl;
   exit(0);
 }
 

@@ -68,8 +68,8 @@ constexpr Vect16 genf =
   epu8 {FF,FF,FF,FF,FF,FF,FF, 7, FF, 9, 10, 11, 12, 13, 14, 15};
 
 // const vector<Vect16> gens {gene, genf, s1e, s1f};
-const vector<Vect16> gens {gene, genf, s1e, s1f, s2, s3, s4, s5, s6};
-const int nprint = 7;
+const vector<Vect16> gens {gene, genf, s1e, s1f, s2, s3, s4, s5};
+const int nprint = 6;
 google::dense_hash_map<Vect16, std::pair<Vect16, int>,
                        hash<Vect16>, eqVect16> elems;
 
@@ -118,8 +118,8 @@ int main() {
   cout << sizeof(std::vector<int>) << endl;
 
   elems.set_empty_key({FE,FE,FE,FE,FE,FE,FE,FE,FE,FE,FE,FE,FE,FE,FE,FE});
-  elems[id] = make_pair(Vect16 {}, -1);
-  elems.resize(250000000);
+  elems.insert({id, {{}, -1}});
+  // elems.resize(250000000);
 
   int nidemp = 1;
   cout << "Idemp : " << setw(3) << nidemp << " "
@@ -133,11 +133,9 @@ int main() {
     lg ++;
     for (auto v : todo) {
       for (uint8_t i = 0; i < gens.size(); i++) {
-        auto g = gens[i];
-        Vect16 el = act0(v, g);
-        if (elems.find(el) == elems.end()) {
+        Vect16 el = act0(v, gens[i]);
+        if (elems.insert({el, {v, i}}).second) {
           newtodo.push_back(el);
-          elems[el] = make_pair(v, i);
           if (mult0(el, el) == el) {
             nidemp++;
             cout << "Idemp : " << setw(3) << nidemp << " "
