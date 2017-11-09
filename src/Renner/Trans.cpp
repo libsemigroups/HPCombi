@@ -14,8 +14,6 @@
 using namespace std;
 using namespace IVMPG;
 
-using epu8 = uint8_t __attribute__ ((vector_size (16)));
-
 constexpr Vect16 id =
   epu8 {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15};
 

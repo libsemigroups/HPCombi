@@ -3,17 +3,26 @@
 #include <cstdint>
 #include <array>
 #include <vector>
+#include <string>
 #include <unordered_set>
 #include <set>
 #include <iostream>
 #include <functional>  // less<>
-#include <sparsehash/sparse_hash_set>
-#include <sparsehash/dense_hash_set>
+#include <sparsehash/dense_hash_map>
 #include "perm16.hpp"
+
+template <typename T>
+std::ostream& operator<< (std::ostream& out, const std::vector<T>& v) {
+  if ( !v.empty() ) {
+    out << '[';
+    std::copy (v.begin(), v.end(), std::ostream_iterator<T>(out, ", "));
+    out << "\b\b]";
+  }
+  return out;
+}
 
 using namespace std;
 using namespace IVMPG;
-
 
 constexpr Vect16 id =
   epu8 {0, 1, 2, 3, 4, 5, 6, 7  ,  8, 9, 10, 11, 12, 13, 14, 15};
@@ -47,6 +56,10 @@ constexpr Vect16 gene =
 constexpr Vect16 genf =
   epu8 {FF,FF,FF,FF,FF,FF,FF, 7, FF, 9, 10, 11, 12, 13, 14, 15};
 
+// const vector<Vect16> gens {gene, genf, s1e, s1f};
+const vector<Vect16> gens {gene, s0, s1e, s2, s3};
+const int nprint = 3;
+
 
 inline Vect16 act1(Vect16 x, Vect16 y) {
   return static_cast<epu8>(_mm_shuffle_epi8(x, y)) | (y.v == FF);
@@ -68,29 +81,33 @@ struct eqVect16
   }
 };
 
+google::dense_hash_map<Vect16, std::vector<int>, hash<Vect16>, eqVect16> elems;
+
+inline Vect16 mult0(Vect16 x, Vect16 y) {
+  auto res = x;
+  for (uint8_t i : elems[y]) res = act0(res, gens[i]);
+  return res;
+}
+
+std::vector<int> vectelem(Vect16 v, int n) {
+  std::vector<int> res;
+  for (int i=8-n; i < 8+n; i++) {
+    if (v[i] == 0xff) res.push_back(0);
+    else if (v[i] < 8) res.push_back(v[i]-8);
+    else res.push_back(v[i]-7);
+  }
+  return res;
+}
 
 int main() {
-  //vector<Vect16> gens {gene, genf, s1e, s1f, s2, s3, s4, s5};
-  // vector<Vect16> gens {gene, genf, s1e, s1f};
-  vector<Vect16> gens {gene, genf, s1e, s1f, s2, s3, s4, s5, s6};
-  // vector<Vect16> gens {gene, s1e, s2, s3, s4, s5, s6};
-  //const Vect16 toFind =
-  //  {FF,FF,FF,FF,FF,FF,FF,FF,  FF, FF, FF, FF, FF, 13, 14, 15};
-  // cout << act0(s2,genf) << endl;
   int lg = 0;
 
-  using google::dense_hash_set;
-  using google::sparse_hash_set;
+  elems.set_empty_key({FE,FE,FE,FE,FE,FE,FE,FE,FE,FE,FE,FE,FE,FE,FE,FE});
+  elems[id] = {};
 
-  // sparse_hash_set<Vect16, hash<Vect16>, eqVect16> res;
-  dense_hash_set<Vect16, hash<Vect16>, eqVect16> res;
-  res.set_empty_key({FE,FE,FE,FE,FE,FE,FE,FE,FE,FE,FE,FE,FE,FE,FE,FE});
-  res.resize(250000000);
+  int nidemp = 1;
+  cout << "Idemp : " << nidemp << " " << vectelem(id, nprint) << endl;
 
-  // unordered_set<Vect16> res;
-  // res.reserve(250000000);
-
-  res.insert(id);
 
   vector<Vect16> todo, newtodo;
   todo.push_back(id);
@@ -98,23 +115,30 @@ int main() {
     newtodo.clear();
     lg ++;
     for (auto v : todo) {
-      for (auto g : gens) {
-        auto el = act0(v, g);
-        if (res.find(el) == res.end()) {
-          res.insert(el);
+      for (uint8_t i = 0; i < gens.size(); i++) {
+        auto g = gens[i];
+        Vect16 el = act0(v, g);
+        if (elems.find(el) == elems.end()) {
           newtodo.push_back(el);
+          auto newword = elems[v];
+          newword.push_back(i);
+          elems[el] = newword;
+          if (mult0(el, el) == el) {
+            nidemp++;
+            cout << "Idemp : " << nidemp << " " << vectelem(el, nprint) << endl;
+          }
         }
-        //        if (el == toFind) cout << v << endl;
       }
     }
     std::swap(todo, newtodo);
-    cout << lg << ", todo = " << todo.size() << ", res = " << res.size() <<
-      ", #Bucks = " << res.bucket_count() << endl;
-    // cout << "Trouve " << (res.find(toFind) != res.end()) << endl;
-    // if (res.find(toFind) != res.end()) break;
+    // cout << lg << ", todo = " << todo.size() << ", elems = " << elems.size() <<
+    //  ", #Bucks = " << elems.bucket_count() << endl;
+    // cout << "Trouve " << (elems.find(toFind) != elems.end()) << endl;
+    // if (elems.find(toFind) != elems.end()) break;
   }
-  cout << "res =  " << res.size() << endl;
-  // for (auto v : res)  cout << v << endl;
+  Vect16 bla {FF,FF,FF,FF,FF,FF,FF,FF,FF,FF,10,11,12,13,14,15};
+  cout << elems[bla] << endl;
+  cout << "elems =  " << elems.size() << endl;
   exit(0);
 }
 
