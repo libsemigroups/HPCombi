@@ -7,22 +7,33 @@
 #include <unordered_set>
 #include <set>
 #include <iostream>
+#include <iomanip>
 #include <functional>  // less<>
 #include <sparsehash/dense_hash_map>
 #include "perm16.hpp"
 
 template <typename T>
 std::ostream& operator<< (std::ostream& out, const std::vector<T>& v) {
+  out << '[';
   if ( !v.empty() ) {
-    out << '[';
-    std::copy (v.begin(), v.end(), std::ostream_iterator<T>(out, ", "));
-    out << "\b\b]";
+    auto i = v.begin();
+    for (; i != --v.end(); ++i)
+      out << std::setw(2) << *i << ",";
+    out << std::setw(2) << *i;
   }
+  out << "]";
   return out;
 }
 
 using namespace std;
 using namespace IVMPG;
+
+struct eqVect16 {
+  bool operator()(const Vect16 &s1, const Vect16 &s2) const {
+    return s1 == s2;
+  }
+};
+
 
 constexpr Vect16 id =
   epu8 {0, 1, 2, 3, 4, 5, 6, 7  ,  8, 9, 10, 11, 12, 13, 14, 15};
@@ -58,8 +69,8 @@ constexpr Vect16 genf =
 
 // const vector<Vect16> gens {gene, genf, s1e, s1f};
 const vector<Vect16> gens {gene, s0, s1e, s2, s3};
-const int nprint = 3;
-
+const int nprint = 4;
+google::dense_hash_map<Vect16, std::vector<int>, hash<Vect16>, eqVect16> elems;
 
 inline Vect16 act1(Vect16 x, Vect16 y) {
   return static_cast<epu8>(_mm_shuffle_epi8(x, y)) | (y.v == FF);
@@ -73,23 +84,14 @@ inline Vect16 act0(Vect16 x, Vect16 y) {
   return static_cast<epu8>(_mm_blendv_epi8(maxab, minab, mask)) | (y.v == FF);
 }
 
-
-struct eqVect16
-{
-  bool operator()(const Vect16 &s1, const Vect16 &s2) const {
-    return s1 == s2;
-  }
-};
-
-google::dense_hash_map<Vect16, std::vector<int>, hash<Vect16>, eqVect16> elems;
-
 inline Vect16 mult0(Vect16 x, Vect16 y) {
   auto res = x;
   for (uint8_t i : elems[y]) res = act0(res, gens[i]);
   return res;
 }
 
-std::vector<int> vectelem(Vect16 v, int n) {
+
+std::vector<int> sym_renner(Vect16 v, int n) {
   std::vector<int> res;
   for (int i=8-n; i < 8+n; i++) {
     if (v[i] == 0xff) res.push_back(0);
@@ -102,11 +104,14 @@ std::vector<int> vectelem(Vect16 v, int n) {
 int main() {
   int lg = 0;
 
+  cout << sizeof(std::vector<int>) << endl;
+  
   elems.set_empty_key({FE,FE,FE,FE,FE,FE,FE,FE,FE,FE,FE,FE,FE,FE,FE,FE});
   elems[id] = {};
 
   int nidemp = 1;
-  cout << "Idemp : " << nidemp << " " << vectelem(id, nprint) << endl;
+  cout << "Idemp : " << setw(3) << nidemp << " "
+       << sym_renner(id, nprint) << endl;
 
 
   vector<Vect16> todo, newtodo;
@@ -125,7 +130,8 @@ int main() {
           elems[el] = newword;
           if (mult0(el, el) == el) {
             nidemp++;
-            cout << "Idemp : " << nidemp << " " << vectelem(el, nprint) << endl;
+            cout << "Idemp : " << setw(3) << nidemp << " "
+                 << sym_renner(el, nprint) << endl;
           }
         }
       }
