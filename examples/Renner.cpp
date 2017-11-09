@@ -26,7 +26,7 @@ std::ostream& operator<< (std::ostream& out, const std::vector<T>& v) {
 }
 
 using namespace std;
-using namespace IVMPG;
+using namespace HPCombi;
 
 struct eqVect16 {
   bool operator()(const Vect16 &s1, const Vect16 &s2) const {

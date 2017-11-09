@@ -3,7 +3,7 @@
 #include "perm16.hpp"
 #include <boost/test/unit_test.hpp>
 
-using namespace IVMPG;
+using namespace HPCombi;
 
 BOOST_AUTO_TEST_CASE(TestFonct)
 {

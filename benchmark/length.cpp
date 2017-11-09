@@ -28,7 +28,7 @@
 
 using namespace std;
 using namespace std::chrono;
-using namespace IVMPG;
+using namespace HPCombi;
 
 
 using Statistic = array<uint64_t, 256>;

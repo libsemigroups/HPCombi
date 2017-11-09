@@ -20,7 +20,7 @@
 #include <vector>
 #include "perm16.hpp"
 
-namespace IVMPG {
+namespace HPCombi {
 
 constexpr unsigned int factorial(unsigned int n) {
   return n > 1 ? n * factorial(n-1) : 1;
@@ -47,5 +47,5 @@ double timethat(Func fun, int rep = 1, double reftime = 0) {
   return tm.count();
 }
 
-}  // namespace IVMPG
+}  // namespace HPCombi
 #endif  // PERM16_TESTTOOLS_HPP_INCLUDED

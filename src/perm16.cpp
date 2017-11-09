@@ -20,17 +20,18 @@
 #include <algorithm>
 #include <random>
 
+
+namespace HPCombi {
+
+// Definitions since previously *only* declared
+constexpr const size_t Vect16::Size;
+
 namespace power_helper {
 
 // Definitions since previously *only* declared
 constexpr const Perm16 power_helper::Monoid<Perm16>::one;
 
 };  // namespace power_helper
-
-namespace IVMPG {
-
-// Definitions since previously *only* declared
-constexpr const size_t Vect16::Size;
 
 Vect16 Vect16::random(uint16_t bnd) {
   Vect16 res;
@@ -118,4 +119,4 @@ std::ostream & operator<<(std::ostream & stream, Vect16 const &term) {
   return stream;
 }
 
-}  // namespace IVMPG
+}  // namespace HPCombi

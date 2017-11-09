@@ -28,7 +28,7 @@
 
 using namespace std;
 using namespace std::chrono;
-using namespace IVMPG;
+using namespace HPCombi;
 
 
 template<typename Func>

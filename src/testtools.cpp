@@ -18,7 +18,7 @@
 #include <vector>
 #include "testtools.hpp"
 
-namespace IVMPG {
+namespace HPCombi {
 
 std::vector<Perm16> rand_perms(int sz) {
   std::vector<Perm16> res(sz);
@@ -34,4 +34,4 @@ std::vector<Perm16> all_perms(int n) {
   return res;
 }
 
-}  // namespace IVMPG
+}  // namespace HPCombi

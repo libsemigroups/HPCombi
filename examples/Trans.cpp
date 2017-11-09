@@ -12,7 +12,7 @@
 #include "perm16.hpp"
 
 using namespace std;
-using namespace IVMPG;
+using namespace HPCombi;
 
 constexpr Vect16 id =
   epu8 {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15};

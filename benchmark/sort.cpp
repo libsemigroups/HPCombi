@@ -28,7 +28,7 @@
 
 using namespace std;
 using namespace std::chrono;
-using namespace IVMPG;
+using namespace HPCombi;
 
 
 // Sorting network Knuth AoCP3 Fig. 51 p 229.

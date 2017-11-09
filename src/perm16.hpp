@@ -23,7 +23,7 @@
 #include <ostream>
 #include <functional>  // less<>
 
-namespace IVMPG {
+namespace HPCombi {
 
 using epu8 = uint8_t __attribute__ ((vector_size (16)));
 
@@ -152,7 +152,7 @@ struct Perm16 : public Vect16 {
   static const std::array<Perm16, 3> inverting_rounds;
 };
 
-}  // namespace IVMPG
+}  // namespace HPCombi
 
 #include "perm16_impl.hpp"
 
@@ -161,21 +161,21 @@ namespace std {
 #define MASK_24 (((u_int32_t)1<<24)-1) /* i.e., (u_int32_t)0xffffff */
 
 template<>
-struct hash<IVMPG::Vect16> {
-  inline size_t operator () (const IVMPG::Vect16 &ar) const {
+struct hash<HPCombi::Vect16> {
+  inline size_t operator () (const HPCombi::Vect16 &ar) const {
     __int128 v0 = _mm_extract_epi64(ar.v, 0);
     __int128 v1 = _mm_extract_epi64(ar.v, 1);
-    return ((v1*IVMPG::prime + v0)*IVMPG::prime) >> 64;
+    return ((v1*HPCombi::prime + v0)*HPCombi::prime) >> 64;
   }
 };
 
 template<>
-struct less<IVMPG::Vect16> {
+struct less<HPCombi::Vect16> {
   // WARNING: due to endianess this is not lexicographic comparison,
   //          but we don't care when using in std::set.
   // 10% faster than calling the lexicographic comparison operator !
-  inline size_t operator() (const IVMPG::Vect16 &v1,
-                            const IVMPG::Vect16 &v2) const {
+  inline size_t operator() (const HPCombi::Vect16 &v1,
+                            const HPCombi::Vect16 &v2) const {
     __m128 v1v = __m128(v1.v), v2v = __m128(v2.v);
     return v1v[0] == v2v[0] ? v1v[1] < v2v[1] : v1v[0] < v2v[0];
   }

@@ -27,7 +27,7 @@
 
 using namespace std;
 using namespace std::chrono;
-using namespace IVMPG;
+using namespace HPCombi;
 
 
 uint8_t nb_cycles_ref(Perm16 p) {

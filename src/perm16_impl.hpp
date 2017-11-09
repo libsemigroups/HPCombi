@@ -17,7 +17,7 @@
 #include <algorithm>
 #include "power.hpp"
 
-namespace IVMPG {
+namespace HPCombi {
 
 /*****************************************************************************/
 /** Implementation part for inline functions *********************************/
@@ -205,22 +205,18 @@ inline Perm16 Perm16::inverse_find() const {
   return res;
 }
 
-}  // namespace IVMPG
-
-
 // We declare PERM16 as a correct Monoid
 namespace power_helper {
 
-using Perm16 = IVMPG::Perm16;
+using Perm16 = Perm16;
 
 template <> struct Monoid<Perm16> {
   static constexpr const Perm16 one = Perm16::one();
-  static Perm16 mult(Perm16 a, Perm16 b) { return a * b; }
+  static Perm16 prod(Perm16 a, Perm16 b) { return a * b; }
 };
 
 };  // namespace power_helper
 
-namespace IVMPG {
 
 inline Perm16 Perm16::inverse_cycl() const {
   Perm16 res;
@@ -316,4 +312,4 @@ inline uint8_t Perm16::nb_cycles_unroll() const {
 }
 
 
-}  // namespace IVMPG
+}  // namespace HPCombi
