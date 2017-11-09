@@ -113,8 +113,8 @@ Perm16 Perm16::unrankSJT(int n, int r) {
 std::ostream & operator<<(std::ostream & stream, Vect16 const &term) {
   stream << "[" << std::setw(2) << std::hex << unsigned(term[0]);
   for (unsigned i=1; i < Vect16::Size; ++i)
-    stream << "," << std::setw(2) << std::hex << unsigned(term[i]);
-  stream << "]";
+    stream << "," << std::setw(2) << unsigned(term[i]);
+  stream << "]" << std::dec;
   return stream;
 }
 
