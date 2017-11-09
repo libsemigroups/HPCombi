@@ -68,9 +68,10 @@ constexpr Vect16 genf =
   epu8 {FF,FF,FF,FF,FF,FF,FF, 7, FF, 9, 10, 11, 12, 13, 14, 15};
 
 // const vector<Vect16> gens {gene, genf, s1e, s1f};
-const vector<Vect16> gens {gene, s0, s1e, s2, s3};
-const int nprint = 4;
-google::dense_hash_map<Vect16, std::vector<int>, hash<Vect16>, eqVect16> elems;
+const vector<Vect16> gens {gene, genf, s1e, s1f, s2, s3, s4, s5, s6};
+const int nprint = 7;
+google::dense_hash_map<Vect16, std::pair<Vect16, int>,
+                       hash<Vect16>, eqVect16> elems;
 
 inline Vect16 act1(Vect16 x, Vect16 y) {
   return static_cast<epu8>(_mm_shuffle_epi8(x, y)) | (y.v == FF);
@@ -84,10 +85,20 @@ inline Vect16 act0(Vect16 x, Vect16 y) {
   return static_cast<epu8>(_mm_blendv_epi8(maxab, minab, mask)) | (y.v == FF);
 }
 
-inline Vect16 mult0(Vect16 x, Vect16 y) {
-  auto res = x;
-  for (uint8_t i : elems[y]) res = act0(res, gens[i]);
+std::vector<int> reduced_word(Vect16 x) {
+  std::vector<int> res {};
+  while (x != id) {
+    auto p = elems[x];
+    res.push_back(p.second);
+    x = p.first;
+  }
+  std::reverse(res.begin(), res.end());
   return res;
+}
+
+inline Vect16 mult0(Vect16 x, Vect16 y) {
+  for (auto i : reduced_word(y)) x = act0(x, gens[i]);
+  return x;
 }
 
 
@@ -105,13 +116,14 @@ int main() {
   int lg = 0;
 
   cout << sizeof(std::vector<int>) << endl;
-  
+
   elems.set_empty_key({FE,FE,FE,FE,FE,FE,FE,FE,FE,FE,FE,FE,FE,FE,FE,FE});
-  elems[id] = {};
+  elems[id] = make_pair(Vect16 {}, -1);
+  elems.resize(250000000);
 
   int nidemp = 1;
   cout << "Idemp : " << setw(3) << nidemp << " "
-       << sym_renner(id, nprint) << endl;
+       << sym_renner(id, nprint) << " " << reduced_word(id) << endl;
 
 
   vector<Vect16> todo, newtodo;
@@ -125,25 +137,19 @@ int main() {
         Vect16 el = act0(v, g);
         if (elems.find(el) == elems.end()) {
           newtodo.push_back(el);
-          auto newword = elems[v];
-          newword.push_back(i);
-          elems[el] = newword;
+          elems[el] = make_pair(v, i);
           if (mult0(el, el) == el) {
             nidemp++;
             cout << "Idemp : " << setw(3) << nidemp << " "
-                 << sym_renner(el, nprint) << endl;
+                 << sym_renner(el, nprint) << " " << reduced_word(el) << endl;
           }
         }
       }
     }
     std::swap(todo, newtodo);
-    // cout << lg << ", todo = " << todo.size() << ", elems = " << elems.size() <<
-    //  ", #Bucks = " << elems.bucket_count() << endl;
-    // cout << "Trouve " << (elems.find(toFind) != elems.end()) << endl;
-    // if (elems.find(toFind) != elems.end()) break;
+    cout << lg << ", todo = " << todo.size() << ", elems = " << elems.size() <<
+      ", #Bucks = " << elems.bucket_count() << endl;
   }
-  Vect16 bla {FF,FF,FF,FF,FF,FF,FF,FF,FF,FF,10,11,12,13,14,15};
-  cout << elems[bla] << endl;
   cout << "elems =  " << elems.size() << endl;
   exit(0);
 }
