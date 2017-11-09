@@ -1,0 +1,7 @@
+Name: @CMAKE_PROJECT_NAME@
+Description: Fast combinatorics using SSE/AVX
+Version: 0.0.1
+Requires: 
+Libs: -L@CMAKE_INSTALL_PREFIX@/lib
+Cflags: -I@CMAKE_INSTALL_PREIFX@/include
+
