@@ -196,11 +196,11 @@ inline Perm16 Perm16::inverse_sort() const {
 
 inline Perm16 Perm16::inverse_find() const {
   Perm16 res, s = *this;
-  res.v = -epu8(_mm_cmpestrm(s.v, 8, idv, 16, FIND_IN_PERM));
+  res.v = -static_cast<epu8>(_mm_cmpestrm(s.v, 8, idv, 16, FIND_IN_PERM));
   for (Perm16 round : inverting_rounds) {
     s = s * round;
     res.v <<= 1;
-    res.v -= epu8(_mm_cmpestrm(s.v, 8, idv, 16, FIND_IN_PERM));
+    res.v -= static_cast<epu8>(_mm_cmpestrm(s.v, 8, idv, 16, FIND_IN_PERM));
   }
   return res;
 }
