@@ -3,9 +3,6 @@ include_directories (${CMAKE_SOURCE_DIR}/src)
 INCLUDE (CheckIncludeFileCXX)
 INCLUDE (CheckCXXSymbolExists)
 CHECK_INCLUDE_FILE_CXX("sparsehash/dense_hash_map" HAVE_SPARSEHASH)
-# if(NOT HAVE_SPARSEHASH)
-#        message( FATAL_ERROR "Need Google sparsehash" )
-# endif()
 CHECK_CXX_SYMBOL_EXISTS("google::dense_hash_map" "sparsehash/dense_hash_map" HAVE_GOOGLE_HASH_DENSE_HASH_MAP)
 
 file(

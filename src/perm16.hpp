@@ -58,19 +58,19 @@ struct alignas(16) Vect16 {
   auto begin() { return as_array().begin(); }
   auto end() { return as_array().end(); }
 
+  inline bool operator==(const Vect16 &b) const;
+  inline bool operator!=(const Vect16 &b) const;
+  inline bool operator<(const Vect16 &b) const;
+  inline char less_partial(const Vect16 &b, int k) const;
+  inline Vect16 permuted(const Vect16 &other) const;
+  inline Vect16 sorted() const;
+  inline Vect16 revsorted() const;
+
   uint64_t first_diff(const Vect16 &b, size_t bound = Size) const;
 
-  bool operator==(const Vect16 &b) const;
-  bool operator!=(const Vect16 &b) const;
-  bool operator<(const Vect16 &b) const;
-  char less_partial(const Vect16 &b, int k) const;
-  Vect16 permuted(const Vect16 &other) const;
-  Vect16 sorted() const;
-  Vect16 revsorted() const;
-
-  uint8_t sum_ref() const;
-  uint8_t sum4() const;
-  uint8_t sum3() const;
+  inline uint8_t sum_ref() const;
+  inline uint8_t sum4() const;
+  inline uint8_t sum3() const;
   inline uint8_t sum() const { return sum3(); }
 
   template <char IDX_MODE> uint64_t search_index(int bound) const;
@@ -105,11 +105,50 @@ struct Perm16 : public Vect16 {
 
   Perm16 operator*(const Perm16&p) const { return permuted(p); }
 
-  Perm16 inverse_ref() const;
-  Perm16 inverse_sort() const;
-  Perm16 inverse_find() const;
-  Perm16 inverse_pow() const;
-  Perm16 inverse_cycl() const;
+  /** @class common_inverse
+   * @brief The inverse permutation
+   * @details
+   * @returns the inverse of \c *this
+   * @par Example:
+   * @code
+   * Perm16 x = {0,3,2,4,1,5,6,7,8,9,10,11,12,13,14,15};
+   * x.inverse()
+   * @endcode
+   * Returns {0,4,2,1,3,5,6,7,8,9,10,11,12,13,14,15}
+   */
+  /** @copydoc common_inverse
+   *  @par Algorithm:
+   *  Reference @f$O(n)@f$ algorithm using loop and indexed access
+   */
+  inline Perm16 inverse_ref() const;
+  /** @copydoc common_inverse
+   *  @par Algorithm:
+   *  Insert the identity in the least significant bits and sort using a
+   *  sorting network. The number of round of the optimal sorting network is
+   *  as far as I know open, therefore, the complexity is unknown.
+   */
+  inline Perm16 inverse_sort() const;
+  /** @copydoc common_inverse
+   *  @par Algorithm:
+   *  @f$O(\log n)@f$ algorithm using some kind of vectorized dichotomic search.
+   */
+  inline Perm16 inverse_find() const;
+  /** @copydoc common_inverse
+   *  @par Algorithm:
+   *
+   * Raise \e *this to power @f$\text{LCM}(1, 2, ..., n) - 1@f$ so complexity
+   * is in @f$O(log (\text{LCM}(1, 2, ..., n) - 1)) = O(n)@f$
+   */
+  inline Perm16 inverse_pow() const;
+  /** @copydoc common_inverse
+   *  @par Algorithm:
+   *  Compute power from @f$n/2@f$ to @f$n@f$, when @f$\sigma^k(i)=i@f$ then
+   *  @f$\sigma^{-1}(i)=\sigma^{k-1}(i)@f$. Complexity @f$O(n)@f$
+   */
+  inline Perm16 inverse_cycl() const;
+  /** @copydoc common_inverse
+   *
+   *  Frontend method: currently aliased to #inverse_cycl */
   inline Perm16 inverse() { return inverse_cycl(); }
 
   // It's not possible to have a static constexpr member of same type as class

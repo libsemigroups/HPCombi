@@ -12,6 +12,24 @@
 //                                                                            //
 //                  http://www.gnu.org/licenses/                              //
 //****************************************************************************//
+/** @file
+ * @brief Generic compile time power
+ *
+ * The goal of this file is to be able to write expressions such as @c
+ * pow<23>(2.5) or @c pow<n>(x) where the first expression is entirely
+ * computed as compile time and the second one is expanded also as compile
+ * time to a O(log n) long sequence of multiplication. Furthermore such
+ * expression not only works for numbers for for any type where there is a
+ * neutral element and an associative (non necessarily commutative) product,
+ * namely what mathematician calls a \e monoid. This include for example,
+ * strings where the neutral element is the empty string and the product is
+ * the concatenation.
+ *
+ * see HPCombi::power_helper::Monoid<std::string>
+ *
+ * @example stringmonoid.cpp
+ * This is an example of how to use pow with a non numerical Monoid.
+ */
 
 #ifndef PERM16_POWER_HPP_INCLUDED
 #define PERM16_POWER_HPP_INCLUDED
@@ -20,8 +38,7 @@ namespace HPCombi {
 
 namespace power_helper {
 
-  /** Forward declaration */
-  // @brief Monoid structure used by default for type T by the pow function
+  // Forward declaration
   template <typename T> struct Monoid;
 
 };
@@ -29,45 +46,31 @@ namespace power_helper {
 /** A generic compile time squaring function
  *
  *  @param x      the number to square
- *  @return       x squared
+ *  @return       @a x squared
  *
- *  To use for a specific type the user should pass a Monoid structure (see
- *  below) as second parameter to the template. Alternatively a default monoid
- *  structure can be defined for a given type by overloading the struct
- *  power_helper::Monoid<T>
- *
- *  A Monoid structure is required to define two static members
- *  - one : the unit of the monoid
- *  - T prod(T, T) : the product of two elements in the monoid
- *
- *  Note: unfortunately boost::math::power is not enought general to handle
- *  monoids whose unit is not constructed as T(1).
+ *  @details To use for a specific type the user should pass a monoid
+ *  structure as second parameter to the template. Alternatively a
+ *  default monoid structure can be defined for a given type by specializing
+ *  the template struct #HPCombi::power_helper::Monoid
  */
 template<typename T, typename M = power_helper::Monoid<T> >
 constexpr T square(const T x) { return M::prod(x, x); }
 
-/** @brief A generic compile time exponentiation function
+/** A generic compile time exponentiation function
  *
- *  @tparam exp    the power
- *  @arg x      the number to exponentiate
- *  @return       x to the power exp
+ *  @tparam exp the power
+ *  @param x    the number to exponentiate
+ *  @return @a x to the power @a exp
  *
  *  @details Raise x to the exponent exp where exp is known at compile
- *  time. We use the classica binary algorithm, but the recursion is unfolded
- *  and optimized at compile time giving an assembly code which is just a
- *  sequence of multiplication.
+ *  time. We use the classical recursive binary algorithm, but the recursion
+ *  is unfolded and optimized at compile time giving an assembly code which is
+ *  just a sequence of multiplication.
  *
  *  To use for a specific type the user should pass a Monoid structure (see
  *  below) as third parameter to the template. Alternatively a default monoid
- *  structure can be defined for a given type by overloading the struct
- *  power_helper::Monoid<T>
- *
- *  A Monoid structure is required to define two static members
- *  - one : the unit of the monoid
- *  - T prod(T, T) : the product of two elements in the monoid
- *
- *  Note: unfortunately boost::math::power is not enought general to handle
- *  monoids whose unit is not constructed as T(1).
+ *  structure can be defined for a given type by specializing the template
+ *  struct #HPCombi::power_helper::Monoid
  */
 template<unsigned exp, typename T, typename M = power_helper::Monoid<T> >
 constexpr T pow(const T x) {
@@ -81,12 +84,27 @@ constexpr T pow(const T x) {
 
 namespace power_helper {
 
-/** Default class for numeric multiplicative monoids
- */
+  /** Algebraic monoid structure used by default for type T by the pow
+   *  function and prod function
+   *
+   *  @details A Monoid structure is required to define two static members
+   *  - #one : the unit of the monoid
+   *  - T #prod(T, T) : the product of two elements in the monoid
+   *
+   * By default for any type \c T, #one is constructed from the litteral 1 and
+   * #prod calls the operator *. One can change these default by specializing
+   * the template for some specific type \c T.
+   */
 template <typename T> struct Monoid {
-  /** @brief the one of the type T */
+
+/// The one of type T
   static constexpr T one = 1;
-  /** @brief the product of two element in the type T */
+
+/** the product of two elements of type T
+ *  @param a the first element to be multiplied
+ *  @param b the second element to be multiplied
+ *  @return the product a * b
+ */
   static constexpr T prod(T a, T b) { return a * b; }
 };
 
