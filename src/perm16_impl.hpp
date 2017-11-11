@@ -46,9 +46,6 @@ const char LAST_NON_ZERO = (
 const char FIND_IN_PERM = (_SIDD_UBYTE_OPS | _SIDD_CMP_EQUAL_ANY |
                            _SIDD_UNIT_MASK | _SIDD_NEGATIVE_POLARITY);
 
-static constexpr const epu8 idv =
-    {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15};
-
 inline uint64_t Vect16::first_diff(const Vect16 &b, size_t bound) const {
   return unsigned(_mm_cmpestri (v, bound, b.v, bound, FIRST_DIFF));
 }
@@ -129,13 +126,14 @@ inline uint64_t Vect16::first_zero(int bnd) const {
   return search_index<FIRST_ZERO>(bnd);
 }
 inline bool Vect16::is_permutation(const size_t k) const {
-  uint64_t diff = unsigned(_mm_cmpestri(v, Size, idv, Size, LAST_DIFF));
+  uint64_t diff = unsigned(_mm_cmpestri(v, Size, Perm16::one(), Size, LAST_DIFF));
 
-    // (forall x in v, x in idv)  and  (forall x in idv, x in v)  and
-    // (v = idv  or  last diff index < Size)
+  // (forall x in v, x in Perm16::one())  and
+  // (forall x in Perm16::one(), x in v)  and
+  // (v = Perm16::one()   or  last diff index < Size)
   return
-    _mm_cmpestri(idv, Size, v, Size, FIRST_NON_ZERO) == Size &&
-    _mm_cmpestri(v, Size, idv, Size, FIRST_NON_ZERO) == Size &&
+    _mm_cmpestri(Perm16::one(), Size, v, Size, FIRST_NON_ZERO) == Size &&
+    _mm_cmpestri(v, Size, Perm16::one(), Size, FIRST_NON_ZERO) == Size &&
     (diff == Size || diff < k);
 }
 
@@ -196,11 +194,13 @@ inline Perm16 Perm16::inverse_sort() const {
 
 inline Perm16 Perm16::inverse_find() const {
   Perm16 res, s = *this;
-  res.v = -static_cast<epu8>(_mm_cmpestrm(s.v, 8, idv, 16, FIND_IN_PERM));
+  res.v = -static_cast<epu8>(
+    _mm_cmpestrm(s.v, 8, Perm16::one(), 16, FIND_IN_PERM));
   for (Perm16 round : inverting_rounds) {
     s = s * round;
     res.v <<= 1;
-    res.v -= static_cast<epu8>(_mm_cmpestrm(s.v, 8, idv, 16, FIND_IN_PERM));
+    res.v -= static_cast<epu8>(
+      _mm_cmpestrm(s.v, 8, Perm16::one(), 16, FIND_IN_PERM));
   }
   return res;
 }
@@ -211,7 +211,7 @@ namespace power_helper {
 using Perm16 = Perm16;
 
 template <> struct Monoid<Perm16> {
-  static constexpr const Perm16 one = Perm16::one();
+  static constexpr const Perm16 one {};
   static Perm16 prod(Perm16 a, Perm16 b) { return a * b; }
 };
 

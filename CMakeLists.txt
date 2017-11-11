@@ -21,6 +21,7 @@ add_subdirectory(doc)
 add_subdirectory(tests)
 enable_testing ()
 add_test (NAME TestPerm16 COMMAND test_perm16)
+add_test (NAME TestPermAll COMMAND test_perm_all)
 
 CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/hpcombi.pc.in
                ${CMAKE_CURRENT_BINARY_DIR}/hpcombi.pc @ONLY)

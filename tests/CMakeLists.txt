@@ -13,3 +13,10 @@ target_link_libraries(test_perm16
   ${Boost_SYSTEM_LIBRARY}
   ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY}
   )
+add_executable (test_perm_all test_perm_all.cpp)
+target_link_libraries(test_perm_all
+  perm16
+  ${Boost_FILESYSTEM_LIBRARY}
+  ${Boost_SYSTEM_LIBRARY}
+  ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY}
+  )

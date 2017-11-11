@@ -81,7 +81,7 @@ Perm16 Perm16::elementary_transposition(uint64_t i) {
 }
 
 Perm16 Perm16::random() {
-  Perm16 res = Perm16::one();
+  Perm16 res {};
   std::random_shuffle(res.begin(), res.end());
   return res;
 }
@@ -90,7 +90,7 @@ Perm16 Perm16::random() {
 Perm16 Perm16::unrankSJT(int n, int r) {
   int j, k, rem, c;
   std::array<int, 16> dir;
-  Perm16 res = Perm16::one();
+  Perm16 res {};
   for (j=0; j < n; ++j) res[j] = 0xFF;
   for (j=n-1; j >= 0; --j) {
     rem = r % (j + 1);
@@ -112,10 +112,10 @@ Perm16 Perm16::unrankSJT(int n, int r) {
 
 
 std::ostream & operator<<(std::ostream & stream, Vect16 const &term) {
-  stream << "[" << std::setw(2) << std::hex << unsigned(term[0]);
+  stream << "[" << std::setw(2) << unsigned(term[0]);
   for (unsigned i=1; i < Vect16::Size; ++i)
     stream << "," << std::setw(2) << unsigned(term[i]);
-  stream << "]" << std::dec;
+  stream << "]";
   return stream;
 }
 
