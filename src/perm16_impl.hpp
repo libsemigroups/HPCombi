@@ -23,10 +23,10 @@ namespace HPCombi {
 /** Implementation part for inline functions *********************************/
 /*****************************************************************************/
 
-inline Vect16::Vect16(std::initializer_list<uint8_t> il) {
+inline Vect16::Vect16(std::initializer_list<uint8_t> il, uint8_t def) {
   assert(il.size() <= Size);
   std::copy(il.begin(), il.end(), begin());
-  for (uint64_t i = il.size(); i < Size; ++i) v[i] = 0;
+  for (uint64_t i = il.size(); i < Size; ++i) v[i] = def;
 }
 
 // Comparison mode for _mm_cmpestri

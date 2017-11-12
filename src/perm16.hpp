@@ -34,7 +34,7 @@ struct alignas(16) Vect16 {
 
   Vect16() = default;
   constexpr Vect16(epu8 x) : v(x) {}
-  Vect16(std::initializer_list<uint8_t> il);
+  Vect16(std::initializer_list<uint8_t> il, uint8_t def = 0);
   constexpr operator epu8() { return v; }
   constexpr operator const epu8() const { return v; }
 

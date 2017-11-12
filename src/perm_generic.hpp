@@ -31,6 +31,9 @@ struct VectGeneric {
   static const constexpr size_t Size = _Size;
   std::array<Expo, Size> v;
 
+  VectGeneric() = default;
+  VectGeneric(std::initializer_list<Expo> il, Expo def = 0);
+
   Expo operator[](uint64_t i) const { return v[i]; }
   Expo &operator[](uint64_t i) { return v[i]; }
 
@@ -96,6 +99,13 @@ std::ostream & operator<<(std::ostream & stream, const VectGeneric<Size,Expo> &t
     stream << "," << std::setw(2) << unsigned(term[i]);
   stream << "]";
   return stream;
+}
+
+template < size_t Size, typename Expo >
+VectGeneric<Size, Expo>::VectGeneric(std::initializer_list<Expo> il, Expo def) {
+  assert(il.size() <= Size);
+  std::copy(il.begin(), il.end(), v.begin());
+  for (uint64_t i = il.size(); i < Size; ++i) v[i] = def;
 }
 
 

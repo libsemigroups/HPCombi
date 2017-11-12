@@ -63,15 +63,6 @@ struct Fixture : public IsPermFunctions<typename PermType::vect> {
   const PermType RandPerm;
   const std::vector<PermType> Plist;
 
-  static VectType complete(VectType v, int k) {
-    for (size_t i=16; i<VectType::Size; i++) v[i] = k;
-    return v;
-  }
-  static VectType completePerm(VectType v) {
-    for (size_t i=16; i<VectType::Size; i++) v[i] = i;
-    return v;
-  }
-
   static bool less(const VectType a, const VectType b) {return a < b;};
   static bool not_less(const VectType a, const VectType b) {return not(a < b);};
 };
@@ -101,8 +92,8 @@ BOOST_FIXTURE_TEST_CASE_TEMPLATE( equal_test, F, Fixtures, F )
 {
   BOOST_CHECK_EQUAL( F::zero, F::zero );
   BOOST_CHECK_NE( F::zero, F::P01 );
-  for (unsigned i = 0; i<F::Plist.size(); i++)
-    for (unsigned j = 0; j<F::Plist.size(); j++)
+  for (unsigned i = 0; i < F::Plist.size(); i++)
+    for (unsigned j = 0; j < F::Plist.size(); j++)
       if (i == j)
 	BOOST_CHECK_EQUAL( F::Plist[i], F::Plist[j] );
       else
@@ -141,8 +132,8 @@ BOOST_FIXTURE_TEST_CASE_TEMPLATE( operator_bracket_test, F, Fixtures, F )
 
 BOOST_FIXTURE_TEST_CASE_TEMPLATE( operator_less_test, F, Fixtures, F )
 {
-  for (unsigned i = 0; i<F::Plist.size(); i++)
-    for (unsigned j = 0; j<F::Plist.size(); j++)
+  for (unsigned i = 0; i < F::Plist.size(); i++)
+    for (unsigned j = 0; j < F::Plist.size(); j++)
       if (i < j) BOOST_CHECK_PREDICATE(F::less,     (F::Plist[i])(F::Plist[j]) );
       else       BOOST_CHECK_PREDICATE(F::not_less, (F::Plist[i])(F::Plist[j]) );
 }
@@ -226,13 +217,12 @@ BOOST_FIXTURE_TEST_CASE_TEMPLATE( permuted_test, F, Fixtures, F )
   BOOST_CHECK_EQUAL( F::zero.permuted(F::zero), F::zero );
   BOOST_CHECK_EQUAL( F::P01.permuted(F::P01), F::P01 );
   BOOST_CHECK_EQUAL( F::P10.permuted(F::P10),
-		     F::complete(typename F::VectType({0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1}), 1)
+		     typename F::VectType({0,1}, 1)
 		   );
   BOOST_CHECK_EQUAL( F::P10.permuted(F::P01),
-		     F::complete(typename F::VectType({1,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1}), 1)
+		     typename F::VectType({1,0}, 1)
 		   );
   BOOST_CHECK_EQUAL( F::P01.permuted(F::P10), F::P10 );
-// TODO: check mult
 }
 
 
@@ -288,7 +278,7 @@ struct PermFixture : public IsPermFunctions<_Perm> {
 		  Plist({id, RandPerm})
   {
     for (uint64_t i=0; i<15; i++)
-      Plist.insert(Plist.begin()+1+i, PermType::elementary_transposition(i));
+      Plist.push_back(PermType::elementary_transposition(i));
     BOOST_TEST_MESSAGE( "setup fixture" );
   }
 
@@ -315,11 +305,8 @@ BOOST_AUTO_TEST_SUITE( PermType_test )
 
 BOOST_FIXTURE_TEST_CASE_TEMPLATE( constructor_is_permutation_test, F, PermFixtures, F )
 {
-  //for (auto x : Plist) {
-  for (auto it = F::Plist.begin(); it != F::Plist.end(); ++it) {
-    auto x = *it;
-    BOOST_CHECK_PREDICATE(F::is_perm, (x));
-  }
+  for (auto x : F::Plist) BOOST_CHECK_PREDICATE(F::is_perm, (x));
+
   // Default constructor doesn't initialize
   // BOOST_CHECK_PREDICATE(F::is_perm, (typename F::PermType()));
   BOOST_CHECK_PREDICATE(F::is_perm, (typename F::PermType({})));
@@ -330,15 +317,15 @@ BOOST_FIXTURE_TEST_CASE_TEMPLATE( constructor_is_permutation_test, F, PermFixtur
 
 BOOST_FIXTURE_TEST_CASE_TEMPLATE( operator_mult_coxeter_test, F, PermFixtures, F )
 {
-  for (uint64_t i=0; i<15; i++) {
+  for (uint64_t i=0; i < F::PermType::Size-1; i++) {
     auto si = F::PermType::elementary_transposition(i);
     BOOST_CHECK_NE(si, F::id);
     BOOST_CHECK_EQUAL(si * si, F::id);
-    if (i+1 < 15) {
+    if (i+1 < F::PermType::Size-1) {
       auto si1 = F::PermType::elementary_transposition(i+1);
       BOOST_CHECK_EQUAL(si * si1 * si, si1 * si * si1);
     }
-    for (uint64_t j=i+2; j<15; j++) {
+    for (uint64_t j=i+2; j < F::PermType::Size-1; j++) {
     auto sj = F::PermType::elementary_transposition(j);
     BOOST_CHECK_EQUAL(sj * si, si * sj);
     }
@@ -347,9 +334,7 @@ BOOST_FIXTURE_TEST_CASE_TEMPLATE( operator_mult_coxeter_test, F, PermFixtures, F
 
 BOOST_FIXTURE_TEST_CASE_TEMPLATE( operator_mult_test, F, PermFixtures, F )
 {
-  //for (auto x : Plist) {
-  for (auto it = F::Plist.begin(); it != F::Plist.end(); ++it) {
-    auto x = *it;
+  for (auto x : F::Plist) {
     BOOST_CHECK_EQUAL(F::id * x, x);
     BOOST_CHECK_EQUAL(x * F::id, x);
   }
