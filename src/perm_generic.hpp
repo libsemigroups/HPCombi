@@ -29,61 +29,61 @@ template < size_t _Size, typename Expo=uint8_t >
 struct VectGeneric {
 
   static const constexpr size_t Size = _Size;
-  std::array<Expo, Size> p;
+  std::array<Expo, Size> v;
 
-  Expo operator[](uint64_t i) const { return p[i]; }
-  Expo &operator[](uint64_t i) { return p[i]; }
+  Expo operator[](uint64_t i) const { return v[i]; }
+  Expo &operator[](uint64_t i) { return v[i]; }
 
-  inline uint64_t first_diff(const VectGeneric &b, size_t bound = Size) const {
-    for (uint64_t i=0; i<bound; i++) if (p[i] != b[i]) return i;
+  inline uint64_t first_diff(const VectGeneric &u, size_t bound = Size) const {
+    for (uint64_t i=0; i<bound; i++) if (v[i] != u[i]) return i;
     return Size;
   }
 
-  bool operator==(const VectGeneric &b) const {
-    return first_diff(b) == Size;
+  bool operator==(const VectGeneric &u) const {
+    return first_diff(u) == Size;
   }
-  bool operator!=(const VectGeneric &b) const {
-    return first_diff(b) != Size;
-  }
-
-  bool operator < (const VectGeneric &b) const {
-    uint64_t diff = first_diff(b);
-    return (diff != Size) and p[diff] < b[diff];
+  bool operator!=(const VectGeneric &u) const {
+    return first_diff(u) != Size;
   }
 
-  char less_partial(const VectGeneric &b, int k) const {
-    uint64_t diff = first_diff(b, k);
-    return (diff == Size) ? 0 : char(p[diff]) - char(b[diff]);
+  bool operator < (const VectGeneric &u) const {
+    uint64_t diff = first_diff(u);
+    return (diff != Size) and v[diff] < u[diff];
   }
 
-  VectGeneric permuted(const VectGeneric &other) const {
+  char less_partial(const VectGeneric &u, int k) const {
+    uint64_t diff = first_diff(u, k);
+    return (diff == Size) ? 0 : char(v[diff]) - char(u[diff]);
+  }
+
+  VectGeneric permuted(const VectGeneric &u) const {
     VectGeneric res;
-    for (uint64_t i=0; i<Size; i++) res.p[i] = p[other[i]];
+    for (uint64_t i=0; i<Size; i++) res[i] = v[u[i]];
     return res;
   };
 
   uint64_t first_non_zero(size_t bound=Size) const {
-    for (uint64_t i=0; i<bound; i++) if (p[i] != 0) return i;
+    for (uint64_t i=0; i<bound; i++) if (v[i] != 0) return i;
     return Size;
   }
   uint64_t first_zero(size_t  bound=Size) const {
-    for (uint64_t i=0; i<bound; i++) if (p[i] == 0) return i;
+    for (uint64_t i=0; i<bound; i++) if (v[i] == 0) return i;
     return Size;
   }
   uint64_t last_non_zero(size_t  bound=16) const {
-    for (int64_t i=bound-1; i >= 0; i--) if (p[i] != 0) return i;
+    for (int64_t i=bound-1; i >= 0; i--) if (v[i] != 0) return i;
     return Size;
   }
   uint64_t last_zero(size_t  bound=16) const {
-    for (int64_t i=bound-1; i >= 0; i--) if (p[i] == 0) return i;
+    for (int64_t i=bound-1; i >= 0; i--) if (v[i] == 0) return i;
     return Size;
   }
 
   bool is_permutation(const size_t k = Size) const {
-    auto temp = this->p;
+    auto temp = v;
     std::sort(temp.begin(), temp.end());
     for (uint64_t i=0; i<Size; i++) if (temp[i] != i) return false;
-    for (uint64_t i=k; i<Size; i++) if (p[i] != i) return false;
+    for (uint64_t i=k; i<Size; i++) if (v[i] != i) return false;
     return true;
   }
 };
@@ -108,21 +108,33 @@ struct PermGeneric : public VectGeneric<_Size, Expo> {
 
   using vect = VectGeneric<_Size, Expo>;
 
-  PermGeneric() { for (uint64_t i=0; i < _Size; i++) this->p[i] = i; };
-  PermGeneric(const vect v) : vect(v) {};
+  PermGeneric() = default;
+  // PermGeneric() { for (uint64_t i=0; i < _Size; i++) this->v[i] = i; };
+  PermGeneric(const vect u) : vect(u) {};
   PermGeneric(std::initializer_list<Expo> il) {
     assert (il.size() <= vect::Size);
-    std::copy(il.begin(), il.end(), this->p.begin());
-    for (uint64_t i = il.size(); i < vect::Size; i++) this->p[i] = i;
+    std::copy(il.begin(), il.end(), this->v.begin());
+    for (uint64_t i = il.size(); i < vect::Size; i++) this->v[i] = i;
   }
 
   PermGeneric operator*(const PermGeneric&p) const { return this->permuted(p); }
-  static PermGeneric one() { return {}; }
+  static PermGeneric one() { return PermGeneric({}); }
   static PermGeneric elementary_transposition(uint64_t i) {
     assert (i < vect::Size);
-    PermGeneric res {}; res[i]=i+1; res[i+1]=i; return res; }
+    PermGeneric res {{}}; res[i]=i+1; res[i+1]=i; return res; }
 
 };
+
+/*****************************************************************************/
+/** Memory layout concepts check  ********************************************/
+/*****************************************************************************/
+
+static_assert(sizeof(VectGeneric<12>) == sizeof(PermGeneric<12>),
+              "VectGeneric and PermGeneric have a different memory layout !");
+static_assert(std::is_trivial< VectGeneric<12> >(),
+              "VectGeneric is not a a trivial class !");
+static_assert(std::is_trivial< PermGeneric<12> >(),
+              "PermGeneric is not trivial !");
 
 }   //  namespace HPCombi
 

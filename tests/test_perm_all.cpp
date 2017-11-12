@@ -49,16 +49,18 @@ struct Fixture : public IsPermFunctions<typename PermType::vect> {
   using VectType = typename PermType::vect;
   Fixture() : zero({0}), P01({0,1}), P10({1,0}), P11({1,1}),
 	      P1( { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}),
-	      PPa(completePerm({ 1, 2, 3, 4, 0, 5, 6, 7, 8, 9,10,11,12,13,14,15})),
-	      PPb(completePerm({ 1, 2, 3, 6, 0, 5, 6, 7, 8, 9,10,11,12,13,14,15})),
+	      PPa({ 1, 2, 3, 4, 0, 5, 6, 7, 8, 9,10,11,12,13,14,15}),
+	      PPb({ 1, 2, 3, 6, 0, 5, 6, 7, 8, 9,10,11,12,13,14,15}),
 	      czero(zero), cP01 (P01),
-	      RandPerm(completePerm({3,1,0,14,15,13,5,10,2,11,6,12,7,4,8,9})),
+	      RandPerm({3,1,0,14,15,13,5,10,2,11,6,12,7,4,8,9}),
 	      Plist({zero, P01, P10, P11, P1, PPa, PPb, RandPerm})
   { BOOST_TEST_MESSAGE( "setup fixture" ); }
   ~Fixture()         { BOOST_TEST_MESSAGE( "teardown fixture" ); }
 
-  VectType zero, P01, P10, P11, P1, PPa, PPb;
-  const VectType czero, cP01, RandPerm;
+  VectType zero, P01, P10, P11, P1;
+  PermType PPa, PPb;
+  const VectType czero, cP01;
+  const PermType RandPerm;
   const std::vector<PermType> Plist;
 
   static VectType complete(VectType v, int k) {
