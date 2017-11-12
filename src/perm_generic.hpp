@@ -150,7 +150,6 @@ static_assert(std::is_trivial< PermGeneric<12> >(),
 
 namespace std {
 
-  template<>
   template < size_t Size, typename Expo >
   struct hash< HPCombi::VectGeneric<Size,Expo> > {
     size_t operator () (const HPCombi::VectGeneric<Size,Expo> &ar) const {
