@@ -77,7 +77,7 @@ constexpr const std::array<epu8, 4> Vect16::summing_rounds = {{
 
 Perm16 Perm16::elementary_transposition(uint64_t i) {
   assert(i < vect::Size);
-  Perm16 res {}; res[i] = i+1; res[i+1] = i; return res;
+  Perm16 res = one(); res[i] = i+1; res[i+1] = i; return res;
 }
 
 Perm16 Perm16::random() {

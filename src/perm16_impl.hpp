@@ -78,16 +78,16 @@ inline uint8_t Vect16::sum_ref() const {
 
 inline uint8_t Vect16::sum4() const {
   Vect16 res = *this;
-  for (Vect16 round : Vect16::summing_rounds)
+  for (Vect16 round : summing_rounds)
     res.v += res.permuted(round).v;
   return res.v[0];
 }
 
 inline uint8_t Vect16::sum3() const {
   Vect16 res = *this;
-  res.v += res.permuted(Vect16::summing_rounds[0]).v;
-  res.v += res.permuted(Vect16::summing_rounds[1]).v;
-  res.v += res.permuted(Vect16::summing_rounds[2]).v;
+  res.v += res.permuted(summing_rounds[0]).v;
+  res.v += res.permuted(summing_rounds[1]).v;
+  res.v += res.permuted(summing_rounds[2]).v;
   return res.v[0]+res.v[8];
 }
 
@@ -137,10 +137,7 @@ inline bool Vect16::is_permutation(const size_t k) const {
     (diff == Size || diff < k);
 }
 
-static_assert(sizeof(Vect16) == sizeof(Perm16),
-              "Vect16 and Perm16 have a different memory layout !");
-
-const uint64_t prime = 0x9e3779b97f4a7bb9;
+constexpr const uint64_t prime = 0x9e3779b97f4a7bb9;
 
 inline Vect16 Vect16::sorted() const {
   Vect16 res = *this;
@@ -172,14 +169,14 @@ inline Vect16 Vect16::revsorted() const {
 
 
 inline Perm16::Perm16(std::initializer_list<uint8_t> il) {
-  assert(il.size() <= vect::Size);
+  assert(il.size() <= Size);
   std::copy(il.begin(), il.end(), begin());
-  for (uint64_t i = il.size(); i < vect::Size; ++i) v[i] = i;
+  for (uint64_t i = il.size(); i < Size; ++i) v[i] = i;
 }
 
 inline Perm16 Perm16::inverse_ref() const {
-  Perm16 res;
-  for (uint64_t i = 0; i < vect::Size; ++i) res.v[v[i]] = i;
+  Vect16 res;
+  for (uint64_t i = 0; i < Size; ++i) res.v[v[i]] = i;
   return res;
 }
 
@@ -193,14 +190,15 @@ inline Perm16 Perm16::inverse_sort() const {
 }
 
 inline Perm16 Perm16::inverse_find() const {
-  Perm16 res, s = *this;
+  Perm16 s = *this;
+  Vect16 res;
   res.v = -static_cast<epu8>(
-    _mm_cmpestrm(s.v, 8, Perm16::one(), 16, FIND_IN_PERM));
+    _mm_cmpestrm(s.v, 8, one(), 16, FIND_IN_PERM));
   for (Perm16 round : inverting_rounds) {
     s = s * round;
     res.v <<= 1;
     res.v -= static_cast<epu8>(
-      _mm_cmpestrm(s.v, 8, Perm16::one(), 16, FIND_IN_PERM));
+      _mm_cmpestrm(s.v, 8, one(), 16, FIND_IN_PERM));
   }
   return res;
 }
@@ -211,7 +209,7 @@ namespace power_helper {
 using Perm16 = Perm16;
 
 template <> struct Monoid<Perm16> {
-  static constexpr const Perm16 one {};
+  static constexpr const Perm16 one = Perm16::one();
   static Perm16 prod(Perm16 a, Perm16 b) { return a * b; }
 };
 
@@ -219,7 +217,7 @@ template <> struct Monoid<Perm16> {
 
 
 inline Perm16 Perm16::inverse_cycl() const {
-  Perm16 res;
+  Perm16 res = one();
   Perm16 newpow = pow<8>(*this);
   for (int i=9; i <= 16; i++) {
     Perm16 oldpow = newpow;
@@ -242,7 +240,7 @@ inline Perm16 Perm16::inverse_pow() const {
 }
 
 inline Vect16 Perm16::lehmer_ref() const {
-  Vect16 res = {{}};
+  Vect16 res;
   for (int i=0; i < 16; i++)
     for (int j=i+1; j < 16; j++)
       if (v[i] > v[j]) res[i]++;
@@ -250,9 +248,9 @@ inline Vect16 Perm16::lehmer_ref() const {
 }
 
 inline Vect16 Perm16::lehmer() const {
-  Vect16 vsh = *this, res = -Perm16::one().v;
+  Vect16 vsh = *this, res = -one().v;
   for (int i=1; i < 16; i++) {
-    vsh = vsh.permuted(Perm16::left_shift_ff());
+    vsh = vsh.permuted(left_shift_ff());
     res.v -= (v >= vsh.v);
   }
   return res;
@@ -276,7 +274,7 @@ inline uint8_t Perm16::nb_descent_ref() const {
   return res;
 }
 inline uint8_t Perm16::nb_descent() const {
-  Perm16 pdec = permuted(Perm16::left_shift());
+  Perm16 pdec = permuted(left_shift());
   pdec = (v > pdec.v);
   return _mm_popcnt_u32(_mm_movemask_epi8(pdec));
 }
@@ -294,7 +292,7 @@ inline uint8_t Perm16::nb_cycles_ref() const {
 }
 
 inline Vect16 Perm16::cycles_mask_unroll() const {
-  Vect16 x0, x1 = Perm16::one();
+  Vect16 x0, x1 = one();
   Perm16 p = *this;
   x0 = _mm_min_epi8(x1, x1.permuted(p));
   p = p*p;
@@ -307,7 +305,7 @@ inline Vect16 Perm16::cycles_mask_unroll() const {
 }
 
 inline uint8_t Perm16::nb_cycles_unroll() const {
-  Vect16 res = Perm16::one().v == cycles_mask_unroll().v;
+  Vect16 res = one().v == cycles_mask_unroll().v;
   return _mm_popcnt_u32(_mm_movemask_epi8(res));
 }
 

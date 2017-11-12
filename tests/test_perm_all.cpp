@@ -318,7 +318,9 @@ BOOST_FIXTURE_TEST_CASE_TEMPLATE( constructor_is_permutation_test, F, PermFixtur
     auto x = *it;
     BOOST_CHECK_PREDICATE(F::is_perm, (x));
   }
-  BOOST_CHECK_PREDICATE(F::is_perm, (typename F::PermType()));
+  // Default constructor doesn't initialize
+  // BOOST_CHECK_PREDICATE(F::is_perm, (typename F::PermType()));
+  BOOST_CHECK_PREDICATE(F::is_perm, (typename F::PermType({})));
   BOOST_CHECK_PREDICATE(F::is_perm, (typename F::PermType({1,0})));
   BOOST_CHECK_PREDICATE(F::is_perm, (typename F::PermType({1,2,0})));
   BOOST_CHECK_PREDICATE(F::is_not_perm, (typename F::PermType({1,2})));

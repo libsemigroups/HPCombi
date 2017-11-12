@@ -42,8 +42,9 @@ struct alignas(16) Vect16 {
   // But result in Non POD
   // constexpr Vect16(const Vect16 &x) : v(x.v) {}
   // Vect16 & operator=(const Vect16 &x) {v = x.v; return *this;}
+  Vect16 & operator=(const Vect16 &) = default;
   Vect16 & operator=(const epu8 &vv) {v = vv; return *this;}
-
+ 
   std::array<uint8_t, 16> &as_array() {
     return reinterpret_cast<std::array<unsigned char, 16>&>(v); }
   const std::array<uint8_t, 16> &as_array() const {
@@ -98,7 +99,8 @@ std::ostream & operator<<(std::ostream & stream, const Vect16 &term);
 struct Perm16 : public Vect16 {
   using vect = Vect16;
 
-  constexpr Perm16() : Vect16(epu8 {0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15}) {};
+  Perm16() = default;
+  // constexpr Perm16() : Vect16(epu8 {0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15}) {};
   constexpr Perm16(const vect v) : vect(v) {}
   constexpr Perm16(const epu8 x) : vect(x) {}
   Perm16(std::initializer_list<uint8_t> il);
@@ -154,7 +156,9 @@ struct Perm16 : public Vect16 {
   // It's not possible to have a static constexpr member of same type as class
   // being defined (see https://stackoverflow.com/questions/11928089/)
   // therefore we chose to have functions.
-  static const constexpr Perm16 one() { return {}; }
+  static const constexpr Perm16 one() {
+    return epu8 {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15};
+  }
   static const constexpr Perm16 left_cycle() {
     return epu8 {15, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14};
   }
@@ -188,6 +192,18 @@ struct Perm16 : public Vect16 {
  private:
   static const std::array<Perm16, 3> inverting_rounds;
 };
+
+
+/*****************************************************************************/
+/** Memory layout concepts check  ********************************************/
+/*****************************************************************************/
+
+static_assert(sizeof(Vect16) == sizeof(Perm16),
+              "Vect16 and Perm16 have a different memory layout !");
+static_assert(std::is_trivial<Vect16>(),
+              "Vect16 is not a a trivial class !");
+static_assert(std::is_trivial<Perm16>(),
+              "Perm16 is not trivial !");
 
 }  // namespace HPCombi
 
