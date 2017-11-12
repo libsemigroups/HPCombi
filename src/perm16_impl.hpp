@@ -26,7 +26,7 @@ namespace HPCombi {
 inline Vect16::Vect16(std::initializer_list<uint8_t> il, uint8_t def) {
   assert(il.size() <= Size);
   std::copy(il.begin(), il.end(), begin());
-  for (uint64_t i = il.size(); i < Size; ++i) v[i] = def;
+  for (size_t i = il.size(); i < Size; ++i) v[i] = def;
 }
 
 // Comparison mode for _mm_cmpestri
@@ -72,7 +72,7 @@ inline Vect16 Vect16::permuted(const Vect16 &other) const {
 
 inline uint8_t Vect16::sum_ref() const {
   uint8_t res = 0;
-  for (int i = 0; i < 16; i++) res+=v[i];
+  for (size_t i = 0; i < Size; i++) res += v[i];
   return res;
 }
 
@@ -93,15 +93,15 @@ inline uint8_t Vect16::sum3() const {
 
 inline Vect16 Vect16::eval16_ref() const {
   Vect16 res;
-  for (int i = 0; i < 16; i++)
-    if (v[i] < 16) res[v[i]]++;
+  for (size_t i = 0; i < Size; i++)
+    if (v[i] < Size) res[v[i]]++;
   return res;
 }
 
 inline Vect16 Vect16::eval16_vect() const {
   Vect16 res, vp = v;
   res.v = -(Perm16::one().v == vp.v);
-  for (int i = 0; i < 15; i++) {
+  for (int i = 1; i < 16; i++) {
     vp = vp.permuted(Perm16::left_cycle());
     res.v -= (Perm16::one().v == vp.v);
   }
@@ -171,12 +171,12 @@ inline Vect16 Vect16::revsorted() const {
 inline Perm16::Perm16(std::initializer_list<uint8_t> il) {
   assert(il.size() <= Size);
   std::copy(il.begin(), il.end(), begin());
-  for (uint64_t i = il.size(); i < Size; ++i) v[i] = i;
+  for (size_t i = il.size(); i < Size; ++i) v[i] = i;
 }
 
 inline Perm16 Perm16::inverse_ref() const {
   Vect16 res;
-  for (uint64_t i = 0; i < Size; ++i) res.v[v[i]] = i;
+  for (size_t i = 0; i < Size; ++i) res.v[v[i]] = i;
   return res;
 }
 
@@ -241,8 +241,8 @@ inline Perm16 Perm16::inverse_pow() const {
 
 inline Vect16 Perm16::lehmer_ref() const {
   Vect16 res;
-  for (int i=0; i < 16; i++)
-    for (int j=i+1; j < 16; j++)
+  for (size_t i=0; i < Size; i++)
+    for (size_t j=i+1; j < Size; j++)
       if (v[i] > v[j]) res[i]++;
   return res;
 }
@@ -258,8 +258,8 @@ inline Vect16 Perm16::lehmer() const {
 
 inline uint8_t Perm16::length_ref() const {
   uint8_t res = 0;
-  for (int i=0; i < 16; i++)
-    for (int j=i+1; j < 16; j++)
+  for (size_t i=0; i < Size; i++)
+    for (size_t j=i+1; j < Size; j++)
       if (v[i] > v[j]) res++;
   return res;
 }
@@ -269,7 +269,7 @@ inline uint8_t Perm16::length() const {
 
 inline uint8_t Perm16::nb_descent_ref() const {
   uint8_t res = 0;
-  for (int i=0; i < 15; i++)
+  for (size_t i=0; i < Size-1; i++)
     if (v[i] > v[i+1]) res++;
   return res;
 }
@@ -281,10 +281,10 @@ inline uint8_t Perm16::nb_descent() const {
 
 inline uint8_t Perm16::nb_cycles_ref() const {
   Vect16 b {};
-  int i, j, c = 0;
-  for (i = 0; i < 16; i++) {
+  uint8_t c = 0;
+  for (size_t i = 0; i < Size; i++) {
     if (b[i] == 0) {
-      for (j=i; b[j] == 0; j = v[j]) b[j] = 1;
+      for (size_t j=i; b[j] == 0; j = v[j]) b[j] = 1;
       c++;
     }
   }
