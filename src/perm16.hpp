@@ -16,25 +16,24 @@
 #ifndef HPCOMBI_PERM16_HPP_INCLUDED
 #define HPCOMBI_PERM16_HPP_INCLUDED
 
-#include <x86intrin.h>
+#include <array>
 #include <cassert>
 #include <cstdint>
-#include <array>
-#include <ostream>
 #include <functional>  // less<>
+#include <ostream>
+#include <x86intrin.h>
 
 namespace HPCombi {
 
-using epu8 = uint8_t __attribute__ ((vector_size (16)));
+using epu8 = uint8_t __attribute__((vector_size(16)));
 
-template<class Function, std::size_t... Indices>
+template <class Function, std::size_t... Indices>
 constexpr epu8 make_epu8_helper(Function f, std::index_sequence<Indices...>) {
-    return epu8 { f(Indices)... };
+  return epu8{f(Indices)...};
 }
 
-template<class Function>
-constexpr epu8 make_epu8(Function f) {
-    return make_epu8_helper(f, std::make_index_sequence<16>{});
+template <class Function> constexpr epu8 make_epu8(Function f) {
+  return make_epu8_helper(f, std::make_index_sequence<16>{});
 }
 
 // Forward declaration
@@ -53,19 +52,24 @@ struct alignas(16) Vect16 {
   // But result in Non POD
   // constexpr Vect16(const Vect16 &x) : v(x.v) {}
   // Vect16 & operator=(const Vect16 &x) {v = x.v; return *this;}
-  Vect16 & operator=(const Vect16 &) = default;
-  Vect16 & operator=(const epu8 &vv) {v = vv; return *this;}
+  Vect16 &operator=(const Vect16 &) = default;
+  Vect16 &operator=(const epu8 &vv) {
+    v = vv;
+    return *this;
+  }
 
   std::array<uint8_t, 16> &as_array() {
-    return reinterpret_cast<std::array<unsigned char, 16>&>(v); }
+    return reinterpret_cast<std::array<unsigned char, 16> &>(v);
+  }
   const std::array<uint8_t, 16> &as_array() const {
-    return reinterpret_cast<const std::array<unsigned char, 16>&>(v); }
+    return reinterpret_cast<const std::array<unsigned char, 16> &>(v);
+  }
 
   // The following two functions are refused by clang++
   // const uint8_t & operator[](uint64_t i) const { return v[i]; }
   // uint8_t & operator[](uint64_t i) { return v[i]; }
-  const uint8_t & operator[](uint64_t i) const { return as_array()[i]; }
-  uint8_t & operator[](uint64_t i) { return as_array()[i]; }
+  const uint8_t &operator[](uint64_t i) const { return as_array()[i]; }
+  uint8_t &operator[](uint64_t i) { return as_array()[i]; }
 
   auto begin() { return as_array().begin(); }
   auto end() { return as_array().end(); }
@@ -102,24 +106,24 @@ struct alignas(16) Vect16 {
 
   static Vect16 random(uint16_t bnd = 256);
 
- private:
+private:
   static const std::array<Perm16, 9> sorting_rounds;
   static const std::array<epu8, 4> summing_rounds;
 };
 
-
-std::ostream & operator<<(std::ostream & stream, const Vect16 &term);
+std::ostream &operator<<(std::ostream &stream, const Vect16 &term);
 
 struct Perm16 : public Vect16 {
   using vect = Vect16;
 
   Perm16() = default;
-  // constexpr Perm16() : Vect16(epu8 {0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15}) {};
+  // constexpr Perm16() : Vect16(epu8 {0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15})
+  // {};
   constexpr Perm16(const vect v) : vect(v) {}
   constexpr Perm16(const epu8 x) : vect(x) {}
   Perm16(std::initializer_list<uint8_t> il);
 
-  Perm16 inline operator*(const Perm16&p) const { return permuted(p); }
+  Perm16 inline operator*(const Perm16 &p) const { return permuted(p); }
 
   /** @class common_inverse
    * @brief The inverse permutation
@@ -180,7 +184,8 @@ struct Perm16 : public Vect16 {
   static constexpr Perm16 right_cycle() { return make_epu8(make_right_cycle); }
   static constexpr Perm16 left_shift() { return make_epu8(make_left_shift); }
   static constexpr Perm16 left_shift_ff() {
-    return make_epu8(make_left_shift_ff); }
+    return make_epu8(make_left_shift_ff);
+  }
 
   inline static Perm16 elementary_transposition(uint64_t i);
   static Perm16 random();
@@ -199,19 +204,19 @@ struct Perm16 : public Vect16 {
   inline uint8_t nb_cycles_unroll() const;
   inline uint8_t nb_cycles() const { return nb_cycles_unroll(); }
 
- private:
+private:
   static const std::array<Perm16, 3> inverting_rounds;
 
   static constexpr uint8_t make_one(uint8_t i) { return i; }
   static constexpr uint8_t make_left_cycle(uint8_t i) { return (i + 15) % 16; }
   static constexpr uint8_t make_right_cycle(uint8_t i) { return (i + 1) % 16; }
   static constexpr uint8_t make_left_shift_ff(uint8_t i) {
-    return i == 15 ? 0xff : i+1; }
+    return i == 15 ? 0xff : i + 1;
+  }
   static constexpr uint8_t make_left_shift(uint8_t i) {
-    return i == 15 ? 15 : i+1; }
-
+    return i == 15 ? 15 : i + 1;
+  }
 };
-
 
 /*****************************************************************************/
 /** Memory layout concepts check  ********************************************/
@@ -219,10 +224,8 @@ struct Perm16 : public Vect16 {
 
 static_assert(sizeof(Vect16) == sizeof(Perm16),
               "Vect16 and Perm16 have a different memory layout !");
-static_assert(std::is_trivial<Vect16>(),
-              "Vect16 is not a a trivial class !");
-static_assert(std::is_trivial<Perm16>(),
-              "Perm16 is not trivial !");
+static_assert(std::is_trivial<Vect16>(), "Vect16 is not a a trivial class !");
+static_assert(std::is_trivial<Perm16>(), "Perm16 is not trivial !");
 
 }  // namespace HPCombi
 
@@ -230,22 +233,20 @@ static_assert(std::is_trivial<Perm16>(),
 
 namespace std {
 
-template<>
-struct hash<HPCombi::Vect16> {
-  inline size_t operator () (const HPCombi::Vect16 &ar) const {
+template <> struct hash<HPCombi::Vect16> {
+  inline size_t operator()(const HPCombi::Vect16 &ar) const {
     __int128 v0 = _mm_extract_epi64(ar.v, 0);
     __int128 v1 = _mm_extract_epi64(ar.v, 1);
-    return ((v1*HPCombi::prime + v0)*HPCombi::prime) >> 64;
+    return ((v1 * HPCombi::prime + v0) * HPCombi::prime) >> 64;
   }
 };
 
-template<>
-struct less<HPCombi::Vect16> {
+template <> struct less<HPCombi::Vect16> {
   // WARNING: due to endianess this is not lexicographic comparison,
   //          but we don't care when using in std::set.
   // 10% faster than calling the lexicographic comparison operator !
-  inline size_t operator() (const HPCombi::Vect16 &v1,
-                            const HPCombi::Vect16 &v2) const {
+  inline size_t operator()(const HPCombi::Vect16 &v1,
+                           const HPCombi::Vect16 &v2) const {
     __m128 v1v = __m128(v1.v), v2v = __m128(v2.v);
     return v1v[0] == v2v[0] ? v1v[1] < v2v[1] : v1v[0] < v2v[0];
   }
@@ -253,4 +254,4 @@ struct less<HPCombi::Vect16> {
 
 }  // namespace std
 
-#endif   // HPCOMBI_PERM16_HPP_INCLUDED
+#endif  // HPCOMBI_PERM16_HPP_INCLUDED

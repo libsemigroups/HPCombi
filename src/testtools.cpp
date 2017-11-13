@@ -13,17 +13,18 @@
 //                  http://www.gnu.org/licenses/                              //
 //****************************************************************************//
 
-#include <iostream>
-#include <iomanip>
-#include <vector>
 #include "testtools.hpp"
+#include <iomanip>
+#include <iostream>
+#include <vector>
 
 namespace HPCombi {
 
 std::vector<Perm16> rand_perms(int sz) {
   std::vector<Perm16> res(sz);
   std::srand(std::time(0));
-  for (int i = 0; i < sz; i++) res[i] = Perm16::random();
+  for (int i = 0; i < sz; i++)
+    res[i] = Perm16::random();
   return res;
 }
 

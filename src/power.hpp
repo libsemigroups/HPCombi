@@ -38,10 +38,10 @@ namespace HPCombi {
 
 namespace power_helper {
 
-  // Forward declaration
-  template <typename T> struct Monoid;
+// Forward declaration
+template <typename T> struct Monoid;
 
-};
+};  // namespace power_helper
 
 /** A generic compile time squaring function
  *
@@ -53,8 +53,10 @@ namespace power_helper {
  *  default monoid structure can be defined for a given type by specializing
  *  the template struct #HPCombi::power_helper::Monoid
  */
-template<typename T, typename M = power_helper::Monoid<T> >
-constexpr T square(const T x) { return M::prod(x, x); }
+template <typename T, typename M = power_helper::Monoid<T>>
+constexpr T square(const T x) {
+  return M::prod(x, x);
+}
 
 /** A generic compile time exponentiation function
  *
@@ -72,39 +74,38 @@ constexpr T square(const T x) { return M::prod(x, x); }
  *  structure can be defined for a given type by specializing the template
  *  struct #HPCombi::power_helper::Monoid
  */
-template<unsigned exp, typename T, typename M = power_helper::Monoid<T> >
+template <unsigned exp, typename T, typename M = power_helper::Monoid<T>>
 constexpr T pow(const T x) {
-  return
-    (exp == 0) ? M::one :
-    (exp % 2 == 0) ? square<T, M>(pow<unsigned(exp/2), T, M>(x)) :
-    M::prod(x, square<T, M>(pow<unsigned(exp/2), T, M>(x)));
+  return (exp == 0)
+             ? M::one
+             : (exp % 2 == 0)
+                   ? square<T, M>(pow<unsigned(exp / 2), T, M>(x))
+                   : M::prod(x, square<T, M>(pow<unsigned(exp / 2), T, M>(x)));
 }
-
-
 
 namespace power_helper {
 
-  /** Algebraic monoid structure used by default for type T by the pow
-   *  function and prod function
-   *
-   *  @details A Monoid structure is required to define two static members
-   *  - #one : the unit of the monoid
-   *  - T #prod(T, T) : the product of two elements in the monoid
-   *
-   * By default for any type \c T, #one is constructed from the litteral 1 and
-   * #prod calls the operator *. One can change these default by specializing
-   * the template for some specific type \c T.
-   */
+/** Algebraic monoid structure used by default for type T by the pow
+ *  function and prod function
+ *
+ *  @details A Monoid structure is required to define two static members
+ *  - #one : the unit of the monoid
+ *  - T #prod(T, T) : the product of two elements in the monoid
+ *
+ * By default for any type \c T, #one is constructed from the litteral 1 and
+ * #prod calls the operator *. One can change these default by specializing
+ * the template for some specific type \c T.
+ */
 template <typename T> struct Monoid {
 
-/// The one of type T
+  /// The one of type T
   static constexpr T one = 1;
 
-/** the product of two elements of type T
- *  @param a the first element to be multiplied
- *  @param b the second element to be multiplied
- *  @return the product a * b
- */
+  /** the product of two elements of type T
+   *  @param a the first element to be multiplied
+   *  @param b the second element to be multiplied
+   *  @return the product a * b
+   */
   static constexpr T prod(T a, T b) { return a * b; }
 };
 

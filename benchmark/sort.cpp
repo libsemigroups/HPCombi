@@ -13,15 +13,15 @@
 //                  http://www.gnu.org/licenses/                              //
 //****************************************************************************//
 
-#include <x86intrin.h>
-#include <iostream>
-#include <iomanip>
-#include <chrono>
-#include <cstdlib>
-#include <cstdint>
-#include <array>
-#include <vector>
 #include <algorithm>
+#include <array>
+#include <chrono>
+#include <cstdint>
+#include <cstdlib>
+#include <iomanip>
+#include <iostream>
+#include <vector>
+#include <x86intrin.h>
 
 #include "perm16.hpp"
 #include "testtools.hpp"
@@ -30,9 +30,8 @@ using namespace std;
 using namespace std::chrono;
 using namespace HPCombi;
 
-
 // Sorting network Knuth AoCP3 Fig. 51 p 229.
-constexpr const array<epu8, 9> rounds =
+constexpr const array<epu8, 9> rounds =  // clang-format off
     //   0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15
     {{ { 1,  0,  3,  2,  5,  4,  7,  6,  9,  8, 11, 10, 13, 12, 15, 14},
        { 2,  3,  0,  1,  6,  7,  4,  5, 10, 11,  8,  9, 14, 15, 12, 13},
@@ -43,7 +42,7 @@ constexpr const array<epu8, 9> rounds =
        { 0,  1,  4,  5,  2,  3,  8,  9,  6,  7, 12, 13, 10, 11, 14, 15},
        { 0,  1,  2,  6,  4,  8,  3, 10,  5, 12,  7, 11,  9, 13, 14, 15},
        { 0,  1,  2,  4,  3,  6,  5,  8,  7, 10,  9, 12, 11, 13, 14, 15}
-       }};
+    }};  // clang-format on
 
 inline Vect16 sort(Vect16 a) {
   for (Perm16 round : rounds) {
@@ -80,13 +79,13 @@ inline Vect16 sort_pair(Vect16 a) {
 }
 
 inline Vect16 sort_odd_even(Vect16 a) {
-  constexpr uint8_t FF=0xff;
+  constexpr uint8_t FF = 0xff;
   static constexpr Perm16 even =
-    epu8 {1,0, 3,2, 5,4, 7,6, 9,8, 11,10, 13,12, 15,14};
+      epu8{1, 0, 3, 2, 5, 4, 7, 6, 9, 8, 11, 10, 13, 12, 15, 14};
   static constexpr Perm16 odd =
-    epu8 {0, 2,1, 4,3, 6,5, 8,7, 10,9, 12,11, 14,13, 15};
+      epu8{0, 2, 1, 4, 3, 6, 5, 8, 7, 10, 9, 12, 11, 14, 13, 15};
   static constexpr Perm16 mask =
-    epu8 {0,FF, 0,FF, 0,FF, 0,FF, 0,FF, 0,FF, 0,FF, 0,FF};
+      epu8{0, FF, 0, FF, 0, FF, 0, FF, 0, FF, 0, FF, 0, FF, 0, FF};
   Vect16 b, minab, maxab;
   for (unsigned i = 0; i < 8; ++i) {
     b = a.permuted(even);
@@ -103,17 +102,19 @@ inline Vect16 sort_odd_even(Vect16 a) {
 
 inline Perm16 insertion_sort(Perm16 a) {
   for (int i = 0; i < 16; i++)
-    for (int j = i; j > 0 && a[j] < a[j-1]; j--)
-      std::swap(a[j], a[j-1]);
+    for (int j = i; j > 0 && a[j] < a[j - 1]; j--)
+      std::swap(a[j], a[j - 1]);
   return a;
 }
 
 inline Perm16 radix_sort(Perm16 a) {
   Vect16 stat = {}, res;
-  for (int i = 0; i < 16; i++) stat[a[i]]++;
+  for (int i = 0; i < 16; i++)
+    stat[a[i]]++;
   int c = 0;
   for (int i = 0; i < 16; i++)
-    for (int j = 0; j < stat[i]; j++) res[c++]=i;
+    for (int j = 0; j < stat[i]; j++)
+      res[c++] = i;
   return res;
 }
 
@@ -122,42 +123,62 @@ int main() {
 
   for (Perm16 round : rounds) {
     assert(round.is_permutation());
-    assert(round*round == Perm16::one());
+    assert(round * round == Perm16::one());
   }
 
   auto vrand = rand_perms(1000);
   int rep = 10000;
   cout << "Std lib: ";
-  double reftime = timethat([vrand]() {
-      for (Perm16 v : vrand) {
-        std::sort(v.begin(), v.end());
-        assert(v == Perm16::one());
-      }
-    }, rep);
+  double reftime = timethat(
+      [vrand]() {
+        for (Perm16 v : vrand) {
+          std::sort(v.begin(), v.end());
+          assert(v == Perm16::one());
+        }
+      },
+      rep);
   cout << "Method : ";
-  timethat([vrand]() {
-      for (Perm16 v : vrand) assert(v.sorted() == Perm16::one());
-    }, rep, reftime);
+  timethat(
+      [vrand]() {
+        for (Perm16 v : vrand)
+          assert(v.sorted() == Perm16::one());
+      },
+      rep, reftime);
   cout << "Funct  : ";
-  timethat([vrand]() {
-      for (Perm16 v : vrand) assert(sort(v) == Perm16::one());
-    }, rep, reftime);
+  timethat(
+      [vrand]() {
+        for (Perm16 v : vrand)
+          assert(sort(v) == Perm16::one());
+      },
+      rep, reftime);
   cout << "Pair  : ";
-  timethat([vrand]() {
-      for (Perm16 v : vrand) assert(sort_pair(v) == Perm16::one());
-    }, rep, reftime);
+  timethat(
+      [vrand]() {
+        for (Perm16 v : vrand)
+          assert(sort_pair(v) == Perm16::one());
+      },
+      rep, reftime);
   cout << "OddEv : ";
-  timethat([vrand]() {
-      for (Perm16 v : vrand) assert(sort_odd_even(v) == Perm16::one());
-    }, rep, reftime);
+  timethat(
+      [vrand]() {
+        for (Perm16 v : vrand)
+          assert(sort_odd_even(v) == Perm16::one());
+      },
+      rep, reftime);
   cout << "Insert : ";
-  timethat([vrand]() {
-      for (Perm16 v : vrand) assert(insertion_sort(v) == Perm16::one());
-    }, rep, reftime);
+  timethat(
+      [vrand]() {
+        for (Perm16 v : vrand)
+          assert(insertion_sort(v) == Perm16::one());
+      },
+      rep, reftime);
   cout << "Radix16: ";
-  timethat([vrand]() {
-      for (Perm16 v : vrand) assert(radix_sort(v) == Perm16::one());
-    }, rep, reftime);
+  timethat(
+      [vrand]() {
+        for (Perm16 v : vrand)
+          assert(radix_sort(v) == Perm16::one());
+      },
+      rep, reftime);
 
   return EXIT_SUCCESS;
 }

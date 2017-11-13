@@ -13,10 +13,10 @@
 //                  http://www.gnu.org/licenses/                              //
 //****************************************************************************//
 
-#include <cstdlib>
-#include <iostream>
 #include "perm16.hpp"
 #include "testtools.hpp"
+#include <cstdlib>
+#include <iostream>
 
 using namespace std;
 using namespace HPCombi;
@@ -26,16 +26,25 @@ int main() {
   auto rep = 10000;
 
   cout << "Loop   : ";
-  double reftime = timethat([vrand]() {
-      for (Perm16 v : vrand) assert(v.sum_ref() == 120);
-    }, rep);
+  double reftime = timethat(
+      [vrand]() {
+        for (Perm16 v : vrand)
+          assert(v.sum_ref() == 120);
+      },
+      rep);
   cout << "4 rnds : ";
-  timethat([vrand]() {
-      for (Perm16 v : vrand) assert(v.sum4() == 120);
-    }, rep, reftime);
+  timethat(
+      [vrand]() {
+        for (Perm16 v : vrand)
+          assert(v.sum4() == 120);
+      },
+      rep, reftime);
   cout << "3 rnds : ";
-  timethat([vrand]() {
-      for (Perm16 v : vrand) assert(v.sum3() == 120);
-    }, rep, reftime);
+  timethat(
+      [vrand]() {
+        for (Perm16 v : vrand)
+          assert(v.sum3() == 120);
+      },
+      rep, reftime);
   return EXIT_SUCCESS;
 }

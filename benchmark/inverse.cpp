@@ -13,15 +13,15 @@
 //                  http://www.gnu.org/licenses/                              //
 //****************************************************************************//
 
-#include <x86intrin.h>
-#include <iostream>
-#include <iomanip>
-#include <chrono>
-#include <cstdlib>
-#include <cstdint>
-#include <array>
-#include <vector>
 #include <algorithm>
+#include <array>
+#include <chrono>
+#include <cstdint>
+#include <cstdlib>
+#include <iomanip>
+#include <iostream>
+#include <vector>
+#include <x86intrin.h>
 
 #include "perm16.hpp"
 #include "testtools.hpp"
@@ -30,20 +30,20 @@ using namespace std;
 using namespace std::chrono;
 using namespace HPCombi;
 
-
-template<typename Func>
-double timecheck(Func fun,
-                 const std::vector<Perm16> &sample,
-                 std::vector<Perm16> &ref,
-                 double reftime = 0) {
+template <typename Func>
+double timecheck(Func fun, const std::vector<Perm16> &sample,
+                 std::vector<Perm16> &ref, double reftime = 0) {
   std::vector<Perm16> cur(sample.size());
-  double time = timethat([&sample, &cur, fun]() {
-      std::transform(sample.begin(), sample.end(), cur.begin(),
-                     [fun](Perm16 p) -> Perm16 {
-                       for (int i=0; i < 100; i++) p = fun(p);
-                       return p;
-                     });
-    }, 100, reftime);
+  double time = timethat(
+      [&sample, &cur, fun]() {
+        std::transform(sample.begin(), sample.end(), cur.begin(),
+                       [fun](Perm16 p) -> Perm16 {
+                         for (int i = 0; i < 100; i++)
+                           p = fun(p);
+                         return p;
+                       });
+      },
+      100, reftime);
   if (ref.size() == 0)
     ref = std::move(cur);
   else
@@ -51,12 +51,10 @@ double timecheck(Func fun,
   return time;
 }
 
-
-
 int main() {
   std::srand(std::time(0));
 
-  Perm16 p = {  5,  4, 12, 15, 10,  8,  9,  2,  3, 13, 14,  0,  1,  7, 11,  6};
+  Perm16 p = {5, 4, 12, 15, 10, 8, 9, 2, 3, 13, 14, 0, 1, 7, 11, 6};
 
   p = Perm16::random();
 
@@ -72,13 +70,12 @@ int main() {
   assert(p * p.inverse_cycl() == Perm16::one());
   assert(p.inverse_cycl() * p == Perm16::one());
 
-
   uint_fast64_t sz = 10000;
   auto sample = rand_perms(sz);
   std::vector<Perm16> refres;
   cout << "Ref  : ";
-  double tmref = timecheck([](Perm16 p) { return p.inverse_ref(); },
-                    sample, refres);
+  double tmref =
+      timecheck([](Perm16 p) { return p.inverse_ref(); }, sample, refres);
   cout << "Arr  : ";
   timecheck([](Perm16 p) { return p.inverse_arr(); }, sample, refres, tmref);
   cout << "Sort : ";

@@ -1,9 +1,9 @@
-#include <x86intrin.h>
-#include <cassert>
 #include <algorithm>
 #include <array>
-#include <iostream>
+#include <cassert>
 #include <iomanip>
+#include <iostream>
+#include <x86intrin.h>
 
 using namespace std;
 
@@ -16,8 +16,7 @@ const int SZ = 32;
  * vecteur de 16 byte représentant une permutation
  * supporte les commandees vectorielles du processeur
  **/
-using perm = uint8_t __attribute__ ((vector_size (SZ), __may_alias__));
-
+using perm = uint8_t __attribute__((vector_size(SZ), __may_alias__));
 
 /**********************************************************************/
 /***************** Fonctions d'affichages *****************************/
@@ -26,12 +25,12 @@ using perm = uint8_t __attribute__ ((vector_size (SZ), __may_alias__));
 /** Affichage perm
  * Définition de l'opérateur d'affichage << pour le type perm
  **/
-ostream & operator<<(ostream & stream, perm const &p) {
-    stream << "[" << setw(2) << hex << unsigned(p[0]);
-    for (unsigned i=1; i < SZ; ++i)
-        stream << "," << setw(2) << hex << unsigned(p[i]) << dec;
-    stream << "]";
-    return stream;
+ostream &operator<<(ostream &stream, perm const &p) {
+  stream << "[" << setw(2) << hex << unsigned(p[0]);
+  for (unsigned i = 1; i < SZ; ++i)
+    stream << "," << setw(2) << hex << unsigned(p[i]) << dec;
+  stream << "]";
+  return stream;
 }
 
 /**********************************************************************/
@@ -39,14 +38,14 @@ ostream & operator<<(ostream & stream, perm const &p) {
 /**********************************************************************/
 
 /** Permutation identité **/
-const perm permid {0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15};
+const perm permid{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15};
 
 /** Permutation décalée d'un cran à gauche **/
-const perm decal {1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,15};
+const perm decal{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 15};
 
 int main() {
-  const perm v1 {2,1,  7,4,9,15,12,0,5,3,6,8,11,10,14,13};
-  const perm v2 {2,1,32,4,8,  1,12,0,4,4,4,4,41,10,14,13};
+  const perm v1{2, 1, 7, 4, 9, 15, 12, 0, 5, 3, 6, 8, 11, 10, 14, 13};
+  const perm v2{2, 1, 32, 4, 8, 1, 12, 0, 4, 4, 4, 4, 41, 10, 14, 13};
   perm v3;
   v3 = v2 == v1;
 
@@ -58,8 +57,8 @@ int main() {
   cout << int(v1[0]) << " " << int(v1[1]) << endl;
 
   long int b = _mm256_movemask_epi8(v3);
-  cout << "Application du masque : positions égales : " << hex << unsigned(b) << dec << endl;
+  cout << "Application du masque : positions égales : " << hex << unsigned(b)
+       << dec << endl;
   cout << "On compte les 1 avec une opération du processeur" << endl;
   cout << _mm_popcnt_u32(b) << endl;
 }
-

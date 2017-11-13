@@ -13,13 +13,13 @@
 //                  http://www.gnu.org/licenses/                              //
 //****************************************************************************//
 /** @file
- * @brief Example of how to use #HPCombi::pow with #HPCombi::power_helper::Monoid
+ * @brief Example of how to use #HPCombi::pow with
+ * #HPCombi::power_helper::Monoid
  */
 
+#include "power.hpp"
 #include <cassert>
 #include <string>
-#include "power.hpp"
-
 
 namespace HPCombi {
 namespace power_helper {
@@ -27,17 +27,15 @@ namespace power_helper {
 // Algebraic monoid for string with concatenation
 template <> struct Monoid<std::string> {
 
-// The one of the string monoid
-static std::string one;
+  // The one of the string monoid
+  static std::string one;
 
-/* The product of two strings that is their concatenation
- * @param a the first string to be concatenated
- * @param b the second string to be concatenated
- * @return the concatenation of \a a and \a b
- */
-inline static std::string prod(std::string a, std::string b) {
-  return a + b;
-}
+  /* The product of two strings that is their concatenation
+   * @param a the first string to be concatenated
+   * @param b the second string to be concatenated
+   * @return the concatenation of \a a and \a b
+   */
+  inline static std::string prod(std::string a, std::string b) { return a + b; }
 };
 
 using namespace std::string_literals;
