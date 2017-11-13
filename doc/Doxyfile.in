@@ -771,7 +771,8 @@ WARN_LOGFILE           =
 # spaces. See also FILE_PATTERNS and EXTENSION_MAPPING
 # Note: If this tag is empty the current directory is searched.
 
-INPUT = ${CMAKE_SOURCE_DIR}/src \
+INPUT = ${CMAKE_SOURCE_DIR}/include \
+        ${CMAKE_SOURCE_DIR}/src \
         ${CMAKE_SOURCE_DIR}/examples \
         ${CMAKE_SOURCE_DIR}/README.md
 

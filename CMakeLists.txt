@@ -18,6 +18,8 @@ add_subdirectory(examples)
 add_subdirectory(benchmark)
 add_subdirectory(doc)
 
+include_directories(include)
+
 add_subdirectory(tests)
 enable_testing ()
 add_test (NAME TestPerm16 COMMAND test_perm16)

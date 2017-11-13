@@ -1,3 +1,5 @@
+include_directories (${CMAKE_SOURCE_DIR}/include)
+
 add_library(perm16 SHARED perm16.cpp)
 add_library(testtools SHARED testtools.cpp)
 
