@@ -27,6 +27,18 @@ namespace HPCombi {
 
 using epu8 = uint8_t __attribute__ ((vector_size (16)));
 
+template<class Function, std::size_t... Indices>
+constexpr epu8 make_epu8_helper(Function f, std::index_sequence<Indices...>) {
+    return epu8 { f(Indices)... };
+}
+
+template<class Function>
+constexpr epu8 make_epu8(Function f) {
+    return make_epu8_helper(f, std::make_index_sequence<16>{});
+}
+
+// Forward declaration
+struct Perm16;
 
 struct alignas(16) Vect16 {
   static const constexpr size_t Size = 16;
@@ -35,7 +47,6 @@ struct alignas(16) Vect16 {
   Vect16() = default;
   constexpr Vect16(epu8 x) : v(x) {}
   Vect16(std::initializer_list<uint8_t> il, uint8_t def = 0);
-  constexpr operator epu8() { return v; }
   constexpr operator const epu8() const { return v; }
 
   // Overload the default copy constructor and operator= : 10% speedup
@@ -44,7 +55,7 @@ struct alignas(16) Vect16 {
   // Vect16 & operator=(const Vect16 &x) {v = x.v; return *this;}
   Vect16 & operator=(const Vect16 &) = default;
   Vect16 & operator=(const epu8 &vv) {v = vv; return *this;}
- 
+
   std::array<uint8_t, 16> &as_array() {
     return reinterpret_cast<std::array<unsigned char, 16>&>(v); }
   const std::array<uint8_t, 16> &as_array() const {
@@ -74,6 +85,9 @@ struct alignas(16) Vect16 {
   inline uint8_t sum3() const;
   inline uint8_t sum() const { return sum3(); }
 
+  inline Vect16 partial_sums_ref() const;
+  inline Vect16 partial_sums_round() const;
+
   template <char IDX_MODE> inline uint64_t search_index(int bound) const;
 
   inline uint64_t last_non_zero(int bnd = Size) const;
@@ -89,7 +103,7 @@ struct alignas(16) Vect16 {
   static Vect16 random(uint16_t bnd = 256);
 
  private:
-  static const std::array<epu8, 9> sorting_rounds;
+  static const std::array<Perm16, 9> sorting_rounds;
   static const std::array<epu8, 4> summing_rounds;
 };
 
@@ -125,6 +139,11 @@ struct Perm16 : public Vect16 {
   inline Perm16 inverse_ref() const;
   /** @copydoc common_inverse
    *  @par Algorithm:
+   *  @f$O(n)@f$ algorithm using reference cast to arrays
+   */
+  inline Perm16 inverse_arr() const;
+  /** @copydoc common_inverse
+   *  @par Algorithm:
    *  Insert the identity in the least significant bits and sort using a
    *  sorting network. The number of round of the optimal sorting network is
    *  as far as I know open, therefore, the complexity is unknown.
@@ -156,23 +175,14 @@ struct Perm16 : public Vect16 {
   // It's not possible to have a static constexpr member of same type as class
   // being defined (see https://stackoverflow.com/questions/11928089/)
   // therefore we chose to have functions.
-  static const constexpr Perm16 one() {
-    return epu8 {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15};
-  }
-  static const constexpr Perm16 left_cycle() {
-    return epu8 {15, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14};
-  }
-  static const constexpr Perm16 right_cycle() {
-    return epu8 {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 0};
-  }
-  static const constexpr Perm16 left_shift_ff() {
-    return epu8 {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 0xff};
-  }
-  static const constexpr Perm16 left_shift() {
-    return epu8 {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 15};
-  }
+  static constexpr Perm16 one() { return make_epu8(make_one); }
+  static constexpr Perm16 left_cycle() { return make_epu8(make_left_cycle); }
+  static constexpr Perm16 right_cycle() { return make_epu8(make_right_cycle); }
+  static constexpr Perm16 left_shift() { return make_epu8(make_left_shift); }
+  static constexpr Perm16 left_shift_ff() {
+    return make_epu8(make_left_shift_ff); }
 
-  static Perm16 elementary_transposition(uint64_t i);
+  inline static Perm16 elementary_transposition(uint64_t i);
   static Perm16 random();
   static Perm16 unrankSJT(int n, int r);
 
@@ -191,6 +201,15 @@ struct Perm16 : public Vect16 {
 
  private:
   static const std::array<Perm16, 3> inverting_rounds;
+
+  static constexpr uint8_t make_one(uint8_t i) { return i; }
+  static constexpr uint8_t make_left_cycle(uint8_t i) { return (i + 15) % 16; }
+  static constexpr uint8_t make_right_cycle(uint8_t i) { return (i + 1) % 16; }
+  static constexpr uint8_t make_left_shift_ff(uint8_t i) {
+    return i == 15 ? 0xff : i+1; }
+  static constexpr uint8_t make_left_shift(uint8_t i) {
+    return i == 15 ? 15 : i+1; }
+
 };
 
 

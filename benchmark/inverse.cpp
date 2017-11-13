@@ -79,6 +79,8 @@ int main() {
   cout << "Ref  : ";
   double tmref = timecheck([](Perm16 p) { return p.inverse_ref(); },
                     sample, refres);
+  cout << "Arr  : ";
+  timecheck([](Perm16 p) { return p.inverse_arr(); }, sample, refres, tmref);
   cout << "Sort : ";
   timecheck([](Perm16 p) { return p.inverse_sort(); }, sample, refres, tmref);
   cout << "Find : ";

@@ -45,7 +45,7 @@ Vect16 Vect16::random(uint16_t bnd) {
 }
 
 // Sorting network Knuth AoCP3 Fig. 51 p 229.
-constexpr const std::array<epu8, 9> Vect16::sorting_rounds = {{
+constexpr const std::array<Perm16, 9> Vect16::sorting_rounds = {{
     //     0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15
     epu8 { 1,  0,  3,  2,  5,  4,  7,  6,  9,  8, 11, 10, 13, 12, 15, 14},
     epu8 { 2,  3,  0,  1,  6,  7,  4,  5, 10, 11,  8,  9, 14, 15, 12, 13},
@@ -59,7 +59,7 @@ constexpr const std::array<epu8, 9> Vect16::sorting_rounds = {{
   }};
 
 // Gather at the front numbers with (3-i)-th bit not set.
-const std::array<Perm16, 3> Perm16::inverting_rounds = {{
+constexpr const std::array<Perm16, 3> Perm16::inverting_rounds = {{
     //     0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15
     epu8 { 0,  1,  2,  3,  8,  9, 10, 11,  4,  5,  6,  7, 12, 13, 14, 15},
     epu8 { 0,  1,  4,  5,  8,  9, 12, 13,  2,  3,  6,  7, 10, 11, 14, 15},
@@ -67,21 +67,17 @@ const std::array<Perm16, 3> Perm16::inverting_rounds = {{
   }};
 
 const uint8_t FF = 0xff;
+
 constexpr const std::array<epu8, 4> Vect16::summing_rounds = {{
-    //     0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15
-    epu8 { 1, FF,  3, FF,  5, FF,  7, FF,  9, FF, 11, FF, 13, FF, 15, FF},
-    epu8 { 2, FF, FF, FF,  6, FF, FF, FF, 10, FF, FF, FF, 14, FF, FF, FF},
-    epu8 { 4, FF, FF, FF, FF, FF, FF, FF, 12, FF, FF, FF, FF, FF, FF, FF},
-    epu8 { 8, FF, FF, FF, FF, FF, FF, FF, FF, FF, FF, FF, FF, FF, FF, FF}
+    //      0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15
+    epu8 { FF,  0, FF,  2, FF,  4, FF,  6, FF,  8, FF, 10, FF, 12, FF, 14},
+    epu8 { FF, FF,  1,  1, FF, FF,  5,  5, FF, FF,  9,  9, FF, FF, 13, 13},
+    epu8 { FF, FF, FF, FF,  3,  3,  3,  3, FF, FF, FF, FF, 11, 11, 11, 11},
+    epu8 { FF, FF, FF, FF, FF, FF, FF, FF,  7,  7,  7,  7,  7,  7,  7,  7}
   }};
 
-Perm16 Perm16::elementary_transposition(uint64_t i) {
-  assert(i < vect::Size);
-  Perm16 res = one(); res[i] = i+1; res[i+1] = i; return res;
-}
-
 Perm16 Perm16::random() {
-  Perm16 res {};
+  Perm16 res = one();
   std::random_shuffle(res.begin(), res.end());
   return res;
 }

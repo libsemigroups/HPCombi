@@ -18,8 +18,10 @@
 
 #include <chrono>
 #include <vector>
-#include "perm16.hpp"
+#include <iostream>
+#include <iomanip>
 
+#include "perm16.hpp"
 namespace HPCombi {
 
 constexpr unsigned int factorial(unsigned int n) {

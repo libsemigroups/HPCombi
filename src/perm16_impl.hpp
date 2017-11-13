@@ -26,7 +26,8 @@ namespace HPCombi {
 inline Vect16::Vect16(std::initializer_list<uint8_t> il, uint8_t def) {
   assert(il.size() <= Size);
   std::copy(il.begin(), il.end(), begin());
-  for (size_t i = il.size(); i < Size; ++i) v[i] = def;
+  auto &a = as_array();
+  for (size_t i = il.size(); i < Size; ++i) a[i] = def;
 }
 
 // Comparison mode for _mm_cmpestri
@@ -77,10 +78,7 @@ inline uint8_t Vect16::sum_ref() const {
 }
 
 inline uint8_t Vect16::sum4() const {
-  Vect16 res = *this;
-  for (Vect16 round : summing_rounds)
-    res.v += res.permuted(round).v;
-  return res.v[0];
+  return partial_sums_round()[15];
 }
 
 inline uint8_t Vect16::sum3() const {
@@ -88,8 +86,21 @@ inline uint8_t Vect16::sum3() const {
   res.v += res.permuted(summing_rounds[0]).v;
   res.v += res.permuted(summing_rounds[1]).v;
   res.v += res.permuted(summing_rounds[2]).v;
-  return res.v[0]+res.v[8];
+  return res.v[7]+res.v[15];
 }
+
+inline Vect16 Vect16::partial_sums_ref() const {
+  Vect16 res {};
+  res[0] = v[0];
+  for (size_t i = 1; i < Size; i++) res[i] = res[i-1] + v[i];
+  return res;
+}
+inline Vect16 Vect16::partial_sums_round() const {
+  Vect16 res = *this;
+  for (Vect16 round : summing_rounds) res.v += res.permuted(round).v;
+  return res;
+}
+
 
 inline Vect16 Vect16::eval16_ref() const {
   Vect16 res;
@@ -174,9 +185,22 @@ inline Perm16::Perm16(std::initializer_list<uint8_t> il) {
   for (size_t i = il.size(); i < Size; ++i) v[i] = i;
 }
 
+Perm16 Perm16::elementary_transposition(uint64_t i) {
+  assert(i < vect::Size);
+  Perm16 res = one(); res[i] = i+1; res[i+1] = i; return res;
+}
+
 inline Perm16 Perm16::inverse_ref() const {
   Vect16 res;
   for (size_t i = 0; i < Size; ++i) res.v[v[i]] = i;
+  return res;
+}
+
+inline Perm16 Perm16::inverse_arr() const {
+  Vect16 res;
+  auto &arres = res.as_array();
+  auto self = as_array();
+  for (size_t i = 0; i < Size; ++i) arres[self[i]] = i;
   return res;
 }
 
@@ -280,11 +304,11 @@ inline uint8_t Perm16::nb_descent() const {
 }
 
 inline uint8_t Perm16::nb_cycles_ref() const {
-  Vect16 b {};
+  std::array<bool, Size> b {};
   uint8_t c = 0;
   for (size_t i = 0; i < Size; i++) {
-    if (b[i] == 0) {
-      for (size_t j=i; b[j] == 0; j = v[j]) b[j] = 1;
+    if (not b[i]) {
+      for (size_t j=i; not b[j]; j = v[j]) b[j] = true;
       c++;
     }
   }
