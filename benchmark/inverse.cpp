@@ -56,7 +56,7 @@ int main() {
 
   // Perm16 p = {5, 4, 12, 15, 10, 8, 9, 2, 3, 13, 14, 0, 1, 7, 11, 6};
 
-  p = Perm16::random();
+  Perm16 p = Perm16::random();
 
   cout << p << endl << p.inverse_ref() << endl;
   cout << p.inverse_pow() << endl;
