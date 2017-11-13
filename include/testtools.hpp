@@ -13,8 +13,8 @@
 //                  http://www.gnu.org/licenses/                              //
 //****************************************************************************//
 
-#ifndef PERM16_TESTTOOLS_HPP_INCLUDED
-#define PERM16_TESTTOOLS_HPP_INCLUDED
+#ifndef HPCOMBI_TESTTOOLS_HPP_INCLUDED
+#define HPCOMBI_TESTTOOLS_HPP_INCLUDED
 
 #include <chrono>
 #include <iomanip>
@@ -51,4 +51,4 @@ double timethat(Func fun, int rep = 1, double reftime = 0) {
 }
 
 }  // namespace HPCombi
-#endif  // PERM16_TESTTOOLS_HPP_INCLUDED
+#endif  // HPCOMBI_TESTTOOLS_HPP_INCLUDED

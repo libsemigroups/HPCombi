@@ -86,12 +86,13 @@ Perm16 Perm16::random() {
 
 // From Ruskey : Combinatorial Generation page 138
 Perm16 Perm16::unrankSJT(int n, int r) {
-  int j, k, rem, c;
+  int j;
   std::array<int, 16> dir;
   Perm16 res{};
   for (j = 0; j < n; ++j)
     res[j] = 0xFF;
   for (j = n - 1; j >= 0; --j) {
+    int k, rem, c;
     rem = r % (j + 1);
     r = r / (j + 1);
     if ((r & 1) != 0) {

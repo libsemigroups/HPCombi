@@ -54,7 +54,7 @@ double timecheck(Func fun, const std::vector<Perm16> &sample,
 int main() {
   std::srand(std::time(0));
 
-  Perm16 p = {5, 4, 12, 15, 10, 8, 9, 2, 3, 13, 14, 0, 1, 7, 11, 6};
+  // Perm16 p = {5, 4, 12, 15, 10, 8, 9, 2, 3, 13, 14, 0, 1, 7, 11, 6};
 
   p = Perm16::random();
 
