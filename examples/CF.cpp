@@ -12,7 +12,7 @@ class EqEpu8 {
 
   const epu8 elem;
   const uint64_t size;
-  struct EqEpu8Iterator;
+  class EqEpu8Iterator;
 
 public:
 
