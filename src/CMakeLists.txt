@@ -6,12 +6,6 @@ add_library(testtools SHARED testtools.cpp)
 install (TARGETS testtools DESTINATION lib)
 install (TARGETS perm16 DESTINATION lib)
 
-file(
-	GLOB 
-	headers
-	*.hpp
-)
-
 target_compile_options(perm16 PUBLIC -std=c++14 -O3 -Wall -mavx -mtune=native -funroll-loops -flax-vector-conversions)
 target_compile_options(testtools PUBLIC -std=c++14 -O3 -Wall -mavx -mtune=native -funroll-loops -flax-vector-conversions)
 
