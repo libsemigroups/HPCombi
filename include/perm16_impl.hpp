@@ -179,7 +179,7 @@ inline Vect16 Vect16::revsorted() const {
   return res;
 }
 
-inline Perm16::Perm16(std::initializer_list<uint8_t> il) {
+inline PTransf16::PTransf16(std::initializer_list<uint8_t> il) {
   assert(il.size() <= Size);
   std::copy(il.begin(), il.end(), begin());
   for (size_t i = il.size(); i < Size; ++i)

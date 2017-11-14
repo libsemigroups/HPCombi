@@ -25,6 +25,16 @@
 
 namespace HPCombi {
 
+static constexpr uint8_t make_one(uint8_t i) { return i; }
+static constexpr uint8_t make_left_cycle(uint8_t i) { return (i + 15) % 16; }
+static constexpr uint8_t make_right_cycle(uint8_t i) { return (i + 1) % 16; }
+static constexpr uint8_t make_left_shift_ff(uint8_t i) {
+  return i == 15 ? 0xff : i + 1;
+}
+static constexpr uint8_t make_left_shift(uint8_t i) {
+  return i == 15 ? 15 : i + 1;
+}
+
 using epu8 = uint8_t __attribute__((vector_size(16)));
 
 template <class Function, std::size_t... Indices>
@@ -38,7 +48,13 @@ template <class Function> constexpr epu8 make_epu8(Function f) {
 
 // Forward declaration
 struct Perm16;
+struct PTransf16;
+struct Transf16;
 
+
+/** @brief A class for vector of 16 unsigned bytes
+ *
+ */
 struct alignas(16) Vect16 {
   static const constexpr size_t Size = 16;
   epu8 v;
@@ -58,9 +74,17 @@ struct alignas(16) Vect16 {
     return *this;
   }
 
+  /** Return self as an array (just a cast)
+   *
+   *  This is usually faster for algorithm using a lot of indexed acces.
+   */
   std::array<uint8_t, 16> &as_array() {
     return reinterpret_cast<std::array<unsigned char, 16> &>(v);
   }
+  /** Return self as a const array (just a cast)
+   *
+   *  This is usually faster for algorithm using a lot of indexed acces.
+   */
   const std::array<uint8_t, 16> &as_array() const {
     return reinterpret_cast<const std::array<unsigned char, 16> &>(v);
   }
@@ -113,15 +137,48 @@ private:
 
 std::ostream &operator<<(std::ostream &stream, const Vect16 &term);
 
-struct Perm16 : public Vect16 {
+
+/** Partial transformation of @f$\{0\dots 15\}@f$
+ *
+ */
+struct PTransf16 : public Vect16 {
   using vect = Vect16;
+
+  PTransf16() = default;
+  constexpr PTransf16(const vect v) : vect(v) {}
+  constexpr PTransf16(const epu8 x) : vect(x) {}
+  PTransf16(std::initializer_list<uint8_t> il);
+
+  static constexpr PTransf16 one() { return make_epu8(make_one); }
+  PTransf16 inline operator*(const PTransf16 &p) const {
+    return permuted(p).v | (v == 0xFF); }
+};
+
+/** Full transformation of @f$\{0\dots 15\}@f$
+ *
+ */
+struct Transf16 : public PTransf16 {
+
+  Transf16() = default;
+  constexpr Transf16(const vect v) : PTransf16(v) {}
+  constexpr Transf16(const epu8 x) : PTransf16(x) {}
+  Transf16(std::initializer_list<uint8_t> il) : PTransf16(il) {}
+
+  static constexpr Transf16 one() { return make_epu8(make_one); }
+  Transf16 inline operator*(const Transf16 &p) const { return permuted(p); }
+};
+
+/** Permutations of @f$\{0\dots 15\}@f$
+ *
+ */
+struct Perm16 : public Transf16 {
 
   Perm16() = default;
   // constexpr Perm16() : Vect16(epu8 {0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15})
   // {};
-  constexpr Perm16(const vect v) : vect(v) {}
-  constexpr Perm16(const epu8 x) : vect(x) {}
-  Perm16(std::initializer_list<uint8_t> il);
+  constexpr Perm16(const vect v) : Transf16(v) {}
+  constexpr Perm16(const epu8 x) : Transf16(x) {}
+  Perm16(std::initializer_list<uint8_t> il) : Transf16(il) {}
 
   Perm16 inline operator*(const Perm16 &p) const { return permuted(p); }
 
@@ -206,16 +263,6 @@ struct Perm16 : public Vect16 {
 
 private:
   static const std::array<Perm16, 3> inverting_rounds;
-
-  static constexpr uint8_t make_one(uint8_t i) { return i; }
-  static constexpr uint8_t make_left_cycle(uint8_t i) { return (i + 15) % 16; }
-  static constexpr uint8_t make_right_cycle(uint8_t i) { return (i + 1) % 16; }
-  static constexpr uint8_t make_left_shift_ff(uint8_t i) {
-    return i == 15 ? 0xff : i + 1;
-  }
-  static constexpr uint8_t make_left_shift(uint8_t i) {
-    return i == 15 ? 15 : i + 1;
-  }
 };
 
 /*****************************************************************************/
@@ -238,6 +285,18 @@ template <> struct hash<HPCombi::Vect16> {
     __int128 v0 = _mm_extract_epi64(ar.v, 0);
     __int128 v1 = _mm_extract_epi64(ar.v, 1);
     return ((v1 * HPCombi::prime + v0) * HPCombi::prime) >> 64;
+  }
+};
+
+template <> struct hash<HPCombi::PTransf16> {
+  inline size_t operator()(const HPCombi::PTransf16 &ar) const {
+    return hash<HPCombi::Vect16>()(ar);
+  }
+};
+
+template <> struct hash<HPCombi::Transf16> {
+  inline size_t operator()(const HPCombi::Transf16 &ar) const {
+    return hash<HPCombi::Vect16>()(ar);
   }
 };
 
