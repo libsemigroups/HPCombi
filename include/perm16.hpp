@@ -271,8 +271,8 @@ private:
 
 static_assert(sizeof(Vect16) == sizeof(Perm16),
               "Vect16 and Perm16 have a different memory layout !");
-static_assert(std::is_trivial<Vect16>(), "Vect16 is not a a trivial class !");
-static_assert(std::is_trivial<Perm16>(), "Perm16 is not trivial !");
+static_assert(std::is_trivial<Vect16>(), "Vect16 is not a trivial class !");
+static_assert(std::is_trivial<Perm16>(), "Perm16 is not a trivial class !");
 
 }  // namespace HPCombi
 

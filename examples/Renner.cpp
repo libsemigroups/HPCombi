@@ -28,61 +28,57 @@ std::ostream &operator<<(std::ostream &out, const std::vector<T> &v) {
 using namespace std;
 using namespace HPCombi;
 
-struct eqVect16 {
-  bool operator()(const Vect16 &s1, const Vect16 &s2) const { return s1 == s2; }
-};
-
-constexpr Vect16 id =
+constexpr PTransf16 id =
     epu8{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15};
 
-constexpr Vect16 s0 =
+constexpr PTransf16 s0 =
     epu8{0, 1, 2, 3, 4, 5, 6, 8, 7, 9, 10, 11, 12, 13, 14, 15};
 
-constexpr Vect16 s1e =
+constexpr PTransf16 s1e =
     epu8{0, 1, 2, 3, 4, 5, 7, 6, 9, 8, 10, 11, 12, 13, 14, 15};
-constexpr Vect16 s1f =
+constexpr PTransf16 s1f =
     epu8{0, 1, 2, 3, 4, 5, 8, 9, 6, 7, 10, 11, 12, 13, 14, 15};
 
-constexpr Vect16 s2 =
+constexpr PTransf16 s2 =
     epu8{0, 1, 2, 3, 4, 6, 5, 7, 8, 10, 9, 11, 12, 13, 14, 15};
-constexpr Vect16 s3 =
+constexpr PTransf16 s3 =
     epu8{0, 1, 2, 3, 5, 4, 6, 7, 8, 9, 11, 10, 12, 13, 14, 15};
-constexpr Vect16 s4 =
+constexpr PTransf16 s4 =
     epu8{0, 1, 2, 4, 3, 5, 6, 7, 8, 9, 10, 12, 11, 13, 14, 15};
-constexpr Vect16 s5 =
+constexpr PTransf16 s5 =
     epu8{0, 1, 3, 2, 4, 5, 6, 7, 8, 9, 10, 11, 13, 12, 14, 15};
-constexpr Vect16 s6 =
+constexpr PTransf16 s6 =
     epu8{0, 2, 1, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 14, 13, 15};
-constexpr Vect16 s7 =
+constexpr PTransf16 s7 =
     epu8{1, 0, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 15, 14};
 
 constexpr uint8_t FF = 0xff;
 constexpr uint8_t FE = 0xfe;
 
-constexpr Vect16 gene =
+constexpr PTransf16 gene =
     epu8{FF, FF, FF, FF, FF, FF, FF, FF, 8, 9, 10, 11, 12, 13, 14, 15};
-constexpr Vect16 genf =
+constexpr PTransf16 genf =
     epu8{FF, FF, FF, FF, FF, FF, FF, 7, FF, 9, 10, 11, 12, 13, 14, 15};
 
-// const vector<Vect16> gens {gene, genf, s1e, s1f};
-const vector<Vect16> gens{gene, genf, s1e, s1f, s2, s3, s4, s5};
+// const vector<PTransf16> gens {gene, genf, s1e, s1f};
+const vector<PTransf16> gens{gene, genf, s1e, s1f, s2, s3, s4, s5};
 const int nprint = 6;
-google::dense_hash_map<Vect16, std::pair<Vect16, int>, hash<Vect16>, eqVect16>
+google::dense_hash_map<PTransf16, std::pair<PTransf16, int>,
+                       hash<PTransf16>, equal_to<PTransf16>>
     elems;
 
-inline Vect16 act1(Vect16 x, Vect16 y) {
-  return static_cast<epu8>(_mm_shuffle_epi8(x, y)) | (y.v == FF);
-}
+inline PTransf16 act1(PTransf16 x, PTransf16 y) { return x * y; }
+inline PTransf16 mult1(PTransf16 x, PTransf16 y) { return x * y; }
 
-inline Vect16 act0(Vect16 x, Vect16 y) {
-  Vect16 minab, maxab, mask, b = x.permuted(y);
+inline PTransf16 act0(PTransf16 x, PTransf16 y) {
+  PTransf16 minab, maxab, mask, b = x.permuted(y);
   mask = _mm_cmplt_epi8(y, Perm16::one());
   minab = _mm_min_epi8(x, b);
   maxab = _mm_max_epi8(x, b);
   return static_cast<epu8>(_mm_blendv_epi8(maxab, minab, mask)) | (y.v == FF);
 }
 
-std::vector<int> reduced_word(Vect16 x) {
+std::vector<int> reduced_word(PTransf16 x) {
   std::vector<int> res{};
   while (x != id) {
     auto p = elems[x];
@@ -93,13 +89,13 @@ std::vector<int> reduced_word(Vect16 x) {
   return res;
 }
 
-inline Vect16 mult0(Vect16 x, Vect16 y) {
+inline PTransf16 mult0(PTransf16 x, PTransf16 y) {
   for (auto i : reduced_word(y))
     x = act0(x, gens[i]);
   return x;
 }
 
-std::vector<int> sym_renner(Vect16 v, int n) {
+std::vector<int> sym_renner(PTransf16 v, int n) {
   std::vector<int> res;
   for (int i = 8 - n; i < 8 + n; i++) {
     if (v[i] == 0xff)
@@ -126,14 +122,14 @@ int main() {
   cout << "Idemp : " << setw(3) << nidemp << " " << sym_renner(id, nprint)
        << " " << reduced_word(id) << endl;
 
-  vector<Vect16> todo, newtodo;
+  vector<PTransf16> todo, newtodo;
   todo.push_back(id);
   while (todo.size()) {
     newtodo.clear();
     lg++;
     for (auto v : todo) {
       for (uint8_t i = 0; i < gens.size(); i++) {
-        Vect16 el = act0(v, gens[i]);
+        PTransf16 el = act0(v, gens[i]);
         if (elems.insert({el, {v, i}}).second) {
           newtodo.push_back(el);
           if (mult0(el, el) == el) {
