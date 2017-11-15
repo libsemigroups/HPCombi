@@ -25,18 +25,11 @@
 
 namespace HPCombi {
 
-static constexpr uint8_t make_one(uint8_t i) { return i; }
-static constexpr uint8_t make_left_cycle(uint8_t i) { return (i + 15) % 16; }
-static constexpr uint8_t make_right_cycle(uint8_t i) { return (i + 1) % 16; }
-static constexpr uint8_t make_left_shift_ff(uint8_t i) {
-  return i == 15 ? 0xff : i + 1;
-}
-static constexpr uint8_t make_left_shift(uint8_t i) {
-  return i == 15 ? 15 : i + 1;
-}
-
+/// SIMD vector of 16 unsigned bytes
 using epu8 = uint8_t __attribute__((vector_size(16)));
 
+
+///
 template <class Function, std::size_t... Indices>
 constexpr epu8 make_epu8_helper(Function f, std::index_sequence<Indices...>) {
   return epu8{f(Indices)...};
@@ -46,13 +39,33 @@ template <class Function> constexpr epu8 make_epu8(Function f) {
   return make_epu8_helper(f, std::make_index_sequence<16>{});
 }
 
+// The four following function should be constexpr lambdas writen directly in
+// their corresponding methods. However until C++17, constexpr lambda are
+// forbidden. So we put them here.
+
+/// The image of i by the identity function
+static constexpr uint8_t make_one(uint8_t i) { return i; }
+/// The image of i by the left cycle function
+static constexpr uint8_t make_left_cycle(uint8_t i) { return (i + 15) % 16; }
+/// The image of i by the right cycle function
+static constexpr uint8_t make_right_cycle(uint8_t i) { return (i + 1) % 16; }
+/// The image of i by a left shift filling the hole with a @p 0xff
+static constexpr uint8_t make_left_shift_ff(uint8_t i) {
+  return i == 15 ? 0xff : i + 1;
+}
+/// The image of i by a left shift duplicating the hole
+static constexpr uint8_t make_left_shift(uint8_t i) {
+  return i == 15 ? 15 : i + 1;
+}
+
+
 // Forward declaration
 struct Perm16;
 struct PTransf16;
 struct Transf16;
 
 
-/** @brief A class for vector of 16 unsigned bytes
+/** A class for vector of 16 unsigned bytes
  *
  */
 struct alignas(16) Vect16 {
@@ -154,6 +167,7 @@ struct PTransf16 : public Vect16 {
     return permuted(p).v | (v == 0xFF); }
 };
 
+
 /** Full transformation of @f$\{0\dots 15\}@f$
  *
  */
@@ -167,6 +181,7 @@ struct Transf16 : public PTransf16 {
   static constexpr Transf16 one() { return make_epu8(make_one); }
   Transf16 inline operator*(const Transf16 &p) const { return permuted(p); }
 };
+
 
 /** Permutations of @f$\{0\dots 15\}@f$
  *
@@ -299,6 +314,13 @@ template <> struct hash<HPCombi::Transf16> {
     return hash<HPCombi::Vect16>()(ar);
   }
 };
+
+template <> struct hash<HPCombi::Perm16> {
+  inline size_t operator()(const HPCombi::Perm16 &ar) const {
+    return hash<HPCombi::Vect16>()(ar);
+  }
+};
+
 
 template <> struct less<HPCombi::Vect16> {
   // WARNING: due to endianess this is not lexicographic comparison,
