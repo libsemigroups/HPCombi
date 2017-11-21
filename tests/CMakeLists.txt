@@ -1,3 +1,5 @@
+IF (BUILD_TESTING)
+
 find_package (Boost COMPONENTS system filesystem unit_test_framework REQUIRED)
 
 include_directories (
@@ -21,3 +23,5 @@ target_link_libraries(test_perm_all
   ${Boost_SYSTEM_LIBRARY}
   ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY}
   )
+
+ENDIF(BUILD_TESTING)
