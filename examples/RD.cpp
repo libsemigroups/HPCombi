@@ -14,37 +14,25 @@
 using namespace std;
 using namespace HPCombi;
 
-constexpr PTransf16 id =
-    epu8{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15};
+const PTransf16 id {0, 1, 2, 3, 4, 5, 6, 7, 8, 9,10,11,12,13,14,15};
 
-constexpr PTransf16 s0 =
-    epu8{0, 1, 2, 3, 4, 5, 6, 8, 7, 9, 10, 11, 12, 13, 14, 15};
+const PTransf16 s0 {0, 1, 2, 3, 4, 5, 6, 8, 7, 9,10,11,12,13,14,15};
 
-constexpr PTransf16 s1e =
-    epu8{0, 1, 2, 3, 4, 5, 7, 6, 9, 8, 10, 11, 12, 13, 14, 15};
-constexpr PTransf16 s1f =
-    epu8{0, 1, 2, 3, 4, 5, 8, 9, 6, 7, 10, 11, 12, 13, 14, 15};
+const PTransf16 s1e{0, 1, 2, 3, 4, 5, 7, 6, 9, 8,10,11,12,13,14,15};
+const PTransf16 s1f{0, 1, 2, 3, 4, 5, 8, 9, 6, 7,10,11,12,13,14,15};
 
-constexpr PTransf16 s2 =
-    epu8{0, 1, 2, 3, 4, 6, 5, 7, 8, 10, 9, 11, 12, 13, 14, 15};
-constexpr PTransf16 s3 =
-    epu8{0, 1, 2, 3, 5, 4, 6, 7, 8, 9, 11, 10, 12, 13, 14, 15};
-constexpr PTransf16 s4 =
-    epu8{0, 1, 2, 4, 3, 5, 6, 7, 8, 9, 10, 12, 11, 13, 14, 15};
-constexpr PTransf16 s5 =
-    epu8{0, 1, 3, 2, 4, 5, 6, 7, 8, 9, 10, 11, 13, 12, 14, 15};
-constexpr PTransf16 s6 =
-    epu8{0, 2, 1, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 14, 13, 15};
-constexpr PTransf16 s7 =
-    epu8{1, 0, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 15, 14};
+const PTransf16 s2 {0, 1, 2, 3, 4, 6, 5, 7, 8,10, 9,11,12,13,14,15};
+const PTransf16 s3 {0, 1, 2, 3, 5, 4, 6, 7, 8, 9,11,10,12,13,14,15};
+const PTransf16 s4 {0, 1, 2, 4, 3, 5, 6, 7, 8, 9,10,12,11,13,14,15};
+const PTransf16 s5 {0, 1, 3, 2, 4, 5, 6, 7, 8, 9,10,11,13,12,14,15};
+const PTransf16 s6 {0, 2, 1, 3, 4, 5, 6, 7, 8, 9,10,11,12,14,13,15};
+const PTransf16 s7 {1, 0, 2, 3, 4, 5, 6, 7, 8, 9,10,11,12,13,15,14};
 
-constexpr uint8_t FF = 0xff;
-constexpr uint8_t FE = 0xfe;
+const uint8_t FF = 0xff;
+const uint8_t FE = 0xfe;
 
-constexpr PTransf16 gene =
-    epu8{FF, FF, FF, FF, FF, FF, FF, FF, 8, 9, 10, 11, 12, 13, 14, 15};
-constexpr PTransf16 genf =
-    epu8{FF, FF, FF, FF, FF, FF, FF, 7, FF, 9, 10, 11, 12, 13, 14, 15};
+const PTransf16 gene {FF,FF,FF,FF,FF,FF,FF,FF, 8, 9,10,11,12,13,14,15};
+const PTransf16 genf {FF,FF,FF,FF,FF,FF,FF, 7,FF, 9,10,11,12,13,14,15};
 
 inline PTransf16 act1(PTransf16 x, PTransf16 y) {
   return x * y;
