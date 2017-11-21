@@ -24,4 +24,7 @@ target_link_libraries(test_perm_all
   ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY}
   )
 
+add_test (NAME TestPerm16 COMMAND test_perm16)
+add_test (NAME TestPermAll COMMAND test_perm_all)
+
 ENDIF(BUILD_TESTING)
