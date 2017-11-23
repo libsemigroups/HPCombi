@@ -1,8 +1,23 @@
-include_directories (${CMAKE_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include)
+#****************************************************************************#
+#       Copyright (C) 2016 Florent Hivert <Florent.Hivert@lri.fr>,           #
+#                                                                            #
+#  Distributed under the terms of the GNU General Public License (GPL)       #
+#                                                                            #
+#    This code is distributed in the hope that it will be useful,            #
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of          #
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU       #
+#   General Public License for more details.                                 #
+#                                                                            #
+#  The full text of the GPL is available at:                                 #
+#                                                                            #
+#                  http://www.gnu.org/licenses/                               #
+#****************************************************************************#
 
 INCLUDE (CheckIncludeFileCXX)
 CHECK_INCLUDE_FILE_CXX("sparsehash/dense_hash_map" HAVE_SPARSEHASHMAP)
 CHECK_INCLUDE_FILE_CXX("sparsehash/dense_hash_set" HAVE_SPARSEHASHSET)
+
+include_directories(${CMAKE_SOURCE_DIR}/include ${PROJECT_BINARY_DIR})
 
 set(usage_examples RD.cpp Renner.cpp stringmonoid.cpp Trans.cpp CF.cpp)
 

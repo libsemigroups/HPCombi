@@ -14,7 +14,7 @@
 //****************************************************************************//
 
 #include "power.hpp"
-#include "config.hpp"
+#include "HPCombi-config.h"
 #include <algorithm>
 #ifdef HAVE_EXPERIMENTAL_NUMERIC_LCM
 #include <experimental/numeric>  // lcm until c++17
