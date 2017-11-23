@@ -14,11 +14,11 @@
 #****************************************************************************#
 
 include (CheckIncludeFileCXX)
-check_include_file_cxx("sparsehash/dense_hash_map_" HPCOMBI_HAVE_DENSEHASHMAP)
+check_include_file_cxx("sparsehash/dense_hash_map" HPCOMBI_HAVE_DENSEHASHMAP)
 if (NOT HPCOMBI_HAVE_DENSEHASHMAP)
   message(STATUS "Google 'dense_hash_map' not found, using std::unordered_map")
 endif()
-check_include_file_cxx("sparsehash/dense_hash_set_" HPCOMBI_HAVE_DENSEHASHSET)
+check_include_file_cxx("sparsehash/dense_hash_set" HPCOMBI_HAVE_DENSEHASHSET)
 if (NOT HPCOMBI_HAVE_DENSEHASHSET)
   message(STATUS "Google 'dense_hash_set' not found, using std::unordered_set")
 endif()
