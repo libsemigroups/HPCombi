@@ -19,15 +19,16 @@
 #include <cstdint>
 #include <functional>  // less<>
 #include <iostream>
-#include <set>
-#include <sparsehash/dense_hash_set>
-#include <sparsehash/sparse_hash_set>
-#include <unordered_set>
 #include <vector>
+#ifdef HPCOMBI_HAVE_DENSEHASHSET
+#include <sparsehash/dense_hash_set>
+#else
+#include <unordered_set>
+#endif
 #include <x86intrin.h>
 
-using namespace std;
-using namespace HPCombi;
+using HPCombi::PTransf16;
+using HPCombi::epu8;
 
 const PTransf16 id {0, 1, 2, 3, 4, 5, 6, 7, 8, 9,10,11,12,13,14,15};
 
@@ -55,13 +56,14 @@ inline PTransf16 act1(PTransf16 x, PTransf16 y) {
 
 inline PTransf16 act0(PTransf16 x, PTransf16 y) {
   PTransf16 minab, maxab, mask, b = x.permuted(y);
-  mask = _mm_cmplt_epi8(y, Perm16::one());
+  mask = _mm_cmplt_epi8(y, PTransf16::one());
   minab = _mm_min_epi8(x, b);
   maxab = _mm_max_epi8(x, b);
   return static_cast<epu8>(_mm_blendv_epi8(maxab, minab, mask)) | (y.v == FF);
 }
 
 int main() {
+  using namespace std;
   // vector<PTransf16> gens {gene, genf, s1e, s1f, s2, s3, s4, s5};
   // vector<PTransf16> gens {gene, genf, s1e, s1f};
   vector<PTransf16> gens{gene, genf, s1e, s1f, s2, s3, s4, s5, s6};
@@ -71,17 +73,20 @@ int main() {
   // cout << act0(s2,genf) << endl;
   int lg = 0;
 
-  using google::dense_hash_set;
-  using google::sparse_hash_set;
 
+#ifdef HPCOMBI_HAVE_DENSEHASHSET
+  // using google::sparse_hash_set;
   // sparse_hash_set<PTransf16, hash<PTransf16>, equal_to<PTransf16>> res;
+
+  using google::dense_hash_set;
   dense_hash_set<PTransf16, hash<PTransf16>, equal_to<PTransf16>> res;
   res.set_empty_key(
       {FE, FE, FE, FE, FE, FE, FE, FE, FE, FE, FE, FE, FE, FE, FE, FE});
   res.resize(250000000);
-
-  // unordered_set<PTransf16> res;
-  // res.reserve(250000000);
+#else
+  unordered_set<PTransf16> res;
+  res.reserve(250000000);
+#endif
 
   res.insert(id);
 
@@ -105,6 +110,5 @@ int main() {
     // if (res.find(toFind) != res.end()) break;
   }
   cout << "res =  " << res.size() << endl;
-  // for (auto v : res)  cout << v << endl;
   exit(0);
 }

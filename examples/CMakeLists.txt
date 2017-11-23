@@ -10,18 +10,22 @@
 #                                                                            #
 #  The full text of the GPL is available at:                                 #
 #                                                                            #
-#                  http://www.gnu.org/licenses/                               #
+#                  http://www.gnu.org/licenses/                              #
 #****************************************************************************#
 
-INCLUDE (CheckIncludeFileCXX)
-CHECK_INCLUDE_FILE_CXX("sparsehash/dense_hash_map" HAVE_SPARSEHASHMAP)
-CHECK_INCLUDE_FILE_CXX("sparsehash/dense_hash_set" HAVE_SPARSEHASHSET)
+include (CheckIncludeFileCXX)
+check_include_file_cxx("sparsehash/dense_hash_map_" HPCOMBI_HAVE_DENSEHASHMAP)
+if (NOT HPCOMBI_HAVE_DENSEHASHMAP)
+  message(STATUS "Google 'dense_hash_map' not found, using std::unordered_map")
+endif()
+check_include_file_cxx("sparsehash/dense_hash_set_" HPCOMBI_HAVE_DENSEHASHSET)
+if (NOT HPCOMBI_HAVE_DENSEHASHSET)
+  message(STATUS "Google 'dense_hash_set' not found, using std::unordered_set")
+endif()
 
 include_directories(${CMAKE_SOURCE_DIR}/include ${PROJECT_BINARY_DIR})
 
 set(usage_examples RD.cpp Renner.cpp stringmonoid.cpp Trans.cpp CF.cpp)
-
-# set_target_properties(sometarget PROPERTIES CXX_STANDARD 11 CXX_EXTENSIONS FALSE CXX_STANDARD_REQUIRED TRUE)
 
 foreach(f ${usage_examples})
   get_filename_component(exampleName ${f} NAME_WE) 

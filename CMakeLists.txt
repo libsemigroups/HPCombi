@@ -60,12 +60,13 @@ add_subdirectory(tests)
 include_directories(include ${PROJECT_BINARY_DIR})
 
 
-###################
-# pkgconfig stuff
+#####################
+# config.h file stuff
+configure_file(${CMAKE_SOURCE_DIR}/config.h.in ${CMAKE_BINARY_DIR}/HPCombi-config.h)
 
 ###################
 # pkgconfig stuff
-CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/hpcombi.pc.in
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/hpcombi.pc.in
                ${CMAKE_CURRENT_BINARY_DIR}/hpcombi.pc @ONLY)
 install (FILES ${CMAKE_CURRENT_BINARY_DIR}/hpcombi.pc
          DESTINATION lib/pkgconfig/)
@@ -73,10 +74,10 @@ install (FILES ${CMAKE_CURRENT_BINARY_DIR}/hpcombi.pc
 
 ########################
 # Custom target for TAGS
-IF (UNIX)
-  ADD_CUSTOM_TARGET(tags etags --members --declarations  `find ${CMAKE_SOURCE_DIR}/ -name *.cpp -or -name *.hpp -or -name *.c -or -name *.h` -o ${CMAKE_SOURCE_DIR}/TAGS)
-  ADD_CUSTOM_TARGET(etags DEPENDS tags)
-ENDIF (UNIX)
+if (UNIX)
+  add_custom_target(tags etags --members --declarations  `find ${CMAKE_SOURCE_DIR}/ -name *.cpp -or -name *.hpp -or -name *.c -or -name *.h` -o ${CMAKE_SOURCE_DIR}/TAGS)
+  add_custom_target(etags DEPENDS tags)
+endif (UNIX)
 
 
 

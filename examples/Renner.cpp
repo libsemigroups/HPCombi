@@ -20,11 +20,13 @@
 #include <functional>  // less<>
 #include <iomanip>
 #include <iostream>
-#include <set>
-#include <sparsehash/dense_hash_map>
 #include <string>
-#include <unordered_set>
 #include <vector>
+#ifdef HPCOMBI_HAVE_DENSEHASHSET
+#include <sparsehash/dense_hash_map>
+#else
+#include <unordered_map>
+#endif
 #include <x86intrin.h>
 
 template <typename T>
@@ -66,9 +68,14 @@ const PTransf16 genf {FF,FF,FF,FF,FF,FF,FF, 7,FF, 9,10,11,12,13,14,15};
 // const vector<PTransf16> gens {gene, genf, s1e, s1f};
 const vector<PTransf16> gens{gene, genf, s1e, s1f, s2, s3, s4, s5};
 const int nprint = 6;
+
+
+#ifdef HPCOMBI_HAVE_DENSEHASHMAP
 google::dense_hash_map<PTransf16, std::pair<PTransf16, int>,
-                       hash<PTransf16>, equal_to<PTransf16>>
-    elems;
+                       hash<PTransf16>, equal_to<PTransf16>> elems;
+#else
+unordered_map<PTransf16, std::pair<PTransf16, int>> elems;
+#endif
 
 inline PTransf16 act1(PTransf16 x, PTransf16 y) { return x * y; }
 inline PTransf16 mult1(PTransf16 x, PTransf16 y) { return x * y; }
@@ -114,10 +121,11 @@ std::vector<int> sym_renner(PTransf16 v, int n) {
 int main() {
   int lg = 0;
 
-  cout << sizeof(std::vector<int>) << endl;
-
+#ifdef HPCOMBI_HAVE_DENSEHASHMAP
   elems.set_empty_key(
       {FE, FE, FE, FE, FE, FE, FE, FE, FE, FE, FE, FE, FE, FE, FE, FE});
+#endif
+
   elems.insert({id, {{}, -1}});
   // elems.resize(250000000);
 

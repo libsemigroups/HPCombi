@@ -14,4 +14,10 @@
 // Whether std::experimental::lcm function works
 #cmakedefine HPCOMBI_HAVE_EXPERIMENTAL_NUMERIC_LCM
 
+// Google sparse hash map
+#cmakedefine HPCOMBI_HAVE_DENSEHASHMAP
+
+// Google sparse hash set
+#cmakedefine HPCOMBI_HAVE_DENSEHASHSET
+
 #endif  // HPCOMBI_CONFIG_HPP
