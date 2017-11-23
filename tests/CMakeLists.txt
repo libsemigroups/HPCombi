@@ -4,6 +4,7 @@ find_package (Boost COMPONENTS system filesystem unit_test_framework REQUIRED)
 
 include_directories (
   ${CMAKE_SOURCE_DIR}/include
+  ${PROJECT_BINARY_DIR}/include
   ${Boost_INCLUDE_DIRS}
   )
 

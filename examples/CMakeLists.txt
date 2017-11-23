@@ -1,4 +1,4 @@
-include_directories (${CMAKE_SOURCE_DIR}/include)
+include_directories (${CMAKE_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include)
 
 INCLUDE (CheckIncludeFileCXX)
 CHECK_INCLUDE_FILE_CXX("sparsehash/dense_hash_map" HAVE_SPARSEHASHMAP)
