@@ -191,7 +191,25 @@ inline PTransf16::PTransf16(std::initializer_list<uint8_t> il) {
     v[i] = i;
 }
 
-Perm16 Perm16::elementary_transposition(uint64_t i) {
+static constexpr uint8_t hilo_exchng_fun(uint8_t i) {
+  return i < 8 ? i + 8 : i - 8; }
+static constexpr epu8 hilo_exchng = make_epu8(hilo_exchng_fun);
+static constexpr uint8_t hilo_mask_fun(uint8_t i) {
+  return i < 8 ? 0x0 : 0xFF; }
+static constexpr epu8 hilo_mask = make_epu8(hilo_mask_fun);
+
+inline Transf16::Transf16(uint64_t compressed) {
+  epu8 res = _mm_set1_epi64(_mm_set_pi64x(compressed));
+  v = _mm_blendv_epi8(res & 0xf, res >> 4, hilo_mask);
+}
+
+inline Transf16::operator uint64_t() const {
+  Vect16 res = static_cast<epu8>(_mm_slli_epi32(v, 4));
+  res = res.permuted(hilo_exchng).v + v;
+  return _mm_extract_epi64(res, 0);
+}
+
+inline Perm16 Perm16::elementary_transposition(uint64_t i) {
   assert(i < vect::Size);
   Perm16 res = one();
   res[i] = i + 1;
