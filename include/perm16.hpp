@@ -177,9 +177,9 @@ struct Transf16 : public PTransf16 {
   constexpr Transf16(const vect v) : PTransf16(v) {}
   constexpr Transf16(const epu8 x) : PTransf16(x) {}
   Transf16(std::initializer_list<uint8_t> il) : PTransf16(il) {}
-  Transf16(uint64_t compressed);
+  explicit Transf16(uint64_t compressed);
 
-  operator uint64_t() const;
+  explicit operator uint64_t() const;
 
   static constexpr Transf16 one() { return make_epu8(make_one); }
   Transf16 inline operator*(const Transf16 &p) const { return permuted(p); }
@@ -197,7 +197,7 @@ struct Perm16 : public Transf16 {
   constexpr Perm16(const vect v) : Transf16(v) {}
   constexpr Perm16(const epu8 x) : Transf16(x) {}
   Perm16(std::initializer_list<uint8_t> il) : Transf16(il) {}
-  Perm16(uint64_t compressed) : Transf16(compressed) {}
+  explicit Perm16(uint64_t compressed) : Transf16(compressed) {}
 
   Perm16 inline operator*(const Perm16 &p) const { return permuted(p); }
 
