@@ -59,7 +59,7 @@ inline PTransf16 act0(PTransf16 x, PTransf16 y) {
   mask = _mm_cmplt_epi8(y, PTransf16::one());
   minab = _mm_min_epi8(x, b);
   maxab = _mm_max_epi8(x, b);
-  return static_cast<epu8>(_mm_blendv_epi8(maxab, minab, mask)) | (y.v == FF);
+  return epu8(_mm_blendv_epi8(maxab, minab, mask)) | (epu8(y) == FF);
 }
 
 int main() {

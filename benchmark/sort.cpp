@@ -61,7 +61,7 @@ struct RoundsMask {
   // commented out due to a bug in gcc
   /* constexpr */ RoundsMask() : arr() {
     for (unsigned i = 0; i < rounds.size(); ++i)
-      arr[i] = rounds[i] < Perm16::one().v;
+      arr[i] = rounds[i] < epu8(Perm16::one());
   }
   epu8 arr[rounds.size()];
 };

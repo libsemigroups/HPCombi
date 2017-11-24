@@ -69,13 +69,15 @@ struct Transf16;
  *
  */
 struct alignas(16) Vect16 {
+protected:
+    epu8 v;
+public:
   static const constexpr size_t Size = 16;
-  epu8 v;
 
   Vect16() = default;
   constexpr Vect16(epu8 x) : v(x) {}
   Vect16(std::initializer_list<uint8_t> il, uint8_t def = 0);
-  constexpr operator const epu8() const { return v; }
+  constexpr operator epu8() const { return v; }
 
   // Overload the default copy constructor and operator= : 10% speedup
   // But result in Non POD
@@ -157,14 +159,15 @@ std::ostream &operator<<(std::ostream &stream, const Vect16 &term);
 struct PTransf16 : public Vect16 {
   using vect = Vect16;
 
-  PTransf16() = default;
+  constexpr PTransf16() : Vect16(epu8 {0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15}) {};
+  // PTransf16() = default;
   constexpr PTransf16(const vect v) : vect(v) {}
   constexpr PTransf16(const epu8 x) : vect(x) {}
   PTransf16(std::initializer_list<uint8_t> il);
 
   static constexpr PTransf16 one() { return make_epu8(make_one); }
   PTransf16 inline operator*(const PTransf16 &p) const {
-    return permuted(p).v | (v == 0xFF); }
+    return (v == 0xFF) | epu8(permuted(p)); }
 };
 
 
@@ -192,7 +195,7 @@ struct Transf16 : public PTransf16 {
 struct Perm16 : public Transf16 {
 
   Perm16() = default;
-  // constexpr Perm16() : Vect16(epu8 {0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15})
+  // constexpr Perm16() : Transf16(epu8 {0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15}) {};
   // {};
   constexpr Perm16(const vect v) : Transf16(v) {}
   constexpr Perm16(const epu8 x) : Transf16(x) {}
@@ -288,11 +291,12 @@ private:
 /** Memory layout concepts check  ********************************************/
 /*****************************************************************************/
 
+  /*
 static_assert(sizeof(Vect16) == sizeof(Perm16),
               "Vect16 and Perm16 have a different memory layout !");
 static_assert(std::is_trivial<Vect16>(), "Vect16 is not a trivial class !");
 static_assert(std::is_trivial<Perm16>(), "Perm16 is not a trivial class !");
-
+  */
 }  // namespace HPCombi
 
 #include "perm16_impl.hpp"
@@ -301,8 +305,8 @@ namespace std {
 
 template <> struct hash<HPCombi::Vect16> {
   inline size_t operator()(const HPCombi::Vect16 &ar) const {
-    __int128 v0 = _mm_extract_epi64(ar.v, 0);
-    __int128 v1 = _mm_extract_epi64(ar.v, 1);
+    __int128 v0 = _mm_extract_epi64(HPCombi::epu8(ar), 0);
+    __int128 v1 = _mm_extract_epi64(HPCombi::epu8(ar), 1);
     return ((v1 * HPCombi::prime + v0) * HPCombi::prime) >> 64;
   }
 };
@@ -332,7 +336,7 @@ template <> struct less<HPCombi::Vect16> {
   // 10% faster than calling the lexicographic comparison operator !
   inline size_t operator()(const HPCombi::Vect16 &v1,
                            const HPCombi::Vect16 &v2) const {
-    __m128 v1v = __m128(v1.v), v2v = __m128(v2.v);
+    __m128 v1v = __m128(HPCombi::epu8(v1)), v2v = __m128(HPCombi::epu8(v2));
     return v1v[0] == v2v[0] ? v1v[1] < v2v[1] : v1v[0] < v2v[0];
   }
 };

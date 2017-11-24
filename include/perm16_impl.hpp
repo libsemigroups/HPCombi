@@ -205,7 +205,7 @@ inline Transf16::Transf16(uint64_t compressed) {
 
 inline Transf16::operator uint64_t() const {
   Vect16 res = static_cast<epu8>(_mm_slli_epi32(v, 4));
-  res = res.permuted(hilo_exchng).v + v;
+  res = epu8(res.permuted(hilo_exchng)) + v;
   return _mm_extract_epi64(res, 0);
 }
 
@@ -220,7 +220,7 @@ inline Perm16 Perm16::elementary_transposition(uint64_t i) {
 inline Perm16 Perm16::inverse_ref() const {
   Vect16 res;
   for (size_t i = 0; i < Size; ++i)
-    res.v[v[i]] = i;
+    res[v[i]] = i;
   return res;
 }
 
@@ -237,19 +237,18 @@ inline Perm16 Perm16::inverse_sort() const {
   // G++-7 compile this shift by 3 additions.
   // Vect16 res = (v << 4) + one().v;
   // I call directly the shift intrinsic
-  Vect16 res = static_cast<epu8>(_mm_slli_epi32(v, 4)) + one().v;
-  res = res.sorted().v & 0xf;
-  return res;
+  Vect16 res = epu8(_mm_slli_epi32(v, 4)) + epu8(one());
+  return epu8(res.sorted()) & 0xf;
 }
 
 inline Perm16 Perm16::inverse_find() const {
   Perm16 s = *this;
-  Vect16 res;
-  res.v = -static_cast<epu8>(_mm_cmpestrm(s.v, 8, one(), 16, FIND_IN_PERM));
+  epu8 res;
+  res = -epu8(_mm_cmpestrm(s.v, 8, one(), 16, FIND_IN_PERM));
   for (Perm16 round : inverting_rounds) {
     s = s * round;
-    res.v <<= 1;
-    res.v -= static_cast<epu8>(_mm_cmpestrm(s.v, 8, one(), 16, FIND_IN_PERM));
+    res <<= 1;
+    res -= epu8(_mm_cmpestrm(s.v, 8, one(), 16, FIND_IN_PERM));
   }
   return res;
 }
@@ -293,7 +292,7 @@ inline Perm16 Perm16::inverse_pow() const {
 }
 
 inline Vect16 Perm16::lehmer_ref() const {
-  Vect16 res;
+  epu8 res;
   for (size_t i = 0; i < Size; i++)
     for (size_t j = i + 1; j < Size; j++)
       if (v[i] > v[j])
@@ -302,10 +301,11 @@ inline Vect16 Perm16::lehmer_ref() const {
 }
 
 inline Vect16 Perm16::lehmer() const {
-  Vect16 vsh = *this, res = -one().v;
+  Vect16 vsh = *this;
+  epu8 res = -epu8(one());
   for (int i = 1; i < 16; i++) {
     vsh = vsh.permuted(left_shift_ff());
-    res.v -= (v >= vsh.v);
+    res -= (v >= epu8(vsh));
   }
   return res;
 }
@@ -329,7 +329,7 @@ inline uint8_t Perm16::nb_descent_ref() const {
 }
 inline uint8_t Perm16::nb_descent() const {
   Perm16 pdec = permuted(left_shift());
-  pdec = (v > pdec.v);
+  pdec = (v > epu8(pdec));
   return _mm_popcnt_u32(_mm_movemask_epi8(pdec));
 }
 
@@ -360,7 +360,7 @@ inline Vect16 Perm16::cycles_mask_unroll() const {
 }
 
 inline uint8_t Perm16::nb_cycles_unroll() const {
-  Vect16 res = one().v == cycles_mask_unroll().v;
+  Vect16 res = epu8(one()) == epu8(cycles_mask_unroll());
   return _mm_popcnt_u32(_mm_movemask_epi8(res));
 }
 
