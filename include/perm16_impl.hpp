@@ -37,20 +37,20 @@ inline Vect16::Vect16(std::initializer_list<uint8_t> il, uint8_t def) {
 }
 
 // Comparison mode for _mm_cmpestri
-const char FIRST_DIFF =
-    (_SIDD_UBYTE_OPS | _SIDD_CMP_EQUAL_EACH | _SIDD_NEGATIVE_POLARITY);
-const char LAST_DIFF = (_SIDD_UBYTE_OPS | _SIDD_CMP_EQUAL_EACH |
-                        _SIDD_NEGATIVE_POLARITY | _SIDD_MOST_SIGNIFICANT);
-const char FIRST_ZERO = (_SIDD_UBYTE_OPS | _SIDD_CMP_EQUAL_ANY);
-const char LAST_ZERO =
-    (_SIDD_UBYTE_OPS | _SIDD_CMP_EQUAL_ANY | _SIDD_MOST_SIGNIFICANT);
-const char FIRST_NON_ZERO =
-    (_SIDD_UBYTE_OPS | _SIDD_CMP_EQUAL_ANY | _SIDD_MASKED_NEGATIVE_POLARITY);
-const char LAST_NON_ZERO =
-    (_SIDD_UBYTE_OPS | _SIDD_CMP_EQUAL_ANY | _SIDD_MASKED_NEGATIVE_POLARITY |
-     _SIDD_MOST_SIGNIFICANT);
-const char FIND_IN_PERM = (_SIDD_UBYTE_OPS | _SIDD_CMP_EQUAL_ANY |
-                           _SIDD_UNIT_MASK | _SIDD_NEGATIVE_POLARITY);
+#define FIRST_DIFF \
+    (_SIDD_UBYTE_OPS | _SIDD_CMP_EQUAL_EACH | _SIDD_NEGATIVE_POLARITY)
+#define LAST_DIFF (_SIDD_UBYTE_OPS | _SIDD_CMP_EQUAL_EACH | \
+                        _SIDD_NEGATIVE_POLARITY | _SIDD_MOST_SIGNIFICANT)
+#define FIRST_ZERO (_SIDD_UBYTE_OPS | _SIDD_CMP_EQUAL_ANY)
+#define LAST_ZERO \
+    (_SIDD_UBYTE_OPS | _SIDD_CMP_EQUAL_ANY | _SIDD_MOST_SIGNIFICANT)
+#define FIRST_NON_ZERO \
+    (_SIDD_UBYTE_OPS | _SIDD_CMP_EQUAL_ANY | _SIDD_MASKED_NEGATIVE_POLARITY)
+#define LAST_NON_ZERO \
+    (_SIDD_UBYTE_OPS | _SIDD_CMP_EQUAL_ANY | _SIDD_MASKED_NEGATIVE_POLARITY | \
+     _SIDD_MOST_SIGNIFICANT)
+#define FIND_IN_PERM (_SIDD_UBYTE_OPS | _SIDD_CMP_EQUAL_ANY | \
+                           _SIDD_UNIT_MASK | _SIDD_NEGATIVE_POLARITY)
 
 inline uint64_t Vect16::first_diff(const Vect16 &b, size_t bound) const {
   return unsigned(_mm_cmpestri(v, bound, b.v, bound, FIRST_DIFF));
@@ -242,7 +242,9 @@ namespace power_helper {
 using Perm16 = Perm16;
 
 template <> struct Monoid<Perm16> {
-  static constexpr const Perm16 one = Perm16::one();
+  // Workaround for a bug in G++-5
+  // static constexpr Perm16 one = Perm16::one();
+  static constexpr Perm16 one {Vect16(make_epu8(make_one))}; // Perm16::one();
   static Perm16 prod(Perm16 a, Perm16 b) { return a * b; }
 };
 

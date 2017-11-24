@@ -31,7 +31,7 @@ using namespace std::chrono;
 using namespace HPCombi;
 
 // Sorting network Knuth AoCP3 Fig. 51 p 229.
-constexpr const array<epu8, 9> rounds =  // clang-format off
+const array<epu8, 9> rounds =  // clang-format off
     //   0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15
     {{ { 1,  0,  3,  2,  5,  4,  7,  6,  9,  8, 11, 10, 13, 12, 15, 14},
        { 2,  3,  0,  1,  6,  7,  4,  5, 10, 11,  8,  9, 14, 15, 12, 13},
@@ -79,12 +79,12 @@ inline Vect16 sort_pair(Vect16 a) {
 }
 
 inline Vect16 sort_odd_even(Vect16 a) {
-  constexpr uint8_t FF = 0xff;
-  static constexpr Perm16 even =
+  const uint8_t FF = 0xff;
+  static const Perm16 even =
       epu8{1, 0, 3, 2, 5, 4, 7, 6, 9, 8, 11, 10, 13, 12, 15, 14};
-  static constexpr Perm16 odd =
+  static const Perm16 odd =
       epu8{0, 2, 1, 4, 3, 6, 5, 8, 7, 10, 9, 12, 11, 14, 13, 15};
-  static constexpr Perm16 mask =
+  static const Perm16 mask =
       epu8{0, FF, 0, FF, 0, FF, 0, FF, 0, FF, 0, FF, 0, FF, 0, FF};
   Vect16 b, minab, maxab;
   for (unsigned i = 0; i < 8; ++i) {
