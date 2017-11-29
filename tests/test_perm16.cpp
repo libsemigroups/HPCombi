@@ -44,10 +44,79 @@ struct Fix {
   const std::vector<Transf16> Tlist;
 
 };
-//____________________________________________________________________________//
+//****************************************************************************//
+BOOST_AUTO_TEST_SUITE(Vect16_test)
+//****************************************************************************//
+BOOST_FIXTURE_TEST_CASE(IsPTransf, Fix) {
+  BOOST_ASSERT(Fix::zero.is_partial_transformation());
+  BOOST_ASSERT(Fix::P01.is_partial_transformation());
+  BOOST_ASSERT(Fix::P10.is_partial_transformation());
+  BOOST_ASSERT(not Vect16({16, 0}).is_partial_transformation());
+  BOOST_ASSERT(Vect16({}, 0xff).is_partial_transformation());
+  BOOST_ASSERT(Vect16({2, 0xff, 3}, 0).is_partial_transformation());
 
+  BOOST_ASSERT(not Fix::zero.is_partial_transformation(15));
+  BOOST_ASSERT(Fix::PPa.is_partial_transformation());
+  BOOST_ASSERT(Fix::PPa.is_partial_transformation(6));
+  BOOST_ASSERT(Fix::PPa.is_partial_transformation(5));
+  BOOST_ASSERT(not Fix::PPa.is_partial_transformation(4));
+  BOOST_ASSERT(not Fix::PPa.is_partial_transformation(1));
+  BOOST_ASSERT(not Fix::PPa.is_partial_transformation(0));
+
+  BOOST_ASSERT(Fix::RandT.is_partial_transformation());
+  BOOST_ASSERT(Fix::RandT.is_partial_transformation(16));
+  BOOST_ASSERT(not Fix::RandT.is_partial_transformation(15));
+}
+
+BOOST_FIXTURE_TEST_CASE(IsTransf, Fix) {
+  BOOST_ASSERT(Fix::zero.is_transformation());
+  BOOST_ASSERT(Fix::P01.is_transformation());
+  BOOST_ASSERT(Fix::P10.is_transformation());
+  BOOST_ASSERT(not Vect16({16, 0}).is_transformation());
+  BOOST_ASSERT(not Vect16({}, 0xff).is_transformation());
+  BOOST_ASSERT(not Vect16({2, 0xff, 3}, 0).is_transformation());
+
+  BOOST_ASSERT(not Fix::zero.is_transformation(15));
+  BOOST_ASSERT(Fix::PPa.is_transformation());
+  BOOST_ASSERT(Fix::PPa.is_transformation(6));
+  BOOST_ASSERT(Fix::PPa.is_transformation(5));
+  BOOST_ASSERT(not Fix::PPa.is_transformation(4));
+  BOOST_ASSERT(not Fix::PPa.is_transformation(1));
+  BOOST_ASSERT(not Fix::PPa.is_transformation(0));
+
+  BOOST_ASSERT(Fix::RandT.is_transformation());
+  BOOST_ASSERT(Fix::RandT.is_transformation(16));
+  BOOST_ASSERT(not Fix::RandT.is_transformation(15));
+}
+
+BOOST_FIXTURE_TEST_CASE(IsPerm, Fix) {
+  BOOST_ASSERT(not Fix::zero.is_permutation());
+  BOOST_ASSERT(not Fix::P01.is_permutation());
+  BOOST_ASSERT(not Fix::P10.is_permutation());
+  BOOST_ASSERT(not Vect16({16, 0}).is_permutation());
+  BOOST_ASSERT(not Vect16({}, 0xff).is_permutation());
+  BOOST_ASSERT(not Vect16({2, 0xff, 3}, 0).is_permutation());
+
+  BOOST_ASSERT(not Fix::zero.is_permutation(15));
+  BOOST_ASSERT(Fix::PPa.is_permutation());
+  BOOST_ASSERT(Fix::PPa.is_permutation(6));
+  BOOST_ASSERT(Fix::PPa.is_permutation(5));
+  BOOST_ASSERT(not Fix::PPa.is_permutation(4));
+  BOOST_ASSERT(not Fix::PPa.is_permutation(1));
+  BOOST_ASSERT(not Fix::PPa.is_permutation(0));
+
+  BOOST_ASSERT(Fix::RandT.is_permutation());
+  BOOST_ASSERT(Fix::RandT.is_permutation(16));
+  BOOST_ASSERT(not Fix::RandT.is_permutation(15));
+}
+
+BOOST_AUTO_TEST_SUITE_END()
+//****************************************************************************//
+
+
+//****************************************************************************//
 BOOST_AUTO_TEST_SUITE(Transf16_test)
-//____________________________________________________________________________//
+//****************************************************************************//
 
 BOOST_FIXTURE_TEST_CASE(Transf16OperatorUInt64, Fix) {
   BOOST_CHECK_EQUAL(static_cast<uint64_t>(Transf16::one()), 0xf7e6d5c4b3a29180);
@@ -68,13 +137,12 @@ BOOST_FIXTURE_TEST_CASE(Transf16ConstrUInt64, Fix) {
 }
 
 BOOST_AUTO_TEST_SUITE_END()
-//____________________________________________________________________________//
-//____________________________________________________________________________//
+//****************************************************************************//
 
-//____________________________________________________________________________//
 
+//****************************************************************************//
 BOOST_AUTO_TEST_SUITE(Perm16_test)
-//____________________________________________________________________________//
+//****************************************************************************//
 
 BOOST_FIXTURE_TEST_CASE(Perm16OperatorUInt64, Fix) {
   BOOST_CHECK_EQUAL(static_cast<uint64_t>(Perm16::one()), 0xf7e6d5c4b3a29180);
@@ -87,8 +155,7 @@ BOOST_FIXTURE_TEST_CASE(Perm16OperatorUInt64, Fix) {
 }
 
 BOOST_AUTO_TEST_SUITE_END()
-//____________________________________________________________________________//
-//____________________________________________________________________________//
+//****************************************************************************//
 
 
 BOOST_AUTO_TEST_CASE(Vect16TestEq) { BOOST_CHECK_EQUAL(Vect16(), Vect16()); }

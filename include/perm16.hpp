@@ -139,6 +139,50 @@ struct alignas(16) Vect16 {
   inline Vect16 eval16_ref() const;
   inline Vect16 eval16_vect() const;
 
+  /** Test for partial transformation
+   * @details
+   * @returns whether \c *this is a partial transformation.
+   * @param the size of \c *this (default 16)
+   *
+   * Points where the function is undefined are mapped to \c 0xff. If \c *this
+   * is a tranformation of @f$0\dots n-1@f$ for @f$n<16@f$, it should be completed
+   * to a transformation of @f$0\dots 15@f$ by adding fixed points. That is the
+   * values @f$i\geq n@f$ should be mapped to themself.
+   * @par Example:
+   * The partial tranformation
+   * @f$\begin{matrix}0 1 2 3 4 5\\ 2 0 5 . . 4 \end{matrix}@f$
+   * is encoded by the array {2,0,5,0xff,0xff,4,6,7,8,9,10,11,12,13,14,15}
+   */
+  inline bool is_partial_transformation(const size_t k = Size) const;
+  /** Test for transformation
+   * @details
+   * @returns whether \c *this is a transformation.
+   * @param the size of \c *this (default 16)
+   *
+   * If \c *this is a tranformation of @f$0\dots n-1@f$ for @f$n<16@f$,
+   * it should be completed to a transformation of @f$0\dots 15@f$
+   * by adding fixed points. That is the values @f$i\geq n@f$ should be
+   * mapped to themself.
+   * @par Example:
+   * The tranformation
+   * @f$\begin{matrix}0 1 2 3 4 5\\ 2 0 5 2 1 4 \end{matrix}@f$
+   * is encoded by the array {2,0,5,2,1,4,6,7,8,9,10,11,12,13,14,15}
+   */
+  inline bool is_transformation(const size_t k = Size) const;
+  /** Test for permutations
+   * @details
+   * @returns whether \c *this is a permutation.
+   * @param the size of \c *this (default 16)
+   *
+   * If \c *this is a permutation of @f$0\dots n-1@f$ for @f$n<16@f$,
+   * it should be completed to a permutaition of @f$0\dots 15@f$
+   * by adding fixed points. That is the values @f$i\geq n@f$ should be
+   * mapped to themself.
+   * @par Example:
+   * The permutation
+   * @f$\begin{matrix}0 1 2 3 4 5\\ 2 0 5 3 1 4 \end{matrix}@f$
+   * is encoded by the array {2,0,5,3,1,4,6,7,8,9,10,11,12,13,14,15}
+   */
   inline bool is_permutation(const size_t k = Size) const;
 
   static Vect16 random(uint16_t bnd = 256);
@@ -198,7 +242,6 @@ struct Perm16 : public Transf16 {
   constexpr Perm16(const epu8 x) : Transf16(x) {}
   Perm16(std::initializer_list<uint8_t> il) : Transf16(il) {}
   explicit Perm16(uint64_t compressed) : Transf16(compressed) {}
-
   Perm16 inline operator*(const Perm16 &p) const { return permuted(p); }
 
   /** @class common_inverse
