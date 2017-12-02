@@ -27,6 +27,7 @@
 #endif
 #include <x86intrin.h>
 
+using HPCombi::Vect16;
 using HPCombi::PTransf16;
 using HPCombi::epu8;
 
@@ -73,13 +74,12 @@ int main() {
   // cout << act0(s2,genf) << endl;
   int lg = 0;
 
-
 #ifdef HPCOMBI_HAVE_DENSEHASHSET
   // using google::sparse_hash_set;
   // sparse_hash_set<PTransf16, hash<PTransf16>, equal_to<PTransf16>> res;
 
   using google::dense_hash_set;
-  dense_hash_set<PTransf16, hash<PTransf16>, equal_to<PTransf16>> res;
+  dense_hash_set<Vect16, hash<Vect16>, equal_to<Vect16>> res;
   res.set_empty_key(
       {FE, FE, FE, FE, FE, FE, FE, FE, FE, FE, FE, FE, FE, FE, FE, FE});
   res.resize(250000000);

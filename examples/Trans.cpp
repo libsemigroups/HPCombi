@@ -26,6 +26,7 @@
 #include <unordered_set>
 #endif
 
+using HPCombi::Vect16;
 using HPCombi::Transf16;
 
 // Full transformation semigroup on 7 points 
@@ -61,7 +62,9 @@ int main() {
 
 #ifdef HPCOMBI_HAVE_DENSEHASHSET
   using google::dense_hash_set;
-  dense_hash_set<Transf16, std::hash<Transf16>, std::equal_to<Transf16>> res;
+  // We don't use Transf16 here becase the empty key below is not a proper
+  // Transf16 so that the constructor assertion will fire in debug mode.
+  dense_hash_set<Vect16, std::hash<Vect16>, std::equal_to<Vect16>> res;
   res.set_empty_key({FE, FE, FE, FE, FE, FE, FE, FE, FE, FE, FE, FE, FE, FE, FE, FE});
   // res.resize(500000000);
 #else

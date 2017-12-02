@@ -71,8 +71,8 @@ const int nprint = 6;
 
 
 #ifdef HPCOMBI_HAVE_DENSEHASHMAP
-google::dense_hash_map<PTransf16, std::pair<PTransf16, int>,
-                       hash<PTransf16>, equal_to<PTransf16>> elems;
+google::dense_hash_map<Vect16, std::pair<Vect16, int>,
+                       hash<Vect16>, equal_to<Vect16>> elems;
 #else
 unordered_map<PTransf16, std::pair<PTransf16, int>> elems;
 #endif
