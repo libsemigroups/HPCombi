@@ -75,7 +75,7 @@ public:
   static const constexpr size_t Size = 16;
 
   Vect16() = default;
-  constexpr Vect16(epu8 x) : v(x) {}
+  constexpr Vect16(epu8 x) : v{x} {}
   Vect16(std::initializer_list<uint8_t> il, uint8_t def = 0);
   constexpr operator epu8() const { return v; }
 
@@ -84,10 +84,7 @@ public:
   // constexpr Vect16(const Vect16 &x) : v(x.v) {}
   // Vect16 & operator=(const Vect16 &x) {v = x.v; return *this;}
   Vect16 &operator=(const Vect16 &) = default;
-  Vect16 &operator=(const epu8 &vv) {
-    v = vv;
-    return *this;
-  }
+  Vect16 &operator=(const epu8 &vv) { v = vv; return *this; }
 
   /** Return self as an array (just a cast)
    *
@@ -203,13 +200,12 @@ std::ostream &operator<<(std::ostream &stream, const Vect16 &term);
 struct PTransf16 : public Vect16 {
   using vect = Vect16;
 
-  constexpr PTransf16() : Vect16(epu8 {0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15}) {};
-  // PTransf16() = default;
-  constexpr PTransf16(const vect v) : vect(v) {}
-  constexpr PTransf16(const epu8 x) : vect(x) {}
+  constexpr PTransf16() : vect{make_epu8(make_one)} {};
+  PTransf16(const vect v) : vect{v} { assert(is_partial_transformation()); }
+  PTransf16(const epu8 x) : vect{x} { assert(is_partial_transformation()); }
   PTransf16(std::initializer_list<uint8_t> il);
 
-  static constexpr PTransf16 one() { return make_epu8(make_one); }
+  static constexpr PTransf16 one() { return {}; }
   PTransf16 inline operator*(const PTransf16 &p) const {
     return (v == 0xFF) | epu8(permuted(p)); }
 };
@@ -221,14 +217,15 @@ struct PTransf16 : public Vect16 {
 struct Transf16 : public PTransf16 {
 
   Transf16() = default;
-  constexpr Transf16(const vect v) : PTransf16(v) {}
-  constexpr Transf16(const epu8 x) : PTransf16(x) {}
-  Transf16(std::initializer_list<uint8_t> il) : PTransf16(il) {}
+  Transf16(const vect v) : PTransf16{v} { assert(is_transformation()); }
+  Transf16(const epu8 x) : PTransf16{x} { assert(is_transformation()); }
+  Transf16(std::initializer_list<uint8_t> il) : PTransf16(il) {
+    assert(is_transformation()); }
   explicit Transf16(uint64_t compressed);
 
   explicit operator uint64_t() const;
 
-  static constexpr Transf16 one() { return make_epu8(make_one); }
+  static constexpr Transf16 one() { return {}; }
   Transf16 inline operator*(const Transf16 &p) const { return permuted(p); }
 };
 
@@ -239,12 +236,12 @@ struct Transf16 : public PTransf16 {
 struct Perm16 : public Transf16 {
 
   Perm16() = default;
-  // constexpr Perm16() : Transf16(epu8 {0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15}) {};
-  // {};
-  constexpr Perm16(const vect v) : Transf16(v) {}
-  constexpr Perm16(const epu8 x) : Transf16(x) {}
-  Perm16(std::initializer_list<uint8_t> il) : Transf16(il) {}
-  explicit Perm16(uint64_t compressed) : Transf16(compressed) {}
+  Perm16(const vect v) : Transf16{v} { assert(is_permutation()); }
+  Perm16(const epu8 x) : Transf16{x} { assert(is_permutation()); }
+  Perm16(std::initializer_list<uint8_t> il) : Transf16{il} {
+    assert(is_permutation()); }
+  explicit Perm16(uint64_t compressed) : Transf16(compressed) {
+    assert(is_permutation()); }
   Perm16 inline operator*(const Perm16 &p) const { return permuted(p); }
 
   /** @class common_inverse
@@ -301,11 +298,11 @@ struct Perm16 : public Transf16 {
   // It's not possible to have a static constexpr member of same type as class
   // being defined (see https://stackoverflow.com/questions/11928089/)
   // therefore we chose to have functions.
-  static constexpr Perm16 one() { return make_epu8(make_one); }
-  static constexpr Perm16 left_cycle() { return make_epu8(make_left_cycle); }
-  static constexpr Perm16 right_cycle() { return make_epu8(make_right_cycle); }
-  static constexpr Perm16 left_shift() { return make_epu8(make_left_shift); }
-  static constexpr Perm16 left_shift_ff() {
+  static constexpr Perm16 one() { return {}; }
+  static Perm16 left_cycle() { return make_epu8(make_left_cycle); }
+  static Perm16 right_cycle() { return make_epu8(make_right_cycle); }
+  static Perm16 left_shift() { return make_epu8(make_left_shift); }
+  static Perm16 left_shift_ff() {
     return make_epu8(make_left_shift_ff);
   }
 

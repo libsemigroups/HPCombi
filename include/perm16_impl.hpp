@@ -203,6 +203,7 @@ inline PTransf16::PTransf16(std::initializer_list<uint8_t> il) {
   std::copy(il.begin(), il.end(), begin());
   for (size_t i = il.size(); i < Size; ++i)
     v[i] = i;
+  assert(is_partial_transformation());
 }
 
 static constexpr uint8_t hilo_exchng_fun(uint8_t i) {
@@ -275,7 +276,7 @@ using Perm16 = Perm16;
 template <> struct Monoid<Perm16> {
   // Workaround for a bug in G++-5
   // static constexpr Perm16 one = Perm16::one();
-  static constexpr Perm16 one {Vect16(make_epu8(make_one))}; // Perm16::one();
+  static constexpr Perm16 one {Perm16::one()};
   static Perm16 prod(Perm16 a, Perm16 b) { return a * b; }
 };
 

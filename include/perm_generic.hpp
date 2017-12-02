@@ -127,14 +127,14 @@ struct PermGeneric : public VectGeneric<_Size, Expo> {
 
   using vect = VectGeneric<_Size, Expo>;
 
-  PermGeneric() = default;
-  // PermGeneric() { for (uint64_t i=0; i < _Size; i++) this->v[i] = i; };
-  PermGeneric(const vect u) : vect(u){};
+  PermGeneric() { for (uint64_t i=0; i < _Size; i++) this->v[i] = i; };
+  PermGeneric(const vect u) : vect{u} { assert(this->is_permutation()); };
   PermGeneric(std::initializer_list<Expo> il) {
     assert(il.size() <= vect::Size);
     std::copy(il.begin(), il.end(), this->v.begin());
     for (uint64_t i = il.size(); i < vect::Size; i++)
       this->v[i] = i;
+    assert(this->is_permutation());
   }
 
   PermGeneric operator*(const PermGeneric &p) const {
@@ -158,8 +158,8 @@ static_assert(sizeof(VectGeneric<12>) == sizeof(PermGeneric<12>),
               "VectGeneric and PermGeneric have a different memory layout !");
 static_assert(std::is_trivial<VectGeneric<12>>(),
               "VectGeneric is not a a trivial class !");
-static_assert(std::is_trivial<PermGeneric<12>>(),
-              "PermGeneric is not trivial !");
+// static_assert(std::is_trivial<PermGeneric<12>>(),
+//              "PermGeneric is not trivial !");
 
 }  //  namespace HPCombi
 
