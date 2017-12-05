@@ -13,6 +13,8 @@
 #                  http://www.gnu.org/licenses/                               #
 #****************************************************************************#
 
+add_subdirectory(gpu)
+
 include(CheckIncludeFileCXX)
 include(CheckCXXSourceCompiles)
 check_include_file_cxx("experimental/numeric" HPCOMBI_HAVE_EXPERIMENTAL_NUMERIC)

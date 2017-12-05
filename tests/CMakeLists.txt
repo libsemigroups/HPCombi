@@ -27,6 +27,7 @@ add_definitions (-DBOOST_TEST_DYN_LINK)
 add_executable (test_perm16 test_perm16.cpp)
 target_link_libraries(test_perm16
   perm16
+  gpu
   ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY}
   )
 add_executable (test_perm_all test_perm_all.cpp)

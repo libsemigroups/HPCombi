@@ -12,7 +12,7 @@
 //                                                                            //
 //                  http://www.gnu.org/licenses/                              //
 //****************************************************************************//
-
+#include "fonctions_gpu.cuh"
 #include "power.hpp"
 #include "HPCombi-config.h"
 #include <algorithm>
@@ -75,6 +75,16 @@ inline char Vect16::less_partial(const Vect16 &b, int k) const {
 }
 inline Vect16 Vect16::permuted(const Vect16 &other) const {
   return _mm_shuffle_epi8(v, other);
+}
+inline Vect16 Vect16::permuted_gpu(const Vect16 &other) const {
+
+  // Simple pointers are needed to cpy to GPU
+  const uint8_t* x = &v[0];
+  const uint8_t* y = &other[0];
+  epu8 res;
+  uint8_t* z = &res[0];
+  shufl_gpu(x, y, z, Size);
+  return res;
 }
 
 inline uint8_t Vect16::sum_ref() const {

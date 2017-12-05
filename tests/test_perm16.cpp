@@ -16,7 +16,7 @@
 #define BOOST_TEST_MODULE Perm16Tests
 
 #include "perm16.hpp"
-#include <boost/test/unit_test.hpp>
+#include <boost/test/included/unit_test.hpp>
 
 using HPCombi::epu8;
 using HPCombi::Vect16;
@@ -84,6 +84,24 @@ BOOST_FIXTURE_TEST_CASE(Perm16OperatorUInt64, Fix) {
 
   for (auto p : { Perm16::one(), Fix::PPa, Fix::PPb, Fix::RandPerm })
     BOOST_CHECK_EQUAL(static_cast<Perm16>(static_cast<uint64_t>(p)), p);
+}
+
+BOOST_AUTO_TEST_SUITE_END()
+//____________________________________________________________________________//
+//____________________________________________________________________________//
+
+//____________________________________________________________________________//
+
+BOOST_AUTO_TEST_SUITE(fonctions_gpu_test)
+//____________________________________________________________________________//
+
+BOOST_FIXTURE_TEST_CASE(GPU, Fix) {
+  BOOST_CHECK_EQUAL(Fix::PPa.permuted(Fix::RandT), Fix::PPa.permuted_gpu(Fix::RandT));
+  BOOST_CHECK_EQUAL(Fix::PPb.permuted(Fix::RandT), Fix::PPb.permuted_gpu(Fix::RandT));
+  BOOST_CHECK_EQUAL(Fix::RandPerm.permuted(Fix::P11), Fix::RandPerm.permuted_gpu(Fix::P11));
+  BOOST_CHECK_EQUAL(Fix::P01.permuted(Fix::P10), Fix::P01.permuted_gpu(Fix::P10));
+  BOOST_CHECK_EQUAL(Fix::PPa.permuted(Fix::P1), Fix::PPa.permuted_gpu(Fix::P1));
+
 }
 
 BOOST_AUTO_TEST_SUITE_END()

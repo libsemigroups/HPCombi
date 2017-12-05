@@ -13,7 +13,7 @@
 #                  http://www.gnu.org/licenses/                               #
 #****************************************************************************#
 
-cmake_minimum_required(VERSION 2.8)
+cmake_minimum_required(VERSION 3.5.1) # Support of nvcc
 
 #####################
 # Project description
@@ -41,7 +41,7 @@ message(STATUS "*** Compiler id is ${CMAKE_CXX_COMPILER_ID}")
 if ( CMAKE_CXX_COMPILER_ID STREQUAL "GNU" OR CMAKE_CXX_COMPILER_ID STREQUAL "Clang" )
   # Workaround of CMAKE bug https://stackoverflow.com/questions/47213356/
   set(CMAKE_REQUIRED_FLAGS ${CMAKE_REQUIRED_FLAGS} -std=c++14)
-  add_compile_options( -std=c++14 -Wall )
+  add_compile_options( -std=c++11 ) # -std=c++14 and -Wall not supported with nvcc
 endif ( )
 if ( MSVC )
    add_compile_options( /W4 )
