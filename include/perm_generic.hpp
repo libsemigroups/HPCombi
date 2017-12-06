@@ -16,11 +16,14 @@
 #ifndef HPCOMBI_PERM_GENERIC_HPP
 #define HPCOMBI_PERM_GENERIC_HPP
 
+#include "fonctions_gpu.cuh"
 #include <algorithm>
 #include <array>
 #include <cassert>
 #include <cstdint>
 #include <ostream>
+#include <iomanip>
+
 
 namespace HPCombi {
 
@@ -31,6 +34,7 @@ template <size_t _Size, typename Expo = uint8_t> struct VectGeneric {
 
   VectGeneric() = default;
   VectGeneric(std::initializer_list<Expo> il, Expo def = 0);
+  VectGeneric(size_t plus, size_t mod = 0);
 
   Expo operator[](uint64_t i) const { return v[i]; }
   Expo &operator[](uint64_t i) { return v[i]; }
@@ -61,6 +65,20 @@ template <size_t _Size, typename Expo = uint8_t> struct VectGeneric {
       res[i] = v[u[i]];
     return res;
   };
+  
+	VectGeneric permuted_gpu(const VectGeneric &u) const {
+
+	  // Simple pointers are needed to cpy to GPU
+	  const uint16_t* x = &v[0];
+	  const uint16_t* y = &u.v[0];
+	  VectGeneric res;
+	  uint16_t* z = &res.v[0];
+	  shufl_gpu<uint16_t>(x, y, z, Size);
+	  return res;
+	}
+
+
+
 
   uint64_t first_non_zero(size_t bound = Size) const {
     for (uint64_t i = 0; i < bound; i++)
@@ -116,6 +134,13 @@ VectGeneric<Size, Expo>::VectGeneric(std::initializer_list<Expo> il, Expo def) {
   std::copy(il.begin(), il.end(), v.begin());
   for (uint64_t i = il.size(); i < Size; ++i)
     v[i] = def;
+}
+
+template <size_t Size, typename Expo>
+VectGeneric<Size, Expo>::VectGeneric(size_t plus, size_t mod) {
+  mod = (mod==0) ? Size:mod;
+  for (uint64_t i = 0; i < Size; ++i)
+    v[i] = (i+plus)%mod;
 }
 
 // Definition since previously *only* declared

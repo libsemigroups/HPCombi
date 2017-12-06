@@ -1,2 +1,7 @@
+#ifndef HPCOMBI_PERM_FONCTIONS_GPU_CUH
+#define HPCOMBI_PERM_FONCTIONS_GPU_CUH
 
-void shufl_gpu(const uint8_t* x, const uint8_t* y, uint8_t* z, const size_t Size);
+template <typename T>
+void shufl_gpu(const T* x, const T* y, T* z, const size_t Size);
+
+#endif  // HPCOMBI_PERM_FONCTIONS_GPU_CUH
