@@ -152,6 +152,20 @@ inline uint64_t Vect16::last_zero(int bnd) const {
 inline uint64_t Vect16::first_zero(int bnd) const {
   return search_index<FIRST_ZERO>(bnd);
 }
+
+
+inline bool Vect16::is_partial_transformation(const size_t k) const {
+  uint64_t diff =
+      unsigned(_mm_cmpestri(v, Size, Perm16::one(), Size, LAST_DIFF));
+  return (_mm_movemask_epi8(v+1 <= 16) == 0xffff) && (diff == Size || diff < k);
+}
+
+inline bool Vect16::is_transformation(const size_t k) const {
+  uint64_t diff =
+      unsigned(_mm_cmpestri(v, Size, Perm16::one(), Size, LAST_DIFF));
+  return (_mm_movemask_epi8(v < 16) == 0xffff) && (diff == Size || diff < k);
+}
+
 inline bool Vect16::is_permutation(const size_t k) const {
   uint64_t diff =
       unsigned(_mm_cmpestri(v, Size, Perm16::one(), Size, LAST_DIFF));
