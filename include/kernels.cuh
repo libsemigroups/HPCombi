@@ -5,11 +5,11 @@
 #include <stdio.h>
 
 template <typename T>
-__global__ void permute_gpu (T *d_x, T *d_y, const size_t Size);
+__global__ void permute_gpu (T * __restrict__ d_x, T * __restrict__ d_y, const size_t Size);
 
 
 template <typename T>
-__global__ void permute_gpu (T *d_x, T *d_y, const size_t Size) {
+__global__ void permute_gpu (T * __restrict__ d_x, T * __restrict__ d_y, const size_t Size) {
   // Global thread id and warp id
   const size_t tid = blockIdx.x * blockDim.x + threadIdx.x;
   const size_t wid = tid/warpSize;

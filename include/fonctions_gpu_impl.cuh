@@ -5,15 +5,15 @@
 #include <stdio.h>
 
 template <typename T>
-void shufl_gpu(const T* x, const T* y, T* z, const size_t Size);
+void shufl_gpu(const T* __restrict__ x, const T* __restrict__ y, T* __restrict__ z, const size_t Size);
 
 
-//Instentiating template functions
+//Instantiating template functions
 template void shufl_gpu<uint8_t>(const uint8_t* x, const uint8_t* y, uint8_t* z, const size_t Size);
 template void shufl_gpu<uint16_t>(const uint16_t* x, const uint16_t* y, uint16_t* z, const size_t Size);
 
 template <typename T>
-void shufl_gpu(const T* x, const T* y, T* z, const size_t Size)
+void shufl_gpu(const T* __restrict__ x, const T* __restrict__ y, T* __restrict__ z, const size_t Size)
 {
 	// Memory allocation on GPU
 	T *d_x, *d_y;

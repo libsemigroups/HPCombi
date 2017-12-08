@@ -2,6 +2,6 @@
 #define HPCOMBI_PERM_FONCTIONS_GPU_CUH
 
 template <typename T>
-void shufl_gpu(const T* x, const T* y, T* z, const size_t Size);
+void shufl_gpu(const T* __restrict__ x, const T* __restrict__ y, T* __restrict__ z, const size_t Size);
 
 #endif  // HPCOMBI_PERM_FONCTIONS_GPU_CUH
