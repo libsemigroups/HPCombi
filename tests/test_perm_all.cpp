@@ -18,18 +18,9 @@
 #include <iomanip>
 #include <vector>
 
-#ifdef BOOST_TEST_USE_LIB
-#define BOOST_TEST_DYN_LINK
 #include <boost/mpl/list.hpp>
-#include <boost/test/test_case_template.hpp>
 #include <boost/test/unit_test.hpp>
-#endif
-// #ifdef BOOST_TEST_USE_INCLUDE
-// #define BOOST_TEST_NO_LIB
-#include <boost/mpl/list.hpp>
-#include <boost/test/included/unit_test.hpp>
 #include <boost/test/test_case_template.hpp>
-// #endif
 
 //____________________________________________________________________________//
 

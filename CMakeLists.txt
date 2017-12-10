@@ -55,10 +55,18 @@ add_subdirectory(examples)
 add_subdirectory(benchmark)
 add_subdirectory(doc)
 
-add_subdirectory(tests)
 
 include_directories(include ${PROJECT_BINARY_DIR})
 
+
+#########
+# Testing
+
+IF (BUILD_TESTING)
+include(CTest)
+enable_testing ()
+add_subdirectory(tests)
+ENDIF(BUILD_TESTING)
 
 #####################
 # config.h file stuff
