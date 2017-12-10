@@ -13,7 +13,6 @@
 #                  http://www.gnu.org/licenses/                               #
 #****************************************************************************#
 
-IF (BUILD_TESTING)
 
 message(STATUS "Building tests")
 
@@ -35,10 +34,6 @@ target_link_libraries(test_perm_all
   ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY}
   )
 
-include(CTest)
-enable_testing ()
+add_test (TestPerm16 test_perm16)
+add_test (TestPermAll test_perm_all)
 
-add_test (NAME TestPerm16 COMMAND test_perm16)
-add_test (NAME TestPermAll COMMAND test_perm_all)
-
-ENDIF(BUILD_TESTING)
