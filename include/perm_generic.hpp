@@ -21,6 +21,7 @@
 #include <array>
 #include <cassert>
 #include <cstdint>
+#include <stdlib.h> 
 #include <ostream>
 #include <iomanip>
 
@@ -34,7 +35,8 @@ template <size_t _Size, typename Expo = uint8_t> struct VectGeneric {
 
   VectGeneric() = default;
   VectGeneric(std::initializer_list<Expo> il, Expo def = 0);
-  VectGeneric(size_t plus, size_t mod = 0);
+  VectGeneric(size_t plus, size_t mod);
+  VectGeneric(Expo target);
 
   Expo operator[](uint64_t i) const { return v[i]; }
   Expo &operator[](uint64_t i) { return v[i]; }
@@ -138,10 +140,26 @@ VectGeneric<Size, Expo>::VectGeneric(std::initializer_list<Expo> il, Expo def) {
 
 template <size_t Size, typename Expo>
 VectGeneric<Size, Expo>::VectGeneric(size_t plus, size_t mod) {
-  mod = (mod==0) ? Size:mod;
+  mod = (mod<=0) ? Size:mod;
   for (uint64_t i = 0; i < Size; ++i)
     v[i] = (i+plus)%mod;
+  if(mod == -1){
+	  std::random_shuffle(v.begin(), v.end());
+  }
+  else if(mod == -2){
+	  for (uint64_t i = 0; i < Size; ++i)
+	    v[i] = rand()%Size;
+  }
 }
+
+template <size_t Size, typename Expo>
+VectGeneric<Size, Expo>::VectGeneric(Expo target) {
+  if(target >= Size || target < 0)
+	target = 0;
+  for (uint64_t i = 0; i < Size; ++i)
+    v[i] = target;
+}
+
 
 // Definition since previously *only* declared
 template <size_t _Size, typename Expo>
