@@ -1,4 +1,4 @@
-option(USE_CUDA "Use CUDA" ON)
+
 include_directories(${CMAKE_SOURCE_DIR}/include ${PROJECT_BINARY_DIR})
 
 file(GLOB gpu_source_files "${CMAKE_SOURCE_DIR}/src/gpu/*.cu")

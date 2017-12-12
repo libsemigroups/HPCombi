@@ -76,6 +76,9 @@ inline char Vect16::less_partial(const Vect16 &b, int k) const {
 inline Vect16 Vect16::permuted(const Vect16 &other) const {
   return _mm_shuffle_epi8(v, other);
 }
+
+
+#ifdef USE_CUDA
 inline Vect16 Vect16::permuted_gpu(const Vect16 &other) const {
 
   // Simple pointers are needed to cpy to GPU
@@ -86,6 +89,8 @@ inline Vect16 Vect16::permuted_gpu(const Vect16 &other) const {
   shufl_gpu<uint8_t>(x, y, z, Size);
   return res;
 }
+
+#endif  // USE_CUDA
 
 inline uint8_t Vect16::sum_ref() const {
   uint8_t res = 0;

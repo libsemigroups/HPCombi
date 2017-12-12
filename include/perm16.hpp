@@ -143,7 +143,7 @@ struct alignas(16) Vect16 {
   /** Test for partial transformation
    * @details
    * @returns whether \c *this is a partial transformation.
-   * @param the size of \c *this (default 16)
+   * @param k the size of \c *this (default 16)
    *
    * Points where the function is undefined are mapped to \c 0xff. If \c *this
    * is a tranformation of @f$0\dots n-1@f$ for @f$n<16@f$, it should be completed
@@ -158,7 +158,7 @@ struct alignas(16) Vect16 {
   /** Test for transformation
    * @details
    * @returns whether \c *this is a transformation.
-   * @param the size of \c *this (default 16)
+   * @param k the size of \c *this (default 16)
    *
    * If \c *this is a tranformation of @f$0\dots n-1@f$ for @f$n<16@f$,
    * it should be completed to a transformation of @f$0\dots 15@f$
@@ -173,7 +173,7 @@ struct alignas(16) Vect16 {
   /** Test for permutations
    * @details
    * @returns whether \c *this is a permutation.
-   * @param the size of \c *this (default 16)
+   * @param k the size of \c *this (default 16)
    *
    * If \c *this is a permutation of @f$0\dots n-1@f$ for @f$n<16@f$,
    * it should be completed to a permutaition of @f$0\dots 15@f$

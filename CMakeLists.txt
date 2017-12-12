@@ -37,6 +37,8 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_EXTENSIONS OFF) # -std=c++11 instead of -std=gnu++11
 
+option(USE_CUDA "Use CUDA" OFF)
+
 message(STATUS "*** Compiler id is ${CMAKE_CXX_COMPILER_ID}")
 if ( CMAKE_CXX_COMPILER_ID STREQUAL "GNU" OR CMAKE_CXX_COMPILER_ID STREQUAL "Clang" )
   # Workaround of CMAKE bug https://stackoverflow.com/questions/47213356/

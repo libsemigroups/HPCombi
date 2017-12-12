@@ -34,12 +34,15 @@ target_link_libraries(test_perm_all
   perm16
   ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY}
   )
-add_executable (test_perm_gpu test_perm_gpu.cpp)
-target_link_libraries(test_perm_gpu
-  perm16
-  gpu
-  ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY}
+if(USE_CUDA)
+  add_executable (test_perm_gpu test_perm_gpu.cpp)
+  target_link_libraries(test_perm_gpu
+    perm16
+    gpu
+    ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY}
   )
+	
+endif()
 include(CTest)
 enable_testing ()
 
