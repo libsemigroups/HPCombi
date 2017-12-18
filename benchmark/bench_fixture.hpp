@@ -14,7 +14,16 @@ using HPCombi::Perm16;
 using HPCombi::VectGeneric;
 
 typedef VectGeneric<1024, uint16_t> Vect1024;
-constexpr uint_fast64_t repeat = 10000;
+constexpr uint_fast64_t repeat = 1000000;
+
+
+inline static void escape(void *p) {
+  asm volatile("" : : "g"(p) : "memory");
+}
+
+inline static void clobber() {
+  asm volatile("" : : : "memory");
+}
 
 
 class Fix_perm16 {
