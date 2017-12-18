@@ -68,7 +68,7 @@ template <size_t _Size, typename Expo = uint8_t> struct VectGeneric {
     return res;
   };
   
-#ifdef USE_CUDA  
+#if COMPILE_CUDA==1
 	VectGeneric permuted_gpu(const VectGeneric &u) const {
 
 	  // Simple pointers are needed to cpy to GPU

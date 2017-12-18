@@ -102,8 +102,8 @@ int RegisterFromFunction_inverse() {
 int RegisterFromFunction_compose() {    
     auto REF_COMPOSE_CPU = benchmark::RegisterBenchmark("compose_ref", &compose_register, "ref", generic_bench_data.sample, &Vect1024::permuted);
     auto ALT_COMPOSE_CPU = benchmark::RegisterBenchmark("compose_alt", &compose_register, "cpu", generic_bench_data.sample, &Vect1024::permuted);
-    #ifdef USE_CUDA  
-    auto ALT_COMPOSE_GPU = benchmark::RegisterBenchmark("compose_alt", &compose_register, "gpu", generic_bench_data.sample, &Vect1024::permuted_gpu);
+    #if COMPILE_CUDA==1
+		auto ALT_COMPOSE_GPU = benchmark::RegisterBenchmark("compose_alt", &compose_register, "gpu", generic_bench_data.sample, &Vect1024::permuted_gpu);
     #endif  // USE_CUDA
   return 0;
 }

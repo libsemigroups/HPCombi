@@ -38,12 +38,19 @@ set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_EXTENSIONS OFF) # -std=c++11 instead of -std=gnu++11
 
 option(USE_CUDA "Use CUDA" OFF)
+if(USE_CUDA)
+	add_definitions(-DCOMPILE_CUDA)
+endif ( )
 
 message(STATUS "*** Compiler id is ${CMAKE_CXX_COMPILER_ID}")
 if ( CMAKE_CXX_COMPILER_ID STREQUAL "GNU" OR CMAKE_CXX_COMPILER_ID STREQUAL "Clang" )
   # Workaround of CMAKE bug https://stackoverflow.com/questions/47213356/
   set(CMAKE_REQUIRED_FLAGS ${CMAKE_REQUIRED_FLAGS} -std=c++14)
-  add_compile_options( -std=c++11 ) # -std=c++14 and -Wall not supported with nvcc
+  if(USE_CUDA)
+	add_compile_options( -std=c++11 ) # -std=c++14 and -Wall not supported with nvcc
+  else()
+	add_compile_options( -std=c++14 -Wall)
+  endif ( )
 endif ( )
 if ( MSVC )
    add_compile_options( /W4 )

@@ -78,7 +78,7 @@ inline Vect16 Vect16::permuted(const Vect16 &other) const {
 }
 
 
-#ifdef USE_CUDA
+#if COMPILE_CUDA==1
 inline Vect16 Vect16::permuted_gpu(const Vect16 &other) const {
 
   // Simple pointers are needed to cpy to GPU

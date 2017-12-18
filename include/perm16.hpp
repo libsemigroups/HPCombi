@@ -116,7 +116,9 @@ struct alignas(16) Vect16 {
   inline bool operator<(const Vect16 &b) const;
   inline char less_partial(const Vect16 &b, int k) const;
   inline Vect16 permuted(const Vect16 &other) const;
+  #if USE_CUDA==ON
   inline Vect16 permuted_gpu(const Vect16 &other) const;
+  #endif  // USE_CUDA
   inline Vect16 sorted() const;
   inline Vect16 revsorted() const;
 
