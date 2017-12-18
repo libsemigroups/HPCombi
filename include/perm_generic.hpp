@@ -35,7 +35,7 @@ template <size_t _Size, typename Expo = uint8_t> struct VectGeneric {
 
   VectGeneric() = default;
   VectGeneric(std::initializer_list<Expo> il, Expo def = 0);
-  VectGeneric(size_t plus, size_t mod);
+  VectGeneric(size_t plus, int mod);
   VectGeneric(Expo target);
 
   Expo operator[](uint64_t i) const { return v[i]; }
@@ -140,7 +140,7 @@ VectGeneric<Size, Expo>::VectGeneric(std::initializer_list<Expo> il, Expo def) {
 }
 
 template <size_t Size, typename Expo>
-VectGeneric<Size, Expo>::VectGeneric(size_t plus, size_t mod) {
+VectGeneric<Size, Expo>::VectGeneric(size_t plus, int mod) {
   mod = (mod<=0) ? Size:mod;
   for (uint64_t i = 0; i < Size; ++i)
     v[i] = (i+plus)%mod;

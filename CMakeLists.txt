@@ -49,7 +49,7 @@ if ( CMAKE_CXX_COMPILER_ID STREQUAL "GNU" OR CMAKE_CXX_COMPILER_ID STREQUAL "Cla
   if(USE_CUDA)
 	add_compile_options( -std=c++11 ) # -std=c++14 and -Wall not supported with nvcc
   else()
-	add_compile_options( -std=c++14 -Wall)
+	add_compile_options( -std=c++14 )
   endif ( )
 endif ( )
 if ( MSVC )

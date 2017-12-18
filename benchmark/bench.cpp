@@ -10,7 +10,7 @@ using HPCombi::Transf16;
 using HPCombi::Perm16;
 using HPCombi::VectGeneric;
 
-static void escape(epu8 *p) {
+static void escape(void *p) {
   asm volatile("" : : "g"(p) : "memory");
 }
 
@@ -26,16 +26,16 @@ void use(T &&t) {
 const Fix_perm16 perm16_bench_data;
 const Fix_generic generic_bench_data;
 
-typedef Perm16 ( Perm16::*INVERSE_FUNC ) () const;
-typedef uint8_t ( Perm16::*SUM_FUNC ) () const;
+typedef Perm16 ( Perm16::*PERM16_OUT_FUNC ) () const;
+typedef uint8_t ( Perm16::*UNINT8_OUT_FUNC ) () const;
 typedef Vect1024 ( Vect1024::*COMPOSE_FUNC ) (const Vect1024&) const;
   
-  
-void inverse_register(benchmark::State& st, const char* label, const std::vector<Perm16> sample, INVERSE_FUNC inverse_func) { 
+template<typename T, typename TF> 
+void generic_register(benchmark::State& st, const char* label, const std::vector<T> sample, TF pfunc) { 
   for (auto _ : st) {
 	  for (auto elem : sample){
 		  benchmark::DoNotOptimize(
-		  (elem.*inverse_func)()
+		  (elem.*pfunc)()
 		  )
 		  ;
 		  escape(&elem.v);
@@ -44,20 +44,7 @@ void inverse_register(benchmark::State& st, const char* label, const std::vector
   }
   st.SetLabel(label);
 }
-  
-void sum_register(benchmark::State& st, const char* label, const std::vector<Perm16> sample, SUM_FUNC sum_func) { 
-  for (auto _ : st) {
-	  for (auto elem : sample){
-		  benchmark::DoNotOptimize(
-		  (elem.*sum_func)()
-		  )
-		  ;
-		  escape(&elem.v);
-	  }		  
-	  clobber();
-  }
-  st.SetLabel(label);
-}
+
 
   
 void compose_register(benchmark::State& st, const char* label, const std::vector<Vect1024> sample, COMPOSE_FUNC compose_func) { 
@@ -67,7 +54,7 @@ void compose_register(benchmark::State& st, const char* label, const std::vector
 		  (elem.*compose_func)(elem)
 		  )
 		  ;
-		  //~ escape(&elem.v);
+		  escape(&elem.v);
 	  }		  
 	  clobber();
   }
@@ -77,14 +64,14 @@ void compose_register(benchmark::State& st, const char* label, const std::vector
 
 
 int RegisterFromFunction_inverse() {
-	const float min_time = 0.00001;
-    auto REF = benchmark::RegisterBenchmark("inverse_ref", &inverse_register, "ref", perm16_bench_data.sample, &Perm16::inverse_ref);
-    auto ALT_REF = benchmark::RegisterBenchmark("inverse_alt", &inverse_register, "ref", perm16_bench_data.sample, &Perm16::inverse_ref);
-    auto ALT_ARR = benchmark::RegisterBenchmark("inverse_alt", &inverse_register, "arr", perm16_bench_data.sample, &Perm16::inverse_arr);
-    auto ALT_SORT = benchmark::RegisterBenchmark("inverse_alt", &inverse_register, "sort", perm16_bench_data.sample, &Perm16::inverse_sort);
-    auto ALT_FIND = benchmark::RegisterBenchmark("inverse_alt", &inverse_register, "find", perm16_bench_data.sample, &Perm16::inverse_find);
-    auto ALT_POW = benchmark::RegisterBenchmark("inverse_alt", &inverse_register, "pow", perm16_bench_data.sample, &Perm16::inverse_pow);
-    auto ALT_CYCL = benchmark::RegisterBenchmark("inverse_alt", &inverse_register, "cycl", perm16_bench_data.sample, &Perm16::inverse_cycl);	
+	//~ const float min_time = 0.00001;
+    auto REF = benchmark::RegisterBenchmark("inverse_ref", &generic_register<Perm16, PERM16_OUT_FUNC>, "ref", perm16_bench_data.sample, &Perm16::inverse_ref);
+    auto ALT_REF = benchmark::RegisterBenchmark("inverse_alt", &generic_register<Perm16, PERM16_OUT_FUNC>, "ref", perm16_bench_data.sample, &Perm16::inverse_ref);
+    auto ALT_ARR = benchmark::RegisterBenchmark("inverse_alt", &generic_register<Perm16, PERM16_OUT_FUNC>, "arr", perm16_bench_data.sample, &Perm16::inverse_arr);
+    auto ALT_SORT = benchmark::RegisterBenchmark("inverse_alt", &generic_register<Perm16, PERM16_OUT_FUNC>, "sort", perm16_bench_data.sample, &Perm16::inverse_sort);
+    auto ALT_FIND = benchmark::RegisterBenchmark("inverse_alt", &generic_register<Perm16, PERM16_OUT_FUNC>, "find", perm16_bench_data.sample, &Perm16::inverse_find);
+    auto ALT_POW = benchmark::RegisterBenchmark("inverse_alt", &generic_register<Perm16, PERM16_OUT_FUNC>, "pow", perm16_bench_data.sample, &Perm16::inverse_pow);
+    auto ALT_CYCL = benchmark::RegisterBenchmark("inverse_alt", &generic_register<Perm16, PERM16_OUT_FUNC>, "cycl", perm16_bench_data.sample, &Perm16::inverse_cycl);	
     //~ const std::pair<std::string, const Vect16> vect16s[] = {{"inverse_ref", inverse}, {"inverse_arr", inverse}, {"inverse_sort", inverse}};
 	//~ std::vector<benchmark::Benchmark> bnchs = {REF, ALT_REF, ALT_ARR, ALT_SORT, ALT_FIND, ALT_POW, ALT_CYCL};
 
@@ -108,17 +95,30 @@ int RegisterFromFunction_compose() {
   return 0;
 }
 
-int RegisterFromFunction_sum() {    
-    auto REF_SUM = benchmark::RegisterBenchmark("sum_ref", &sum_register, "ref", perm16_bench_data.sample, &Perm16::sum_ref);
-    auto ALT_SUM_REF = benchmark::RegisterBenchmark("sum_alt", &sum_register, "ref", perm16_bench_data.sample, &Perm16::sum_ref);
-    auto ALT_SUM3 = benchmark::RegisterBenchmark("sum_alt", &sum_register, "sum3", perm16_bench_data.sample, &Perm16::sum3);
-    auto ALT_SUM4 = benchmark::RegisterBenchmark("sum_alt", &sum_register, "sum4", perm16_bench_data.sample, &Perm16::sum4);
+int RegisterFromFunction() {
+    auto REF_SUM = benchmark::RegisterBenchmark("sum_ref", &generic_register<Perm16, UNINT8_OUT_FUNC>, "ref", perm16_bench_data.sample, &Perm16::sum_ref);
+    auto ALT_SUM_REF = benchmark::RegisterBenchmark("sum_alt", &generic_register<Perm16, UNINT8_OUT_FUNC>, "ref", perm16_bench_data.sample, &Perm16::sum_ref);
+    auto ALT_SUM3 = benchmark::RegisterBenchmark("sum_alt", &generic_register<Perm16, UNINT8_OUT_FUNC>, "sum3", perm16_bench_data.sample, &Perm16::sum3);
+    auto ALT_SUM4 = benchmark::RegisterBenchmark("sum_alt", &generic_register<Perm16, UNINT8_OUT_FUNC>, "sum4", perm16_bench_data.sample, &Perm16::sum4);
+
+    auto REF_LENGTH = benchmark::RegisterBenchmark("length_ref", &generic_register<Perm16, UNINT8_OUT_FUNC>, "ref", perm16_bench_data.sample, &Perm16::length_ref);
+    auto ALT_LENGTH_REF = benchmark::RegisterBenchmark("length_alt", &generic_register<Perm16, UNINT8_OUT_FUNC>, "ref", perm16_bench_data.sample, &Perm16::length_ref);
+    auto ALT_LENGTH = benchmark::RegisterBenchmark("length_alt", &generic_register<Perm16, UNINT8_OUT_FUNC>, "length", perm16_bench_data.sample, &Perm16::length);
+
+    auto REF_NB_DESCENT = benchmark::RegisterBenchmark("nb_descent_ref", &generic_register<Perm16, UNINT8_OUT_FUNC>, "ref", perm16_bench_data.sample, &Perm16::nb_descent_ref);
+    auto ALT_NB_DESCENT_REF = benchmark::RegisterBenchmark("nb_descent_alt", &generic_register<Perm16, UNINT8_OUT_FUNC>, "ref", perm16_bench_data.sample, &Perm16::nb_descent_ref);
+    auto ALT_NB_DESCENT = benchmark::RegisterBenchmark("nb_descent_alt", &generic_register<Perm16, UNINT8_OUT_FUNC>, "nb_descent", perm16_bench_data.sample, &Perm16::nb_descent);
+
+    auto REF_NB_CYCLES = benchmark::RegisterBenchmark("nb_cycles_ref", &generic_register<Perm16, UNINT8_OUT_FUNC>, "ref", perm16_bench_data.sample, &Perm16::nb_cycles_ref);
+    auto ALT_NB_CYCLES_REF = benchmark::RegisterBenchmark("nb_cycles_alt", &generic_register<Perm16, UNINT8_OUT_FUNC>, "ref", perm16_bench_data.sample, &Perm16::nb_cycles_ref);
+    auto ALT_NB_CYCLES_UNROLL = benchmark::RegisterBenchmark("nb_cycles_alt", &generic_register<Perm16, UNINT8_OUT_FUNC>, "unroll", perm16_bench_data.sample, &Perm16::nb_cycles_unroll);
+    
   return 0;
 }
 
 int dummy0 = RegisterFromFunction_compose();
-int dummy1 = RegisterFromFunction_sum();
 int dummy2 = RegisterFromFunction_inverse();
+int dummy1 = RegisterFromFunction();
 
 
 BENCHMARK_MAIN();
