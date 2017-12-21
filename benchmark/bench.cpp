@@ -31,9 +31,7 @@ void compose_register(benchmark::State& st, const char* label, const std::vector
 		  (elem.*compose_func)(elem)
 		  )
 		  ;
-		  escape(&elem.v);
-	  }		  
-	  clobber();
+	  }
   }
   st.SetLabel(label);
 }
