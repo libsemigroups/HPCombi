@@ -147,13 +147,17 @@ inline uint64_t Vect16::first_zero(int bnd) const {
 inline bool Vect16::is_partial_transformation(const size_t k) const {
   uint64_t diff =
       unsigned(_mm_cmpestri(v, Size, Perm16::one(), Size, LAST_DIFF));
-  return (_mm_movemask_epi8(v+1 <= 16) == 0xffff) && (diff == Size || diff < k);
+  return
+    (_mm_movemask_epi8(v+1 <= cst_epu8_0x0F) == 0xffff) &&
+    (diff == Size || diff < k);
 }
 
 inline bool Vect16::is_transformation(const size_t k) const {
   uint64_t diff =
       unsigned(_mm_cmpestri(v, Size, Perm16::one(), Size, LAST_DIFF));
-  return (_mm_movemask_epi8(v < 16) == 0xffff) && (diff == Size || diff < k);
+  return
+    (_mm_movemask_epi8(v < cst_epu8_0x0F) == 0xffff) &&
+    (diff == Size || diff < k);
 }
 
 inline bool Vect16::is_permutation(const size_t k) const {
@@ -252,7 +256,7 @@ inline Perm16 Perm16::inverse_sort() const {
   // Vect16 res = (v << 4) + one().v;
   // I call directly the shift intrinsic
   Vect16 res = static_cast<epu8>(_mm_slli_epi32(v, 4)) + one().v;
-  res = res.sorted().v & 0xf;
+  res = res.sorted().v & cst_epu8_0x0F;
   return res;
 }
 

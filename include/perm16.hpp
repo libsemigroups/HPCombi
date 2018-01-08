@@ -59,6 +59,13 @@ static constexpr uint8_t make_left_shift(uint8_t i) {
 }
 
 
+// Old Clang doesn't automatically broadcast uint8_t into epu8
+// We therefore write there the explicit constants
+const epu8 cst_epu8_0x0F = {0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F,
+                            0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F};
+const epu8 cst_epu8_0xFF = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
+                            0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF};
+
 // Forward declaration
 struct Perm16;
 struct PTransf16;
@@ -208,7 +215,7 @@ struct PTransf16 : public Vect16 {
 
   static constexpr PTransf16 one() { return make_epu8(make_one); }
   PTransf16 inline operator*(const PTransf16 &p) const {
-    return permuted(p).v | (v == 0xFF); }
+    return permuted(p).v | (v == cst_epu8_0xFF); }
 };
 
 
