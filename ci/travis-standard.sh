@@ -1,6 +1,8 @@
 #!/bin/bash
 set -e
 
+echo "CMake version:"
+cmake --version
 echo "g++ version:"
 $CXX --version
 echo "gcc version:"
