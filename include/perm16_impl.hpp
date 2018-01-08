@@ -213,7 +213,7 @@ static constexpr uint8_t hilo_mask_fun(uint8_t i) {
 static constexpr epu8 hilo_mask = make_epu8(hilo_mask_fun);
 
 inline Transf16::Transf16(uint64_t compressed) {
-  epu8 res = _mm_set1_epi64(_mm_set_pi64x(compressed));
+  epu8 res = _mm_set_epi64x(compressed, compressed);
   v = _mm_blendv_epi8(res & 0xf, res >> 4, hilo_mask);
 }
 
