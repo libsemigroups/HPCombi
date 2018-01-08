@@ -16,6 +16,9 @@
 #include "power.hpp"
 #include "HPCombi-config.h"
 #include <algorithm>
+#include <iomanip>
+#include <random>
+
 #ifdef HAVE_EXPERIMENTAL_NUMERIC_LCM
 #include <experimental/numeric>  // lcm until c++17
 #else
@@ -34,6 +37,17 @@ inline Vect16::Vect16(std::initializer_list<uint8_t> il, uint8_t def) {
   auto &a = as_array();
   for (size_t i = il.size(); i < Size; ++i)
     a[i] = def;
+}
+
+Vect16 Vect16::random(uint16_t bnd) {
+  Vect16 res;
+  std::random_device rd;
+
+  std::default_random_engine e1(rd());
+  std::uniform_int_distribution<int> uniform_dist(0, bnd - 1);
+  for (size_t i = 0; i < Size; i++)
+    res.v[i] = uniform_dist(e1);
+  return res;
 }
 
 // Comparison mode for _mm_cmpestri
@@ -227,6 +241,42 @@ inline Transf16::operator uint64_t() const {
   return _mm_extract_epi64(res, 0);
 }
 
+
+Perm16 Perm16::random() {
+  Perm16 res = one();
+  std::random_shuffle(res.begin(), res.end());
+  return res;
+}
+
+// From Ruskey : Combinatorial Generation page 138
+Perm16 Perm16::unrankSJT(int n, int r) {
+  int j;
+  std::array<int, 16> dir;
+  Perm16 res{};
+  for (j = 0; j < n; ++j)
+    res[j] = 0xFF;
+  for (j = n - 1; j >= 0; --j) {
+    int k, rem, c;
+    rem = r % (j + 1);
+    r = r / (j + 1);
+    if ((r & 1) != 0) {
+      k = -1;
+      dir[j] = +1;
+    } else {
+      k = n;
+      dir[j] = -1;
+    }
+    c = -1;
+    do {
+      k = k + dir[j];
+      if (res[k] == 0xFF)
+        ++c;
+    } while (c < rem);
+    res[k] = j;
+  }
+  return res;
+}
+
 inline Perm16 Perm16::elementary_transposition(uint64_t i) {
   assert(i < vect::Size);
   Perm16 res = one();
@@ -380,6 +430,14 @@ inline Vect16 Perm16::cycles_mask_unroll() const {
 inline uint8_t Perm16::nb_cycles_unroll() const {
   Vect16 res = one().v == cycles_mask_unroll().v;
   return _mm_popcnt_u32(_mm_movemask_epi8(res));
+}
+
+std::ostream &operator<<(std::ostream &stream, Vect16 const &term) {
+  stream << "[" << std::setw(2) << unsigned(term[0]);
+  for (unsigned i = 1; i < Vect16::Size; ++i)
+    stream << "," << std::setw(2) << unsigned(term[i]);
+  stream << "]";
+  return stream;
 }
 
 }  // namespace HPCombi

@@ -14,11 +14,7 @@
 //****************************************************************************//
 
 #include "perm16.hpp"
-#include <algorithm>
 #include <array>
-#include <iomanip>
-#include <iostream>
-#include <random>
 
 namespace HPCombi {
 
@@ -31,17 +27,6 @@ namespace power_helper {
 constexpr const Perm16 power_helper::Monoid<Perm16>::one;
 
 };  // namespace power_helper
-
-Vect16 Vect16::random(uint16_t bnd) {
-  Vect16 res;
-  std::random_device rd;
-
-  std::default_random_engine e1(rd());
-  std::uniform_int_distribution<int> uniform_dist(0, bnd - 1);
-  for (size_t i = 0; i < Size; i++)
-    res.v[i] = uniform_dist(e1);
-  return res;
-}
 
 // clang-format off
 
@@ -77,48 +62,5 @@ const std::array<epu8, 4> Vect16::summing_rounds = {{
     epu8 { FF, FF, FF, FF, FF, FF, FF, FF,  7,  7,  7,  7,  7,  7,  7,  7}
   }};
 // clang-format on
-
-Perm16 Perm16::random() {
-  Perm16 res = one();
-  std::random_shuffle(res.begin(), res.end());
-  return res;
-}
-
-// From Ruskey : Combinatorial Generation page 138
-Perm16 Perm16::unrankSJT(int n, int r) {
-  int j;
-  std::array<int, 16> dir;
-  Perm16 res{};
-  for (j = 0; j < n; ++j)
-    res[j] = 0xFF;
-  for (j = n - 1; j >= 0; --j) {
-    int k, rem, c;
-    rem = r % (j + 1);
-    r = r / (j + 1);
-    if ((r & 1) != 0) {
-      k = -1;
-      dir[j] = +1;
-    } else {
-      k = n;
-      dir[j] = -1;
-    }
-    c = -1;
-    do {
-      k = k + dir[j];
-      if (res[k] == 0xFF)
-        ++c;
-    } while (c < rem);
-    res[k] = j;
-  }
-  return res;
-}
-
-std::ostream &operator<<(std::ostream &stream, Vect16 const &term) {
-  stream << "[" << std::setw(2) << unsigned(term[0]);
-  for (unsigned i = 1; i < Vect16::Size; ++i)
-    stream << "," << std::setw(2) << unsigned(term[i]);
-  stream << "]";
-  return stream;
-}
 
 }  // namespace HPCombi
