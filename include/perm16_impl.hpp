@@ -148,7 +148,7 @@ inline bool Vect16::is_partial_transformation(const size_t k) const {
   uint64_t diff =
       unsigned(_mm_cmpestri(v, Size, Perm16::one(), Size, LAST_DIFF));
   return
-    (_mm_movemask_epi8(v+1 <= cst_epu8_0x0F) == 0xffff) &&
+    (_mm_movemask_epi8(v+cst_epu8_0x01 <= cst_epu8_0x0F) == 0xffff) &&
     (diff == Size || diff < k);
 }
 
@@ -218,7 +218,7 @@ static constexpr epu8 hilo_mask = make_epu8(hilo_mask_fun);
 
 inline Transf16::Transf16(uint64_t compressed) {
   epu8 res = _mm_set_epi64x(compressed, compressed);
-  v = _mm_blendv_epi8(res & 0xf, res >> 4, hilo_mask);
+  v = _mm_blendv_epi8(res & cst_epu8_0x0F, res >> 4, hilo_mask);
 }
 
 inline Transf16::operator uint64_t() const {
