@@ -32,6 +32,7 @@ using namespace HPCombi;
 
 #define ASSERT(test) if (!(test)) cout << "Test failed in file " << __FILE__ \
                                        << " line " << __LINE__ << ": " #test << endl
+
 // Sorting network Knuth AoCP3 Fig. 51 p 229.
 const array<epu8, 9> rounds =  // clang-format off
     //   0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15
