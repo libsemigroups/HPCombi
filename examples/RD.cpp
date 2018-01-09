@@ -111,5 +111,9 @@ int main() {
     // if (res.find(toFind) != res.end()) break;
   }
   cout << "res =  " << res.size() << endl;
+  assert (res.size() == 248318309);
+// 1  2   3     4      5       6         7          8
+// 4 37 541 10625 258661 7464625 248318309 9339986689
+
   exit(0);
 }
