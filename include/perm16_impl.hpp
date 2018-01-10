@@ -333,13 +333,13 @@ using Perm16 = Perm16;
 template <> struct Monoid<Perm16> {
   // Workaround for a bug in G++-5
   // static constexpr Perm16 one = Perm16::one();
-  static constexpr Perm16 one {Vect16(make_epu8(make_one))}; // Perm16::one();
+  static constexpr Perm16 one {Vect16(make_epu8(make_one))};
   static Perm16 prod(Perm16 a, Perm16 b) { return a * b; }
 };
 
 // Definitions since previously *only* declared
 constexpr const Perm16 power_helper::Monoid<Perm16>::one;
-};  // namespace power_helper
+}  // namespace power_helper
 
 inline Perm16 Perm16::inverse_cycl() const {
   Perm16 res = one();

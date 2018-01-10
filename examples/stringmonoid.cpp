@@ -42,8 +42,8 @@ using namespace std::string_literals;
 
 std::string Monoid<std::string>::one = ""s;
 
-};  // namespace power_helper
-};  // namespace HPCombi
+}  // namespace power_helper
+}  // namespace HPCombi
 
 using namespace std::string_literals;
 

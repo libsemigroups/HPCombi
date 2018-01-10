@@ -374,13 +374,13 @@ template <> struct hash<HPCombi::PTransf16> {
 
 template <> struct hash<HPCombi::Transf16> {
   inline size_t operator()(const HPCombi::Transf16 &ar) const {
-    return hash<HPCombi::Vect16>()(ar);
+    return uint64_t(ar);
   }
 };
 
 template <> struct hash<HPCombi::Perm16> {
   inline size_t operator()(const HPCombi::Perm16 &ar) const {
-    return hash<HPCombi::Vect16>()(ar);
+    return uint64_t(ar);
   }
 };
 
