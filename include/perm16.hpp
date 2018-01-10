@@ -13,9 +13,6 @@
 //                  http://www.gnu.org/licenses/                              //
 //****************************************************************************//
 
-#define CONSTEXPR const
-#define CONSTEXPR_CONSTRUCTOR
-
 #ifndef HPCOMBI_PERM16_HPP_INCLUDED
 #define HPCOMBI_PERM16_HPP_INCLUDED
 
