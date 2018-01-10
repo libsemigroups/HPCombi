@@ -20,4 +20,7 @@
 // Google sparse hash set
 #cmakedefine HPCOMBI_HAVE_DENSEHASHSET
 
+// GCC-4.8 constexpr function argument bug
+#cmakedefine HPCOMBI_CONSTEXPR_FUN_ARGS
+
 #endif  // HPCOMBI_CONFIG_HPP

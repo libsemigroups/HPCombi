@@ -14,7 +14,6 @@
 //****************************************************************************//
 
 #include "power.hpp"
-#include "HPCombi-config.h"
 #include <algorithm>
 #include <iomanip>
 #include <random>

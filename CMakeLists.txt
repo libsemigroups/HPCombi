@@ -38,6 +38,14 @@ set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_EXTENSIONS OFF) # -std=c++11 instead of -std=gnu++11
 
 message(STATUS "*** Compiler id is ${CMAKE_CXX_COMPILER_ID}")
+if ( CMAKE_CXX_COMPILER_ID STREQUAL "GNU" OR CMAKE_CXX_COMPILER_ID STREQUAL "Clang" )
+  # Workaround of CMAKE bug https://stackoverflow.com/questions/47213356/
+  set(CMAKE_REQUIRED_FLAGS ${CMAKE_REQUIRED_FLAGS} -std=c++11)
+  add_compile_options( -std=c++11 -Wall )
+endif ( )
+if ( MSVC )
+   add_compile_options( /W1 )
+endif ( MSVC )
 
 ###################
 # Project Structure

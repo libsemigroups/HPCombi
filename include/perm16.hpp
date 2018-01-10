@@ -13,14 +13,8 @@
 //                  http://www.gnu.org/licenses/                              //
 //****************************************************************************//
 
-#define CONSTEXPR constexpr
-#define CONSTEXPR_CONSTRUCTOR constexpr
-
 #ifndef HPCOMBI_PERM16_HPP_INCLUDED
 #define HPCOMBI_PERM16_HPP_INCLUDED
-
-#define CONSTEXPR constexpr
-#define CONSTEXPR_CONSTRUCTOR constexpr
 
 #include <array>
 #include <cassert>
@@ -29,6 +23,17 @@
 #include <ostream>
 #include <x86intrin.h>
 #include "fallback/seq.hpp"
+
+
+#include "HPCombi-config.h"
+
+#ifdef HPCOMBI_CONSTEXPR_FUN_ARGS
+  #define CONSTEXPR constexpr
+  #define CONSTEXPR_CONSTRUCTOR constexpr
+#else
+  #define CONSTEXPR const
+  #define CONSTEXPR_CONSTRUCTOR
+#endif
 
 namespace HPCombi {
 
