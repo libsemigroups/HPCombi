@@ -3,8 +3,15 @@ dist: trusty
 sudo: required
 compiler:
   - gcc
+addons:
+  apt:
+    sources:
+    - ubuntu-toolchain-r-test
+    packages:
+    - libboost1.55-all-dev
 matrix:
   include:
+    - env: TEST_SUITE=standard
     - env: TEST_SUITE=standard MATRIX_EVAL="CC=gcc-5 && CXX=g++-5"
       addons:
         apt:
@@ -13,7 +20,14 @@ matrix:
           packages:
             - gcc-5
             - g++-5
-            - libboost1.55-all-dev
+    - compiler: clang
+      env: TEST_SUITE=standard MATRIX_EVAL="CC=clang-5.0 && CXX=clang++-5.0"
+      addons:
+        apt:
+          sources:
+            - llvm-toolchain-trusty-5.0
+          packages:
+            - clang-5.0
 before_install:
     - eval "${MATRIX_EVAL}"
     - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo add-apt-repository ppa:dns/gnu -y; fi
