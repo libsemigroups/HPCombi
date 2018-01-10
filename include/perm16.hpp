@@ -19,6 +19,9 @@
 #ifndef HPCOMBI_PERM16_HPP_INCLUDED
 #define HPCOMBI_PERM16_HPP_INCLUDED
 
+#define CONSTEXPR constexpr
+#define CONSTEXPR_CONSTRUCTOR constexpr
+
 #include <array>
 #include <cassert>
 #include <cstdint>
