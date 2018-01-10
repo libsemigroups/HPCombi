@@ -30,6 +30,9 @@ using namespace std;
 using namespace std::chrono;
 using namespace HPCombi;
 
+#define ASSERT(test) if (!(test)) cout << "Test failed in file " << __FILE__ \
+                                       << " line " << __LINE__ << ": " #test << endl
+
 // Sorting network Knuth AoCP3 Fig. 51 p 229.
 const array<epu8, 9> rounds =  // clang-format off
     //   0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15
@@ -122,8 +125,8 @@ int main() {
   // Perm16 a = { 5, 4,12,15,10, 8, 9, 2, 3,13,14, 0, 1, 7,11, 6};
 
   for (Perm16 round : rounds) {
-    assert(round.is_permutation());
-    assert(round * round == Perm16::one());
+    ASSERT(round.is_permutation());
+    ASSERT(round * round == Perm16::one());
   }
 
   auto vrand = rand_perms(1000);
@@ -133,7 +136,7 @@ int main() {
       [vrand]() {
         for (Perm16 v : vrand) {
           std::sort(v.begin(), v.end());
-          assert(v == Perm16::one());
+          ASSERT(v == Perm16::one());  // avoid optimization
         }
       },
       rep);
@@ -141,42 +144,42 @@ int main() {
   timethat(
       [vrand]() {
         for (Perm16 v : vrand)
-          assert(v.sorted() == Perm16::one());
+          ASSERT(v.sorted() == Perm16::one());
       },
       rep, reftime);
   cout << "Funct  : ";
   timethat(
       [vrand]() {
         for (Perm16 v : vrand)
-          assert(sort(v) == Perm16::one());
+          ASSERT(sort(v) == Perm16::one());
       },
       rep, reftime);
   cout << "Pair  : ";
   timethat(
       [vrand]() {
         for (Perm16 v : vrand)
-          assert(sort_pair(v) == Perm16::one());
+          ASSERT(sort_pair(v) == Perm16::one());
       },
       rep, reftime);
   cout << "OddEv : ";
   timethat(
       [vrand]() {
         for (Perm16 v : vrand)
-          assert(sort_odd_even(v) == Perm16::one());
+          ASSERT(sort_odd_even(v) == Perm16::one());
       },
       rep, reftime);
   cout << "Insert : ";
   timethat(
       [vrand]() {
         for (Perm16 v : vrand)
-          assert(insertion_sort(v) == Perm16::one());
+          ASSERT(insertion_sort(v) == Perm16::one());
       },
       rep, reftime);
   cout << "Radix16: ";
   timethat(
       [vrand]() {
         for (Perm16 v : vrand)
-          assert(radix_sort(v) == Perm16::one());
+          ASSERT(radix_sort(v) == Perm16::one());
       },
       rep, reftime);
 

@@ -16,6 +16,9 @@
 #include "power.hpp"
 #include "HPCombi-config.h"
 #include <algorithm>
+#include <iomanip>
+#include <random>
+
 #ifdef HAVE_EXPERIMENTAL_NUMERIC_LCM
 #include <experimental/numeric>  // lcm until c++17
 #else
@@ -23,6 +26,9 @@
 #endif  // HAVE_EXPERIMENTAL_NUMERIC_LCM
 
 namespace HPCombi {
+
+// Definitions since previously *only* declared
+constexpr const size_t Vect16::Size;
 
 /*****************************************************************************/
 /** Implementation part for inline functions *********************************/
@@ -34,6 +40,17 @@ inline Vect16::Vect16(std::initializer_list<uint8_t> il, uint8_t def) {
   auto &a = as_array();
   for (size_t i = il.size(); i < Size; ++i)
     a[i] = def;
+}
+
+Vect16 Vect16::random(uint16_t bnd) {
+  Vect16 res;
+  std::random_device rd;
+
+  std::default_random_engine e1(rd());
+  std::uniform_int_distribution<int> uniform_dist(0, bnd - 1);
+  for (size_t i = 0; i < Size; i++)
+    res.v[i] = uniform_dist(e1);
+  return res;
 }
 
 // Comparison mode for _mm_cmpestri
@@ -162,13 +179,17 @@ inline uint64_t Vect16::first_zero(int bnd) const {
 inline bool Vect16::is_partial_transformation(const size_t k) const {
   uint64_t diff =
       unsigned(_mm_cmpestri(v, Size, Perm16::one(), Size, LAST_DIFF));
-  return (_mm_movemask_epi8(v+1 <= 16) == 0xffff) && (diff == Size || diff < k);
+  return
+    (_mm_movemask_epi8(v+cst_epu8_0x01 <= cst_epu8_0x0F) == 0xffff) &&
+    (diff == Size || diff < k);
 }
 
 inline bool Vect16::is_transformation(const size_t k) const {
   uint64_t diff =
       unsigned(_mm_cmpestri(v, Size, Perm16::one(), Size, LAST_DIFF));
-  return (_mm_movemask_epi8(v < 16) == 0xffff) && (diff == Size || diff < k);
+  return
+    (_mm_movemask_epi8(v < cst_epu8_0x0F) == 0xffff) &&
+    (diff == Size || diff < k);
 }
 
 inline bool Vect16::is_permutation(const size_t k) const {
@@ -228,14 +249,50 @@ static constexpr uint8_t hilo_mask_fun(uint8_t i) {
 static constexpr epu8 hilo_mask = make_epu8(hilo_mask_fun);
 
 inline Transf16::Transf16(uint64_t compressed) {
-  epu8 res = _mm_set1_epi64(_mm_set_pi64x(compressed));
-  v = _mm_blendv_epi8(res & 0xf, res >> 4, hilo_mask);
+  epu8 res = _mm_set_epi64x(compressed, compressed);
+  v = _mm_blendv_epi8(res & cst_epu8_0x0F, res >> 4, hilo_mask);
 }
 
 inline Transf16::operator uint64_t() const {
   Vect16 res = static_cast<epu8>(_mm_slli_epi32(v, 4));
   res = res.permuted(hilo_exchng).v + v;
   return _mm_extract_epi64(res, 0);
+}
+
+
+Perm16 Perm16::random() {
+  Perm16 res = one();
+  std::random_shuffle(res.begin(), res.end());
+  return res;
+}
+
+// From Ruskey : Combinatorial Generation page 138
+Perm16 Perm16::unrankSJT(int n, int r) {
+  int j;
+  std::array<int, 16> dir;
+  Perm16 res{};
+  for (j = 0; j < n; ++j)
+    res[j] = 0xFF;
+  for (j = n - 1; j >= 0; --j) {
+    int k, rem, c;
+    rem = r % (j + 1);
+    r = r / (j + 1);
+    if ((r & 1) != 0) {
+      k = -1;
+      dir[j] = +1;
+    } else {
+      k = n;
+      dir[j] = -1;
+    }
+    c = -1;
+    do {
+      k = k + dir[j];
+      if (res[k] == 0xFF)
+        ++c;
+    } while (c < rem);
+    res[k] = j;
+  }
+  return res;
 }
 
 inline Perm16 Perm16::elementary_transposition(uint64_t i) {
@@ -267,7 +324,7 @@ inline Perm16 Perm16::inverse_sort() const {
   // Vect16 res = (v << 4) + one().v;
   // I call directly the shift intrinsic
   Vect16 res = static_cast<epu8>(_mm_slli_epi32(v, 4)) + one().v;
-  res = res.sorted().v & 0xf;
+  res = res.sorted().v & cst_epu8_0x0F;
   return res;
 }
 
@@ -295,6 +352,8 @@ template <> struct Monoid<Perm16> {
   static Perm16 prod(Perm16 a, Perm16 b) { return a * b; }
 };
 
+// Definitions since previously *only* declared
+constexpr const Perm16 power_helper::Monoid<Perm16>::one;
 };  // namespace power_helper
 
 inline Perm16 Perm16::inverse_cycl() const {
@@ -392,5 +451,55 @@ inline uint8_t Perm16::nb_cycles_unroll() const {
   Vect16 res = one().v == cycles_mask_unroll().v;
   return _mm_popcnt_u32(_mm_movemask_epi8(res));
 }
+
+std::ostream &operator<<(std::ostream &stream, Vect16 const &term) {
+  stream << "[" << std::setw(2) << unsigned(term[0]);
+  for (unsigned i = 1; i < Vect16::Size; ++i)
+    stream << "," << std::setw(2) << unsigned(term[i]);
+  stream << "]";
+  return stream;
+}
+
+// clang-format off
+
+// Sorting network Knuth AoCP3 Fig. 51 p 229.
+const std::array<Perm16, 9> Vect16::sorting_rounds = {{
+    //     0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15
+    epu8 { 1,  0,  3,  2,  5,  4,  7,  6,  9,  8, 11, 10, 13, 12, 15, 14},
+    epu8 { 2,  3,  0,  1,  6,  7,  4,  5, 10, 11,  8,  9, 14, 15, 12, 13},
+    epu8 { 4,  5,  6,  7,  0,  1,  2,  3, 12, 13, 14, 15,  8,  9, 10, 11},
+    epu8 { 8,  9, 10, 11, 12, 13, 14, 15,  0,  1,  2,  3,  4,  5,  6,  7},
+    epu8 { 0,  2,  1, 12,  8, 10,  9, 11,  4,  6,  5,  7,  3, 14, 13, 15},
+    epu8 { 0,  4,  8, 10,  1,  9, 12, 13,  2,  5,  3, 14,  6,  7, 11, 15},
+    epu8 { 0,  1,  4,  5,  2,  3,  8,  9,  6,  7, 12, 13, 10, 11, 14, 15},
+    epu8 { 0,  1,  2,  6,  4,  8,  3, 10,  5, 12,  7, 11,  9, 13, 14, 15},
+    epu8 { 0,  1,  2,  4,  3,  6,  5,  8,  7, 10,  9, 12, 11, 13, 14, 15}
+  }};
+
+// Gather at the front numbers with (3-i)-th bit not set.
+const std::array<Perm16, 3> Perm16::inverting_rounds = {{
+    //     0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15
+    epu8 { 0,  1,  2,  3,  8,  9, 10, 11,  4,  5,  6,  7, 12, 13, 14, 15},
+    epu8 { 0,  1,  4,  5,  8,  9, 12, 13,  2,  3,  6,  7, 10, 11, 14, 15},
+    epu8 { 0,  2,  4,  6,  8, 10, 12, 14,  1,  3,  5,  7,  9, 11, 13, 15}
+  }};
+
+
+#if defined(FF)
+#error FF is defined !
+#endif /* FF */
+#define FF 0xff
+
+const std::array<epu8, 4> Vect16::summing_rounds = {{
+    //      0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15
+    epu8 { FF,  0, FF,  2, FF,  4, FF,  6, FF,  8, FF, 10, FF, 12, FF, 14},
+    epu8 { FF, FF,  1,  1, FF, FF,  5,  5, FF, FF,  9,  9, FF, FF, 13, 13},
+    epu8 { FF, FF, FF, FF,  3,  3,  3,  3, FF, FF, FF, FF, 11, 11, 11, 11},
+    epu8 { FF, FF, FF, FF, FF, FF, FF, FF,  7,  7,  7,  7,  7,  7,  7,  7}
+  }};
+
+#undef FF
+
+// clang-format on
 
 }  // namespace HPCombi

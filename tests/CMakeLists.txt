@@ -13,7 +13,6 @@
 #                  http://www.gnu.org/licenses/                               #
 #****************************************************************************#
 
-IF (BUILD_TESTING)
 
 message(STATUS "Building tests")
 
@@ -26,14 +25,17 @@ add_definitions (-DBOOST_TEST_DYN_LINK)
 
 add_executable (test_perm16 test_perm16.cpp)
 target_link_libraries(test_perm16
-  perm16
   ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY}
   )
+  target_compile_options(test_perm16 PUBLIC -mavx -mtune=native -funroll-loops -flax-vector-conversions)
+
 add_executable (test_perm_all test_perm_all.cpp)
 target_link_libraries(test_perm_all
-  perm16
   ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY}
   )
+  
+  target_compile_options(test_perm_all PUBLIC -mavx -mtune=native -funroll-loops -flax-vector-conversions)
+  
 if(USE_CUDA)
   add_executable (test_perm_gpu test_perm_gpu.cpp)
   target_link_libraries(test_perm_gpu
@@ -50,4 +52,3 @@ add_test (NAME TestPerm16 COMMAND test_perm16)
 add_test (NAME TestPermAll COMMAND test_perm_all)
 add_test (NAME TestPermGPU COMMAND test_perm_gpu)
 
-ENDIF(BUILD_TESTING)

@@ -59,7 +59,8 @@ inline PTransf16 act0(PTransf16 x, PTransf16 y) {
   mask = _mm_cmplt_epi8(y, PTransf16::one());
   minab = _mm_min_epi8(x, b);
   maxab = _mm_max_epi8(x, b);
-  return static_cast<epu8>(_mm_blendv_epi8(maxab, minab, mask)) | (y.v == FF);
+  return static_cast<epu8>(_mm_blendv_epi8(maxab, minab, mask)) |
+    (y.v == HPCombi::cst_epu8_0xFF);
 }
 
 int main() {
@@ -110,5 +111,9 @@ int main() {
     // if (res.find(toFind) != res.end()) break;
   }
   cout << "res =  " << res.size() << endl;
+  assert (res.size() == 248318309);
+// 1  2   3     4      5       6         7          8
+// 4 37 541 10625 258661 7464625 248318309 9339986689
+
   exit(0);
 }
