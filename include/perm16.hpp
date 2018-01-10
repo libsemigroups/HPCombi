@@ -256,8 +256,7 @@ struct Perm16 : public Transf16 {
   CONSTEXPR_CONSTRUCTOR Perm16(const vect v) : Transf16(v) {}
   CONSTEXPR_CONSTRUCTOR Perm16(const epu8 x) : Transf16(x) {}
   Perm16(std::initializer_list<uint8_t> il) : Transf16(il) {}
-  CONSTEXPR_CONSTRUCTOR explicit
-  Perm16(uint64_t compressed) : Transf16(compressed) {}
+  explicit Perm16(uint64_t compressed) : Transf16(compressed) {}
   Perm16 inline operator*(const Perm16 &p) const { return permuted(p); }
 
   /** @class common_inverse
