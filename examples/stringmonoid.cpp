@@ -38,17 +38,15 @@ template <> struct Monoid<std::string> {
   inline static std::string prod(std::string a, std::string b) { return a + b; }
 };
 
-using namespace std::string_literals;
 
-std::string Monoid<std::string>::one = ""s;
+std::string Monoid<std::string>::one = "";
 
 };  // namespace power_helper
 };  // namespace HPCombi
 
-using namespace std::string_literals;
 
 int main() {
-  assert(HPCombi::pow<0>("ab"s) == ""s);
-  assert(HPCombi::pow<4>("ab"s) == "abababab"s);
-  assert(HPCombi::pow<5>("abc"s) == "abcabcabcabcabc"s);
+  assert(HPCombi::pow<0>(std::string("ab")) == "");
+  assert(HPCombi::pow<4>(std::string("ab")) == "abababab");
+  assert(HPCombi::pow<5>(std::string("abc")) == "abcabcabcabcabc");
 }

@@ -54,7 +54,7 @@ template <typename T> struct Monoid;
  *  the template struct #HPCombi::power_helper::Monoid
  */
 template <typename T, typename M = power_helper::Monoid<T>>
-constexpr T square(const T x) {
+const T square(const T x) {
   return M::prod(x, x);
 }
 
@@ -75,7 +75,7 @@ constexpr T square(const T x) {
  *  struct #HPCombi::power_helper::Monoid
  */
 template <unsigned exp, typename T, typename M = power_helper::Monoid<T>>
-constexpr T pow(const T x) {
+const T pow(const T x) {
   return (exp == 0)
              ? M::one
              : (exp % 2 == 0)
@@ -99,14 +99,14 @@ namespace power_helper {
 template <typename T> struct Monoid {
 
   /// The one of type T
-  static constexpr T one = 1;
+  static const T one = 1;
 
   /** the product of two elements of type T
    *  @param a the first element to be multiplied
    *  @param b the second element to be multiplied
    *  @return the product a * b
    */
-  static constexpr T prod(T a, T b) { return a * b; }
+  static const T prod(T a, T b) { return a * b; }
 };
 
 };  // namespace power_helper
