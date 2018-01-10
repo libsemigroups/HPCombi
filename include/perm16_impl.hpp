@@ -336,7 +336,7 @@ template <> struct Monoid<Perm16> {
 };
 
 const Perm16 power_helper::Monoid<Perm16>::one = Perm16::one();
-};  // namespace power_helper
+}  // namespace power_helper
 
 inline Perm16 Perm16::inverse_cycl() const {
   Perm16 res = one();

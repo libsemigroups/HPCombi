@@ -41,7 +41,7 @@ namespace power_helper {
 // Forward declaration
 template <typename T> struct Monoid;
 
-};  // namespace power_helper
+}  // namespace power_helper
 
 /** A generic compile time squaring function
  *
@@ -109,8 +109,8 @@ template <typename T> struct Monoid {
   static const T prod(T a, T b) { return a * b; }
 };
 
-};  // namespace power_helper
+}  // namespace power_helper
 
-};  // namespace HPCombi
+}  // namespace HPCombi
 
 #endif  // HPCOMBI_POWER_HPP_INCLUDED

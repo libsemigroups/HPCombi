@@ -41,8 +41,8 @@ template <> struct Monoid<std::string> {
 
 std::string Monoid<std::string>::one = "";
 
-};  // namespace power_helper
-};  // namespace HPCombi
+}  // namespace power_helper
+}  // namespace HPCombi
 
 
 int main() {
