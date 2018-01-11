@@ -13,8 +13,9 @@
 //                  http://www.gnu.org/licenses/                              //
 //****************************************************************************//
 
+#ifndef HPCOMBI_FALLBACK_SEQ_HPP_INCLUDED
+#define HPCOMBI_FALLBACK_SEQ_HPP_INCLUDED
 
-#if __cplusplus <= 201103L
 namespace bwcompat_details {
   // Copy pasted from sources
 
@@ -80,4 +81,5 @@ namespace std {
     using index_sequence_for = make_index_sequence<sizeof...(_Types)>;
 
 }  // namespace std
-#endif
+
+#endif  // HPCOMBI_FALLBACK_SEQ_HPP_INCLUDED

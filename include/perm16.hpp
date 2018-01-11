@@ -22,10 +22,12 @@
 #include <functional>  // less<>
 #include <ostream>
 #include <x86intrin.h>
-#include "fallback/seq.hpp"
-
 
 #include "HPCombi-config.h"
+
+#if __cplusplus <= 201103L
+#include "fallback/seq.hpp"
+#endif
 
 #ifdef HPCOMBI_CONSTEXPR_FUN_ARGS
   #define HPCOMBI_CONSTEXPR constexpr
@@ -34,7 +36,6 @@
   #define HPCOMBI_CONSTEXPR const
   #define HPCOMBI_CONSTEXPR_CONSTRUCTOR
 #endif
-
 
 namespace HPCombi {
 
