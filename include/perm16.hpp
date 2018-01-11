@@ -379,6 +379,14 @@ template <> struct hash<HPCombi::Vect16> {
     __int128 v0 = _mm_extract_epi64(ar.v, 0);
     __int128 v1 = _mm_extract_epi64(ar.v, 1);
     return ((v1 * HPCombi::prime + v0) * HPCombi::prime) >> 64;
+
+    /* The following is extremely slow on Renner benchmark
+    uint64_t v0 = _mm_extract_epi64(ar.v, 0);
+    uint64_t v1 = _mm_extract_epi64(ar.v, 1);
+    size_t seed = v0 + 0x9e3779b9;
+    seed ^= v1 + 0x9e3779b9 + (seed<<6) + (seed>>2);
+    return seed;
+    */
   }
 };
 
