@@ -37,15 +37,14 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_EXTENSIONS OFF) # -std=c++11 instead of -std=gnu++11
 
+add_definitions(-DHPCOMBI_HAVE_CONFIG)
+
 message(STATUS "*** Compiler id is ${CMAKE_CXX_COMPILER_ID}")
 if ( CMAKE_CXX_COMPILER_ID STREQUAL "GNU" OR CMAKE_CXX_COMPILER_ID STREQUAL "Clang" )
   # Workaround of CMAKE bug https://stackoverflow.com/questions/47213356/
   set(CMAKE_REQUIRED_FLAGS ${CMAKE_REQUIRED_FLAGS} -std=c++11)
   add_compile_options( -std=c++11 -Wall )
 endif ( )
-if ( MSVC )
-   add_compile_options( /W1 )
-endif ( MSVC )
 
 ###################
 # Project Structure
@@ -70,14 +69,36 @@ ENDIF(BUILD_TESTING)
 #####################
 # config.h file stuff
 configure_file(${CMAKE_SOURCE_DIR}/config.h.in ${CMAKE_BINARY_DIR}/HPCombi-config.h)
+# install (FILES ${CMAKE_CURRENT_BINARY_DIR}/HPCombi-config.h
+#   DESTINATION include/${CMAKE_PROJECT_NAME})
+configure_file(${CMAKE_SOURCE_DIR}/VERSION.in ${CMAKE_BINARY_DIR}/VERSION)
 
+####################
+# Install Misc
+install (FILES ${CMAKE_CURRENT_BINARY_DIR}/VERSION DESTINATION ".")
+install (FILES ${CMAKE_SOURCE_DIR}/AUTHORS DESTINATION ".")
+install (FILES ${CMAKE_SOURCE_DIR}/LICENSE DESTINATION ".")
+install (FILES ${CMAKE_SOURCE_DIR}/list_intrin.txt DESTINATION ".")
 ###################
 # pkgconfig stuff
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/hpcombi.pc.in
-               ${CMAKE_CURRENT_BINARY_DIR}/hpcombi.pc @ONLY)
-install (FILES ${CMAKE_CURRENT_BINARY_DIR}/hpcombi.pc
-         DESTINATION lib/pkgconfig/)
+# configure_file(${CMAKE_CURRENT_SOURCE_DIR}/hpcombi.pc.in
+#                ${CMAKE_CURRENT_BINARY_DIR}/hpcombi.pc @ONLY)
 
+
+#################
+# Packing stuff
+#
+set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "${DESCRIPTION}")
+set(CPACK_PACKAGE_VENDOR "Florent Hivert <florent.hivert@lri.fr>")
+set(CPACK_PACKAGE_DESCRIPTION_FILE "${CMAKE_CURRENT_SOURCE_DIR}/README.md")
+set(CPACK_PACKAGE_VERSION_MAJOR "${VERSION_MAJOR}")
+set(CPACK_PACKAGE_VERSION_MINOR "${VERSION_MINOR}")
+set(CPACK_PACKAGE_VERSION_PATCH "${VERSION_PATCH}")
+
+set(CPACK_GENERATOR "TGZ")
+SET(CPACK_PACKAGE_FILE_NAME
+  "HPCombi-${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}")
+include(CPack)
 
 ########################
 # Custom target for TAGS

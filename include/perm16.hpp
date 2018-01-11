@@ -23,7 +23,9 @@
 #include <ostream>
 #include <x86intrin.h>
 
+#ifdef HPCOMBI_HAVE_CONFIG
 #include "HPCombi-config.h"
+#endif
 
 #if __cplusplus <= 201103L
 #include "fallback/seq.hpp"
@@ -33,6 +35,7 @@
   #define HPCOMBI_CONSTEXPR constexpr
   #define HPCOMBI_CONSTEXPR_CONSTRUCTOR constexpr
 #else
+  #pragma message "Using a constexpr broken compiler ! Performance may not be optimal"
   #define HPCOMBI_CONSTEXPR const
   #define HPCOMBI_CONSTEXPR_CONSTRUCTOR
 #endif
