@@ -27,7 +27,7 @@
 namespace HPCombi {
 
 // Definitions since previously *only* declared
-CONSTEXPR size_t Vect16::Size;
+HPCOMBI_CONSTEXPR size_t Vect16::Size;
 
 /*****************************************************************************/
 /** Implementation part for inline functions *********************************/
@@ -188,8 +188,6 @@ inline bool Vect16::is_permutation(const size_t k) const {
          (diff == Size || diff < k);
 }
 
-const uint64_t prime = 0x9e3779b97f4a7bb9;
-
 inline Vect16 Vect16::sorted() const {
   Vect16 res = *this;
   for (auto round : sorting_rounds) {
@@ -225,12 +223,12 @@ inline PTransf16::PTransf16(std::initializer_list<uint8_t> il) {
     v[i] = i;
 }
 
-static CONSTEXPR uint8_t hilo_exchng_fun(uint8_t i) {
-  return i < 8 ? i + 8 : i - 8; }
-static CONSTEXPR epu8 hilo_exchng = make_epu8(hilo_exchng_fun);
-static CONSTEXPR uint8_t hilo_mask_fun(uint8_t i) {
-  return i < 8 ? 0x0 : 0xFF; }
-static CONSTEXPR epu8 hilo_mask = make_epu8(hilo_mask_fun);
+static HPCOMBI_CONSTEXPR
+uint8_t hilo_exchng_fun(uint8_t i) { return i < 8 ? i + 8 : i - 8; }
+static HPCOMBI_CONSTEXPR epu8 hilo_exchng = make_epu8(hilo_exchng_fun);
+static HPCOMBI_CONSTEXPR
+uint8_t hilo_mask_fun(uint8_t i) { return i < 8 ? 0x0 : 0xFF; }
+static HPCOMBI_CONSTEXPR epu8 hilo_mask = make_epu8(hilo_mask_fun);
 
 inline Transf16::Transf16(uint64_t compressed) {
   epu8 res = _mm_set_epi64x(compressed, compressed);
