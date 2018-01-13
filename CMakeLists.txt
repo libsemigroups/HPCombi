@@ -22,7 +22,7 @@ project(HPCombi)
 set(DESCRIPTION  "High Performance Combinatorics in C++ using vector instructions" CACHE STRING "Project description.")
 set(VERSION_MAJOR   0   CACHE STRING "Project major version number.")
 set(VERSION_MINOR   0   CACHE STRING "Project minor version number.")
-set(VERSION_PATCH   1   CACHE STRING "Project patch version number.")
+set(VERSION_PATCH   2   CACHE STRING "Project patch version number.")
 mark_as_advanced(VERSION_MAJOR VERSION_MINOR VERSION_PATCH)
 
 message(STATUS "**** Build type = ${CMAKE_BUILD_TYPE}")
@@ -76,7 +76,7 @@ configure_file(${CMAKE_SOURCE_DIR}/VERSION.in ${CMAKE_BINARY_DIR}/VERSION)
 ####################
 # Install Misc
 install (FILES ${CMAKE_CURRENT_BINARY_DIR}/VERSION DESTINATION ".")
-install (FILES ${CMAKE_SOURCE_DIR}/AUTHORS DESTINATION ".")
+install (FILES ${CMAKE_SOURCE_DIR}/README.md DESTINATION ".")
 install (FILES ${CMAKE_SOURCE_DIR}/LICENSE DESTINATION ".")
 install (FILES ${CMAKE_SOURCE_DIR}/list_intrin.txt DESTINATION ".")
 ###################
