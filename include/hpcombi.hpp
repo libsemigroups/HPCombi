@@ -12,41 +12,10 @@
 //                                                                            //
 //                  http://www.gnu.org/licenses/                              //
 //****************************************************************************//
-/** @file
- * @brief Example of how to use #HPCombi::pow with
- * #HPCombi::power_helper::Monoid
- */
 
-#include "power.hpp"
-#include <cassert>
-#include <string>
+#ifndef HPCOMBI_HPCOMBI_HPP_INCLUDED
+#define HPCOMBI_HPCOMBI_HPP_INCLUDED
 
-namespace HPCombi {
-namespace power_helper {
+#include "perm16"
 
-// Algebraic monoid for string with concatenation
-template <> struct Monoid<std::string> {
-
-  // The one of the string monoid
-  static std::string one;
-
-  /* The product of two strings that is their concatenation
-   * @param a the first string to be concatenated
-   * @param b the second string to be concatenated
-   * @return the concatenation of \a a and \a b
-   */
-  inline static std::string prod(std::string a, std::string b) { return a + b; }
-};
-
-
-std::string Monoid<std::string>::one = "";
-
-}  // namespace power_helper
-}  // namespace HPCombi
-
-
-int main() {
-  assert(HPCombi::pow<0>(std::string("ab")) == "");
-  assert(HPCombi::pow<4>(std::string("ab")) == "abababab");
-  assert(HPCombi::pow<5>(std::string("abc")) == "abcabcabcabcabc");
-}
+#define HPCOMBI_HPCOMBI_HPP_INCLUDED

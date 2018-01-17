@@ -23,57 +23,76 @@
 #include <ostream>
 #include <x86intrin.h>
 
+#ifdef HPCOMBI_HAVE_CONFIG
+#include "HPCombi-config.h"
+#endif
+
+#if __cplusplus <= 201103L
+#include "fallback/seq.hpp"
+#endif
+
+#ifdef HPCOMBI_CONSTEXPR_FUN_ARGS
+  #define HPCOMBI_CONSTEXPR constexpr
+  #define HPCOMBI_CONSTEXPR_CONSTRUCTOR constexpr
+#else
+  #pragma message "Using a constexpr broken compiler ! Performance may not be optimal"
+  #define HPCOMBI_CONSTEXPR const
+  #define HPCOMBI_CONSTEXPR_CONSTRUCTOR
+#endif
+
 namespace HPCombi {
 
 /// SIMD vector of 16 unsigned bytes
 using epu8 = uint8_t __attribute__((vector_size(16)));
 
-
 ///
-template <class Function, std::size_t... Indices>
-constexpr epu8 make_epu8_helper(Function f, std::index_sequence<Indices...>) {
+template <class Function, std::size_t... Indices> HPCOMBI_CONSTEXPR
+epu8 make_epu8_helper(Function f, std::index_sequence<Indices...>) {
   return epu8{f(Indices)...};
 }
 
-template <class Function> constexpr epu8 make_epu8(Function f) {
+template <class Function> HPCOMBI_CONSTEXPR epu8 make_epu8(Function f) {
   return make_epu8_helper(f, std::make_index_sequence<16>{});
 }
 
-// The four following function should be constexpr lambdas writen directly in
+template <uint8_t c> HPCOMBI_CONSTEXPR
+uint8_t constfun(uint8_t ignored) { return c; }
+
+template <uint8_t c> HPCOMBI_CONSTEXPR epu8 make_const_epu8() {
+  return make_epu8_helper(constfun<c>, std::make_index_sequence<16>{});
+}
+
+// The following functions should be constexpr lambdas writen directly in
 // their corresponding methods. However until C++17, constexpr lambda are
 // forbidden. So we put them here.
 
 /// The image of i by the identity function
-static constexpr uint8_t make_one(uint8_t i) { return i; }
+static HPCOMBI_CONSTEXPR
+uint8_t make_one(uint8_t i) { return i; }
 /// The image of i by the left cycle function
-static constexpr uint8_t make_left_cycle(uint8_t i) { return (i + 15) % 16; }
+static HPCOMBI_CONSTEXPR
+uint8_t make_left_cycle(uint8_t i) { return (i + 15) % 16; }
 /// The image of i by the right cycle function
-static constexpr uint8_t make_right_cycle(uint8_t i) { return (i + 1) % 16; }
+static HPCOMBI_CONSTEXPR
+uint8_t make_right_cycle(uint8_t i) { return (i + 1) % 16; }
 /// The image of i by a left shift filling the hole with a @p 0xff
-static constexpr uint8_t make_left_shift_ff(uint8_t i) {
-  return i == 15 ? 0xff : i + 1;
-}
+static HPCOMBI_CONSTEXPR
+uint8_t make_left_shift_ff(uint8_t i) { return i == 15 ? 0xff : i + 1; }
 /// The image of i by a left shift duplicating the hole
-static constexpr uint8_t make_left_shift(uint8_t i) {
-  return i == 15 ? 15 : i + 1;
-}
+static HPCOMBI_CONSTEXPR
+uint8_t make_left_shift(uint8_t i) { return i == 15 ? 15 : i + 1; }
 
 
 // Old Clang doesn't automatically broadcast uint8_t into epu8
 // We therefore write there the explicit constants
-const epu8 cst_epu8_0x00 = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-                            0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
-const epu8 cst_epu8_0x01 = {0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01,
-                            0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01};
-const epu8 cst_epu8_0x02 = cst_epu8_0x01 + cst_epu8_0x01;
-const epu8 cst_epu8_0x04 = cst_epu8_0x02 + cst_epu8_0x02;
-const epu8 cst_epu8_0x08 = cst_epu8_0x04 + cst_epu8_0x04;
-const epu8 cst_epu8_0x0F = {0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F,
-                            0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F};
-const epu8 cst_epu8_0xF0 = {0xF0, 0xF0, 0xF0, 0xF0, 0xF0, 0xF0, 0xF0, 0xF0,
-                            0xF0, 0xF0, 0xF0, 0xF0, 0xF0, 0xF0, 0xF0, 0xF0};
-const epu8 cst_epu8_0xFF = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
-                            0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF};
+HPCOMBI_CONSTEXPR epu8 cst_epu8_0x00 = make_const_epu8<0x00>();
+HPCOMBI_CONSTEXPR epu8 cst_epu8_0x01 = make_const_epu8<0x01>();
+HPCOMBI_CONSTEXPR epu8 cst_epu8_0x02 = make_const_epu8<0x02>();
+HPCOMBI_CONSTEXPR epu8 cst_epu8_0x04 = make_const_epu8<0x04>();
+HPCOMBI_CONSTEXPR epu8 cst_epu8_0x08 = make_const_epu8<0x08>();
+HPCOMBI_CONSTEXPR epu8 cst_epu8_0x0F = make_const_epu8<0x0F>();
+HPCOMBI_CONSTEXPR epu8 cst_epu8_0xF0 = make_const_epu8<0xF0>();
+HPCOMBI_CONSTEXPR epu8 cst_epu8_0xFF = make_const_epu8<0xFF>();
 
 // Forward declaration
 struct Perm16;
@@ -85,18 +104,14 @@ struct Transf16;
  *
  */
 struct alignas(16) Vect16 {
-  static const constexpr size_t Size = 16;
+
+  static HPCOMBI_CONSTEXPR size_t Size = 16;
   epu8 v;
 
   Vect16() = default;
-  constexpr Vect16(epu8 x) : v(x) {}
+  HPCOMBI_CONSTEXPR_CONSTRUCTOR Vect16(epu8 x) : v(x) {}
   Vect16(std::initializer_list<uint8_t> il, uint8_t def = 0);
-  constexpr operator const epu8() const { return v; }
-
-  // Overload the default copy constructor and operator= : 10% speedup
-  // But result in Non POD
-  // constexpr Vect16(const Vect16 &x) : v(x.v) {}
-  // Vect16 & operator=(const Vect16 &x) {v = x.v; return *this;}
+  HPCOMBI_CONSTEXPR_CONSTRUCTOR operator epu8() const { return v; }
   Vect16 &operator=(const Vect16 &) = default;
   Vect16 &operator=(const epu8 &vv) {
     v = vv;
@@ -124,8 +139,10 @@ struct alignas(16) Vect16 {
   const uint8_t &operator[](uint64_t i) const { return as_array()[i]; }
   uint8_t &operator[](uint64_t i) { return as_array()[i]; }
 
-  auto begin() { return as_array().begin(); }
-  auto end() { return as_array().end(); }
+  // Auto is only calid here in C++14
+  using iter = const std::array<uint8_t, 16>::iterator;
+  iter begin() { return as_array().begin(); }
+  iter end() { return as_array().end(); }
 
   inline bool operator==(const Vect16 &b) const;
   inline bool operator!=(const Vect16 &b) const;
@@ -221,11 +238,11 @@ struct PTransf16 : public Vect16 {
   using vect = Vect16;
 
   PTransf16() = default;
-  constexpr PTransf16(const vect v) : vect(v) {}
-  constexpr PTransf16(const epu8 x) : vect(x) {}
+  HPCOMBI_CONSTEXPR_CONSTRUCTOR PTransf16(const vect v) : vect(v) {}
+  HPCOMBI_CONSTEXPR_CONSTRUCTOR PTransf16(const epu8 x) : vect(x) {}
   PTransf16(std::initializer_list<uint8_t> il);
 
-  static constexpr PTransf16 one() { return make_epu8(make_one); }
+  static HPCOMBI_CONSTEXPR PTransf16 one() { return make_epu8(make_one); }
   PTransf16 inline operator*(const PTransf16 &p) const {
     return permuted(p).v | (v == cst_epu8_0xFF); }
 };
@@ -237,14 +254,14 @@ struct PTransf16 : public Vect16 {
 struct Transf16 : public PTransf16 {
 
   Transf16() = default;
-  constexpr Transf16(const vect v) : PTransf16(v) {}
-  constexpr Transf16(const epu8 x) : PTransf16(x) {}
+  HPCOMBI_CONSTEXPR_CONSTRUCTOR Transf16(const vect v) : PTransf16(v) {}
+  HPCOMBI_CONSTEXPR_CONSTRUCTOR Transf16(const epu8 x) : PTransf16(x) {}
   Transf16(std::initializer_list<uint8_t> il) : PTransf16(il) {}
   explicit Transf16(uint64_t compressed);
 
   explicit operator uint64_t() const;
 
-  static constexpr Transf16 one() { return make_epu8(make_one); }
+  static HPCOMBI_CONSTEXPR Transf16 one() { return make_epu8(make_one); }
   Transf16 inline operator*(const Transf16 &p) const { return permuted(p); }
 };
 
@@ -255,10 +272,8 @@ struct Transf16 : public PTransf16 {
 struct Perm16 : public Transf16 {
 
   Perm16() = default;
-  // constexpr Perm16() : Vect16(epu8 {0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15})
-  // {};
-  constexpr Perm16(const vect v) : Transf16(v) {}
-  constexpr Perm16(const epu8 x) : Transf16(x) {}
+  HPCOMBI_CONSTEXPR_CONSTRUCTOR Perm16(const vect v) : Transf16(v) {}
+  HPCOMBI_CONSTEXPR_CONSTRUCTOR Perm16(const epu8 x) : Transf16(x) {}
   Perm16(std::initializer_list<uint8_t> il) : Transf16(il) {}
   explicit Perm16(uint64_t compressed) : Transf16(compressed) {}
   Perm16 inline operator*(const Perm16 &p) const { return permuted(p); }
@@ -317,13 +332,16 @@ struct Perm16 : public Transf16 {
   // It's not possible to have a static constexpr member of same type as class
   // being defined (see https://stackoverflow.com/questions/11928089/)
   // therefore we chose to have functions.
-  static constexpr Perm16 one() { return make_epu8(make_one); }
-  static constexpr Perm16 left_cycle() { return make_epu8(make_left_cycle); }
-  static constexpr Perm16 right_cycle() { return make_epu8(make_right_cycle); }
-  static constexpr Perm16 left_shift() { return make_epu8(make_left_shift); }
-  static constexpr Perm16 left_shift_ff() {
-    return make_epu8(make_left_shift_ff);
-  }
+  static HPCOMBI_CONSTEXPR
+  Perm16 one() { return make_epu8(make_one); }
+  static HPCOMBI_CONSTEXPR
+  Perm16 left_cycle() { return make_epu8(make_left_cycle); }
+  static HPCOMBI_CONSTEXPR
+  Perm16 right_cycle() { return make_epu8(make_right_cycle); }
+  static HPCOMBI_CONSTEXPR
+  Perm16 left_shift() { return make_epu8(make_left_shift); }
+  static HPCOMBI_CONSTEXPR
+  Perm16 left_shift_ff() { return make_epu8(make_left_shift_ff); }
 
   inline static Perm16 elementary_transposition(uint64_t i);
   static Perm16 random();
@@ -355,6 +373,7 @@ static_assert(sizeof(Vect16) == sizeof(Perm16),
 static_assert(std::is_trivial<Vect16>(), "Vect16 is not a trivial class !");
 static_assert(std::is_trivial<Perm16>(), "Perm16 is not a trivial class !");
 
+const uint64_t prime = 0x9e3779b97f4a7bb9;
 }  // namespace HPCombi
 
 #include "perm16_impl.hpp"
@@ -366,6 +385,14 @@ template <> struct hash<HPCombi::Vect16> {
     __int128 v0 = _mm_extract_epi64(ar.v, 0);
     __int128 v1 = _mm_extract_epi64(ar.v, 1);
     return ((v1 * HPCombi::prime + v0) * HPCombi::prime) >> 64;
+
+    /* The following is extremely slow on Renner benchmark
+    uint64_t v0 = _mm_extract_epi64(ar.v, 0);
+    uint64_t v1 = _mm_extract_epi64(ar.v, 1);
+    size_t seed = v0 + 0x9e3779b9;
+    seed ^= v1 + 0x9e3779b9 + (seed<<6) + (seed>>2);
+    return seed;
+    */
   }
 };
 
@@ -377,13 +404,13 @@ template <> struct hash<HPCombi::PTransf16> {
 
 template <> struct hash<HPCombi::Transf16> {
   inline size_t operator()(const HPCombi::Transf16 &ar) const {
-    return hash<HPCombi::Vect16>()(ar);
+    return uint64_t(ar);
   }
 };
 
 template <> struct hash<HPCombi::Perm16> {
   inline size_t operator()(const HPCombi::Perm16 &ar) const {
-    return hash<HPCombi::Vect16>()(ar);
+    return uint64_t(ar);
   }
 };
 

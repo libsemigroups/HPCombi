@@ -14,7 +14,6 @@
 //****************************************************************************//
 #include "fonctions_gpu.cuh"
 #include "power.hpp"
-#include "HPCombi-config.h"
 #include <algorithm>
 #include <iomanip>
 #include <random>
@@ -28,7 +27,7 @@
 namespace HPCombi {
 
 // Definitions since previously *only* declared
-constexpr const size_t Vect16::Size;
+HPCOMBI_CONSTEXPR size_t Vect16::Size;
 
 /*****************************************************************************/
 /** Implementation part for inline functions *********************************/
@@ -204,8 +203,6 @@ inline bool Vect16::is_permutation(const size_t k) const {
          (diff == Size || diff < k);
 }
 
-constexpr const uint64_t prime = 0x9e3779b97f4a7bb9;
-
 inline Vect16 Vect16::sorted() const {
   Vect16 res = *this;
   for (auto round : sorting_rounds) {
@@ -241,12 +238,12 @@ inline PTransf16::PTransf16(std::initializer_list<uint8_t> il) {
     v[i] = i;
 }
 
-static constexpr uint8_t hilo_exchng_fun(uint8_t i) {
-  return i < 8 ? i + 8 : i - 8; }
-static constexpr epu8 hilo_exchng = make_epu8(hilo_exchng_fun);
-static constexpr uint8_t hilo_mask_fun(uint8_t i) {
-  return i < 8 ? 0x0 : 0xFF; }
-static constexpr epu8 hilo_mask = make_epu8(hilo_mask_fun);
+static HPCOMBI_CONSTEXPR
+uint8_t hilo_exchng_fun(uint8_t i) { return i < 8 ? i + 8 : i - 8; }
+static HPCOMBI_CONSTEXPR epu8 hilo_exchng = make_epu8(hilo_exchng_fun);
+static HPCOMBI_CONSTEXPR
+uint8_t hilo_mask_fun(uint8_t i) { return i < 8 ? 0x0 : 0xFF; }
+static HPCOMBI_CONSTEXPR epu8 hilo_mask = make_epu8(hilo_mask_fun);
 
 inline Transf16::Transf16(uint64_t compressed) {
   epu8 res = _mm_set_epi64x(compressed, compressed);
@@ -346,15 +343,12 @@ namespace power_helper {
 using Perm16 = Perm16;
 
 template <> struct Monoid<Perm16> {
-  // Workaround for a bug in G++-5
-  // static constexpr Perm16 one = Perm16::one();
-  static constexpr Perm16 one {Vect16(make_epu8(make_one))}; // Perm16::one();
+  static const Perm16 one;
   static Perm16 prod(Perm16 a, Perm16 b) { return a * b; }
 };
 
-// Definitions since previously *only* declared
-constexpr const Perm16 power_helper::Monoid<Perm16>::one;
-};  // namespace power_helper
+const Perm16 power_helper::Monoid<Perm16>::one = Perm16::one();
+}  // namespace power_helper
 
 inline Perm16 Perm16::inverse_cycl() const {
   Perm16 res = one();
@@ -368,12 +362,14 @@ inline Perm16 Perm16::inverse_cycl() const {
 }
 
 static constexpr unsigned lcm_range(unsigned n) {
+#if __cplusplus <= 201103L
+  return n == 1 ? 1 : std::experimental::lcm(lcm_range(n-1), n);
+#else
   unsigned res = 1;
   for (unsigned i = 1; i <= n; ++i)
     res = std::experimental::lcm(res, i);
   return res;
-  // C++11 version:
-  // return n == 1 ? 1 : std::experimental::lcm(lcm_range(n-1), n);
+#endif
 }
 
 inline Perm16 Perm16::inverse_pow() const {

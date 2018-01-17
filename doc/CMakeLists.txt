@@ -29,6 +29,6 @@ else()
      )
 
   install(DIRECTORY ${CMAKE_BINARY_DIR}/doc/html 
-          DESTINATION share/doc/${CMAKE_PROJECT_NAME})
+          DESTINATION doc)
 
 endif()
