@@ -13,6 +13,7 @@ using HPCombi::VectGeneric;
 typedef Perm16 ( Perm16::*PERM16_OUT_FUNC ) () const;
 typedef uint8_t ( Perm16::*UNINT8_OUT_FUNC ) () const;
 typedef Vect1024 ( Vect1024::*COMPOSE_FUNC ) (const Vect1024&) const;
+typedef Vect1024 ( Vect1024::*COMPOSE_GPU_FUNC ) (const Vect1024&, float*) const;
  
 template<typename T, typename TF> 
 void generic_register(benchmark::State& st, const char* label, const std::vector<T> sample, TF pfunc);
@@ -32,6 +33,23 @@ void compose_register(benchmark::State& st, const char* label, const std::vector
 		  )
 		  ;
 	  }
+  }
+  st.SetLabel(label);
+}
+  
+void compose_gpu_register(benchmark::State& st, const char* label, const std::vector<Vect1024> sample, COMPOSE_GPU_FUNC compose_func, int timer_select) {
+  float timers[4] = {0, 0, 0, 0};
+  float gpu_timer_total = 0;
+  for (auto _ : st) {
+	  gpu_timer_total = 0;
+	  for (auto elem : sample){
+		  benchmark::DoNotOptimize(
+		  (elem.*compose_func)(elem, timers)
+		  )
+		  ;
+		  gpu_timer_total += timers[timer_select]/1000000;
+	  }
+	  st.SetIterationTime(gpu_timer_total);
   }
   st.SetLabel(label);
 }
@@ -56,9 +74,9 @@ typedef Perm16 ( Perm16::*PERM16_OUT_FUNC ) () const;
 
 //##################################################################################
 int RegisterFromFunction_inverse() {
-	//~ const float min_time = 0.00001;
+	//~ const float min_time = 0.000001;
 	auto REF = benchmark::RegisterBenchmark("inverse_ref", &generic_register<Perm16, PERM16_OUT_FUNC>, "ref", perm16_bench_data.sample, &Perm16::inverse_ref);
-    auto ALT_REF2 = benchmark::RegisterBenchmark("inverse_alt", &generic_register<Perm16, PERM16_OUT_FUNC>, "ref2", perm16_bench_data.sample, &Perm16::inverse_ref);
+    auto ALT_REF = benchmark::RegisterBenchmark("inverse_alt", &generic_register<Perm16, PERM16_OUT_FUNC>, "ref2", perm16_bench_data.sample, &Perm16::inverse_ref);
     auto ALT_ARR = benchmark::RegisterBenchmark("inverse_alt", &generic_register<Perm16, PERM16_OUT_FUNC>, "arr", perm16_bench_data.sample, &Perm16::inverse_arr);
     auto ALT_SORT = benchmark::RegisterBenchmark("inverse_alt", &generic_register<Perm16, PERM16_OUT_FUNC>, "sort", perm16_bench_data.sample, &Perm16::inverse_sort);
     auto ALT_FIND = benchmark::RegisterBenchmark("inverse_alt", &generic_register<Perm16, PERM16_OUT_FUNC>, "find", perm16_bench_data.sample, &Perm16::inverse_find);
@@ -83,7 +101,11 @@ int RegisterFromFunction_compose() {
     auto REF_COMPOSE_CPU = benchmark::RegisterBenchmark("compose_ref", &compose_register, "ref", generic_bench_data.sample, &Vect1024::permuted);
     auto ALT_COMPOSE_CPU = benchmark::RegisterBenchmark("compose_alt", &compose_register, "cpu", generic_bench_data.sample, &Vect1024::permuted);
     #if COMPILE_CUDA==1
-		auto ALT_COMPOSE_GPU = benchmark::RegisterBenchmark("compose_alt", &compose_register, "gpu", generic_bench_data.sample, &Vect1024::permuted_gpu);
+		auto ALT_COMPOSE_GPU = benchmark::RegisterBenchmark("compose_alt", &compose_register, "gpu alloc copy", generic_bench_data.sample, &Vect1024::permuted_gpu);
+		for (int timer_select=0; timer_select<4; timer_select++){
+			auto ALT_COMPOSE_GPU_TIMER = benchmark::RegisterBenchmark("compose_alt", &compose_gpu_register, "gpu", generic_bench_data.sample, &Vect1024::permuted_gpu_timer, timer_select);
+			ALT_COMPOSE_GPU_TIMER->UseManualTime()->MinTime(0.00001);
+		}
     #endif  // USE_CUDA
   return 0;
 }

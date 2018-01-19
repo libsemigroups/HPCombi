@@ -24,6 +24,7 @@
 #include <stdlib.h> 
 #include <ostream>
 #include <iomanip>
+#include <chrono>
 
 
 namespace HPCombi {
@@ -72,11 +73,23 @@ template <size_t _Size, typename Expo = uint8_t> struct VectGeneric {
 	VectGeneric permuted_gpu(const VectGeneric &u) const {
 
 	  // Simple pointers are needed to cpy to GPU
-	  const uint16_t* x = &v[0];
-	  const uint16_t* y = &u.v[0];
+	  float timers[4] = {0, 0, 0, 0};
 	  VectGeneric res;
-	  uint16_t* z = &res.v[0];
-	  shufl_gpu<uint16_t>(x, y, z, Size);
+	  shufl_gpu<uint16_t>(&v[0], &u.v[0], &res.v[0], Size, timers);
+	  return res;
+	}
+	VectGeneric permuted_gpu_timer(const VectGeneric &u, float * timers) const {
+
+	  // Simple pointers are needed to cpy to GPU
+
+	  VectGeneric res;
+	  
+	  auto start = std::chrono::high_resolution_clock::now();
+	  shufl_gpu<uint16_t>(&v[0], &u.v[0], &res.v[0], Size, timers);
+	  
+	  auto end   = std::chrono::high_resolution_clock::now();
+	  auto elapsed_seconds = std::chrono::duration_cast<std::chrono::duration<float>>(end - start);
+      timers[3] = elapsed_seconds.count()*1000000;
 	  return res;
 	}
 #endif  // USE_CUDA

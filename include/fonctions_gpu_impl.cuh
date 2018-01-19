@@ -5,44 +5,55 @@
 #include <stdio.h>
 
 template <typename T>
-void shufl_gpu(const T* __restrict__ x, const T* __restrict__ y, T* __restrict__ z, const size_t Size);
+void shufl_gpu(const T* __restrict__ x, const T* __restrict__ y, T* __restrict__ z, const size_t Size, float * timers);
 
 
 //Instantiating template functions
-template void shufl_gpu<uint8_t>(const uint8_t* x, const uint8_t* y, uint8_t* z, const size_t Size);
-template void shufl_gpu<uint16_t>(const uint16_t* x, const uint16_t* y, uint16_t* z, const size_t Size);
+template void shufl_gpu<uint8_t>(const uint8_t* x, const uint8_t* y, uint8_t* z, const size_t Size, float * timers);
+template void shufl_gpu<uint16_t>(const uint16_t* x, const uint16_t* y, uint16_t* z, const size_t Size, float * timers);
 
 template <typename T>
-void shufl_gpu(const T* __restrict__ x, const T* __restrict__ y, T* __restrict__ z, const size_t Size)
+void shufl_gpu(const T* __restrict__ x, const T* __restrict__ y, T* __restrict__ z, const size_t Size, float * timers)
 {
-	cudaSetDevice(0);
 	//Creation des timers	
-	//~ cudaEvent_t start, stop;
-	//~ cudaEventCreate(&start);
-	//~ cudaEventCreate(&stop);
-	//~ float milliseconds = 0;
+	cudaEvent_t start_all, stop_all;
+	cudaEventCreate(&start_all);
+	cudaEventCreate(&stop_all);
+	cudaEventRecord(start_all);
+	cudaEvent_t start, stop;
+	cudaEventCreate(&start);
+	cudaEventCreate(&stop);
+	cudaSetDevice(1);
 
 	//~ printf("Size : %d\n", Size);
 	
 	// Memory allocation on GPU
+	cudaEventRecord(start);
 	T *d_x, *d_y;
 	cudaMalloc((void**)&d_x, Size*sizeof(T));
 	cudaMalloc((void**)&d_y, Size*sizeof(T));
+	cudaEventRecord(stop);
+	cudaEventSynchronize(stop);
+	cudaEventElapsedTime(timers+2, start, stop);
 
 	// Definition of grid and block sizes
 	dim3 block(Size,1);
 	dim3 grid((Size+block.x-1)/block.x,1);
 
 	// Copy CPU to GPU
+	cudaEventRecord(start);
 	cudaMemcpy(d_x, x, Size*sizeof(T), cudaMemcpyHostToDevice);
 	cudaMemcpy(d_y, y, Size*sizeof(T), cudaMemcpyHostToDevice);
+	cudaEventRecord(stop);
+	cudaEventSynchronize(stop);
+	cudaEventElapsedTime(timers+1, start, stop);
 	
 		// Computation
-		//~ cudaEventRecord(start);
+		cudaEventRecord(start);
 		permute_gpu<T><<<grid, block, Size*sizeof(T)>>>(d_x, d_y, Size);
-		//~ cudaEventRecord(stop);	
-		//~ cudaEventSynchronize(stop);
-		//~ cudaEventElapsedTime(&milliseconds, start, stop);
+		cudaEventRecord(stop);
+		cudaEventSynchronize(stop);
+		cudaEventElapsedTime(timers, start, stop);
 		//~ printf("Computation %.3f ms\n", milliseconds);
 	
 	//Copy GPU to CPU
@@ -51,6 +62,14 @@ void shufl_gpu(const T* __restrict__ x, const T* __restrict__ y, T* __restrict__
 	// Free GPU memory
 	cudaFree(d_x);
 	cudaFree(d_y);
+	
+	cudaEventRecord(stop_all);
+	cudaEventSynchronize(stop_all);
+	cudaEventElapsedTime(timers+3, start_all, stop_all);
+	
+	timers[1] += timers[0];
+	timers[2] += timers[1];
+
 }
 
 

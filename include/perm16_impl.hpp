@@ -98,11 +98,9 @@ inline Vect16 Vect16::permuted(const Vect16 &other) const {
 inline Vect16 Vect16::permuted_gpu(const Vect16 &other) const {
 
   // Simple pointers are needed to cpy to GPU
-  const uint8_t* x = &v[0];
-  const uint8_t* y = &other.v[0];
+  float timers[4] = {0, 0, 0, 0};
   Vect16 res;
-  uint8_t* z = &res.v[0];
-  shufl_gpu<uint8_t>(x, y, z, Size);
+  shufl_gpu<uint8_t>(&v[0], &other.v[0], &res.v[0], Size, timers);
   return res;
 }
 
