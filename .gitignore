@@ -31,5 +31,8 @@
 *.out
 *.app
 
+# Python compiled file
+*.pyc
+
 TAGS
 build
