@@ -5,13 +5,13 @@ compiler:
   - gcc
 matrix:
   include:
-    - env: TEST_SUITE=standard
-      addons:
-        apt:
-          sources:
-          - ubuntu-toolchain-r-test
-          packages:
-          - libboost1.55-all-dev
+    #~ - env: TEST_SUITE=standard
+      #~ addons:
+        #~ apt:
+          #~ sources:
+          #~ - ubuntu-toolchain-r-test
+          #~ packages:
+          #~ - libboost1.55-all-dev
     - env: TEST_SUITE=standard MATRIX_EVAL="CC=gcc-5 && CXX=g++-5"
       addons:
         apt:
