@@ -59,9 +59,9 @@ public :
 class Fix_generic {
 public :
   Fix_generic() :          
-          randShuf(Vect1024(0, -1)),
-          rand(Vect1024(0, -2)),
-          zeros(Vect1024(0)),
+          randShuf(Vect1024(0, -1)), // random permutation
+          rand(Vect1024(0, -2)), // Randdom transformation
+          zeros(Vect1024(0)), // only zeros
           sample({randShuf, rand, zeros})
           {}
 		  
