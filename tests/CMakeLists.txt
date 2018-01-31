@@ -36,19 +36,20 @@ target_link_libraries(test_perm_all
   
   target_compile_options(test_perm_all PUBLIC -mavx -mtune=native -funroll-loops -flax-vector-conversions)
   
+
+include(CTest)
+enable_testing ()
+
+add_test (NAME TestPerm16 COMMAND test_perm16)
+add_test (NAME TestPermAll COMMAND test_perm_all)
+
 if(USE_CUDA)
   add_executable (test_perm_gpu test_perm_gpu.cpp)
   target_link_libraries(test_perm_gpu
     perm16
     gpu
     ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY}
-  )
-	
+  )	
+  add_test (NAME TestPermGPU COMMAND test_perm_gpu)
 endif()
-include(CTest)
-enable_testing ()
-
-add_test (NAME TestPerm16 COMMAND test_perm16)
-add_test (NAME TestPermAll COMMAND test_perm_all)
-add_test (NAME TestPermGPU COMMAND test_perm_gpu)
 
