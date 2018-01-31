@@ -35,6 +35,7 @@ before_install:
     - eval "${MATRIX_EVAL}"
     - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo add-apt-repository ppa:dns/gnu -y; fi
     - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt-get update -q; fi
+    - ci/travis-benchmark-install.sh
 install:
     - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install boost; fi
 script:
