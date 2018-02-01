@@ -6,6 +6,8 @@
 		Print speed up insdead of of gain.
 		Print benchmark label.
 		Compare all competitors beanchmarks (not only the first one).
+	Modified function : find_test
+		Compare all competitors whose name "include" (instead of "is") the reference name
 """
 import os
 import re
@@ -122,8 +124,8 @@ def generate_difference_report(json1, json2, use_color=True):
     def find_test(name):
         out = []
         for b in json2['benchmarks']:
-            if b['name'] == name:
-                out.append(b)
+            if b['name'].find(name) != -1 :
+				out.append(b)
         return out
     first_col_width = max(first_col_width, len('Benchmark'))
     first_line = "{:<{}s}Time             CPU      Time Old      Time New       CPU Old       CPU New".format(
