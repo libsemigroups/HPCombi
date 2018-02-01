@@ -28,10 +28,11 @@ const Fix_generic generic_bench_data;
 void compose_register(benchmark::State& st, const char* label, const std::vector<Vect1024> sample, COMPOSE_FUNC compose_func) { 
   for (auto _ : st) {
 	  for (auto elem : sample){
-		  benchmark::DoNotOptimize(
-		  (elem.*compose_func)(elem)
-		  )
-		  ;
+		  for (int i = 0; i < 100; i++)
+			  benchmark::DoNotOptimize(
+			  (elem.*compose_func)(elem)
+			  )
+			  ;
 	  }
   }
   st.SetLabel(label);
@@ -60,10 +61,11 @@ template<typename T, typename TF>
 void generic_register(benchmark::State& st, const char* label, const std::vector<T> sample, TF pfunc) { 
   for (auto _ : st) {
 	  for (auto elem : sample){
-		  benchmark::DoNotOptimize(
-		  (elem.*pfunc)()
-		  )
-		  ;
+		  for (int i = 0; i < 100; i++)
+			  benchmark::DoNotOptimize(
+			  (elem.*pfunc)()
+			  )
+			  ;
 	  }
   }
   st.SetLabel(label);
