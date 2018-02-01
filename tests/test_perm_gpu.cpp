@@ -59,6 +59,26 @@ struct Fix {
 		  mod_32_1024(VectGeneric<1024, uint16_t>(0, 32)),
 		  prem_1024(VectGeneric<1024, uint16_t>(13, 131)),
 		  
+		  id_2048(VectGeneric<2048, uint16_t>(0, 0)),
+		  plus_one_2048(VectGeneric<2048, uint16_t>(1, 0)),
+		  mod_32_2048(VectGeneric<2048, uint16_t>(0, 32)),
+		  prem_2048(VectGeneric<2048, uint16_t>(13, 131)),
+		  
+		  id_8192(VectGeneric<8192, uint16_t>(0, 0)),
+		  plus_one_8192(VectGeneric<8192, uint16_t>(1, 0)),
+		  mod_32_8192(VectGeneric<8192, uint16_t>(0, 32)),
+		  prem_8192(VectGeneric<8192, uint16_t>(13, 131)),
+		  
+		  id_32768(VectGeneric<32768, uint16_t>(0, 0)),
+		  plus_one_32768(VectGeneric<32768, uint16_t>(1, 0)),
+		  mod_32_32768(VectGeneric<32768, uint16_t>(0, 32)),
+		  prem_32768(VectGeneric<32768, uint16_t>(13, 131)),
+		  
+		  id_131072(VectGeneric<131072, uint32_t>(0, 0)),
+		  plus_one_131072(VectGeneric<131072, uint32_t>(1, 0)),
+		  mod_32_131072(VectGeneric<131072, uint32_t>(0, 32)),
+		  prem_131072(VectGeneric<131072, uint32_t>(13, 131)),
+		  
 		  id_701(VectGeneric<701, uint16_t>(0, 0)),
 		  plus_one_701(VectGeneric<701, uint16_t>(1, 0)),
 		  mod_32_701(VectGeneric<701, uint16_t>(0, 32)),
@@ -74,6 +94,10 @@ struct Fix {
   VectGeneric<16, uint8_t> id_16, plus_one_16, mod_8_16, prem_16, zerogen;
   VectGeneric<64, uint16_t> id_64, plus_one_64, mod_32_64, prem_64;
   VectGeneric<1024, uint16_t> id_1024, plus_one_1024, mod_32_1024, prem_1024;
+  VectGeneric<2048, uint16_t> id_2048, plus_one_2048, mod_32_2048, prem_2048;
+  VectGeneric<8192, uint16_t> id_8192, plus_one_8192, mod_32_8192, prem_8192;
+  VectGeneric<32768, uint16_t> id_32768, plus_one_32768, mod_32_32768, prem_32768;
+  VectGeneric<131072, uint32_t> id_131072, plus_one_131072, mod_32_131072, prem_131072;
   VectGeneric<701, uint16_t> id_701, plus_one_701, mod_32_701, prem_701;
   VectGeneric<1024, uint16_t> randShuf, rand, zeros;
 
@@ -134,6 +158,66 @@ BOOST_AUTO_TEST_SUITE_END()
 //____________________________________________________________________________//
 //____________________________________________________________________________//
 
+BOOST_AUTO_TEST_SUITE(fonctions_gpu_test_2048)
+//____________________________________________________________________________//
+
+BOOST_FIXTURE_TEST_CASE(GPU_2048, Fix) {
+  BOOST_CHECK_EQUAL(Fix::id_2048.permuted(Fix::prem_2048), Fix::id_2048.permuted_gpu(Fix::prem_2048));
+  BOOST_CHECK_EQUAL(Fix::plus_one_2048.permuted(Fix::prem_2048), Fix::plus_one_2048.permuted_gpu(Fix::prem_2048));
+  BOOST_CHECK_EQUAL(Fix::plus_one_2048.permuted(Fix::mod_32_2048), Fix::plus_one_2048.permuted_gpu(Fix::mod_32_2048));
+  BOOST_CHECK_EQUAL(Fix::prem_2048.permuted(Fix::mod_32_2048), Fix::prem_2048.permuted_gpu(Fix::mod_32_2048));
+
+}
+
+BOOST_AUTO_TEST_SUITE_END()
+//____________________________________________________________________________//
+//____________________________________________________________________________//
+
+BOOST_AUTO_TEST_SUITE(fonctions_gpu_test_8192)
+//____________________________________________________________________________//
+
+BOOST_FIXTURE_TEST_CASE(GPU_8192, Fix) {
+  BOOST_CHECK_EQUAL(Fix::id_8192.permuted(Fix::prem_8192), Fix::id_8192.permuted_gpu(Fix::prem_8192));
+  BOOST_CHECK_EQUAL(Fix::plus_one_8192.permuted(Fix::prem_8192), Fix::plus_one_8192.permuted_gpu(Fix::prem_8192));
+  BOOST_CHECK_EQUAL(Fix::plus_one_8192.permuted(Fix::mod_32_8192), Fix::plus_one_8192.permuted_gpu(Fix::mod_32_8192));
+  BOOST_CHECK_EQUAL(Fix::prem_8192.permuted(Fix::mod_32_8192), Fix::prem_8192.permuted_gpu(Fix::mod_32_8192));
+
+}
+
+BOOST_AUTO_TEST_SUITE_END()
+//____________________________________________________________________________//
+//____________________________________________________________________________//
+
+BOOST_AUTO_TEST_SUITE(fonctions_gpu_test_32768)
+//____________________________________________________________________________//
+
+BOOST_FIXTURE_TEST_CASE(GPU_32768, Fix) {
+  BOOST_CHECK_EQUAL(Fix::id_32768.permuted(Fix::prem_32768), Fix::id_32768.permuted_gpu(Fix::prem_32768));
+  BOOST_CHECK_EQUAL(Fix::plus_one_32768.permuted(Fix::prem_32768), Fix::plus_one_32768.permuted_gpu(Fix::prem_32768));
+  BOOST_CHECK_EQUAL(Fix::plus_one_32768.permuted(Fix::mod_32_32768), Fix::plus_one_32768.permuted_gpu(Fix::mod_32_32768));
+  BOOST_CHECK_EQUAL(Fix::prem_32768.permuted(Fix::mod_32_32768), Fix::prem_32768.permuted_gpu(Fix::mod_32_32768));
+
+}
+
+BOOST_AUTO_TEST_SUITE_END()
+//____________________________________________________________________________//
+//____________________________________________________________________________//
+
+BOOST_AUTO_TEST_SUITE(fonctions_gpu_test_131072)
+//____________________________________________________________________________//
+
+BOOST_FIXTURE_TEST_CASE(GPU_131072, Fix) {
+  BOOST_CHECK_EQUAL(Fix::id_131072.permuted(Fix::prem_131072), Fix::id_131072.permuted_gpu(Fix::prem_131072));
+  BOOST_CHECK_EQUAL(Fix::plus_one_131072.permuted(Fix::prem_131072), Fix::plus_one_131072.permuted_gpu(Fix::prem_131072));
+  BOOST_CHECK_EQUAL(Fix::plus_one_131072.permuted(Fix::mod_32_131072), Fix::plus_one_131072.permuted_gpu(Fix::mod_32_131072));
+  BOOST_CHECK_EQUAL(Fix::prem_131072.permuted(Fix::mod_32_131072), Fix::prem_131072.permuted_gpu(Fix::mod_32_131072));
+
+}
+
+BOOST_AUTO_TEST_SUITE_END()
+//____________________________________________________________________________//
+//____________________________________________________________________________//
+
 //____________________________________________________________________________//
 
 BOOST_AUTO_TEST_SUITE(fonctions_gpu_test_701)
@@ -166,6 +250,7 @@ BOOST_FIXTURE_TEST_CASE(GPU_Rand, Fix) {
 BOOST_AUTO_TEST_SUITE_END()
 //____________________________________________________________________________//
 //____________________________________________________________________________//
+
 
 
 

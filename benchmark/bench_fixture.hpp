@@ -14,7 +14,12 @@ using HPCombi::Perm16;
 using HPCombi::VectGeneric;
 
 typedef VectGeneric<1024, uint16_t> Vect1024;
-constexpr uint_fast64_t repeat = 1000000;
+typedef VectGeneric<2048, uint16_t> Vect2048;
+typedef VectGeneric<8192, uint16_t> Vect8192;
+typedef VectGeneric<32768, uint16_t> Vect32768;
+typedef VectGeneric<131072, uint32_t> Vect131072;
+constexpr uint_fast64_t number = 1;
+constexpr uint_fast64_t repeat = 1000;
 
 
 inline static void escape(void *p) {
@@ -26,12 +31,13 @@ inline static void clobber() {
 }
 
 
+
 class Fix_perm16 {
 public :
   Fix_perm16() :
           PPa({1, 2, 3, 4, 0, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15}),
           PPb({1, 2, 3, 6, 0, 5, 4, 7, 8, 9, 10, 11, 12, 15, 14, 13}),
-		  sample(HPCombi::rand_perms(repeat))
+		  sample(HPCombi::rand_perms(number))
           {}
 		  
   ~Fix_perm16() {}
@@ -59,16 +65,21 @@ public :
 class Fix_generic {
 public :
   Fix_generic() :          
+          id(Vect1024(0, 0)), // random permutation
           randShuf(Vect1024(0, -1)), // random permutation
           rand(Vect1024(0, -2)), // Randdom transformation
           zeros(Vect1024(0)), // only zeros
-          sample({randShuf, rand, zeros})
+          sample1024({id, randShuf, rand, zeros}),
+          sample2048({id, randShuf, rand, zeros}),
+          sample8192({id, randShuf, rand, zeros}),
+          sample32768({id, randShuf, rand, zeros}),
+          sample131072({id, randShuf, rand, zeros})
           {}
 		  
   ~Fix_generic() {}
 
-  const Vect1024 randShuf, rand, zeros;
-  const std::vector<Vect1024> sample;
+  const Vect1024 id, randShuf, rand, zeros;
+  const std::vector<Vect1024> sample1024, sample2048, sample8192, sample32768, sample131072;
 };
 
 

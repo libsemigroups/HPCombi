@@ -3,6 +3,9 @@
 //~ #include "perm_generic.hpp"
 #include "bench_fixture.hpp"
 
+#include <string.h>
+#include <stdlib.h>
+
 using HPCombi::epu8;
 using HPCombi::Vect16;
 using HPCombi::PTransf16;
@@ -16,52 +19,17 @@ typedef Vect1024 ( Vect1024::*COMPOSE_FUNC ) (const Vect1024&) const;
 typedef Vect1024 ( Vect1024::*COMPOSE_GPU_FUNC ) (const Vect1024&, float*) const;
  
 template<typename T, typename TF> 
-void generic_register(benchmark::State& st, const char* label, const std::vector<T> sample, TF pfunc);
-void compose_register(benchmark::State& st, const char* label, const std::vector<Vect1024> sample, COMPOSE_FUNC compose_func); 
-
+void generic_register(benchmark::State& st, const char* label, const std::vector<T> & sample, TF pfunc);
 
 const Fix_perm16 perm16_bench_data;
-const Fix_generic generic_bench_data;
 
 //##################################################################################
-  
-void compose_register(benchmark::State& st, const char* label, const std::vector<Vect1024> sample, COMPOSE_FUNC compose_func) { 
-  for (auto _ : st) {
-	  for (auto elem : sample){
-		  for (int i = 0; i < 100; i++)
-			  benchmark::DoNotOptimize(
-			  (elem.*compose_func)(elem)
-			  )
-			  ;
-	  }
-  }
-  st.SetLabel(label);
-}
-  
-void compose_gpu_register(benchmark::State& st, const char* label, const std::vector<Vect1024> sample, COMPOSE_GPU_FUNC compose_func, int timer_select) {
-  float timers[4] = {0, 0, 0, 0};
-  float gpu_timer_total = 0;
-  for (auto _ : st) {
-	  gpu_timer_total = 0;
-	  for (auto elem : sample){
-		  benchmark::DoNotOptimize(
-		  (elem.*compose_func)(elem, timers)
-		  )
-		  ;
-		  gpu_timer_total += timers[timer_select]/1000000;
-	  }
-	  st.SetIterationTime(gpu_timer_total);
-  }
-  st.SetLabel(label);
-}
-
-//##################################################################################
-
+// Register fuction for generic operation that take zeros argument
 template<typename T, typename TF> 
-void generic_register(benchmark::State& st, const char* label, const std::vector<T> sample, TF pfunc) { 
+void generic_register(benchmark::State& st, const char* label, const std::vector<T> & sample, TF pfunc) { 
   for (auto _ : st) {
 	  for (auto elem : sample){
-		  for (int i = 0; i < 100; i++)
+		  for (int i = 0; i < repeat; i++)
 			  benchmark::DoNotOptimize(
 			  (elem.*pfunc)()
 			  )
@@ -99,18 +67,7 @@ int RegisterFromFunction_inverse() {
 	//~ ALT_CYCL->MinTime(min_time);
 }
 
-int RegisterFromFunction_compose() {    
-    auto REF_COMPOSE_CPU = benchmark::RegisterBenchmark("compose_ref", &compose_register, "ref", generic_bench_data.sample, &Vect1024::permuted);
-    auto ALT_COMPOSE_CPU = benchmark::RegisterBenchmark("compose_alt", &compose_register, "cpu", generic_bench_data.sample, &Vect1024::permuted);
-    #if COMPILE_CUDA==1
-		auto ALT_COMPOSE_GPU = benchmark::RegisterBenchmark("compose_alt", &compose_register, "gpu alloc copy", generic_bench_data.sample, &Vect1024::permuted_gpu);
-		for (int timer_select=0; timer_select<4; timer_select++){
-			auto ALT_COMPOSE_GPU_TIMER = benchmark::RegisterBenchmark("compose_alt", &compose_gpu_register, "gpu", generic_bench_data.sample, &Vect1024::permuted_gpu_timer, timer_select);
-			ALT_COMPOSE_GPU_TIMER->UseManualTime()->MinTime(0.00001);
-		}
-    #endif  // USE_CUDA
-  return 0;
-}
+
 
 int RegisterFromFunction() {
     auto REF_SUM = benchmark::RegisterBenchmark("sum_ref", &generic_register<Perm16, UNINT8_OUT_FUNC>, "ref", perm16_bench_data.sample, &Perm16::sum_ref);
@@ -133,7 +90,6 @@ int RegisterFromFunction() {
   return 0;
 }
 
-int dummy0 = RegisterFromFunction_compose();
 int dummy2 = RegisterFromFunction_inverse();
 int dummy1 = RegisterFromFunction();
 

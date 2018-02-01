@@ -8,7 +8,7 @@ if( ("${CMAKE_VERSION}" VERSION_EQUAL 3.8) OR
     # Modern CMake
     if(USE_CUDA)
         enable_language("CUDA")
-        add_compile_options( -arch=compute_30 -code=sm_30 )
+        add_compile_options( -arch=compute_30 -code=sm_30 )#-Wno-deprecated-declarations) # Warning about __shfl instrucion deprecited in cuda 9
 		add_library(gpu SHARED ${gpu_source_files})
 		
     endif()
