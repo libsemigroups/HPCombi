@@ -38,6 +38,8 @@ template <size_t _Size, typename Expo = uint8_t> struct VectGeneric {
   VectGeneric(std::initializer_list<Expo> il, Expo def = 0);
   VectGeneric(size_t plus, int mod);
   VectGeneric(Expo target);
+  //~ VectGeneric<Size, Expo> random();
+
 
   Expo operator[](uint64_t i) const { return v[i]; }
   Expo &operator[](uint64_t i) { return v[i]; }
@@ -75,7 +77,7 @@ template <size_t _Size, typename Expo = uint8_t> struct VectGeneric {
 	  // Simple pointers are needed to cpy to GPU
 	  float timers[4] = {0, 0, 0, 0};
 	  VectGeneric res;
-	  shufl_gpu<uint16_t>(&v[0], &u.v[0], &res.v[0], Size, timers);
+	  shufl_gpu<Expo>(&v[0], &u.v[0], &res.v[0], Size, timers);
 	  return res;
 	}
 	VectGeneric permuted_gpu_timer(const VectGeneric &u, float * timers) const {
@@ -85,11 +87,18 @@ template <size_t _Size, typename Expo = uint8_t> struct VectGeneric {
 	  VectGeneric res;
 	  
 	  auto start = std::chrono::high_resolution_clock::now();
-	  shufl_gpu<uint16_t>(&v[0], &u.v[0], &res.v[0], Size, timers);
+	  shufl_gpu<Expo>(&v[0], &u.v[0], &res.v[0], Size, timers);
 	  
 	  auto end   = std::chrono::high_resolution_clock::now();
 	  auto elapsed_seconds = std::chrono::duration_cast<std::chrono::duration<float>>(end - start);
       timers[3] = elapsed_seconds.count()*1000000;
+	  return res;
+	}
+	
+
+	VectGeneric<Size, Expo> random() {
+	  VectGeneric<Size, Expo> res = VectGeneric<Size, Expo>(0, 0);
+	  std::random_shuffle(res.begin(), res.end());
 	  return res;
 	}
 #endif  // USE_CUDA
@@ -165,6 +174,7 @@ VectGeneric<Size, Expo>::VectGeneric(size_t plus, int mod) {
 	    v[i] = rand()%Size;
   }
 }
+
 
 template <size_t Size, typename Expo>
 VectGeneric<Size, Expo>::VectGeneric(Expo target) {
