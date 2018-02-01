@@ -28,6 +28,15 @@ std::vector<Perm16> rand_perms(int sz) {
   return res;
 }
 
+template <size_t Size, typename Expo>
+std::vector<VectGeneric<Size, Expo>> rand_perms(int sz) {
+  std::vector<VectGeneric<Size, Expo>> res(sz);
+  std::srand(std::time(0));
+  for (int i = 0; i < sz; i++)
+    res[i] = VectGeneric<Size, Expo>::random();
+  return res;
+}
+
 std::vector<Perm16> all_perms(int n) {
   std::vector<Perm16> res(factorial(n));
   for (unsigned int i = 0; i < res.size(); i++)
