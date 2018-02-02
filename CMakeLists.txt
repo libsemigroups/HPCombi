@@ -39,7 +39,6 @@ set(CMAKE_CXX_EXTENSIONS OFF) # -std=c++11 instead of -std=gnu++11
 
 add_definitions(-DHPCOMBI_HAVE_CONFIG)
 
-option(USE_CUDA "Use CUDA" ON)
 if(USE_CUDA)
 	add_definitions(-DCOMPILE_CUDA)
 endif ( )

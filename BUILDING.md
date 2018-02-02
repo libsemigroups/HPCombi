@@ -40,3 +40,7 @@ By default, cmake compile in debug mode (no optimisation, assert are on). To
 compile in release mode:
 
     cmake -DCMAKE_BUILD_TYPE=Release ..
+
+
+If you want to build CUDA code:
+    cmake -DUSE_CUDA=1 ..
