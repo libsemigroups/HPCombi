@@ -52,8 +52,8 @@ void shufl_gpu(const T* __restrict__ x, const T* __restrict__ y, T* __restrict__
 	
 		// Computation
 		cudaEventRecord(start);
-		permute_gpu<T><<<grid, block, block.x*sizeof(T)>>>(d_x, d_y, Size); // Algorithm using sfhl and shared memory
-		//~ permute_gpu_gen<T><<<grid, block>>>(d_x, d_y, Size); // Simple algorithm
+		//~ permute_gpu<T><<<grid, block, block.x*sizeof(T)>>>(d_x, d_y, Size); // Algorithm using sfhl and shared memory
+		permute_gpu_gen<T><<<grid, block>>>(d_x, d_y, Size); // Simple algorithm
 		cudaEventRecord(stop);
 		cudaEventSynchronize(stop);
 		cudaEventElapsedTime(timers, start, stop);

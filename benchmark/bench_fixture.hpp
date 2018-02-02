@@ -18,8 +18,8 @@ typedef VectGeneric<2048, uint16_t> Vect2048;
 typedef VectGeneric<8192, uint16_t> Vect8192;
 typedef VectGeneric<32768, uint16_t> Vect32768;
 typedef VectGeneric<131072, uint32_t> Vect131072;
-constexpr uint_fast64_t number = 1;
-constexpr uint_fast64_t repeat = 1000;
+constexpr uint_fast64_t number = 10000;
+constexpr uint_fast64_t repeat = 100;
 
 
 inline static void escape(void *p) {

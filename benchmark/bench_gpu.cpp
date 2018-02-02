@@ -1,3 +1,5 @@
+#if COMPILE_CUDA==1
+
 #include <benchmark/benchmark.h>
 //~ #include "perm16.hpp"
 //~ #include "perm_generic.hpp"
@@ -101,7 +103,7 @@ void compose_gpu_one_register(benchmark::State& st, const char* label, const Vec
 int RegisterFromFunction_compose() {
     auto REF_COMPOSE_CPU = benchmark::RegisterBenchmark("compose_ref", &compose_register<Vect1024, COMPOSE_FUNC1024>, "ref", generic_bench_data.sample1024, &Vect1024::permuted);
     auto ALT_COMPOSE_CPU = benchmark::RegisterBenchmark("compose_alt", &compose_register<Vect1024, COMPOSE_FUNC1024>, "cpu", generic_bench_data.sample1024, &Vect1024::permuted);
-    #if COMPILE_CUDA==1
+    
 		auto ALT_COMPOSE_GPU = benchmark::RegisterBenchmark("compose_alt", &compose_register<Vect1024, COMPOSE_FUNC1024>, "gpu function call", generic_bench_data.sample1024, &Vect1024::permuted_gpu);
 		std::string gpu = "gpu";
 		for (int timer_select=0; timer_select<4; timer_select++){
@@ -114,14 +116,14 @@ int RegisterFromFunction_compose() {
 		auto ALT_COMPOSE_GPU_SPE_ALT2 = benchmark::RegisterBenchmark("gpu_spe_alt", &compose_gpu_one_register<Vect1024, COMPOSE_GPU_FUNC1024>, "rand", generic_bench_data.rand, &Vect1024::permuted_gpu_timer, 0);
 		auto ALT_COMPOSE_GPU_SPE_ALT3 = benchmark::RegisterBenchmark("gpu_spe_alt", &compose_gpu_one_register<Vect1024, COMPOSE_GPU_FUNC1024>, "randShuf", generic_bench_data.randShuf, &Vect1024::permuted_gpu_timer, 0);
 
-    #endif  // USE_CUDA
+    
   return 0;
 }
 
 int RegisterFromFunction_compose131072() {
     auto REF_COMPOSE_CPU = benchmark::RegisterBenchmark("compose131072_ref", &compose_register<Vect131072, COMPOSE_FUNC131072>, "ref", generic_bench_data.sample131072, &Vect131072::permuted);
     auto ALT_COMPOSE_CPU = benchmark::RegisterBenchmark("compose131072_alt", &compose_register<Vect131072, COMPOSE_FUNC131072>, "cpu", generic_bench_data.sample131072, &Vect131072::permuted);
-    #if COMPILE_CUDA==1
+
 		auto ALT_COMPOSE_GPU = benchmark::RegisterBenchmark("compose131072_alt", &compose_register<Vect131072, COMPOSE_FUNC131072>, "gpu function call", generic_bench_data.sample131072, &Vect131072::permuted_gpu);
 		std::string gpu = "gpu";
 		for (int timer_select=0; timer_select<4; timer_select++){
@@ -129,7 +131,7 @@ int RegisterFromFunction_compose131072() {
 			ALT_COMPOSE_GPU_TIMER->UseManualTime()->MinTime(0.00005);
 		}
 
-    #endif  // USE_CUDA
+
   return 0;
 }
 
@@ -138,3 +140,4 @@ int dummy0 = RegisterFromFunction_compose();
 int dummy1 = RegisterFromFunction_compose131072();
 
 BENCHMARK_MAIN();
+#endif  // USE_CUDA
