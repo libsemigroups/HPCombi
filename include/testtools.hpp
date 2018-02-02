@@ -32,6 +32,8 @@ constexpr unsigned int factorial(unsigned int n) {
 std::vector<Perm16> rand_perms(int sz);
 std::vector<Perm16> all_perms(int n);
 
+//~ std::vector<VectGeneric<1024, uint16_t>> rand_perms2(int sz);
+
 // using a template allows us to ignore the differences between functors,
 // function pointers and lambda
 template <typename Func>

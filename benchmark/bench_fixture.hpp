@@ -64,22 +64,27 @@ public :
 
 class Fix_generic {
 public :
-  Fix_generic() :          
+  Fix_generic() :
           id(Vect1024(0, 0)), // random permutation
           randShuf(Vect1024(0, -1)), // random permutation
           rand(Vect1024(0, -2)), // Randdom transformation
           zeros(Vect1024(0)), // only zeros
           sample1024({id, randShuf, rand, zeros}),
-          sample2048({id, randShuf, rand, zeros}),
-          sample8192({id, randShuf, rand, zeros}),
-          sample32768({id, randShuf, rand, zeros}),
-          sample131072({id, randShuf, rand, zeros})
+      
+          id131072(Vect131072(0, 0)), // random permutation
+          randShuf131072(Vect131072(0, -1)), // random permutation
+          rand131072(Vect131072(0, -2)), // Randdom transformation
+          zeros131072(Vect131072(0)), // only zeros
+          sample131072({id131072, randShuf131072, rand131072, zeros131072})
+          //~ sample( HPCombi::rand_perms2<1024, uint16_t>(number) )
           {}
 		  
   ~Fix_generic() {}
 
   const Vect1024 id, randShuf, rand, zeros;
-  const std::vector<Vect1024> sample1024, sample2048, sample8192, sample32768, sample131072;
+  const Vect131072 id131072, randShuf131072, rand131072, zeros131072;
+  const std::vector<Vect1024> sample1024;
+  const std::vector<Vect131072> sample131072;
 };
 
 

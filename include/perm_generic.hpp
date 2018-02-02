@@ -70,7 +70,13 @@ template <size_t _Size, typename Expo = uint8_t> struct VectGeneric {
       res[i] = v[u[i]];
     return res;
   };
-  
+ 
+	//~ VectGeneric random() {
+	  //~ VectGeneric<Size, Expo> res = VectGeneric<Size, Expo>(0, 0);
+	  //~ std::random_shuffle(res.begin(), res.end());
+	  //~ return res;
+	//~ }
+	
 #if COMPILE_CUDA==1
 	VectGeneric permuted_gpu(const VectGeneric &u) const {
 
@@ -96,11 +102,6 @@ template <size_t _Size, typename Expo = uint8_t> struct VectGeneric {
 	}
 	
 
-	VectGeneric<Size, Expo> random() {
-	  VectGeneric<Size, Expo> res = VectGeneric<Size, Expo>(0, 0);
-	  std::random_shuffle(res.begin(), res.end());
-	  return res;
-	}
 #endif  // USE_CUDA
 
 
