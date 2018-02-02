@@ -33,7 +33,7 @@ HPCOMBI_CONSTEXPR size_t Vect16::Size;
 /** Implementation part for inline functions *********************************/
 /*****************************************************************************/
 
-inline Vect16::Vect16(std::initializer_list<uint8_t> il, uint8_t def) {
+Vect16::Vect16(std::initializer_list<uint8_t> il, uint8_t def) {
   assert(il.size() <= Size);
   std::copy(il.begin(), il.end(), begin());
   auto &a = as_array();
@@ -100,7 +100,7 @@ inline Vect16 Vect16::permuted_gpu(const Vect16 &other) const {
   // Simple pointers are needed to cpy to GPU
   float timers[4] = {0, 0, 0, 0};
   Vect16 res;
-  shufl_gpu<uint8_t>(&v[0], &other.v[0], &res.v[0], Size, timers);
+  shufl_gpu<uint8_t>(&((*this)[0]), &(other[0]), &(res[0]), Size, timers);
   return res;
 }
 
@@ -229,7 +229,7 @@ inline Vect16 Vect16::revsorted() const {
   return res;
 }
 
-inline PTransf16::PTransf16(std::initializer_list<uint8_t> il) {
+PTransf16::PTransf16(std::initializer_list<uint8_t> il) {
   assert(il.size() <= Size);
   std::copy(il.begin(), il.end(), begin());
   for (size_t i = il.size(); i < Size; ++i)

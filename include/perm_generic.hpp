@@ -83,7 +83,7 @@ template <size_t _Size, typename Expo = uint8_t> struct VectGeneric {
 	  // Simple pointers are needed to cpy to GPU
 	  float timers[4] = {0, 0, 0, 0};
 	  VectGeneric res;
-	  shufl_gpu<Expo>(&v[0], &u.v[0], &res.v[0], Size, timers);
+	  shufl_gpu<Expo>(v.data(), u.v.data(), res.v.data(), Size, timers);
 	  return res;
 	}
 	VectGeneric permuted_gpu_timer(const VectGeneric &u, float * timers) const {
@@ -93,7 +93,7 @@ template <size_t _Size, typename Expo = uint8_t> struct VectGeneric {
 	  VectGeneric res;
 	  
 	  auto start = std::chrono::high_resolution_clock::now();
-	  shufl_gpu<Expo>(&v[0], &u.v[0], &res.v[0], Size, timers);
+	  shufl_gpu<Expo>(v.data(), u.v.data(), res.v.data(), Size, timers);
 	  
 	  auto end   = std::chrono::high_resolution_clock::now();
 	  auto elapsed_seconds = std::chrono::duration_cast<std::chrono::duration<float>>(end - start);
