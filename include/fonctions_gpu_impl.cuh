@@ -26,6 +26,7 @@ void shufl_gpu(const T* __restrict__ x, const T* __restrict__ y, T* __restrict__
 	cudaEventCreate(&start);
 	cudaEventCreate(&stop);
 	cudaSetDevice(0);
+	float tmp=0;
 
 	//~ printf("Size : %d\n", Size);
 	
@@ -60,7 +61,11 @@ void shufl_gpu(const T* __restrict__ x, const T* __restrict__ y, T* __restrict__
 		//~ printf("Computation %.3f ms\n", milliseconds);
 	
 	//Copy GPU to CPU
+	cudaEventRecord(start);
 	cudaMemcpy(z, d_y, Size*sizeof(T), cudaMemcpyDeviceToHost);
+	cudaEventRecord(stop);
+	cudaEventSynchronize(stop);
+	cudaEventElapsedTime(&tmp, start, stop);
 	
 	// Free GPU memory
 	cudaFree(d_x);
@@ -69,7 +74,7 @@ void shufl_gpu(const T* __restrict__ x, const T* __restrict__ y, T* __restrict__
 	cudaEventRecord(stop_all);
 	cudaEventSynchronize(stop_all);
 	cudaEventElapsedTime(timers+3, start_all, stop_all);
-	
+	timers[1] += tmp;
 	timers[1] += timers[0];
 	timers[2] += timers[1];
 
