@@ -15,8 +15,6 @@ using HPCombi::VectGeneric;
 
 typedef Perm16 ( Perm16::*PERM16_OUT_FUNC ) () const;
 typedef uint8_t ( Perm16::*UNINT8_OUT_FUNC ) () const;
-typedef Vect1024 ( Vect1024::*COMPOSE_FUNC ) (const Vect1024&) const;
-typedef Vect1024 ( Vect1024::*COMPOSE_GPU_FUNC ) (const Vect1024&, float*) const;
  
 template<typename T, typename TF> 
 void generic_register(benchmark::State& st, const char* label, const std::vector<T> & sample, TF pfunc);
@@ -65,6 +63,7 @@ int RegisterFromFunction_inverse() {
 	//~ ALT_FIND->MinTime(min_time); 
 	//~ ALT_POW->MinTime(min_time);
 	//~ ALT_CYCL->MinTime(min_time);
+	return 0;
 }
 
 
@@ -87,7 +86,7 @@ int RegisterFromFunction() {
     auto ALT_NB_CYCLES_REF = benchmark::RegisterBenchmark("nb_cycles_alt", &generic_register<Perm16, UNINT8_OUT_FUNC>, "ref", perm16_bench_data.sample, &Perm16::nb_cycles_ref);
     auto ALT_NB_CYCLES_UNROLL = benchmark::RegisterBenchmark("nb_cycles_alt", &generic_register<Perm16, UNINT8_OUT_FUNC>, "unroll", perm16_bench_data.sample, &Perm16::nb_cycles_unroll);
     
-  return 0;
+	return 0;
 }
 
 int dummy2 = RegisterFromFunction_inverse();
