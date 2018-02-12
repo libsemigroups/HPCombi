@@ -11,7 +11,6 @@ using HPCombi::Vect16;
 using HPCombi::PTransf16;
 using HPCombi::Transf16;
 using HPCombi::Perm16;
-using HPCombi::VectGeneric;
 
 typedef Perm16 ( Perm16::*PERM16_OUT_FUNC ) () const;
 typedef uint8_t ( Perm16::*UNINT8_OUT_FUNC ) () const;
@@ -20,6 +19,7 @@ template<typename T, typename TF>
 void generic_register(benchmark::State& st, const char* label, const std::vector<T> & sample, TF pfunc);
 
 const Fix_perm16 perm16_bench_data;
+
 
 //##################################################################################
 // Register fuction for generic operation that take zeros argument

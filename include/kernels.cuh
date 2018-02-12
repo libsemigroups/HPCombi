@@ -5,13 +5,13 @@
 #include <stdio.h>
 
 template <typename T>
-__global__ void permute_gpu (T * __restrict__ d_x, T * __restrict__ d_y, const size_t Size);
+__global__ void permute_gpu (T * __restrict__ d_x, T * __restrict__ d_y, const size_t size);
 template <typename T>
-__global__ void permute_gpu_gen (T * __restrict__ d_x, T * __restrict__ d_y, const size_t Size);
+__global__ void permute_gpu_gen (T * __restrict__ d_x, T * __restrict__ d_y, const size_t size);
 
 
 template <typename T>
-__global__ void permute_gpu (T * __restrict__ d_x, T * __restrict__ d_y, const size_t Size) {
+__global__ void permute_gpu (T * __restrict__ d_x, T * __restrict__ d_y, const size_t size) {
   // Global thread id and warp id
   const size_t tid = blockIdx.x * blockDim.x + threadIdx.x;
   const size_t wid = threadIdx.x/warpSize;
@@ -30,7 +30,7 @@ __global__ void permute_gpu (T * __restrict__ d_x, T * __restrict__ d_y, const s
   extern __shared__ __align__(sizeof(T)) unsigned char my_shared[];
   T *shared = reinterpret_cast<T *>(my_shared);
   
-  if (tid < Size){
+  if (tid < size){
 	// Copy in shared memory for shared memory shuffle
 	shared[threadIdx.x] = x_reg;
 	
@@ -56,10 +56,10 @@ __global__ void permute_gpu (T * __restrict__ d_x, T * __restrict__ d_y, const s
 
 
 template <typename T>
-__global__ void permute_gpu_gen (T * __restrict__ d_x, T * __restrict__ d_y, const size_t Size) {
+__global__ void permute_gpu_gen (T * __restrict__ d_x, T * __restrict__ d_y, const size_t size) {
   // Global thread id and warp id
   const size_t tid = blockIdx.x * blockDim.x + threadIdx.x;  
-  if (tid < Size){
+  if (tid < size){
 	d_y[tid] = d_x[d_y[tid]];
   }
 }

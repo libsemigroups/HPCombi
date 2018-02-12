@@ -3,16 +3,12 @@
 #include <benchmark/benchmark.h>
 //~ #include "perm16.hpp"
 //~ #include "perm_generic.hpp"
-#include "bench_fixture.hpp"
+#include "bench_gpu_fixture.hpp"
 
 #include <string.h>
 #include <stdlib.h>
 
-using HPCombi::epu8;
-using HPCombi::Vect16;
-using HPCombi::PTransf16;
-using HPCombi::Transf16;
-using HPCombi::Perm16;
+
 using HPCombi::VectGeneric;
 
 
@@ -115,7 +111,11 @@ int RegisterFromFunction_compose() {
 		auto ALT_COMPOSE_GPU_SPE_ALT1 = benchmark::RegisterBenchmark("gpu_spe_alt", &compose_gpu_one_register<Vect1024, COMPOSE_GPU_FUNC1024>, "zeros", generic_bench_data.zeros, &Vect1024::permuted_gpu_timer, 0);
 		auto ALT_COMPOSE_GPU_SPE_ALT2 = benchmark::RegisterBenchmark("gpu_spe_alt", &compose_gpu_one_register<Vect1024, COMPOSE_GPU_FUNC1024>, "rand", generic_bench_data.rand, &Vect1024::permuted_gpu_timer, 0);
 		auto ALT_COMPOSE_GPU_SPE_ALT3 = benchmark::RegisterBenchmark("gpu_spe_alt", &compose_gpu_one_register<Vect1024, COMPOSE_GPU_FUNC1024>, "randShuf", generic_bench_data.randShuf, &Vect1024::permuted_gpu_timer, 0);
-
+		ALT_COMPOSE_GPU_SPE_REF->UseManualTime()->MinTime(0.00005);
+		ALT_COMPOSE_GPU_SPE_ALT0->UseManualTime()->MinTime(0.00005);
+		ALT_COMPOSE_GPU_SPE_ALT1->UseManualTime()->MinTime(0.00005);
+		ALT_COMPOSE_GPU_SPE_ALT2->UseManualTime()->MinTime(0.00005);
+		ALT_COMPOSE_GPU_SPE_ALT3->UseManualTime()->MinTime(0.00005);
     
   return 0;
 }
@@ -140,4 +140,5 @@ int dummy0 = RegisterFromFunction_compose();
 int dummy1 = RegisterFromFunction_compose131072();
 
 BENCHMARK_MAIN();
+
 #endif  // USE_CUDA
