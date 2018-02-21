@@ -6,7 +6,7 @@
 	//~ #include <helper_functions.h>
 	#include <cuda_runtime.h>
 	template <typename T>
-	void shufl_gpu(const T* __restrict__ x, const T* __restrict__ y, T* __restrict__ z, const size_t size, float * timers);
+	void shufl_gpu(T* __restrict__ x, const T* __restrict__ y, const size_t size, float * timers);
 
 	// GPU error catching
 	#define gpuErrchk(ans) { gpuAssert((ans), __FILE__, __LINE__); }
@@ -24,12 +24,26 @@
 	class MemGpu {
 	
 		public :
+		uint8_t *h_x8, *h_y8;
+		uint16_t *h_x16, *h_y16;
+		uint32_t *h_x32, *h_y32;
+
 		uint8_t *d_x8, *d_y8;
 		uint16_t *d_x16, *d_y16;
 		uint32_t *d_x32, *d_y32;
-		int *d_xi, *d_yi;
 	
 		MemGpu (size_t size) {
+
+			gpuErrchk( cudaHostAlloc((void**)&h_x8, size*sizeof(uint8_t), 0) );
+			gpuErrchk( cudaHostAlloc((void**)&h_y8, size*sizeof(uint8_t), 0) );
+			
+			gpuErrchk( cudaHostAlloc((void**)&h_x16, size*sizeof(uint16_t), 0) );
+			gpuErrchk( cudaHostAlloc((void**)&h_y16, size*sizeof(uint16_t), 0) );
+			
+			gpuErrchk( cudaHostAlloc((void**)&h_x32, size*sizeof(uint32_t), 0) );
+			gpuErrchk( cudaHostAlloc((void**)&h_y32, size*sizeof(uint32_t), 0) );
+
+			
 			gpuErrchk( cudaMalloc((void**)&d_x8, size*sizeof(uint8_t)) );
 			gpuErrchk( cudaMalloc((void**)&d_y8, size*sizeof(uint8_t)) );
 	
@@ -38,19 +52,21 @@
 	
 			gpuErrchk( cudaMalloc((void**)&d_x32, size*sizeof(uint32_t)) );
 			gpuErrchk( cudaMalloc((void**)&d_y32, size*sizeof(uint32_t)) );
-	
-			gpuErrchk( cudaMalloc((void**)&d_xi, size*sizeof(int)) );
-			gpuErrchk( cudaMalloc((void**)&d_yi, size*sizeof(int)) );
 		}
 		~MemGpu () {
+			gpuErrchk( cudaFreeHost(h_x8) );
+			gpuErrchk( cudaFreeHost(h_y8) );
+			gpuErrchk( cudaFreeHost(h_x16) );
+			gpuErrchk( cudaFreeHost(h_y16) );
+			gpuErrchk( cudaFreeHost(h_x32) );
+			gpuErrchk( cudaFreeHost(h_y32) );
+
 			gpuErrchk( cudaFree(d_x8) );
 			gpuErrchk( cudaFree(d_y8) );
 			gpuErrchk( cudaFree(d_x16) );
 			gpuErrchk( cudaFree(d_y16) );
 			gpuErrchk( cudaFree(d_x32) );
 			gpuErrchk( cudaFree(d_y32) );
-			gpuErrchk( cudaFree(d_xi) );
-			gpuErrchk( cudaFree(d_yi) );
 			
 		}
 	};

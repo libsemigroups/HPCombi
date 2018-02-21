@@ -2,6 +2,7 @@
 #define BENCH_FIXTURE
 
 #include "perm_generic.hpp"
+#include <vector>
 
 using HPCombi::VectGeneric;
 

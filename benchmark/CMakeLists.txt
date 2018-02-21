@@ -27,9 +27,19 @@ foreach(f ${benchmark_src})
   #   RENAME ${CMAKE_PROJECT_NAME}-${benchName})
 endforeach(f)
 
-file(GLOB bench_gpu "${CMAKE_SOURCE_DIR}/benchmark/bench_gpu.cu")
+#~ set(benchmark_gpu bench_gpu.cpp profile_gpu.cpp)
+set(benchmark_gpu bench_gpu.cpp)
+if(USE_CUDA)
+  foreach(f ${benchmark_gpu})
+	get_filename_component(benchName ${f} NAME_WE)
+	add_executable (${benchName} ${f})
+	target_compile_options(${benchName} PUBLIC -Winline -mavx -mtune=native -funroll-loops -flax-vector-conversions)
+	target_link_libraries(${benchName} testtools benchmark pthread gpu)
+  endforeach(f)
+endif()
 
 
+file(GLOB bench_gpu "${CMAKE_SOURCE_DIR}/benchmark/profile_gpu.cu")
 
 if(USE_CUDA)
 	get_filename_component(benchName ${bench_gpu} NAME_WE)
