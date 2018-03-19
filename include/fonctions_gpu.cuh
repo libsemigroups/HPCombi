@@ -33,7 +33,7 @@
 		uint32_t *d_x32, *d_y32;
 	
 		MemGpu (size_t size) {
-
+			cudaSetDevice(0);
 			gpuErrchk( cudaHostAlloc((void**)&h_x8, size*sizeof(uint8_t), 0) );
 			gpuErrchk( cudaHostAlloc((void**)&h_y8, size*sizeof(uint8_t), 0) );
 			
