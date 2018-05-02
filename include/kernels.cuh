@@ -5,13 +5,13 @@
 #include <stdio.h>
 
 template <typename T>
-__global__ void permute_gpu (T * __restrict__ d_x, T * __restrict__ d_y, const size_t size);
+__global__ void permute_gpu (T * __restrict__ d_x, T * __restrict__ d_y, T * __restrict__ d_z, const size_t size);
 template <typename T>
-__global__ void permute_gpu_gen (T * __restrict__ d_x, T * __restrict__ d_y, const size_t size);
+__global__ void permute_gpu_gen (T * __restrict__ d_x, T * __restrict__ d_y, T * __restrict__ d_z, const size_t size);
 
 
 template <typename T>
-__global__ void permute_gpu (T * __restrict__ d_x, T * __restrict__ d_y, const size_t size) {
+__global__ void permute_gpu (T * __restrict__ d_x, T * __restrict__ d_y, T * __restrict__ d_z, const size_t size) {
   // Global thread id and warp id
   const size_t tid = blockIdx.x * blockDim.x + threadIdx.x;
   const size_t wid = threadIdx.x/warpSize;
@@ -42,13 +42,13 @@ __global__ void permute_gpu (T * __restrict__ d_x, T * __restrict__ d_y, const s
 	__syncthreads();	
 	//Shared memory shuffle
 	if(mask_global == false){
-		d_y[tid] = d_x[d_y[tid]];
+		d_z[tid] = d_x[d_y[tid]];
 	}
 	else if(mask_shared == false){
-		d_y[tid] = shared[y_reg%blockDim.x];
+		d_z[tid] = shared[y_reg%blockDim.x];
 	}
 	else{
-		d_y[tid] = tmp;
+		d_z[tid] = tmp;
 	}
 	
   }
@@ -56,11 +56,11 @@ __global__ void permute_gpu (T * __restrict__ d_x, T * __restrict__ d_y, const s
 
 
 template <typename T>
-__global__ void permute_gpu_gen (T * __restrict__ d_x, T * __restrict__ d_y, const size_t size) {
+__global__ void permute_gpu_gen (T * __restrict__ d_x, T * __restrict__ d_y, T * __restrict__ d_z, const size_t size) {
   // Global thread id and warp id
   const size_t tid = blockIdx.x * blockDim.x + threadIdx.x;  
   if (tid < size){
-	d_y[tid] = d_x[d_y[tid]];
+    d_z[tid] = d_x[d_y[tid]];
   }
 }
 

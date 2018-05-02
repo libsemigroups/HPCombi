@@ -28,9 +28,9 @@
 		uint16_t *h_x16, *h_y16;
 		uint32_t *h_x32, *h_y32;
 
-		uint8_t *d_x8, *d_y8;
-		uint16_t *d_x16, *d_y16;
-		uint32_t *d_x32, *d_y32;
+		uint8_t *d_x8, *d_y8, *d_z8;
+		uint16_t *d_x16, *d_y16, *d_z16;
+		uint32_t *d_x32, *d_y32, *d_z32;
 	
 		MemGpu (size_t size) {
 			cudaSetDevice(0);
@@ -46,12 +46,15 @@
 			
 			gpuErrchk( cudaMalloc((void**)&d_x8, size*sizeof(uint8_t)) );
 			gpuErrchk( cudaMalloc((void**)&d_y8, size*sizeof(uint8_t)) );
+			gpuErrchk( cudaMalloc((void**)&d_z8, size*sizeof(uint8_t)) );
 	
 			gpuErrchk( cudaMalloc((void**)&d_x16, size*sizeof(uint16_t)) );
 			gpuErrchk( cudaMalloc((void**)&d_y16, size*sizeof(uint16_t)) );
+			gpuErrchk( cudaMalloc((void**)&d_z16, size*sizeof(uint16_t)) );
 	
 			gpuErrchk( cudaMalloc((void**)&d_x32, size*sizeof(uint32_t)) );
 			gpuErrchk( cudaMalloc((void**)&d_y32, size*sizeof(uint32_t)) );
+			gpuErrchk( cudaMalloc((void**)&d_z32, size*sizeof(uint32_t)) );
 		}
 		~MemGpu () {
 			gpuErrchk( cudaFreeHost(h_x8) );
@@ -63,10 +66,13 @@
 
 			gpuErrchk( cudaFree(d_x8) );
 			gpuErrchk( cudaFree(d_y8) );
+			gpuErrchk( cudaFree(d_z8) );
 			gpuErrchk( cudaFree(d_x16) );
 			gpuErrchk( cudaFree(d_y16) );
+			gpuErrchk( cudaFree(d_z16) );
 			gpuErrchk( cudaFree(d_x32) );
 			gpuErrchk( cudaFree(d_y32) );
+			gpuErrchk( cudaFree(d_z32) );
 			
 		}
 	};

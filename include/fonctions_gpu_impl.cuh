@@ -39,20 +39,22 @@ void shufl_gpu(T* __restrict__ x, const T* __restrict__ y, const size_t size, fl
 	
 	// Memory allocation on GPU
 	cudaEventRecord(start);
-	T *d_x, *d_y;
-	//~ T *h_x, *h_y;
+	T *d_x, *d_y, *d_z;
 
 	if (std::is_same<uint8_t, T>::value){
 		d_x = (T*)memGpu.d_x8;
 		d_y = (T*)memGpu.d_y8;
+		d_z = (T*)memGpu.d_z8;
 	}
 	else if (std::is_same<uint16_t, T>::value){
 		d_x = (T*)memGpu.d_x16;
 		d_y = (T*)memGpu.d_y16;
+		d_z = (T*)memGpu.d_z16;
 	}
 	else if (std::is_same<uint32_t, T>::value){
 		d_x = (T*)memGpu.d_x32;
 		d_y = (T*)memGpu.d_y32;
+		d_z = (T*)memGpu.d_z32;
 	}
 	
 	cudaEventRecord(stop);
@@ -60,8 +62,8 @@ void shufl_gpu(T* __restrict__ x, const T* __restrict__ y, const size_t size, fl
 	cudaEventElapsedTime(timers+2, start, stop);
 
 	// Definition of grid and block sizes
-	dim3 block(512,1);
-	dim3 grid((size+block.x-1)/block.x,1);
+	dim3 block(128,1);
+	dim3 grid((size + block.x-1)/block.x,1);
 
 	// Copy CPU to GPU
 	cudaEventRecord(start);
@@ -73,8 +75,8 @@ void shufl_gpu(T* __restrict__ x, const T* __restrict__ y, const size_t size, fl
 	
 		// Computation
 		cudaEventRecord(start);
-		//~ permute_gpu<T><<<grid, block, block.x*sizeof(T)>>>(d_x, d_y, size); // Algorithm using sfhl and shared memory
-		permute_gpu_gen<T><<<grid, block>>>(d_x, d_y, size); // Simple algorithm
+		//~ permute_gpu<T><<<grid, block, block.x*sizeof(T)>>>(d_x, d_y, d_z, size); // Algorithm using sfhl and shared memory
+		permute_gpu_gen<T><<<grid, block>>>(d_x, d_y, d_z, size); // Simple algorithm
 		gpuErrchk( cudaPeekAtLastError() );
 		gpuErrchk( cudaDeviceSynchronize() );
 		cudaEventRecord(stop);
@@ -85,7 +87,7 @@ void shufl_gpu(T* __restrict__ x, const T* __restrict__ y, const size_t size, fl
 	//Copy GPU to CPU
 	cudaEventRecord(start);
 	//~ memset(z, 0, size*sizeof(T));
-	gpuErrchk( cudaMemcpy(x, d_y, size*sizeof(T), cudaMemcpyDeviceToHost) );
+	gpuErrchk( cudaMemcpy(x, d_z, size*sizeof(T), cudaMemcpyDeviceToHost) );
 	cudaEventRecord(stop);
 	cudaEventSynchronize(stop);
 	cudaEventElapsedTime(&tmp, start, stop);
