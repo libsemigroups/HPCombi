@@ -35,7 +35,8 @@
   #define HPCOMBI_CONSTEXPR constexpr
   #define HPCOMBI_CONSTEXPR_CONSTRUCTOR constexpr
 #else
-  #pragma message "Using a constexpr broken compiler ! Performance may not be optimal"
+  #pragma message "Using a constexpr broken compiler ! "\
+                   "Performance may not be optimal"
   #define HPCOMBI_CONSTEXPR const
   #define HPCOMBI_CONSTEXPR_CONSTRUCTOR
 #endif
@@ -357,7 +358,7 @@ struct Perm16 : public Transf16 {
   inline uint8_t nb_cycles_unroll() const;
   inline uint8_t nb_cycles() const { return nb_cycles_unroll(); }
 
-private:
+ private:
   static const std::array<Perm16, 3> inverting_rounds;
 };
 

@@ -1,17 +1,17 @@
-/******************************************************************************/
-/*       Copyright (C) 2014 Florent Hivert <Florent.Hivert@lri.fr>,           */
-/*                                                                            */
-/*  Distributed under the terms of the GNU General Public License (GPL)       */
-/*                                                                            */
-/*    This code is distributed in the hope that it will be useful,            */
-/*    but WITHOUT ANY WARRANTY; without even the implied warranty of          */
-/*    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU       */
-/*   General Public License for more details.                                 */
-/*                                                                            */
-/*  The full text of the GPL is available at:                                 */
-/*                                                                            */
-/*                  http://www.gnu.org/licenses/                              */
-/******************************************************************************/
+//****************************************************************************//
+//       Copyright (C) 2016 Florent Hivert <Florent.Hivert@lri.fr>,           //
+//                                                                            //
+//  Distributed under the terms of the GNU General Public License (GPL)       //
+//                                                                            //
+//    This code is distributed in the hope that it will be useful,            //
+//    but WITHOUT ANY WARRANTY; without even the implied warranty of          //
+//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU       //
+//   General Public License for more details.                                 //
+//                                                                            //
+//  The full text of the GPL is available at:                                 //
+//                                                                            //
+//                  http://www.gnu.org/licenses/                              //
+//****************************************************************************//
 
 #ifndef HPCOMBI_PERM_GENERIC_HPP
 #define HPCOMBI_PERM_GENERIC_HPP
@@ -52,7 +52,8 @@ template <size_t _Size, typename Expo = uint8_t> struct VectGeneric {
 
   char less_partial(const VectGeneric &u, int k) const {
     uint64_t diff = first_diff(u, k);
-    return (diff == Size) ? 0 : char(v[diff]) - char(u[diff]);
+    return (diff == Size) ? 0
+      : static_cast<char>(v[diff]) - static_cast<char>(u[diff]);
   }
 
   VectGeneric permuted(const VectGeneric &u) const {
@@ -60,7 +61,7 @@ template <size_t _Size, typename Expo = uint8_t> struct VectGeneric {
     for (uint64_t i = 0; i < Size; i++)
       res[i] = v[u[i]];
     return res;
-  };
+  }
 
   uint64_t first_non_zero(size_t bound = Size) const {
     for (uint64_t i = 0; i < bound; i++)
@@ -128,8 +129,8 @@ struct PermGeneric : public VectGeneric<_Size, Expo> {
   using vect = VectGeneric<_Size, Expo>;
 
   PermGeneric() = default;
-  // PermGeneric() { for (uint64_t i=0; i < _Size; i++) this->v[i] = i; };
-  PermGeneric(const vect u) : vect(u){};
+  // PermGeneric() { for (uint64_t i=0; i < _Size; i++) this->v[i] = i; }
+  PermGeneric(const vect u) : vect(u) {}
   PermGeneric(std::initializer_list<Expo> il) {
     assert(il.size() <= vect::Size);
     std::copy(il.begin(), il.end(), this->v.begin());

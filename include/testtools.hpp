@@ -35,7 +35,9 @@ std::vector<Perm16> all_perms(int n);
 // function pointers and lambda
 template <typename Func>
 double timethat(Func fun, int rep = 1, double reftime = 0) {
-  using namespace std::chrono;
+  using std::chrono::duration;
+  using std::chrono::duration_cast;
+  using std::chrono::high_resolution_clock;
   auto tstart = high_resolution_clock::now();
   for (int i = 0; i < rep; i++)
     fun();
