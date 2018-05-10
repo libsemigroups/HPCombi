@@ -103,10 +103,11 @@ inline uint8_t Vect16::sum_ref() const {
 inline uint8_t Vect16::sum4() const { return partial_sums_round()[15]; }
 
 inline uint8_t Vect16::sum3() const {
+  auto sr = summing_rounds();
   Vect16 res = *this;
-  res.v += res.permuted(summing_rounds[0]).v;
-  res.v += res.permuted(summing_rounds[1]).v;
-  res.v += res.permuted(summing_rounds[2]).v;
+  res.v += res.permuted(sr[0]).v;
+  res.v += res.permuted(sr[1]).v;
+  res.v += res.permuted(sr[2]).v;
   return res.v[7] + res.v[15];
 }
 
@@ -119,7 +120,7 @@ inline Vect16 Vect16::partial_sums_ref() const {
 }
 inline Vect16 Vect16::partial_sums_round() const {
   Vect16 res = *this;
-  for (Vect16 round : summing_rounds)
+  for (Vect16 round : summing_rounds())
     res.v += res.permuted(round).v;
   return res;
 }
@@ -164,7 +165,7 @@ inline bool Vect16::is_partial_transformation(const size_t k) const {
   uint64_t diff =
       unsigned(_mm_cmpestri(v, Size, Perm16::one(), Size, LAST_DIFF));
   return
-    (_mm_movemask_epi8(v+cst_epu8_0x01 <= cst_epu8_0x0F) == 0xffff) &&
+    (_mm_movemask_epi8(v+cst_epu8_0x01 <= cst_epu8_0x10) == 0xffff) &&
     (diff == Size || diff < k);
 }
 
@@ -172,7 +173,7 @@ inline bool Vect16::is_transformation(const size_t k) const {
   uint64_t diff =
       unsigned(_mm_cmpestri(v, Size, Perm16::one(), Size, LAST_DIFF));
   return
-    (_mm_movemask_epi8(v < cst_epu8_0x0F) == 0xffff) &&
+    (_mm_movemask_epi8(v < cst_epu8_0x10) == 0xffff) &&
     (diff == Size || diff < k);
 }
 
@@ -190,7 +191,7 @@ inline bool Vect16::is_permutation(const size_t k) const {
 
 inline Vect16 Vect16::sorted() const {
   Vect16 res = *this;
-  for (auto round : sorting_rounds) {
+  for (auto round : sorting_rounds()) {
     Vect16 b = res.permuted(round);
 
     Vect16 mask = _mm_cmplt_epi8(round, Perm16::one());
@@ -204,7 +205,7 @@ inline Vect16 Vect16::sorted() const {
 
 inline Vect16 Vect16::revsorted() const {
   Vect16 res = *this;
-  for (auto round : sorting_rounds) {
+  for (auto round : sorting_rounds()) {
     Vect16 b = res.permuted(round);
 
     Vect16 mask = _mm_cmplt_epi8(round, Perm16::one());
@@ -314,7 +315,7 @@ inline Perm16 Perm16::inverse_find() const {
   Perm16 s = *this;
   Vect16 res;
   res.v = -static_cast<epu8>(_mm_cmpestrm(s.v, 8, one(), 16, FIND_IN_PERM));
-  for (Perm16 round : inverting_rounds) {
+  for (Perm16 round : inverting_rounds()) {
     s = s * round;
     res.v <<= 1;
     res.v -= static_cast<epu8>(_mm_cmpestrm(s.v, 8, one(), 16, FIND_IN_PERM));
@@ -444,7 +445,8 @@ std::ostream &operator<<(std::ostream &stream, Vect16 const &term) {
 // clang-format off
 
 // Sorting network Knuth AoCP3 Fig. 51 p 229.
-const std::array<Perm16, 9> Vect16::sorting_rounds = {{
+const std::array<Perm16, 9> Vect16::sorting_rounds() {
+  static std::array<Perm16, 9> res {
     //     0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15
     epu8 { 1,  0,  3,  2,  5,  4,  7,  6,  9,  8, 11, 10, 13, 12, 15, 14},
     epu8 { 2,  3,  0,  1,  6,  7,  4,  5, 10, 11,  8,  9, 14, 15, 12, 13},
@@ -455,15 +457,20 @@ const std::array<Perm16, 9> Vect16::sorting_rounds = {{
     epu8 { 0,  1,  4,  5,  2,  3,  8,  9,  6,  7, 12, 13, 10, 11, 14, 15},
     epu8 { 0,  1,  2,  6,  4,  8,  3, 10,  5, 12,  7, 11,  9, 13, 14, 15},
     epu8 { 0,  1,  2,  4,  3,  6,  5,  8,  7, 10,  9, 12, 11, 13, 14, 15}
-  }};
+  };
+  return res;
+}
 
 // Gather at the front numbers with (3-i)-th bit not set.
-const std::array<Perm16, 3> Perm16::inverting_rounds = {{
+const std::array<Perm16, 3> Perm16::inverting_rounds() {
+  static std::array<Perm16, 3> res {
     //     0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15
     epu8 { 0,  1,  2,  3,  8,  9, 10, 11,  4,  5,  6,  7, 12, 13, 14, 15},
     epu8 { 0,  1,  4,  5,  8,  9, 12, 13,  2,  3,  6,  7, 10, 11, 14, 15},
     epu8 { 0,  2,  4,  6,  8, 10, 12, 14,  1,  3,  5,  7,  9, 11, 13, 15}
-  }};
+  };
+  return res;
+}
 
 
 #if defined(FF)
@@ -471,13 +478,16 @@ const std::array<Perm16, 3> Perm16::inverting_rounds = {{
 #endif /* FF */
 #define FF 0xff
 
-const std::array<epu8, 4> Vect16::summing_rounds = {{
+const std::array<epu8, 4> Vect16::summing_rounds() {
+  static std::array<epu8, 4> res {
     //      0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15
     epu8 { FF,  0, FF,  2, FF,  4, FF,  6, FF,  8, FF, 10, FF, 12, FF, 14},
     epu8 { FF, FF,  1,  1, FF, FF,  5,  5, FF, FF,  9,  9, FF, FF, 13, 13},
     epu8 { FF, FF, FF, FF,  3,  3,  3,  3, FF, FF, FF, FF, 11, 11, 11, 11},
     epu8 { FF, FF, FF, FF, FF, FF, FF, FF,  7,  7,  7,  7,  7,  7,  7,  7}
-  }};
+  };
+  return res;
+}
 
 #undef FF
 

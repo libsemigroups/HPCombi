@@ -92,6 +92,7 @@ HPCOMBI_CONSTEXPR epu8 cst_epu8_0x02 = make_const_epu8<0x02>();
 HPCOMBI_CONSTEXPR epu8 cst_epu8_0x04 = make_const_epu8<0x04>();
 HPCOMBI_CONSTEXPR epu8 cst_epu8_0x08 = make_const_epu8<0x08>();
 HPCOMBI_CONSTEXPR epu8 cst_epu8_0x0F = make_const_epu8<0x0F>();
+HPCOMBI_CONSTEXPR epu8 cst_epu8_0x10 = make_const_epu8<0x10>();
 HPCOMBI_CONSTEXPR epu8 cst_epu8_0xF0 = make_const_epu8<0xF0>();
 HPCOMBI_CONSTEXPR epu8 cst_epu8_0xFF = make_const_epu8<0xFF>();
 
@@ -219,11 +220,11 @@ struct alignas(16) Vect16 {
    */
   inline bool is_permutation(const size_t k = Size) const;
 
-  static Vect16 random(uint16_t bnd = 256);
+  inline static Vect16 random(uint16_t bnd = 256);
 
 private:
-  static const std::array<Perm16, 9> sorting_rounds;
-  static const std::array<epu8, 4> summing_rounds;
+  inline static const std::array<Perm16, 9> sorting_rounds();
+  inline static const std::array<epu8, 4> summing_rounds();
 };
 
 std::ostream &operator<<(std::ostream &stream, const Vect16 &term);
@@ -343,7 +344,7 @@ struct Perm16 : public Transf16 {
 
   inline static Perm16 elementary_transposition(uint64_t i);
   static Perm16 random();
-  static Perm16 unrankSJT(int n, int r);
+  inline static Perm16 unrankSJT(int n, int r);
 
   inline Vect16 lehmer_ref() const;
   inline Vect16 lehmer() const;
@@ -359,7 +360,7 @@ struct Perm16 : public Transf16 {
   inline uint8_t nb_cycles() const { return nb_cycles_unroll(); }
 
  private:
-  static const std::array<Perm16, 3> inverting_rounds;
+  inline static const std::array<Perm16, 3> inverting_rounds();
 };
 
 /*****************************************************************************/
