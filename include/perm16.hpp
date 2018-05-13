@@ -57,7 +57,7 @@ template <class Function> HPCOMBI_CONSTEXPR epu8 make_epu8(Function f) {
 }
 
 template <uint8_t c> HPCOMBI_CONSTEXPR
-uint8_t constfun(uint8_t ignored) { return c; }
+uint8_t constfun(uint8_t) { return c; }
 
 template <uint8_t c> HPCOMBI_CONSTEXPR epu8 make_const_epu8() {
   return make_epu8_helper(constfun<c>, std::make_index_sequence<16>{});
@@ -153,8 +153,10 @@ struct alignas(16) Vect16 {
   inline Vect16 permuted(const Vect16 &other) const;
   inline Vect16 sorted() const;
   inline Vect16 revsorted() const;
+  inline bool is_sorted() const;
 
   inline uint64_t first_diff(const Vect16 &b, size_t bound = Size) const;
+  inline uint64_t last_diff(const Vect16 &b, size_t bound = Size) const;
 
   inline uint8_t sum_ref() const;
   inline uint8_t sum4() const;

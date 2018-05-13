@@ -71,6 +71,9 @@ Vect16 Vect16::random(uint16_t bnd) {
 inline uint64_t Vect16::first_diff(const Vect16 &b, size_t bound) const {
   return unsigned(_mm_cmpestri(v, bound, b.v, bound, FIRST_DIFF));
 }
+inline uint64_t Vect16::last_diff(const Vect16 &b, size_t bound) const {
+  return unsigned(_mm_cmpestri(v, bound, b.v, bound, LAST_DIFF));
+}
 inline bool Vect16::operator==(const Vect16 &b) const {
   return _mm_movemask_epi8(_mm_cmpeq_epi8(v, b.v)) == 0xffff;
   // return first_diff(b) == Size;
@@ -162,25 +165,21 @@ inline uint64_t Vect16::first_zero(int bnd) const {
 
 
 inline bool Vect16::is_partial_transformation(const size_t k) const {
-  uint64_t diff =
-      unsigned(_mm_cmpestri(v, Size, Perm16::one(), Size, LAST_DIFF));
+  uint64_t diff = last_diff(Perm16::one(), Size);
   return
     (_mm_movemask_epi8(v+cst_epu8_0x01 <= cst_epu8_0x10) == 0xffff) &&
     (diff == Size || diff < k);
 }
 
 inline bool Vect16::is_transformation(const size_t k) const {
-  uint64_t diff =
-      unsigned(_mm_cmpestri(v, Size, Perm16::one(), Size, LAST_DIFF));
+  uint64_t diff = last_diff(Perm16::one(), Size);
   return
     (_mm_movemask_epi8(v < cst_epu8_0x10) == 0xffff) &&
     (diff == Size || diff < k);
 }
 
 inline bool Vect16::is_permutation(const size_t k) const {
-  uint64_t diff =
-      unsigned(_mm_cmpestri(v, Size, Perm16::one(), Size, LAST_DIFF));
-
+  uint64_t diff = last_diff(Perm16::one(), Size);
   // (forall x in v, x in Perm16::one())  and
   // (forall x in Perm16::one(), x in v)  and
   // (v = Perm16::one()   or  last diff index < Size)
@@ -215,6 +214,10 @@ inline Vect16 Vect16::revsorted() const {
     res = _mm_blendv_epi8(maxab, minab, mask);
   }
   return res;
+}
+
+inline bool Vect16::is_sorted() const {
+  return _mm_movemask_epi8(v > permuted(Perm16::left_shift()).v) == 0;
 }
 
 inline PTransf16::PTransf16(std::initializer_list<uint8_t> il) {
@@ -393,14 +396,11 @@ inline uint8_t Perm16::length() const { return lehmer().sum(); }
 inline uint8_t Perm16::nb_descent_ref() const {
   uint8_t res = 0;
   for (size_t i = 0; i < Size - 1; i++)
-    if (v[i] > v[i + 1])
-      res++;
+    if (v[i] > v[i + 1]) res++;
   return res;
 }
 inline uint8_t Perm16::nb_descent() const {
-  Perm16 pdec = permuted(left_shift());
-  pdec = (v > pdec.v);
-  return _mm_popcnt_u32(_mm_movemask_epi8(pdec));
+  return _mm_popcnt_u32(_mm_movemask_epi8(v > permuted(left_shift()).v));
 }
 
 inline uint8_t Perm16::nb_cycles_ref() const {
