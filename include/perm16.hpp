@@ -107,7 +107,7 @@ struct Transf16;
  */
 struct alignas(16) Vect16 {
 
-  static HPCOMBI_CONSTEXPR size_t Size = 16;
+  static HPCOMBI_CONSTEXPR size_t Size() { return 16; };
   epu8 v;
 
   Vect16() = default;
@@ -154,7 +154,7 @@ struct alignas(16) Vect16 {
   inline Vect16 sorted() const;
   inline Vect16 revsorted() const;
 
-  inline uint64_t first_diff(const Vect16 &b, size_t bound = Size) const;
+  inline uint64_t first_diff(const Vect16 &b, size_t bound = Size()) const;
 
   inline uint8_t sum_ref() const;
   inline uint8_t sum4() const;
@@ -166,10 +166,10 @@ struct alignas(16) Vect16 {
 
   template <char IDX_MODE> inline uint64_t search_index(int bound) const;
 
-  inline uint64_t last_non_zero(int bnd = Size) const;
-  inline uint64_t first_non_zero(int bnd = Size) const;
-  inline uint64_t last_zero(int bnd = Size) const;
-  inline uint64_t first_zero(int bnd = Size) const;
+  inline uint64_t last_non_zero(int bnd = Size()) const;
+  inline uint64_t first_non_zero(int bnd = Size()) const;
+  inline uint64_t last_zero(int bnd = Size()) const;
+  inline uint64_t first_zero(int bnd = Size()) const;
 
   inline Vect16 eval16_ref() const;
   inline Vect16 eval16_vect() const;
@@ -188,7 +188,7 @@ struct alignas(16) Vect16 {
    * @f$\begin{matrix}0 1 2 3 4 5\\ 2 0 5 . . 4 \end{matrix}@f$
    * is encoded by the array {2,0,5,0xff,0xff,4,6,7,8,9,10,11,12,13,14,15}
    */
-  inline bool is_partial_transformation(const size_t k = Size) const;
+  inline bool is_partial_transformation(const size_t k = Size()) const;
   /** Test for transformation
    * @details
    * @returns whether \c *this is a transformation.
@@ -203,7 +203,7 @@ struct alignas(16) Vect16 {
    * @f$\begin{matrix}0 1 2 3 4 5\\ 2 0 5 2 1 4 \end{matrix}@f$
    * is encoded by the array {2,0,5,2,1,4,6,7,8,9,10,11,12,13,14,15}
    */
-  inline bool is_transformation(const size_t k = Size) const;
+  inline bool is_transformation(const size_t k = Size()) const;
   /** Test for permutations
    * @details
    * @returns whether \c *this is a permutation.
@@ -218,7 +218,7 @@ struct alignas(16) Vect16 {
    * @f$\begin{matrix}0 1 2 3 4 5\\ 2 0 5 3 1 4 \end{matrix}@f$
    * is encoded by the array {2,0,5,3,1,4,6,7,8,9,10,11,12,13,14,15}
    */
-  inline bool is_permutation(const size_t k = Size) const;
+  inline bool is_permutation(const size_t k = Size()) const;
 
   inline static Vect16 random(uint16_t bnd = 256);
 
@@ -227,7 +227,7 @@ private:
   inline static const std::array<epu8, 4> summing_rounds();
 };
 
-std::ostream &operator<<(std::ostream &stream, const Vect16 &term);
+inline std::ostream &operator<<(std::ostream &stream, const Vect16 &term);
 
 
 /** Partial transformation of @f$\{0\dots 15\}@f$
@@ -343,7 +343,7 @@ struct Perm16 : public Transf16 {
   Perm16 left_shift_ff() { return make_epu8(make_left_shift_ff); }
 
   inline static Perm16 elementary_transposition(uint64_t i);
-  static Perm16 random();
+  inline static Perm16 random();
   inline static Perm16 unrankSJT(int n, int r);
 
   inline Vect16 lehmer_ref() const;

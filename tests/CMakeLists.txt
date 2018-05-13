@@ -35,6 +35,13 @@ target_link_libraries(test_perm_all
   )
   target_compile_options(test_perm_all PUBLIC -mavx -mtune=native -funroll-loops -flax-vector-conversions)
 
+add_executable (test_mincl test_mincl.cpp test_mincl0.cpp test_mincl1.cpp)
+target_link_libraries(test_mincl
+  ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY}
+  )
+  target_compile_options(test_mincl PUBLIC -mavx -mtune=native -funroll-loops -flax-vector-conversions)
+
 add_test (TestPerm16 test_perm16)
 add_test (TestPermAll test_perm_all)
+add_test (TestMultIncl test_mincl)
 

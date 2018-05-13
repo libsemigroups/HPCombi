@@ -79,7 +79,7 @@ BOOST_AUTO_TEST_SUITE(VectType_test)
 //____________________________________________________________________________//
 
 BOOST_FIXTURE_TEST_CASE_TEMPLATE(sizeof_test, F, Fixtures, F) {
-  BOOST_CHECK_EQUAL(sizeof(F::zero), F::VectType::Size);
+  BOOST_CHECK_EQUAL(sizeof(F::zero), F::VectType::Size());
 }
 
 BOOST_FIXTURE_TEST_CASE_TEMPLATE(equal_test, F, Fixtures, F) {
@@ -163,38 +163,38 @@ BOOST_FIXTURE_TEST_CASE_TEMPLATE(first_zero_test, F, Fixtures, F) {
   BOOST_CHECK_EQUAL(F::PPa.first_zero(), 4u);
   BOOST_CHECK_EQUAL(F::P10.first_zero(), 1u);
   BOOST_CHECK_EQUAL(F::P1.first_zero(), 16u);
-  BOOST_CHECK_EQUAL(F::P10.first_zero(1), F::VectType::Size);
+  BOOST_CHECK_EQUAL(F::P10.first_zero(1), F::VectType::Size());
   BOOST_CHECK_EQUAL(F::PPa.first_zero(5), 4u);
-  BOOST_CHECK_EQUAL(F::PPa.first_zero(3), F::VectType::Size);
+  BOOST_CHECK_EQUAL(F::PPa.first_zero(3), F::VectType::Size());
 }
 
 BOOST_FIXTURE_TEST_CASE_TEMPLATE(last_zero_test, F, Fixtures, F) {
   BOOST_CHECK_EQUAL(F::zero.last_zero(), 15u);
   BOOST_CHECK_EQUAL(F::P01.last_zero(), 15u);
   BOOST_CHECK_EQUAL(F::PPa.last_zero(), 4u);
-  BOOST_CHECK_EQUAL(F::P1.last_zero(), F::VectType::Size);
+  BOOST_CHECK_EQUAL(F::P1.last_zero(), F::VectType::Size());
   BOOST_CHECK_EQUAL(F::P01.last_zero(1), 0u);
-  BOOST_CHECK_EQUAL(F::P10.last_zero(1), F::VectType::Size);
+  BOOST_CHECK_EQUAL(F::P10.last_zero(1), F::VectType::Size());
   BOOST_CHECK_EQUAL(F::PPa.last_zero(5), 4u);
-  BOOST_CHECK_EQUAL(F::PPa.last_zero(3), F::VectType::Size);
+  BOOST_CHECK_EQUAL(F::PPa.last_zero(3), F::VectType::Size());
 }
 
 BOOST_FIXTURE_TEST_CASE_TEMPLATE(first_non_zero_test, F, Fixtures, F) {
-  BOOST_CHECK_EQUAL(F::zero.first_non_zero(), F::VectType::Size);
+  BOOST_CHECK_EQUAL(F::zero.first_non_zero(), F::VectType::Size());
   BOOST_CHECK_EQUAL(F::P01.first_non_zero(), 1u);
   BOOST_CHECK_EQUAL(F::PPa.first_non_zero(), 0u);
   BOOST_CHECK_EQUAL(F::P01.first_non_zero(), 1u);
-  BOOST_CHECK_EQUAL(F::P01.first_non_zero(1), F::VectType::Size);
+  BOOST_CHECK_EQUAL(F::P01.first_non_zero(1), F::VectType::Size());
   BOOST_CHECK_EQUAL(F::PPa.first_non_zero(5), 0u);
   BOOST_CHECK_EQUAL(F::PPa.first_non_zero(3), 0u);
 }
 
 BOOST_FIXTURE_TEST_CASE_TEMPLATE(last_non_zero_test, F, Fixtures, F) {
-  BOOST_CHECK_EQUAL(F::zero.last_non_zero(), F::VectType::Size);
+  BOOST_CHECK_EQUAL(F::zero.last_non_zero(), F::VectType::Size());
   BOOST_CHECK_EQUAL(F::P01.last_non_zero(), 1u);
   BOOST_CHECK_EQUAL(F::PPa.last_non_zero(), 15u);
   BOOST_CHECK_EQUAL(F::P01.last_non_zero(), 1u);
-  BOOST_CHECK_EQUAL(F::P01.last_non_zero(1), F::VectType::Size);
+  BOOST_CHECK_EQUAL(F::P01.last_non_zero(1), F::VectType::Size());
   BOOST_CHECK_EQUAL(F::PPa.last_non_zero(5), 3u);
   BOOST_CHECK_EQUAL(F::PPa.last_non_zero(3), 2u);
 }
@@ -211,7 +211,7 @@ BOOST_FIXTURE_TEST_CASE_TEMPLATE(operator_insert_test, F, Fixtures, F) {
   std::ostringstream out, out2;
   out << F::zero;
   out2 << "[ 0";
-  for (size_t i = 1; i < F::VectType::Size; i++)
+  for (size_t i = 1; i < F::VectType::Size(); i++)
     out2 << ", 0";
   out2 << "]";
   BOOST_CHECK_EQUAL(out.str(), out2.str());
@@ -220,7 +220,7 @@ BOOST_FIXTURE_TEST_CASE_TEMPLATE(operator_insert_test, F, Fixtures, F) {
   out2.str("");
   out << F::P01;
   out2 << "[ 0, 1";
-  for (size_t i = 2; i < F::VectType::Size; i++)
+  for (size_t i = 2; i < F::VectType::Size(); i++)
     out2 << ", 0";
   out2 << "]";
   BOOST_CHECK_EQUAL(out.str(), out2.str());
@@ -229,7 +229,7 @@ BOOST_FIXTURE_TEST_CASE_TEMPLATE(operator_insert_test, F, Fixtures, F) {
   out2.str("");
   out << F::PPa;
   out2 << "[ 1, 2, 3, 4, 0";
-  for (size_t i = 5; i < F::VectType::Size; i++)
+  for (size_t i = 5; i < F::VectType::Size(); i++)
     out2 << "," << std::setw(2) << i;
   out2 << "]";
   BOOST_CHECK_EQUAL(out.str(), out2.str());
@@ -298,15 +298,15 @@ BOOST_FIXTURE_TEST_CASE_TEMPLATE(constructor_is_permutation_test, F,
 
 BOOST_FIXTURE_TEST_CASE_TEMPLATE(operator_mult_coxeter_test, F, PermFixtures,
                                  F) {
-  for (uint64_t i = 0; i < F::PermType::Size - 1; i++) {
+  for (uint64_t i = 0; i < F::PermType::Size() - 1; i++) {
     auto si = F::PermType::elementary_transposition(i);
     BOOST_CHECK_NE(si, F::id);
     BOOST_CHECK_EQUAL(si * si, F::id);
-    if (i + 1 < F::PermType::Size - 1) {
+    if (i + 1 < F::PermType::Size() - 1) {
       auto si1 = F::PermType::elementary_transposition(i + 1);
       BOOST_CHECK_EQUAL(si * si1 * si, si1 * si * si1);
     }
-    for (uint64_t j = i + 2; j < F::PermType::Size - 1; j++) {
+    for (uint64_t j = i + 2; j < F::PermType::Size() - 1; j++) {
       auto sj = F::PermType::elementary_transposition(j);
       BOOST_CHECK_EQUAL(sj * si, si * sj);
     }
