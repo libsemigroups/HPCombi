@@ -1,5 +1,5 @@
 //****************************************************************************//
-//       Copyright (C) 2016 Florent Hivert <Florent.Hivert@lri.fr>,           //
+//       Copyright (C) 2018 Florent Hivert <Florent.Hivert@lri.fr>,           //
 //                                                                            //
 //  Distributed under the terms of the GNU General Public License (GPL)       //
 //                                                                            //
@@ -13,9 +13,15 @@
 //                  http://www.gnu.org/licenses/                              //
 //****************************************************************************//
 
-#ifndef HPCOMBI_HPCOMBI_HPP_INCLUDED
-#define HPCOMBI_HPCOMBI_HPP_INCLUDED
+#define BOOST_TEST_MODULE MultIncl_Test
 
-#include "perm16.hpp"
+#include <boost/test/unit_test.hpp>
 
-#endif  // HPCOMBI_HPCOMBI_HPP_INCLUDED
+int foo0();  // in test_mincl0.cpp
+int foo1();  // in test_mincl1.cpp
+
+BOOST_AUTO_TEST_SUITE(MultIncl)
+BOOST_AUTO_TEST_CASE(MultInclFoo0) { BOOST_CHECK_EQUAL(foo0(), 0); }
+BOOST_AUTO_TEST_CASE(MultInclFoo1) { BOOST_CHECK_EQUAL(foo1(), 1); }
+BOOST_AUTO_TEST_SUITE_END()
+

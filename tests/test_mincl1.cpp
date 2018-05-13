@@ -1,5 +1,5 @@
 //****************************************************************************//
-//       Copyright (C) 2016 Florent Hivert <Florent.Hivert@lri.fr>,           //
+//       Copyright (C) 2018 Florent Hivert <Florent.Hivert@lri.fr>,           //
 //                                                                            //
 //  Distributed under the terms of the GNU General Public License (GPL)       //
 //                                                                            //
@@ -13,9 +13,14 @@
 //                  http://www.gnu.org/licenses/                              //
 //****************************************************************************//
 
-#ifndef HPCOMBI_HPCOMBI_HPP_INCLUDED
-#define HPCOMBI_HPCOMBI_HPP_INCLUDED
+// We check that multiple inclusion of HPCombi works
 
-#include "perm16.hpp"
+#include "hpcombi.hpp"
 
-#endif  // HPCOMBI_HPCOMBI_HPP_INCLUDED
+int foo1() {
+  HPCombi::Perm16 res = HPCombi::Perm16::one();
+  res = res * res;
+  res = res * res;
+  res = res * res;
+  return res[1];
+}

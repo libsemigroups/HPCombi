@@ -26,28 +26,25 @@
 
 namespace HPCombi {
 
-// Definitions since previously *only* declared
-HPCOMBI_CONSTEXPR size_t Vect16::Size;
-
 /*****************************************************************************/
 /** Implementation part for inline functions *********************************/
 /*****************************************************************************/
 
 inline Vect16::Vect16(std::initializer_list<uint8_t> il, uint8_t def) {
-  assert(il.size() <= Size);
+  assert(il.size() <= Size());
   std::copy(il.begin(), il.end(), begin());
   auto &a = as_array();
-  for (size_t i = il.size(); i < Size; ++i)
+  for (size_t i = il.size(); i < Size(); ++i)
     a[i] = def;
 }
 
-Vect16 Vect16::random(uint16_t bnd) {
+inline Vect16 Vect16::random(uint16_t bnd) {
   Vect16 res;
   std::random_device rd;
 
   std::default_random_engine e1(rd());
   std::uniform_int_distribution<int> uniform_dist(0, bnd - 1);
-  for (size_t i = 0; i < Size; i++)
+  for (size_t i = 0; i < Size(); i++)
     res.v[i] = uniform_dist(e1);
   return res;
 }
@@ -76,19 +73,19 @@ inline uint64_t Vect16::last_diff(const Vect16 &b, size_t bound) const {
 }
 inline bool Vect16::operator==(const Vect16 &b) const {
   return _mm_movemask_epi8(_mm_cmpeq_epi8(v, b.v)) == 0xffff;
-  // return first_diff(b) == Size;
+  // return first_diff(b) == Size();
 }
 inline bool Vect16::operator!=(const Vect16 &b) const {
   return _mm_movemask_epi8(_mm_cmpeq_epi8(v, b.v)) != 0xffff;
-  // return first_diff(b) != Size;
+  // return first_diff(b) != Size();
 }
 inline bool Vect16::operator<(const Vect16 &b) const {
   uint64_t diff = first_diff(b);
-  return (diff < Size) && v[diff] < b[diff];
+  return (diff < Size()) && v[diff] < b[diff];
 }
 inline char Vect16::less_partial(const Vect16 &b, int k) const {
   uint64_t diff = first_diff(b, k);
-  return (diff == Size)
+  return (diff == Size())
              ? 0
              : static_cast<char>(v[diff]) - static_cast<char>(b[diff]);
 }
@@ -98,7 +95,7 @@ inline Vect16 Vect16::permuted(const Vect16 &other) const {
 
 inline uint8_t Vect16::sum_ref() const {
   uint8_t res = 0;
-  for (size_t i = 0; i < Size; i++)
+  for (size_t i = 0; i < Size(); i++)
     res += v[i];
   return res;
 }
@@ -117,7 +114,7 @@ inline uint8_t Vect16::sum3() const {
 inline Vect16 Vect16::partial_sums_ref() const {
   Vect16 res{};
   res[0] = v[0];
-  for (size_t i = 1; i < Size; i++)
+  for (size_t i = 1; i < Size(); i++)
     res[i] = res[i - 1] + v[i];
   return res;
 }
@@ -130,8 +127,8 @@ inline Vect16 Vect16::partial_sums_round() const {
 
 inline Vect16 Vect16::eval16_ref() const {
   Vect16 res;
-  for (size_t i = 0; i < Size; i++)
-    if (v[i] < Size)
+  for (size_t i = 0; i < Size(); i++)
+    if (v[i] < Size())
       res[v[i]]++;
   return res;
 }
@@ -165,27 +162,27 @@ inline uint64_t Vect16::first_zero(int bnd) const {
 
 
 inline bool Vect16::is_partial_transformation(const size_t k) const {
-  uint64_t diff = last_diff(Perm16::one(), Size);
+  uint64_t diff = last_diff(Perm16::one(), Size());
   return
     (_mm_movemask_epi8(v+cst_epu8_0x01 <= cst_epu8_0x10) == 0xffff) &&
-    (diff == Size || diff < k);
+    (diff == Size() || diff < k);
 }
 
 inline bool Vect16::is_transformation(const size_t k) const {
-  uint64_t diff = last_diff(Perm16::one(), Size);
+  uint64_t diff = last_diff(Perm16::one(), Size());
   return
     (_mm_movemask_epi8(v < cst_epu8_0x10) == 0xffff) &&
-    (diff == Size || diff < k);
+    (diff == Size() || diff < k);
 }
 
 inline bool Vect16::is_permutation(const size_t k) const {
-  uint64_t diff = last_diff(Perm16::one(), Size);
+  uint64_t diff = last_diff(Perm16::one(), Size());
   // (forall x in v, x in Perm16::one())  and
   // (forall x in Perm16::one(), x in v)  and
-  // (v = Perm16::one()   or  last diff index < Size)
-  return _mm_cmpestri(Perm16::one(), Size, v, Size, FIRST_NON_ZERO) == Size &&
-         _mm_cmpestri(v, Size, Perm16::one(), Size, FIRST_NON_ZERO) == Size &&
-         (diff == Size || diff < k);
+  // (v = Perm16::one()   or  last diff index < Size())
+  return _mm_cmpestri(Perm16::one(), Size(), v, Size(), FIRST_NON_ZERO) == Size() &&
+         _mm_cmpestri(v, Size(), Perm16::one(), Size(), FIRST_NON_ZERO) == Size() &&
+         (diff == Size() || diff < k);
 }
 
 inline Vect16 Vect16::sorted() const {
@@ -221,9 +218,9 @@ inline bool Vect16::is_sorted() const {
 }
 
 inline PTransf16::PTransf16(std::initializer_list<uint8_t> il) {
-  assert(il.size() <= Size);
+  assert(il.size() <= Size());
   std::copy(il.begin(), il.end(), begin());
-  for (size_t i = il.size(); i < Size; ++i)
+  for (size_t i = il.size(); i < Size(); ++i)
     v[i] = i;
 }
 
@@ -246,7 +243,7 @@ inline Transf16::operator uint64_t() const {
 }
 
 
-Perm16 Perm16::random() {
+inline Perm16 Perm16::random() {
   Perm16 res = one();
   std::random_shuffle(res.begin(), res.end());
   return res;
@@ -282,7 +279,7 @@ Perm16 Perm16::unrankSJT(int n, int r) {
 }
 
 inline Perm16 Perm16::elementary_transposition(uint64_t i) {
-  assert(i < vect::Size);
+  assert(i < vect::Size());
   Perm16 res = one();
   res[i] = i + 1;
   res[i + 1] = i;
@@ -291,7 +288,7 @@ inline Perm16 Perm16::elementary_transposition(uint64_t i) {
 
 inline Perm16 Perm16::inverse_ref() const {
   Vect16 res;
-  for (size_t i = 0; i < Size; ++i)
+  for (size_t i = 0; i < Size(); ++i)
     res.v[v[i]] = i;
   return res;
 }
@@ -300,7 +297,7 @@ inline Perm16 Perm16::inverse_arr() const {
   Vect16 res;
   auto &arres = res.as_array();
   auto self = as_array();
-  for (size_t i = 0; i < Size; ++i)
+  for (size_t i = 0; i < Size(); ++i)
     arres[self[i]] = i;
   return res;
 }
@@ -332,11 +329,10 @@ namespace power_helper {
 using Perm16 = Perm16;
 
 template <> struct Monoid<Perm16> {
-  static const Perm16 one;
+  static const Perm16 one() { return Perm16::one(); }
   static Perm16 prod(Perm16 a, Perm16 b) { return a * b; }
 };
 
-const Perm16 power_helper::Monoid<Perm16>::one = Perm16::one();
 }  // namespace power_helper
 
 inline Perm16 Perm16::inverse_cycl() const {
@@ -367,8 +363,8 @@ inline Perm16 Perm16::inverse_pow() const {
 
 inline Vect16 Perm16::lehmer_ref() const {
   Vect16 res;
-  for (size_t i = 0; i < Size; i++)
-    for (size_t j = i + 1; j < Size; j++)
+  for (size_t i = 0; i < Size(); i++)
+    for (size_t j = i + 1; j < Size(); j++)
       if (v[i] > v[j])
         res[i]++;
   return res;
@@ -385,8 +381,8 @@ inline Vect16 Perm16::lehmer() const {
 
 inline uint8_t Perm16::length_ref() const {
   uint8_t res = 0;
-  for (size_t i = 0; i < Size; i++)
-    for (size_t j = i + 1; j < Size; j++)
+  for (size_t i = 0; i < Size(); i++)
+    for (size_t j = i + 1; j < Size(); j++)
       if (v[i] > v[j])
         res++;
   return res;
@@ -395,7 +391,7 @@ inline uint8_t Perm16::length() const { return lehmer().sum(); }
 
 inline uint8_t Perm16::nb_descent_ref() const {
   uint8_t res = 0;
-  for (size_t i = 0; i < Size - 1; i++)
+  for (size_t i = 0; i < Size() - 1; i++)
     if (v[i] > v[i + 1]) res++;
   return res;
 }
@@ -404,9 +400,9 @@ inline uint8_t Perm16::nb_descent() const {
 }
 
 inline uint8_t Perm16::nb_cycles_ref() const {
-  std::array<bool, Size> b{};
+  std::array<bool, Size()> b{};
   uint8_t c = 0;
-  for (size_t i = 0; i < Size; i++) {
+  for (size_t i = 0; i < Size(); i++) {
     if (not b[i]) {
       for (size_t j = i; not b[j]; j = v[j])
         b[j] = true;
@@ -434,9 +430,9 @@ inline uint8_t Perm16::nb_cycles_unroll() const {
   return _mm_popcnt_u32(_mm_movemask_epi8(res));
 }
 
-std::ostream &operator<<(std::ostream &stream, Vect16 const &term) {
+inline std::ostream &operator<<(std::ostream &stream, Vect16 const &term) {
   stream << "[" << std::setw(2) << unsigned(term[0]);
-  for (unsigned i = 1; i < Vect16::Size; ++i)
+  for (unsigned i = 1; i < Vect16::Size(); ++i)
     stream << "," << std::setw(2) << unsigned(term[i]);
   stream << "]";
   return stream;

@@ -77,7 +77,7 @@ const T square(const T x) {
 template <unsigned exp, typename T, typename M = power_helper::Monoid<T>>
 const T pow(const T x) {
   return (exp == 0)
-             ? M::one
+             ? M::one()
              : (exp % 2 == 0)
                    ? square<T, M>(pow<unsigned(exp / 2), T, M>(x))
                    : M::prod(x, square<T, M>(pow<unsigned(exp / 2), T, M>(x)));
@@ -89,7 +89,7 @@ namespace power_helper {
  *  function and prod function
  *
  *  @details A Monoid structure is required to define two static members
- *  - #one : the unit of the monoid
+ *  - T #one() : the unit of the monoid
  *  - T #prod(T, T) : the product of two elements in the monoid
  *
  * By default for any type \c T, #one is constructed from the litteral 1 and
@@ -99,7 +99,7 @@ namespace power_helper {
 template <typename T> struct Monoid {
 
   /// The one of type T
-  static const T one = 1;
+  static const T one() { return 1; }
 
   /** the product of two elements of type T
    *  @param a the first element to be multiplied
