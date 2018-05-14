@@ -28,18 +28,15 @@ namespace power_helper {
 template <> struct Monoid<std::string> {
 
   // The one of the string monoid
-  static std::string one;
+  static std::string one() { return {}; };
 
   /* The product of two strings that is their concatenation
    * @param a the first string to be concatenated
    * @param b the second string to be concatenated
    * @return the concatenation of \a a and \a b
    */
-  inline static std::string prod(std::string a, std::string b) { return a + b; }
+  static std::string prod(std::string a, std::string b) { return a + b; }
 };
-
-
-std::string Monoid<std::string>::one = "";
 
 }  // namespace power_helper
 }  // namespace HPCombi
