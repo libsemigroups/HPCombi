@@ -26,7 +26,7 @@ namespace HPCombi {
 
 template <size_t _Size, typename Expo = uint8_t> struct VectGeneric {
 
-  static const constexpr size_t Size() { return _Size; }
+  static constexpr size_t Size() { return _Size; }
   std::array<Expo, _Size> v;
 
   VectGeneric() = default;

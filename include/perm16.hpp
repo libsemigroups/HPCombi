@@ -107,7 +107,7 @@ struct Transf16;
  */
 struct alignas(16) Vect16 {
 
-  static HPCOMBI_CONSTEXPR size_t Size() { return 16; };
+  static constexpr size_t Size() { return 16; };
   epu8 v;
 
   Vect16() = default;
