@@ -28,7 +28,7 @@
 #endif
 
 #if __cplusplus <= 201103L
-#include "fallback/seq.hpp"
+#include "seq.hpp"
 #endif
 
 #ifdef HPCOMBI_CONSTEXPR_FUN_ARGS

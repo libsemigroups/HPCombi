@@ -53,8 +53,7 @@ add_subdirectory(examples)
 add_subdirectory(benchmark)
 add_subdirectory(doc)
 
-
-include_directories(include ${PROJECT_BINARY_DIR})
+include_directories(${CMAKE_SOURCE_DIR}/include ${CMAKE_SOURCE_DIR}/include/fallback ${PROJECT_BINARY_DIR})
 
 
 #########

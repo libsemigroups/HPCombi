@@ -19,7 +19,7 @@ message(STATUS "Building tests")
 find_package (Boost COMPONENTS unit_test_framework REQUIRED)
 
 include_directories ( ${Boost_INCLUDE_DIRS} )
-include_directories(${CMAKE_SOURCE_DIR}/include ${PROJECT_BINARY_DIR})
+include_directories(${CMAKE_SOURCE_DIR}/include ${CMAKE_SOURCE_DIR}/include/fallback ${PROJECT_BINARY_DIR})
 
 add_definitions (-DBOOST_TEST_DYN_LINK)
 
