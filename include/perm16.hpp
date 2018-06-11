@@ -141,8 +141,8 @@ struct alignas(16) Vect16 {
   const uint8_t &operator[](uint64_t i) const { return as_array()[i]; }
   uint8_t &operator[](uint64_t i) { return as_array()[i]; }
 
-  // Auto is only calid here in C++14
-  using iter = const std::array<uint8_t, 16>::iterator;
+  // Auto is only valid here in C++14
+  using iter = std::array<uint8_t, 16>::iterator;
   iter begin() { return as_array().begin(); }
   iter end() { return as_array().end(); }
 
