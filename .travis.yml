@@ -31,6 +31,13 @@ matrix:
           packages:
             - clang-5.0
             - libboost1.55-all-dev
+    - env: TEST_SUITE=libsemigroups
+      addons:
+        apt:
+          sources:
+          - ubuntu-toolchain-r-test
+          packages:
+          - libboost1.55-all-dev
 before_install:
     - eval "${MATRIX_EVAL}"
     - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo add-apt-repository ppa:dns/gnu -y; fi
