@@ -220,9 +220,9 @@ VectGeneric<Size, Expo>::VectGeneric(std::initializer_list<Expo> il, Expo def) {
 
 template <size_t Size, typename Expo>
 VectGeneric<Size, Expo>::VectGeneric(size_t plus, int mod) {
-  mod = (mod<=0) ? Size:mod;
+  int modulo = (mod<=0 || mod > Size) ? Size:mod;
   for (uint64_t i = 0; i < Size; ++i)
-    v[i] = (i+plus)%mod;
+    v[i] = (i+plus)%modulo;
   if(mod == -1){
 	  std::random_shuffle(v.begin(), v.end());
   }
