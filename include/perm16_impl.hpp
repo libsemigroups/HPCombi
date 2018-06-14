@@ -188,9 +188,9 @@ inline bool Vect16::is_permutation(const size_t k) const {
          (diff == Size() || diff < k);
 }
 
-inline Vect16 Vect16::sorted() const {
-  Vect16 res = *this;
-  for (auto round : sorting_rounds()) {
+template<size_t sz>
+inline Vect16 sortedVect16(Vect16 res, std::array<Perm16, sz> rounds) {
+  for (auto round : rounds) {
     Vect16 b = res.permuted(round);
 
     Vect16 mask = _mm_cmplt_epi8(round, Perm16::one());
@@ -202,9 +202,9 @@ inline Vect16 Vect16::sorted() const {
   return res;
 }
 
-inline Vect16 Vect16::revsorted() const {
-  Vect16 res = *this;
-  for (auto round : sorting_rounds()) {
+template<size_t sz>
+inline Vect16 revsortedVect16(Vect16 res, std::array<Perm16, sz> rounds) {
+  for (auto round : rounds) {
     Vect16 b = res.permuted(round);
 
     Vect16 mask = _mm_cmplt_epi8(round, Perm16::one());
@@ -215,6 +215,19 @@ inline Vect16 Vect16::revsorted() const {
   }
   return res;
 }
+
+inline Vect16 Vect16::sorted() const {
+  return sortedVect16(*this, sorting_rounds());
+}
+inline Vect16 Vect16::sorted8() const {
+  return sortedVect16(*this, sorting_rounds8());
+};
+inline Vect16 Vect16::revsorted() const {
+  return revsortedVect16(*this, sorting_rounds());
+}
+inline Vect16 Vect16::revsorted8() const {
+  return revsortedVect16(*this, sorting_rounds8());
+};
 
 inline bool Vect16::is_sorted() const {
   return _mm_movemask_epi8(v > permuted(Perm16::right_shift()).v) == 0;
@@ -453,17 +466,30 @@ inline std::ostream &operator<<(std::ostream &stream, Vect16 const &term) {
 
 // Sorting network Knuth AoCP3 Fig. 51 p 229.
 const std::array<Perm16, 9> Vect16::sorting_rounds() {
-  static std::array<Perm16, 9> res {{
+    static std::array<Perm16, 9> res {{
     //     0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15
     epu8 { 1,  0,  3,  2,  5,  4,  7,  6,  9,  8, 11, 10, 13, 12, 15, 14},
     epu8 { 2,  3,  0,  1,  6,  7,  4,  5, 10, 11,  8,  9, 14, 15, 12, 13},
-    epu8 { 4,  5,  6,  7,  0,  1,  2,  3, 12, 13, 14, 15,  8,  9, 10, 11} ,
+    epu8 { 4,  5,  6,  7,  0,  1,  2,  3, 12, 13, 14, 15,  8,  9, 10, 11},
     epu8 { 8,  9, 10, 11, 12, 13, 14, 15,  0,  1,  2,  3,  4,  5,  6,  7},
     epu8 { 0,  2,  1, 12,  8, 10,  9, 11,  4,  6,  5,  7,  3, 14, 13, 15},
     epu8 { 0,  4,  8, 10,  1,  9, 12, 13,  2,  5,  3, 14,  6,  7, 11, 15},
     epu8 { 0,  1,  4,  5,  2,  3,  8,  9,  6,  7, 12, 13, 10, 11, 14, 15},
     epu8 { 0,  1,  2,  6,  4,  8,  3, 10,  5, 12,  7, 11,  9, 13, 14, 15},
     epu8 { 0,  1,  2,  4,  3,  6,  5,  8,  7, 10,  9, 12, 11, 13, 14, 15}
+  }};
+  return res;
+}
+// Batcher odd–even mergesort (ref: wikipedia)
+const std::array<Perm16, 6> Vect16::sorting_rounds8() {
+    static std::array<Perm16, 6> res {{
+    //     0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15
+    epu8 { 1,  0,  3,  2,  5,  4,  7,  6,  9,  8, 11, 10, 13, 12, 15, 14},
+    epu8 { 2,  3,  0,  1,  6,  7,  4,  5, 10, 11,  8,  9, 14, 15, 12, 13},
+    epu8 { 0,  2,  1,  3,  4,  6,  5,  7,  8, 10,  9, 11, 12, 14, 13, 15},
+    epu8 { 4,  5,  6,  7,  0,  1,  2,  3, 12, 13, 14, 15,  8,  9, 10, 11},
+    epu8 { 0,  1,  4,  5,  2,  3,  6,  7,  8,  9, 12, 13, 10, 11, 14, 15},
+    epu8 { 0,  2,  1,  4,  3,  6,  5,  7,  8, 10,  9, 12, 11, 14, 13, 15},
   }};
   return res;
 }

@@ -17,6 +17,7 @@
 #define HPCOMBI_PERM16_HPP_INCLUDED
 
 #include <array>
+#include <vector>
 #include <cassert>
 #include <cstdint>
 #include <functional>  // less<>
@@ -157,7 +158,9 @@ struct alignas(16) Vect16 {
   inline char less_partial(const Vect16 &b, int k) const;
   inline Vect16 permuted(const Vect16 &other) const;
   inline Vect16 sorted() const;
+  inline Vect16 sorted8() const;
   inline Vect16 revsorted() const;
+  inline Vect16 revsorted8() const;
   inline bool is_sorted() const;
 
   inline Vect16 remove_dups() const;
@@ -233,6 +236,7 @@ struct alignas(16) Vect16 {
 
 private:
   inline static const std::array<Perm16, 9> sorting_rounds();
+  inline static const std::array<Perm16, 6> sorting_rounds8();
   inline static const std::array<epu8, 4> summing_rounds();
 };
 
