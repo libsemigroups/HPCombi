@@ -79,9 +79,14 @@ uint8_t make_right_cycle(uint8_t i) { return (i + 1) % 16; }
 /// The image of i by a left shift filling the hole with a @p 0xff
 static HPCOMBI_CONSTEXPR
 uint8_t make_left_shift_ff(uint8_t i) { return i == 15 ? 0xff : i + 1; }
+static HPCOMBI_CONSTEXPR
+uint8_t make_right_shift_ff(uint8_t i) { return i == 0 ? 0xff : i - 1; }
 /// The image of i by a left shift duplicating the hole
 static HPCOMBI_CONSTEXPR
 uint8_t make_left_shift(uint8_t i) { return i == 15 ? 15 : i + 1; }
+static HPCOMBI_CONSTEXPR
+uint8_t make_right_shift(uint8_t i) { return i == 0 ? 0 : i - 1; }
+
 
 
 // Old Clang doesn't automatically broadcast uint8_t into epu8
@@ -154,6 +159,8 @@ struct alignas(16) Vect16 {
   inline Vect16 sorted() const;
   inline Vect16 revsorted() const;
   inline bool is_sorted() const;
+
+  inline Vect16 remove_dups() const;
 
   inline uint64_t first_diff(const Vect16 &b, size_t bound = Size()) const;
   inline uint64_t last_diff(const Vect16 &b, size_t bound = Size()) const;
@@ -246,8 +253,9 @@ struct PTransf16 : public Vect16 {
   static HPCOMBI_CONSTEXPR PTransf16 one() { return make_epu8(make_one); }
   PTransf16 inline operator*(const PTransf16 &p) const {
     return permuted(p).v | (v == cst_epu8_0xFF); }
-};
 
+  uint32_t image() const;
+};
 
 /** Full transformation of @f$\{0\dots 15\}@f$
  *
@@ -342,7 +350,12 @@ struct Perm16 : public Transf16 {
   static HPCOMBI_CONSTEXPR
   Perm16 left_shift() { return make_epu8(make_left_shift); }
   static HPCOMBI_CONSTEXPR
+  Perm16 right_shift() { return make_epu8(make_right_shift); }
+  static HPCOMBI_CONSTEXPR
   Perm16 left_shift_ff() { return make_epu8(make_left_shift_ff); }
+  static HPCOMBI_CONSTEXPR
+  Perm16 right_shift_ff() { return make_epu8(make_right_shift_ff); }
+
 
   inline static Perm16 elementary_transposition(uint64_t i);
   inline static Perm16 random();

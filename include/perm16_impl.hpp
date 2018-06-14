@@ -62,8 +62,11 @@ inline Vect16 Vect16::random(uint16_t bnd) {
 #define LAST_NON_ZERO \
     (_SIDD_UBYTE_OPS | _SIDD_CMP_EQUAL_ANY | _SIDD_MASKED_NEGATIVE_POLARITY | \
      _SIDD_MOST_SIGNIFICANT)
+  // CLEANUP HERE
 #define FIND_IN_PERM (_SIDD_UBYTE_OPS | _SIDD_CMP_EQUAL_ANY | \
                            _SIDD_UNIT_MASK | _SIDD_NEGATIVE_POLARITY)
+#define FIND_IN_PERM_COMPL (_SIDD_UBYTE_OPS | _SIDD_CMP_EQUAL_ANY | \
+                           _SIDD_UNIT_MASK)
 
 inline uint64_t Vect16::first_diff(const Vect16 &b, size_t bound) const {
   return unsigned(_mm_cmpestri(v, bound, b.v, bound, FIRST_DIFF));
@@ -214,7 +217,11 @@ inline Vect16 Vect16::revsorted() const {
 }
 
 inline bool Vect16::is_sorted() const {
-  return _mm_movemask_epi8(v > permuted(Perm16::left_shift()).v) == 0;
+  return _mm_movemask_epi8(v > permuted(Perm16::right_shift()).v) == 0;
+}
+
+inline Vect16 Vect16::remove_dups() const {
+  return (v != permuted(Perm16::right_shift_ff()).v) ? v : cst_epu8_0x00;
 }
 
 inline PTransf16::PTransf16(std::initializer_list<uint8_t> il) {
@@ -222,6 +229,10 @@ inline PTransf16::PTransf16(std::initializer_list<uint8_t> il) {
   std::copy(il.begin(), il.end(), begin());
   for (size_t i = il.size(); i < Size(); ++i)
     v[i] = i;
+}
+
+inline uint32_t PTransf16::image() const {
+  return _mm_movemask_epi8(_mm_cmpestrm(v, 16, one().v, 16, FIND_IN_PERM_COMPL));
 }
 
 static HPCOMBI_CONSTEXPR

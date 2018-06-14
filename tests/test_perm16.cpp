@@ -164,3 +164,24 @@ BOOST_AUTO_TEST_CASE(Perm16TestEq) {
   BOOST_CHECK_EQUAL(Perm16::one() * Perm16::one(), Perm16::one());
 }
 
+
+BOOST_AUTO_TEST_CASE(PTransf16_image) {
+  BOOST_CHECK_EQUAL(PTransf16({}).image(), 0xffff);
+  BOOST_CHECK_EQUAL(PTransf16({4,4,4,4}).image(), 0xfff0);
+  BOOST_CHECK_EQUAL(PTransf16({1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1}).image(), 0x02);
+  BOOST_CHECK_EQUAL(PTransf16({2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2}).image(), 0x04);
+}
+
+BOOST_AUTO_TEST_CASE(Vect16_remove_dups) {
+  BOOST_CHECK_EQUAL(Vect16({}).remove_dups(), Vect16({}));
+  BOOST_CHECK_EQUAL(Vect16({4,4,4,4}).remove_dups(),
+                    Vect16({4,0,0,0}));
+  BOOST_CHECK_EQUAL(Vect16({1,1,1,1,1,1,1,1,1,1,1,}).remove_dups(),
+                    Vect16({1}));
+  BOOST_CHECK_EQUAL(Vect16({1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1}).remove_dups(),
+                    Vect16({1}));
+  BOOST_CHECK_EQUAL(Vect16({2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2}).remove_dups(),
+                    Vect16({2}));
+  BOOST_CHECK_EQUAL(Vect16({2,2,3,3,3,1,5,5}).remove_dups(),
+                    Vect16({2,0,3,0,0,1,5}));
+}
