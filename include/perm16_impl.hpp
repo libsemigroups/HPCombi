@@ -234,7 +234,9 @@ inline bool Vect16::is_sorted() const {
 }
 
 inline Vect16 Vect16::remove_dups() const {
-  return (v != permuted(Perm16::right_shift_ff()).v) ? v : cst_epu8_0x00;
+  // Ternary operator is not supported by clang.
+  // return (v != permuted(Perm16::right_shift_ff()).v) ? v : cst_epu8_0x00;
+  return _mm_blendv_epi8(cst_epu8_0x00, v, v != permuted(Perm16::right_shift_ff()).v);
 }
 
 inline PTransf16::PTransf16(std::initializer_list<uint8_t> il) {
