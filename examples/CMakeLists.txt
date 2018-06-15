@@ -25,7 +25,7 @@ endif()
 
 include_directories(${CMAKE_SOURCE_DIR}/include ${CMAKE_SOURCE_DIR}/include/fallback ${PROJECT_BINARY_DIR})
 
-set(usage_examples RD.cpp Renner.cpp stringmonoid.cpp Trans.cpp CF.cpp)
+set(usage_examples RD.cpp Renner.cpp stringmonoid.cpp Trans.cpp CF.cpp image.cpp)
 
 foreach(f ${usage_examples})
   get_filename_component(exampleName ${f} NAME_WE)
