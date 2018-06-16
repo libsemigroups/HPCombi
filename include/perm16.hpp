@@ -46,22 +46,32 @@ namespace HPCombi {
 
 /// SIMD vector of 16 unsigned bytes
 using epu8 = uint8_t __attribute__((vector_size(16)));
+/// SIMD vector of 32 unsigned bytes
+using xpu8 = uint8_t __attribute__((vector_size(32)));
 
 ///
-template <class Function, std::size_t... Indices> HPCOMBI_CONSTEXPR
-epu8 make_epu8_helper(Function f, std::index_sequence<Indices...>) {
-  return epu8{f(Indices)...};
+template <class Tpu, class Function, std::size_t... Indices> HPCOMBI_CONSTEXPR
+epu8 make_Tpu_helper(Function f, std::index_sequence<Indices...>, Tpu) {
+  return Tpu {f(Indices)...};
 }
 
 template <class Function> HPCOMBI_CONSTEXPR epu8 make_epu8(Function f) {
-  return make_epu8_helper(f, std::make_index_sequence<16>{});
+  return make_Tpu_helper(f, std::make_index_sequence<16>{}, epu8{});
+}
+
+template <class Function> HPCOMBI_CONSTEXPR xpu8 make_xpu8(Function f) {
+  return make_Tpu_helper(f, std::make_index_sequence<32>{}, xpu8{});
 }
 
 template <uint8_t c> HPCOMBI_CONSTEXPR
 uint8_t constfun(uint8_t) { return c; }
 
 template <uint8_t c> HPCOMBI_CONSTEXPR epu8 make_const_epu8() {
-  return make_epu8_helper(constfun<c>, std::make_index_sequence<16>{});
+  return make_Tpu_helper(constfun<c>, std::make_index_sequence<16>{}, epu8{});
+}
+
+template <uint8_t c> HPCOMBI_CONSTEXPR xpu8 make_const_xpu8() {
+  return make_Tpu_helper(constfun<c>, std::make_index_sequence<32>{}, xpu8{});
 }
 
 // The following functions should be constexpr lambdas writen directly in
@@ -108,44 +118,22 @@ struct PTransf16;
 struct Transf16;
 
 
-/** A class for vector of 16 unsigned bytes
+std::array<uint8_t, 16> &as_array(epu8& v) {
+  return reinterpret_cast<std::array<unsigned char, 16> &>(v);
+}
+/** Return self as a const array (just a cast)
  *
+ *  This is usually faster for algorithm using a lot of indexed acces.
  */
-struct alignas(16) Vect16 {
+const std::array<uint8_t, 16> &as_array(const epu8& v) const {
+  return reinterpret_cast<const std::array<unsigned char, 16> &>(v);
+}
 
-  static constexpr size_t Size() { return 16; };
-  epu8 v;
-
-  Vect16() = default;
-  HPCOMBI_CONSTEXPR_CONSTRUCTOR Vect16(epu8 x) : v(x) {}
-  Vect16(std::initializer_list<uint8_t> il, uint8_t def = 0);
-  HPCOMBI_CONSTEXPR_CONSTRUCTOR operator epu8() const { return v; }
-  Vect16 &operator=(const Vect16 &) = default;
-  Vect16 &operator=(const epu8 &vv) {
-    v = vv;
-    return *this;
-  }
-
-  /** Return self as an array (just a cast)
-   *
-   *  This is usually faster for algorithm using a lot of indexed acces.
-   */
-  std::array<uint8_t, 16> &as_array() {
-    return reinterpret_cast<std::array<unsigned char, 16> &>(v);
-  }
-  /** Return self as a const array (just a cast)
-   *
-   *  This is usually faster for algorithm using a lot of indexed acces.
-   */
-  const std::array<uint8_t, 16> &as_array() const {
-    return reinterpret_cast<const std::array<unsigned char, 16> &>(v);
-  }
-
-  // The following two functions are refused by clang++
-  // const uint8_t & operator[](uint64_t i) const { return v[i]; }
-  // uint8_t & operator[](uint64_t i) { return v[i]; }
-  const uint8_t &operator[](uint64_t i) const { return as_array()[i]; }
-  uint8_t &operator[](uint64_t i) { return as_array()[i]; }
+// The following two functions are refused by clang++
+// const uint8_t & operator[](uint64_t i) const { return v[i]; }
+// uint8_t & operator[](uint64_t i) { return v[i]; }
+const uint8_t &operator[](uint64_t i) const { return as_array()[i]; }
+uint8_t &operator[](uint64_t i) { return as_array()[i]; }
 
   // Auto is only valid here in C++14
   using iter = std::array<uint8_t, 16>::iterator;
