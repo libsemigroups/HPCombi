@@ -23,6 +23,12 @@ include_directories(${CMAKE_SOURCE_DIR}/include ${CMAKE_SOURCE_DIR}/include/fall
 
 add_definitions (-DBOOST_TEST_DYN_LINK)
 
+add_executable (test_epu test_epu.cpp)
+target_link_libraries(test_epu
+  ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY}
+  )
+  target_compile_options(test_epu PUBLIC -mavx -mtune=native -funroll-loops -flax-vector-conversions)
+
 add_executable (test_perm16 test_perm16.cpp)
 target_link_libraries(test_perm16
   ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY}
@@ -41,6 +47,7 @@ target_link_libraries(test_mincl
   )
   target_compile_options(test_mincl PUBLIC -mavx -mtune=native -funroll-loops -flax-vector-conversions)
 
+add_test (TestEPU test_epu)
 add_test (TestPerm16 test_perm16)
 add_test (TestPermAll test_perm_all)
 add_test (TestMultIncl test_mincl)

@@ -129,27 +129,16 @@ const std::array<uint8_t, 16> &as_array(const epu8& v) const {
   return reinterpret_cast<const std::array<unsigned char, 16> &>(v);
 }
 
-// The following two functions are refused by clang++
-// const uint8_t & operator[](uint64_t i) const { return v[i]; }
-// uint8_t & operator[](uint64_t i) { return v[i]; }
-const uint8_t &operator[](uint64_t i) const { return as_array()[i]; }
-uint8_t &operator[](uint64_t i) { return as_array()[i]; }
-
-  // Auto is only valid here in C++14
-  using iter = std::array<uint8_t, 16>::iterator;
-  iter begin() { return as_array().begin(); }
-  iter end() { return as_array().end(); }
-
-  inline bool operator==(const Vect16 &b) const;
-  inline bool operator!=(const Vect16 &b) const;
-  inline bool operator<(const Vect16 &b) const;
-  inline char less_partial(const Vect16 &b, int k) const;
-  inline Vect16 permuted(const Vect16 &other) const;
-  inline Vect16 sorted() const;
-  inline Vect16 sorted8() const;
-  inline Vect16 revsorted() const;
-  inline Vect16 revsorted8() const;
-  inline bool is_sorted() const;
+inline bool equal(epu8 a, epu8 b) const;
+inline bool not_equal(epu8 a, epu8 b) const;
+inline bool less(epu8 a, epu8 b) const;
+inline char less_partial(epu8 a, epu8 b, int k) const;
+inline epu8 permuted(epu8 a, epu8 b) const;
+inline epu8 sorted(epu8 a) const;
+inline epu8 sorted8(epu8 a) const;
+inline epu8 revsorted(epu8 a) const;
+inline epu8 revsorted8(epu8 a) const;
+inline bool is_sorted(epu8 a) const;
 
   inline Vect16 remove_dups() const;
 
