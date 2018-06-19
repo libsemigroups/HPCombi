@@ -23,7 +23,7 @@ git clone https://github.com/google/benchmark.git googlebenchmark
 cd googlebenchmark
 mkdir build
 cd build
-cmake .. -DCMAKE_BUILD_TYPE=RELEASE
+cmake .. -DCMAKE_BUILD_TYPE=RELEASE -DBENCHMARK_DOWNLOAD_DEPENDENCIES=ON
 make
 sudo make install
 cd ../../
