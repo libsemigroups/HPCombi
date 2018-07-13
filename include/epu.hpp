@@ -44,6 +44,10 @@
 
 namespace HPCombi {
 
+inline constexpr uint8_t operator "" _u8( unsigned long long arg ) noexcept {
+    return static_cast<uint8_t >( arg );
+}
+
 /// SIMD vector of 16 unsigned bytes
 using epu8 = uint8_t __attribute__((vector_size(16)));
 /// SIMD vector of 32 unsigned bytes
@@ -53,7 +57,7 @@ using xpu8 = uint8_t __attribute__((vector_size(32)));
 /// constexpr
 template <class TPU> struct TPUBuild {
 
-    using type_elem = decltype((TPU{})[0]);
+    using type_elem = typename std::remove_reference<decltype((TPU{})[0])>::type;
     static constexpr size_t size_elem = sizeof(type_elem);
     static constexpr size_t size = sizeof(TPU)/size_elem;
 
@@ -126,15 +130,15 @@ HPCOMBI_CONSTEXPR epu8 left_shift = epu8cons(left_shift_fun);
 
 // Old Clang doesn't automatically broadcast uint8_t into epu8
 // We therefore write there the explicit constants
-HPCOMBI_CONSTEXPR epu8 cst_epu8_0x00 = epu8cons.cst<0x00>();
-HPCOMBI_CONSTEXPR epu8 cst_epu8_0x01 = epu8cons.cst<0x01>();
-HPCOMBI_CONSTEXPR epu8 cst_epu8_0x02 = epu8cons.cst<0x02>();
-HPCOMBI_CONSTEXPR epu8 cst_epu8_0x04 = epu8cons.cst<0x04>();
-HPCOMBI_CONSTEXPR epu8 cst_epu8_0x08 = epu8cons.cst<0x08>();
-HPCOMBI_CONSTEXPR epu8 cst_epu8_0x0F = epu8cons.cst<0x0F>();
-HPCOMBI_CONSTEXPR epu8 cst_epu8_0x10 = epu8cons.cst<0x10>();
-HPCOMBI_CONSTEXPR epu8 cst_epu8_0xF0 = epu8cons.cst<0xF0>();
-HPCOMBI_CONSTEXPR epu8 cst_epu8_0xFF = epu8cons.cst<0xFF>();
+HPCOMBI_CONSTEXPR epu8 cst_epu8_0x00 = epu8cons.cst<0x00_u8>();
+HPCOMBI_CONSTEXPR epu8 cst_epu8_0x01 = epu8cons.cst<0x01_u8>();
+HPCOMBI_CONSTEXPR epu8 cst_epu8_0x02 = epu8cons.cst<0x02_u8>();
+HPCOMBI_CONSTEXPR epu8 cst_epu8_0x04 = epu8cons.cst<0x04_u8>();
+HPCOMBI_CONSTEXPR epu8 cst_epu8_0x08 = epu8cons.cst<0x08_u8>();
+HPCOMBI_CONSTEXPR epu8 cst_epu8_0x0F = epu8cons.cst<0x0F_u8>();
+HPCOMBI_CONSTEXPR epu8 cst_epu8_0x10 = epu8cons.cst<0x10_u8>();
+HPCOMBI_CONSTEXPR epu8 cst_epu8_0xF0 = epu8cons.cst<0xF0_u8>();
+HPCOMBI_CONSTEXPR epu8 cst_epu8_0xFF = epu8cons.cst<0xFF_u8>();
 
 
 inline uint64_t first_diff(epu8 a, epu8 b, size_t bound = 16);
