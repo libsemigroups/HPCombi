@@ -14,13 +14,12 @@ const Fix_perm16 perm16_bench_data;
 
 #define ASSERT(test) if (!(test)) cout << "Test failed in file " << __FILE__ \
                                        << " line " << __LINE__ << ": " #test << endl
-
 //##################################################################################
 // Register fuction for generic operation that take zeros argument
 template<typename TF, typename Sample>
 void bench_inv(const char* name, TF pfunc, const char* label, Sample &sample) {
     benchmark::RegisterBenchmark(name,
-        [pfunc, &sample](benchmark::State& st, const char* label) {
+        [pfunc](benchmark::State& st, const char* label, Sample &sample) {
             for (auto _ : st) {
                 bool ok = true;
                 for (auto elem : sample) {
@@ -31,7 +30,7 @@ void bench_inv(const char* name, TF pfunc, const char* label, Sample &sample) {
             }
             st.SetLabel(label);
             // st.SetItemsProcessed(st.iterations()*perm16_bench_data.sample.size());
-        }, label);
+        }, label, sample);
 }
 
 
@@ -77,22 +76,32 @@ inline epu8 radix_sort(epu8 a) {
 
 //##################################################################################
 int Bench_sort() {
-    bench_inv("sort_ref", [](epu8 p) {
-                              auto &ar = HPCombi::epu8cons.as_array(p);
-                              std::sort(ar.begin(), ar.end());
-                              return p;
-                          },
-              "std", perm16_bench_data.sample);
-    bench_inv("sort_alt", [](epu8 p) {
-                              auto &ar = HPCombi::epu8cons.as_array(p);
-                              std::sort(ar.begin(), ar.end());
-                              return p;
-                          },
-              "std", perm16_bench_data.sample);
-    bench_inv("sort_alt", insertion_sort, "insert", perm16_bench_data.sample);
-    bench_inv("sort_alt", sort_odd_even, "odd_even", perm16_bench_data.sample);
-    bench_inv("sort_alt", radix_sort, "radix", perm16_bench_data.sample);
-    bench_inv("sort_alt", HPCombi::sorted, "netw", perm16_bench_data.sample);
+    bench_inv("sort_ref",
+              [](epu8 p) {
+                  auto &ar = HPCombi::epu8cons.as_array(p);
+                  std::sort(ar.begin(), ar.end());
+                  return p;
+              }, "std", perm16_bench_data.sample);
+    bench_inv("sort_alt",
+              [](epu8 p) {
+                  auto &ar = HPCombi::epu8cons.as_array(p);
+                  std::sort(ar.begin(), ar.end());
+                  return p;
+              }, "std", perm16_bench_data.sample);
+    bench_inv("sort_alt",
+              [](epu8 p) {return insertion_sort(p);},
+              "insert_lambda", perm16_bench_data.sample);
+    bench_inv("sort_alt",
+              [](epu8 p) {return sort_odd_even(p);},
+              "odd_even", perm16_bench_data.sample);
+    bench_inv("sort_alt",
+              [](epu8 p) {return radix_sort(p);},
+              "radix", perm16_bench_data.sample);
+    bench_inv("sort_alt",
+              HPCombi::sorted, "netw", perm16_bench_data.sample);
+    bench_inv("sort_alt",  // lambda function is needed for inlining
+              [](epu8 p) {return HPCombi::sorted(p);},
+              "netw_lambda", perm16_bench_data.sample);
     return 0;
 }
 
