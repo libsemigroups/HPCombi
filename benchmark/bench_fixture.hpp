@@ -5,7 +5,7 @@
 
 using HPCombi::epu8;
 
-constexpr uint_fast64_t size = 10000;
+constexpr uint_fast64_t size = 100000;
 // constexpr uint_fast64_t repeat = 100;
 
 

@@ -73,34 +73,20 @@ double timethat(Func fun, int rep = 1, double reftime = 0) {
   return tm.count();
 }
 
-// Sorting network Knuth AoCP3 Fig. 51 p 229.
-const array<epu8, 9> rounds =  // clang-format off
-    //   0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15
-    {{ { 1,  0,  3,  2,  5,  4,  7,  6,  9,  8, 11, 10, 13, 12, 15, 14},
-       { 2,  3,  0,  1,  6,  7,  4,  5, 10, 11,  8,  9, 14, 15, 12, 13},
-       { 4,  5,  6,  7,  0,  1,  2,  3, 12, 13, 14, 15,  8,  9, 10, 11},
-       { 8,  9, 10, 11, 12, 13, 14, 15,  0,  1,  2,  3,  4,  5,  6,  7},
-       { 0,  2,  1, 12,  8, 10,  9, 11,  4,  6,  5,  7,  3, 14, 13, 15},
-       { 0,  4,  8, 10,  1,  9, 12, 13,  2,  5,  3, 14,  6,  7, 11, 15},
-       { 0,  1,  4,  5,  2,  3,  8,  9,  6,  7, 12, 13, 10, 11, 14, 15},
-       { 0,  1,  2,  6,  4,  8,  3, 10,  5, 12,  7, 11,  9, 13, 14, 15},
-       { 0,  1,  2,  4,  3,  6,  5,  8,  7, 10,  9, 12, 11, 13, 14, 15}
-    }};  // clang-format on
-
 struct RoundsMask {
   // commented out due to a bug in gcc
     /* constexpr */ RoundsMask() : arr() {
-        for (unsigned i = 0; i < rounds.size(); ++i)
-            arr[i] = rounds[i] < epu8id;
+        for (unsigned i = 0; i < HPCombi::sorting_rounds.size(); ++i)
+            arr[i] = HPCombi::sorting_rounds[i] < epu8id;
     }
-    epu8 arr[rounds.size()];
+    epu8 arr[HPCombi::sorting_rounds.size()];
 };
 
 const auto rounds_mask = RoundsMask();
 
 inline epu8 sort_pair(epu8 a) {
-    for (unsigned i = 0; i < rounds.size(); ++i) {
-        epu8 minab, maxab, b = permuted(a, rounds[i]);
+    for (unsigned i = 0; i < HPCombi::sorting_rounds.size(); ++i) {
+        epu8 minab, maxab, b = permuted(a, HPCombi::sorting_rounds[i]);
         minab = _mm_min_epi8(a, b);
         maxab = _mm_max_epi8(a, b);
         a = _mm_blendv_epi8(minab, maxab, rounds_mask.arr[i]);
@@ -130,22 +116,24 @@ inline epu8 sort_odd_even(epu8 a) {
     return a;
 }
 
-inline epu8 insertion_sort(epu8 a) {
+inline epu8 insertion_sort(epu8 p) {
+    auto &a = HPCombi::epu8cons.as_array(p);
     for (int i = 0; i < 16; i++)
         for (int j = i; j > 0 && a[j] < a[j - 1]; j--)
             std::swap(a[j], a[j - 1]);
-    return a;
+    return p;
 }
 
-inline epu8 radix_sort(epu8 a) {
-    epu8 stat = {}, res;
+inline epu8 radix_sort(epu8 p) {
+    auto &a = HPCombi::epu8cons.as_array(p);
+    std::array<uint8_t, 16> stat {};
     for (int i = 0; i < 16; i++)
         stat[a[i]]++;
     int c = 0;
     for (int i = 0; i < 16; i++)
         for (int j = 0; j < stat[i]; j++)
-            res[c++] = i;
-    return res;
+            a[c++] = i;
+    return p;
 }
 
 int main() {
@@ -163,20 +151,6 @@ int main() {
             }
         },
         rep);
-    cout << "Funct  : ";
-    timethat(
-        [vrand]() {
-            for (epu8 v : vrand)
-                ASSERT(equal(sorted(v), epu8id));
-        },
-        rep, reftime);
-    cout << "Pair  : ";
-    timethat(
-        [vrand]() {
-            for (epu8 v : vrand)
-                ASSERT(equal(sort_pair(v), epu8id));
-        },
-        rep, reftime);
     cout << "OddEv : ";
     timethat(
         [vrand]() {
@@ -196,6 +170,20 @@ int main() {
         [vrand]() {
             for (epu8 v : vrand)
                 ASSERT(equal(radix_sort(v), epu8id));
+        },
+        rep, reftime);
+    cout << "Pair  : ";
+    timethat(
+        [vrand]() {
+            for (epu8 v : vrand)
+                ASSERT(equal(sort_pair(v), epu8id));
+        },
+        rep, reftime);
+    cout << "Funct  : ";
+    timethat(
+        [vrand]() {
+            for (epu8 v : vrand)
+                ASSERT(equal(sorted(v), epu8id));
         },
         rep, reftime);
 
