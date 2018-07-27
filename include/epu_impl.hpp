@@ -37,6 +37,18 @@
 
 namespace HPCombi {
 
+template <class TPU>
+inline TPU TPUBuild<TPU>::operator()(std::initializer_list<type_elem> il,
+                                     type_elem def) const {
+    TPU res;
+    assert(il.size() <= size);
+    std::copy(il.begin(), il.end(), as_array(res).begin());
+    for (size_t i = il.size(); i < size; ++i)
+        res[i] = def;
+    return res;
+}
+
+
 /*****************************************************************************/
 /** Implementation part for inline functions *********************************/
 /*****************************************************************************/
@@ -59,11 +71,15 @@ inline uint64_t last_diff(epu8 a, epu8 b, size_t bound) {
     return unsigned(_mm_cmpestri(a, bound, b, bound, LAST_DIFF));
 }
 
+inline bool is_all_zero(epu8 a) {
+    return _mm_testz_si128(a, a);
+}
+
 inline bool equal(epu8 a, epu8 b) {
-    return _mm_movemask_epi8(a == b) == 0xffff;
+    return is_all_zero(_mm_xor_si128(a, b));
 }
 inline bool not_equal(epu8 a, epu8 b) {
-    return _mm_movemask_epi8(a == b) != 0xffff;
+    return not equal(a, b);
 }
 
 inline bool less(epu8 a, epu8 b) {
@@ -78,31 +94,20 @@ inline char less_partial(epu8 a, epu8 b, int k) {
 }
 
 inline epu8 permuted(epu8 a, epu8 b) { return _mm_shuffle_epi8(a, b); }
+inline epu8 shifted_left(epu8 a) { return _mm_bslli_si128(a,1); }
+inline epu8 shifted_right(epu8 a) { return _mm_bsrli_si128(a,1); }
 
-template <size_t sz>
-inline epu8 sorted_epu8(epu8 res, std::array<epu8, sz> rounds) {
+template <bool Incr = true, size_t sz>
+inline epu8 network_sort(epu8 res, std::array<epu8, sz> rounds) {
     for (auto round : rounds) {
         epu8 b = permuted(res, round);
 
-        epu8 mask = round < epu8id;
+        // This conditional should be optimized out by the compiler
+        epu8 mask = Incr ? round < epu8id : epu8id < round;
         epu8 minab = _mm_min_epu8(res, b);  // unsigned comparison
         epu8 maxab = _mm_max_epu8(res, b);  // unsigned comparison
 
         res = _mm_blendv_epi8(minab, maxab, mask);
-    }
-    return res;
-}
-
-template <size_t sz>
-inline epu8 revsorted_epu8(epu8 res, std::array<epu8, sz> rounds) {
-    for (auto round : rounds) {
-        epu8 b = permuted(res, round);
-
-        epu8 mask = round < epu8id;
-        epu8 minab = _mm_min_epu8(res, b);  // unsigned comparison
-        epu8 maxab = _mm_max_epu8(res, b);  // unsigned comparison
-
-        res = _mm_blendv_epi8(maxab, minab, mask);
     }
     return res;
 }
@@ -137,15 +142,20 @@ constexpr std::array<epu8, 6> sorting_rounds8 {{
 // clang-format on
 
 inline bool is_sorted(epu8 a) {
-    return _mm_movemask_epi8(static_cast<epu8>(_mm_bslli_si128(a, 1)) > a) == 0;
+    return _mm_movemask_epi8(shifted_left(a) > a) == 0;
 }
-inline bool is_sorted_perm(epu8 a) {
-    return _mm_movemask_epi8(a > permuted(a, left_shift)) == 0;
+inline epu8 sorted(epu8 a) {
+    return network_sort<true>(a, sorting_rounds);
 }
-inline epu8 sorted(epu8 a) { return sorted_epu8(a, sorting_rounds); }
-inline epu8 sorted8(epu8 a) { return sorted_epu8(a, sorting_rounds8); };
-inline epu8 revsorted(epu8 a) { return revsorted_epu8(a, sorting_rounds); }
-inline epu8 revsorted8(epu8 a) { return revsorted_epu8(a, sorting_rounds8); };
+inline epu8 sorted8(epu8 a) {
+    return network_sort<true>(a, sorting_rounds8);
+};
+inline epu8 revsorted(epu8 a) {
+    return network_sort<false>(a, sorting_rounds);
+}
+inline epu8 revsorted8(epu8 a) {
+    return network_sort<false>(a, sorting_rounds8);
+};
 
 }  // namespace HPCombi
 

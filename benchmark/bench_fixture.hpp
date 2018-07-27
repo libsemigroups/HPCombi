@@ -5,7 +5,7 @@
 
 using HPCombi::epu8;
 
-constexpr uint_fast64_t size = 100000;
+constexpr uint_fast64_t size = 1000;
 // constexpr uint_fast64_t repeat = 100;
 
 
@@ -18,7 +18,7 @@ std::vector<epu8> rand_sample(size_t sz) {
 
 inline epu8 rand_perm() {
   epu8 res = HPCombi::epu8id;
-  auto &ar = HPCombi::epu8cons.as_array(res);
+  auto &ar = HPCombi::as_array(res);
   std::random_shuffle(ar.begin(), ar.end());
   return res;
 }

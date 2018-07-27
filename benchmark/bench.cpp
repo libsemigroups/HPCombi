@@ -73,7 +73,7 @@ inline epu8 sort_odd_even(epu8 a) {
 }
 
 inline epu8 insertion_sort(epu8 p) {
-    auto &a = HPCombi::epu8cons.as_array(p);
+    auto &a = HPCombi::as_array(p);
     for (int i = 0; i < 16; i++)
         for (int j = i; j > 0 && a[j] < a[j - 1]; j--)
             std::swap(a[j], a[j - 1]);
@@ -81,7 +81,7 @@ inline epu8 insertion_sort(epu8 p) {
 }
 
 inline epu8 radix_sort(epu8 p) {
-    auto &a = HPCombi::epu8cons.as_array(p);
+    auto &a = HPCombi::as_array(p);
     std::array<uint8_t, 16> stat {};
     for (int i = 0; i < 16; i++)
         stat[a[i]]++;
@@ -93,14 +93,16 @@ inline epu8 radix_sort(epu8 p) {
 }
 
 inline epu8 std_sort(epu8 &p) {
-    auto &ar = HPCombi::epu8cons.as_array(p);
+    auto &ar = HPCombi::as_array(p);
     std::sort(ar.begin(), ar.end());
     return p;
 }
 
 //##################################################################################
 int Bench_sort() {
-    bench_sort("sort_ref", std_sort, "std", bench_data.sample);
+    bench_sort("sort_ref", std_sort, "std1", bench_data.sample);
+    bench_sort("sort_ref", std_sort, "std2", bench_data.sample);
+    bench_sort("sort_ref", std_sort, "std3", bench_data.sample);
 
     bench_sort("sort_alt", std_sort, "std", bench_data.sample);
     bench_sort("sort_alt", insertion_sort, "insert", bench_data.sample);

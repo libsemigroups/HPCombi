@@ -41,7 +41,7 @@ std::vector<epu8> rand_sample(size_t sz) {
 
 inline epu8 rand_perm() {
   epu8 res = epu8id;
-  auto &ar = epu8cons.as_array(res);
+  auto &ar = as_array(res);
   std::random_shuffle(ar.begin(), ar.end());
   return res;
 }
@@ -117,7 +117,7 @@ inline epu8 sort_odd_even(epu8 a) {
 }
 
 inline epu8 insertion_sort(epu8 p) {
-    auto &a = HPCombi::epu8cons.as_array(p);
+    auto &a = HPCombi::as_array(p);
     for (int i = 0; i < 16; i++)
         for (int j = i; j > 0 && a[j] < a[j - 1]; j--)
             std::swap(a[j], a[j - 1]);
@@ -125,7 +125,7 @@ inline epu8 insertion_sort(epu8 p) {
 }
 
 inline epu8 radix_sort(epu8 p) {
-    auto &a = HPCombi::epu8cons.as_array(p);
+    auto &a = HPCombi::as_array(p);
     std::array<uint8_t, 16> stat {};
     for (int i = 0; i < 16; i++)
         stat[a[i]]++;
@@ -145,7 +145,7 @@ int main() {
     double reftime = timethat(
         [vrand]() {
             for (epu8 v : vrand) {
-                auto &ar = epu8cons.as_array(v);
+                auto &ar = as_array(v);
                 std::sort(ar.begin(), ar.end());
                 ASSERT(equal(v, epu8id));  // avoid optimization
             }
