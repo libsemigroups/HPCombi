@@ -63,7 +63,7 @@ template <class TPU> struct TPUBuild {
     using array = std::array<type_elem, size>;
 
     template <class Fun, std::size_t... Is> static HPCOMBI_CONSTEXPR
-    TPU make_helper(Fun f, std::index_sequence<Is...>) { return {f(Is)...}; }
+    TPU make_helper(Fun f, std::index_sequence<Is...>) { return TPU{f(Is)...}; }
 
     // This is a handmade C++11 constexpr lambda;
     struct ConstFun {
@@ -117,6 +117,9 @@ TPUBuild<epu8>::array &as_array(epu8 &v) {
 }
 const TPUBuild<epu8>::array &as_array(const epu8 &v) {
     return reinterpret_cast<const typename TPUBuild<epu8>::array &>(v);
+}
+epu8 from_array(const TPUBuild<epu8>::array a) {
+    return reinterpret_cast<const epu8 &>(a);
 }
 
 inline uint64_t first_diff(epu8 a, epu8 b, size_t bound = 16);

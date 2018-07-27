@@ -29,24 +29,27 @@ using namespace HPCombi;
 
 
 struct Fix {
-    Fix()
-        : zero(Epu8({}, 0)), P01(Epu8({0, 1}, 0)),
-          P10(Epu8({1, 0}, 0)), P11(Epu8({1, 1}, 0)),
-          P1(Epu8({}, 1)),
-          P112(Epu8({1, 1}, 2)),
-          Pa1(Epu8({4, 2, 5, 1, 2, 7, 7, 3, 4, 2}, 1)),
-          Pa2(Epu8({4, 2, 5, 1, 2, 9, 7, 3, 4, 2}, 1)),
-          P51(Epu8({5,1}, 6)),
-          P5(Epu8({}, 5)),
-          Pb(Epu8({23, 5, 21, 5, 43, 36}, 7)),
-          // Elements should be sorted in alphabetic order here
-          v({zero, P01, P10, P11, P1, P112, Pa1, Pa2, P51, P5, Pb}) {
-        BOOST_TEST_MESSAGE("setup fixture");
-    }
+    Fix() : zero(Epu8({}, 0)), P01(Epu8({0, 1}, 0)),
+            P10(Epu8({1, 0}, 0)), P11(Epu8({1, 1}, 0)),
+            P1(Epu8({}, 1)),
+            P112(Epu8({1, 1}, 2)),
+            Pa1(Epu8({4, 2, 5, 1, 2, 7, 7, 3, 4, 2}, 1)),
+            Pa2(Epu8({4, 2, 5, 1, 2, 9, 7, 3, 4, 2}, 1)),
+            P51(Epu8({5,1}, 6)),
+            Pv(epu8{ 5, 5, 2, 5, 1, 6,12, 4, 0, 3, 2,11,12,13,14,15}),
+            P5(Epu8({}, 5)),
+            Pb(Epu8({23, 5, 21, 5, 43, 36}, 7)),
+            // Elements should be sorted in alphabetic order here
+            v({zero, P01, P10, P11, P1, P112, Pa1, Pa2, P51, Pv, P5, Pb}),
+            av({ 5, 5, 2, 5, 1, 6,12, 4, 0, 3, 2,11,12,13,14,15})
+        {
+            BOOST_TEST_MESSAGE("setup fixture");
+        }
     ~Fix() { BOOST_TEST_MESSAGE("teardown fixture"); }
 
-    const epu8 zero, P01, P10, P11, P1, P112, Pa1, Pa2, P51, P5, Pb;
+    const epu8 zero, P01, P10, P11, P1, P112, Pa1, Pa2, P51, Pv, P5, Pb;
     const std::vector<epu8> v;
+    const std::array<uint8_t, 16> av;
 };
 
 //****************************************************************************//
@@ -159,6 +162,14 @@ BOOST_FIXTURE_TEST_CASE(EPU8_as_array, Fix) {
     EPU8_EQUAL(x, Epu8({4, 2, 42, 1, 2, 7, 7, 3, 4, 2}, 1));
     std::fill(refx.begin()+4, refx.end(), 3);
     EPU8_EQUAL(x, Epu8({4, 2, 42, 1}, 3));
+    BOOST_TEST(av == as_array(Pv));
+}
+
+BOOST_FIXTURE_TEST_CASE(EPU8_from_array, Fix) {
+    for (auto x : v) {
+        EPU8_EQUAL(x, from_array(as_array(x)));
+    }
+    EPU8_EQUAL(Pv, from_array(av));
 }
 
 BOOST_FIXTURE_TEST_CASE(EPU8_is_sorted, Fix) {
