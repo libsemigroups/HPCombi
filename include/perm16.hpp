@@ -24,93 +24,10 @@
 #include <ostream>
 #include <x86intrin.h>
 
-#ifdef HPCOMBI_HAVE_CONFIG
-#include "HPCombi-config.h"
-#endif
-
-#if __cplusplus <= 201103L
-#include "seq.hpp"
-#endif
-
-#ifdef HPCOMBI_CONSTEXPR_FUN_ARGS
-  #define HPCOMBI_CONSTEXPR constexpr
-  #define HPCOMBI_CONSTEXPR_CONSTRUCTOR constexpr
-#else
-  #pragma message "Using a constexpr broken compiler ! "\
-                   "Performance may not be optimal"
-  #define HPCOMBI_CONSTEXPR const
-  #define HPCOMBI_CONSTEXPR_CONSTRUCTOR
-#endif
+#include "epu.hpp"
 
 namespace HPCombi {
 
-/// SIMD vector of 16 unsigned bytes
-using epu8 = uint8_t __attribute__((vector_size(16)));
-/// SIMD vector of 32 unsigned bytes
-using xpu8 = uint8_t __attribute__((vector_size(32)));
-
-///
-template <class Tpu, class Function, std::size_t... Indices> HPCOMBI_CONSTEXPR
-epu8 make_Tpu_helper(Function f, std::index_sequence<Indices...>, Tpu) {
-  return Tpu {f(Indices)...};
-}
-
-template <class Function> HPCOMBI_CONSTEXPR epu8 make_epu8(Function f) {
-  return make_Tpu_helper(f, std::make_index_sequence<16>{}, epu8{});
-}
-
-template <class Function> HPCOMBI_CONSTEXPR xpu8 make_xpu8(Function f) {
-  return make_Tpu_helper(f, std::make_index_sequence<32>{}, xpu8{});
-}
-
-template <uint8_t c> HPCOMBI_CONSTEXPR
-uint8_t constfun(uint8_t) { return c; }
-
-template <uint8_t c> HPCOMBI_CONSTEXPR epu8 make_const_epu8() {
-  return make_Tpu_helper(constfun<c>, std::make_index_sequence<16>{}, epu8{});
-}
-
-template <uint8_t c> HPCOMBI_CONSTEXPR xpu8 make_const_xpu8() {
-  return make_Tpu_helper(constfun<c>, std::make_index_sequence<32>{}, xpu8{});
-}
-
-// The following functions should be constexpr lambdas writen directly in
-// their corresponding methods. However until C++17, constexpr lambda are
-// forbidden. So we put them here.
-
-/// The image of i by the identity function
-static HPCOMBI_CONSTEXPR
-uint8_t make_one(uint8_t i) { return i; }
-/// The image of i by the left cycle function
-static HPCOMBI_CONSTEXPR
-uint8_t make_left_cycle(uint8_t i) { return (i + 15) % 16; }
-/// The image of i by the right cycle function
-static HPCOMBI_CONSTEXPR
-uint8_t make_right_cycle(uint8_t i) { return (i + 1) % 16; }
-/// The image of i by a left shift filling the hole with a @p 0xff
-static HPCOMBI_CONSTEXPR
-uint8_t make_left_shift_ff(uint8_t i) { return i == 15 ? 0xff : i + 1; }
-static HPCOMBI_CONSTEXPR
-uint8_t make_right_shift_ff(uint8_t i) { return i == 0 ? 0xff : i - 1; }
-/// The image of i by a left shift duplicating the hole
-static HPCOMBI_CONSTEXPR
-uint8_t make_left_shift(uint8_t i) { return i == 15 ? 15 : i + 1; }
-static HPCOMBI_CONSTEXPR
-uint8_t make_right_shift(uint8_t i) { return i == 0 ? 0 : i - 1; }
-
-
-
-// Old Clang doesn't automatically broadcast uint8_t into epu8
-// We therefore write there the explicit constants
-HPCOMBI_CONSTEXPR epu8 cst_epu8_0x00 = make_const_epu8<0x00>();
-HPCOMBI_CONSTEXPR epu8 cst_epu8_0x01 = make_const_epu8<0x01>();
-HPCOMBI_CONSTEXPR epu8 cst_epu8_0x02 = make_const_epu8<0x02>();
-HPCOMBI_CONSTEXPR epu8 cst_epu8_0x04 = make_const_epu8<0x04>();
-HPCOMBI_CONSTEXPR epu8 cst_epu8_0x08 = make_const_epu8<0x08>();
-HPCOMBI_CONSTEXPR epu8 cst_epu8_0x0F = make_const_epu8<0x0F>();
-HPCOMBI_CONSTEXPR epu8 cst_epu8_0x10 = make_const_epu8<0x10>();
-HPCOMBI_CONSTEXPR epu8 cst_epu8_0xF0 = make_const_epu8<0xF0>();
-HPCOMBI_CONSTEXPR epu8 cst_epu8_0xFF = make_const_epu8<0xFF>();
 
 // Forward declaration
 struct Perm16;
@@ -118,32 +35,7 @@ struct PTransf16;
 struct Transf16;
 
 
-std::array<uint8_t, 16> &as_array(epu8& v) {
-  return reinterpret_cast<std::array<unsigned char, 16> &>(v);
-}
-/** Return self as a const array (just a cast)
- *
- *  This is usually faster for algorithm using a lot of indexed acces.
- */
-const std::array<uint8_t, 16> &as_array(const epu8& v) const {
-  return reinterpret_cast<const std::array<unsigned char, 16> &>(v);
-}
-
-inline bool equal(epu8 a, epu8 b) const;
-inline bool not_equal(epu8 a, epu8 b) const;
-inline bool less(epu8 a, epu8 b) const;
-inline char less_partial(epu8 a, epu8 b, int k) const;
-inline epu8 permuted(epu8 a, epu8 b) const;
-inline epu8 sorted(epu8 a) const;
-inline epu8 sorted8(epu8 a) const;
-inline epu8 revsorted(epu8 a) const;
-inline epu8 revsorted8(epu8 a) const;
-inline bool is_sorted(epu8 a) const;
-
   inline Vect16 remove_dups() const;
-
-  inline uint64_t first_diff(const Vect16 &b, size_t bound = Size()) const;
-  inline uint64_t last_diff(const Vect16 &b, size_t bound = Size()) const;
 
   inline uint8_t sum_ref() const;
   inline uint8_t sum4() const;
