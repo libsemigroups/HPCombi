@@ -58,6 +58,13 @@ using xpu8 = uint8_t __attribute__((vector_size(32)));
 
 namespace {  // Implementation detail code
 
+/// A handmade C++11 constexpr lambda
+template <typename T> struct ConstFun {
+    HPCOMBI_CONSTEXPR ConstFun(T cc) : cst(cc) {}
+    HPCOMBI_CONSTEXPR T operator()(T) const { return cst; }
+    T cst;
+};
+
 /// Factory object for various SIMD constants in particular constexpr
 template <class TPU> struct TPUBuild {
 
@@ -69,13 +76,6 @@ template <class TPU> struct TPUBuild {
     template <class Fun, std::size_t... Is> static HPCOMBI_CONSTEXPR
     TPU make_helper(Fun f, std::index_sequence<Is...>) { return TPU{f(Is)...}; }
 
-    /// A handmade C++11 constexpr lambda
-    struct ConstFun {
-        HPCOMBI_CONSTEXPR ConstFun(type_elem cc) : c(cc) {}
-        HPCOMBI_CONSTEXPR type_elem operator()(type_elem) const {return c;}
-        type_elem c;
-    };
-
     inline TPU operator()(std::initializer_list<type_elem>, type_elem) const;
 
     template <class Fun>
@@ -84,7 +84,8 @@ template <class TPU> struct TPUBuild {
     }
 
     inline HPCOMBI_CONSTEXPR TPU operator()(type_elem c) const {
-        return make_helper(ConstFun(c), std::make_index_sequence<size>{});
+        return make_helper(ConstFun<type_elem>(c),
+                           std::make_index_sequence<size>{});
     }
     // explicit overloading for int constants
     inline HPCOMBI_CONSTEXPR TPU operator()(int c) const {
@@ -239,15 +240,110 @@ inline epu8 random_epu8(uint16_t bnd);
 inline epu8 remove_dups(epu8 a, uint8_t repl=0);
 
 
+/** @class common_horiz_sum
+ * @brief Horizontal sum of a  #HPCombi::epu8
+ * @details
+ * @returns the horizontal sum of the input
+ * @par Example:
+ * @code
+ * horiz_sum(epu8 { 5, 5, 2, 5, 1, 6,12, 4, 0, 3, 2,11,12,13,14,15});
+ * @endcode
+ * Returns `110`
+ * @warning The result is supposed to fit in a \c uint8_t
+ */
+/** @copydoc common_horiz_sum
+ *  @par Algorithm:
+ *  Reference @f$O(n)@f$ algorithm using loop and indexed access
+ */
 inline uint8_t horiz_sum_ref(epu8);
+/** @copydoc common_horiz_sum
+ *  @par Algorithm:
+ *  4-stages paralell algorithm
+ */
 inline uint8_t horiz_sum4(epu8);
+/** @copydoc common_horiz_sum
+ *  @par Algorithm:
+ *  3-stages paralell algorithm + indexed access
+ */
 inline uint8_t horiz_sum3(epu8);
+/** @copydoc common_horiz_sum */
 inline uint8_t horiz_sum(epu8 v) { return horiz_sum3(v); }
 
+
+/** @class common_partial_sums
+ * @brief Horizontal partial sum of a #HPCombi::epu8
+ * @details
+ * @returns the partials sums of the input
+ * @par Example:
+ * @code
+ * partial_sums(epu8 { 5, 5, 2, 5, 1, 6,12, 4, 0, 3, 2,11,12,13,14,15});
+ * @endcode
+ * Returns `{ 5,10,12,17,18,24,36,40,40,43,45,56,68,81,95,110}`
+ */
+/** @copydoc common_partial_sums
+ *  @par Algorithm:
+ *  Reference @f$O(n)@f$ algorithm using loop and indexed access
+ */
 inline epu8 partial_sums_ref(epu8);
+/** @copydoc common_partial_sums
+ *  @par Algorithm:
+ *  4-stages paralell algorithm
+ */
 inline epu8 partial_sums_round(epu8);
+/** @copydoc common_partial_sums */
 inline epu8 partial_sums(epu8 v) { return partial_sums_round(v); }
 
+
+/** @class common_eval16
+ * @brief Evaluation of a #HPCombi::epu8
+ * @details
+ * @param v : a #HPCombi::epu8
+ * @returns the evaluation, that is the #HPCombi::epu8 \c r such that
+ *     \c r[i] is the number of occurrence of \c i in the input \c v
+ * @par Example:
+ * @code
+ * eval16(epu8 { 5, 5, 2, 5, 1, 6,12, 4, 0, 3, 2,11,12,13,14,15});
+ * @endcode
+ * Returns `{ 1, 1, 2, 1, 1, 3, 1, 0, 0, 0, 0, 1, 2, 1, 1, 1}`
+ * @warning The entries larger than 15 are ignored
+ */
+/** @copydoc common_eval16
+ *  @par Algorithm:
+ *  Reference @f$O(n)@f$ algorithm using loop and indexed access
+ */
+inline epu8 eval16_ref(epu8 v);
+/** @copydoc common_eval16
+ *  @par Algorithm:
+ *  Vector @f$O(n)@f$ using cyclic shifting
+ */
+inline epu8 eval16_cycle(epu8 v);
+/** @copydoc common_eval16
+ *  @par Algorithm:
+ *  Vector @f$O(n)@f$ using popcount
+ */
+inline epu8 eval16_popcount(epu8 v);
+/** @copydoc common_eval16 */
+inline epu8 eval16(epu8 v) { return eval16_cycle(v); };
+
+/*
+template <char IDX_MODE>
+inline uint64_t search_index(epu8 v, int bound) {
+    return unsigned(_mm_cmpestri(epu8{}, 1, v, bound, IDX_MODE));
+}
+
+inline uint64_t last_non_zero(epu8 v, int bnd) {
+    return search_index<LAST_NON_ZERO>(v, bnd);
+}
+inline uint64_t first_non_zero(epu8 v, int bnd) {
+    return search_index<FIRST_NON_ZERO>(v, bnd);
+}
+inline uint64_t last_zero(epu8 v, int bnd) {
+    return search_index<LAST_ZERO>(v, bnd);
+}
+inline uint64_t first_zero(epu8 v, int bnd) {
+    return search_index<FIRST_ZERO>(v,bnd);
+}
+*/
 }  // namespace HPCombi
 
 namespace std {

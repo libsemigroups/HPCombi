@@ -154,9 +154,9 @@ inline epu8 random_epu8(uint16_t bnd) {
 }
 
 inline epu8 remove_dups(epu8 v, uint8_t repl) {
-  // Ternary operator is not supported by clang.
-  // return (v != permuted(Perm16::right_shift_ff()).v) ? v : cst_epu8_0x00;
-  return _mm_blendv_epi8(Epu8(repl), v, v != shifted_right(v));
+    // Ternary operator is not supported by clang.
+    // return (v != permuted(Perm16::right_shift_ff()).v) ? v : cst_epu8_0x00;
+    return _mm_blendv_epi8(Epu8(repl), v, v != shifted_right(v));
 }
 
 
@@ -180,10 +180,9 @@ constexpr std::array<epu8, 4> summing_rounds
 #undef FF
 
 inline uint8_t horiz_sum_ref(epu8 v) {
-  uint8_t res = 0;
-  for (size_t i = 0; i < 16; i++)
-    res += v[i];
-  return res;
+    uint8_t res = 0;
+    for (size_t i = 0; i < 16; i++) res += v[i];
+    return res;
 }
 
 inline uint8_t horiz_sum4(epu8 v) {
@@ -191,40 +190,62 @@ inline uint8_t horiz_sum4(epu8 v) {
 }
 
 inline uint8_t horiz_sum3(epu8 v) {
-  auto sr = summing_rounds;
-  epu8 res = v;
-  res += permuted(res, sr[0]);
-  res += permuted(res, sr[1]);
-  res += permuted(res, sr[2]);
-  return res[7] + res[15];
+    auto sr = summing_rounds;
+    v += permuted(v, sr[0]);
+    v += permuted(v, sr[1]);
+    v += permuted(v, sr[2]);
+    return v[7] + v[15];
 }
 
 inline epu8 partial_sums_ref(epu8 v)  {
-  epu8 res {};
-  res[0] = v[0];
-  for (size_t i = 1; i < 16; i++)
-    res[i] = res[i - 1] + v[i];
-  return res;
+    epu8 res {};
+    res[0] = v[0];
+    for (size_t i = 1; i < 16; i++)
+        res[i] = res[i - 1] + v[i];
+    return res;
 }
 inline epu8 partial_sums_round(epu8 v) {
-  epu8 res = v;
-  for (epu8 round : summing_rounds)
-      res += permuted(res, round);
-  return res;
+    for (epu8 round : summing_rounds)
+        v += permuted(v, round);
+    return v;
 }
 
 
+inline epu8 eval16_ref(epu8 v) {
+    epu8 res {};
+    for (size_t i = 0; i < 16; i++)
+        if (v[i] < 16)
+            res[v[i]]++;
+    return res;
+}
+
+inline epu8 eval16_cycle(epu8 v) {
+    epu8 res = -(epu8id == v);
+    for (int i = 1; i < 16; i++) {
+        v = permuted(v, left_cycle);
+        res -= (epu8id == v);
+    }
+    return res;
+}
+
+inline epu8 eval16_popcount(epu8 v) {
+    epu8 res {};
+    for (size_t i = 0; i < 16; i++) {
+        res[i] = _mm_popcnt_u32(_mm_movemask_epi8(v == Epu8(uint8_t(i))));
+    }
+    return res;
+}
 
 }  // namespace HPCombi
 
 namespace std {
 
 inline std::ostream &operator<<(std::ostream &stream, HPCombi::epu8 const &a) {
-  stream << "[" << std::setw(2) << unsigned(a[0]);
-  for (unsigned i = 1; i < 16; ++i)
-    stream << "," << std::setw(2) << unsigned(a[i]);
-  stream << "]";
-  return stream;
+    stream << "[" << std::setw(2) << unsigned(a[0]);
+    for (unsigned i = 1; i < 16; ++i)
+        stream << "," << std::setw(2) << unsigned(a[i]);
+    stream << "]";
+    return stream;
 }
 
 template <> struct equal_to<HPCombi::epu8> {

@@ -35,16 +35,6 @@ struct PTransf16;
 struct Transf16;
 
 
-  inline Vect16 remove_dups() const;
-
-  inline uint8_t sum_ref() const;
-  inline uint8_t sum4() const;
-  inline uint8_t sum3() const;
-  inline uint8_t sum() const { return sum3(); }
-
-  inline Vect16 partial_sums_ref() const;
-  inline Vect16 partial_sums_round() const;
-
   template <char IDX_MODE> inline uint64_t search_index(int bound) const;
 
   inline uint64_t last_non_zero(int bnd = Size()) const;

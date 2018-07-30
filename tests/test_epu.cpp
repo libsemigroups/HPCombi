@@ -335,5 +335,35 @@ BOOST_FIXTURE_TEST_CASE(EPU8_partial_sum, Fix) {
     for (auto x : v) EPU8_EQUAL(partial_sums_round(x), partial_sums_ref(x));
 }
 
+BOOST_FIXTURE_TEST_CASE(EPU8_eval16_ref, Fix) {
+    EPU8_EQUAL(eval16_ref(zero), Epu8({16}, 0));
+    EPU8_EQUAL(eval16_ref(P01), Epu8({15, 1}, 0));
+    EPU8_EQUAL(eval16_ref(epu8id), Epu8({}, 1));
+    EPU8_EQUAL(eval16_ref(P10), Epu8({15, 1}, 0));
+    EPU8_EQUAL(eval16_ref(P11), Epu8({14, 2}, 0));
+    EPU8_EQUAL(eval16_ref(P1), Epu8({0, 16}, 0));
+    EPU8_EQUAL(eval16_ref(P112), Epu8({0, 2, 14}, 0));
+    EPU8_EQUAL(eval16_ref(Pa1), Epu8({0, 7, 3, 1, 2, 1, 0, 2}, 0));
+    EPU8_EQUAL(eval16_ref(Pa2), Epu8({ 0, 7, 3, 1, 2, 1, 0, 1, 0, 1}, 0));
+    EPU8_EQUAL(eval16_ref(P51), Epu8({ 0, 1, 0, 0, 0, 1,14}, 0));
+    EPU8_EQUAL(eval16_ref(Pv),
+               (epu8{ 1, 1, 2, 1, 1, 3, 1, 0, 0, 0, 0, 1, 2, 1, 1, 1}));
+    EPU8_EQUAL(eval16_ref(P5), Epu8({ 0, 0, 0, 0, 0, 16}, 0));
+    EPU8_EQUAL(eval16_ref(epu8rev), Epu8({}, 1));
+    EPU8_EQUAL(eval16_ref(Pb), Epu8({ 0, 0, 0, 0, 0, 2, 0,10}, 0));
+}
+
+BOOST_FIXTURE_TEST_CASE(EPU8_eval16_cycle, Fix) {
+    for (auto x : v) EPU8_EQUAL(eval16_cycle(x), eval16_ref(x));
+}
+
+BOOST_FIXTURE_TEST_CASE(EPU8_eval16_popcount, Fix) {
+    for (auto x : v) EPU8_EQUAL(eval16_popcount(x), eval16_ref(x));
+}
+
+BOOST_FIXTURE_TEST_CASE(EPU8_eval16, Fix) {
+    for (auto x : v) EPU8_EQUAL(eval16(x), eval16_ref(x));
+}
+
 BOOST_AUTO_TEST_SUITE_END()
 //****************************************************************************//
