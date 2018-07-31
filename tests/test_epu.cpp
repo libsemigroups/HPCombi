@@ -1,5 +1,5 @@
 /******************************************************************************/
-/*       Copyright (C) 2017 Florent Hivert <Florent.Hivert@lri.fr>,           */
+/*     Copyright (C) 2016-2018 Florent Hivert <Florent.Hivert@lri.fr>,        */
 /*                                                                            */
 /*  Distributed under the terms of the GNU General Public License (GPL)       */
 /*                                                                            */
@@ -37,18 +37,19 @@ struct Fix {
             Pa2(Epu8({4, 2, 5, 1, 2, 9, 7, 3, 4, 2}, 1)),
             P51(Epu8({5,1}, 6)),
             Pv(epu8{ 5, 5, 2, 5, 1, 6,12, 4, 0, 3, 2,11,12,13,14,15}),
+            Pw(epu8{ 5, 5, 2, 9, 1, 6,12, 4, 0, 4, 4, 4,12,13,14,15}),
             P5(Epu8({}, 5)),
             Pb(Epu8({23, 5, 21, 5, 43, 36}, 7)),
             // Elements should be sorted in alphabetic order here
             v({zero, P01, epu8id, P10, P11, P1, P112, Pa1,
-               Pa2, P51, Pv, P5, epu8rev, Pb}),
+               Pa2, P51, Pv, Pw, P5, epu8rev, Pb}),
             av({ 5, 5, 2, 5, 1, 6,12, 4, 0, 3, 2,11,12,13,14,15})
         {
             BOOST_TEST_MESSAGE("setup fixture");
         }
     ~Fix() { BOOST_TEST_MESSAGE("teardown fixture"); }
 
-    const epu8 zero, P01, P10, P11, P1, P112, Pa1, Pa2, P51, Pv, P5, Pb;
+    const epu8 zero, P01, P10, P11, P1, P112, Pa1, Pa2, P51, Pv, Pw, P5, Pb;
     const std::vector<epu8> v;
     const std::array<uint8_t, 16> av;
 };
@@ -57,36 +58,80 @@ struct Fix {
 BOOST_AUTO_TEST_SUITE(EPU8_test)
 //****************************************************************************//
 
-BOOST_FIXTURE_TEST_CASE(EPU8_first_diff, Fix) {
-    BOOST_TEST(first_diff(Pb, Pb) == 16);
-    BOOST_TEST(first_diff(zero, P01) == 1);
-    BOOST_TEST(first_diff(zero, P10) == 0);
-    BOOST_TEST(first_diff(zero, P01, 1) == 16);
-    BOOST_TEST(first_diff(zero, P01, 2) == 1);
-    BOOST_TEST(first_diff(Pa1, Pa2, 2) == 16);
-    BOOST_TEST(first_diff(Pa1, Pa2, 4) == 16);
-    BOOST_TEST(first_diff(Pa1, Pa2, 5) == 16);
-    BOOST_TEST(first_diff(Pa1, Pa2, 6) == 5);
-    BOOST_TEST(first_diff(Pa1, Pa2, 7) == 5);
-    BOOST_TEST(first_diff(Pa1, Pa2) == 5);
+BOOST_FIXTURE_TEST_CASE(EPU8_first_diff_ref, Fix) {
+    BOOST_TEST(first_diff_ref(Pb, Pb) == 16);
+    BOOST_TEST(first_diff_ref(zero, P01) == 1);
+    BOOST_TEST(first_diff_ref(zero, P10) == 0);
+    BOOST_TEST(first_diff_ref(zero, P01, 1) == 16);
+    BOOST_TEST(first_diff_ref(zero, P01, 2) == 1);
+    BOOST_TEST(first_diff_ref(Pa1, Pa2, 2) == 16);
+    BOOST_TEST(first_diff_ref(Pa1, Pa2, 4) == 16);
+    BOOST_TEST(first_diff_ref(Pa1, Pa2, 5) == 16);
+    BOOST_TEST(first_diff_ref(Pa1, Pa2, 6) == 5);
+    BOOST_TEST(first_diff_ref(Pa1, Pa2, 7) == 5);
+    BOOST_TEST(first_diff_ref(Pa1, Pa2) == 5);
+    BOOST_TEST(first_diff(Pv, Pw) == 3);
+    for (int i=0; i<16; i++)
+        BOOST_TEST(first_diff(Pv, Pw, i) == (i <= 3 ? 16 : 3));
+}
+BOOST_FIXTURE_TEST_CASE(EPU8_first_diff_cmpstr, Fix) {
+    for (auto x : v) {
+        for (auto y : v) {
+            BOOST_TEST(first_diff_cmpstr(x, y) == first_diff_ref(x, y));
+            for (int i=0; i<17; i++)
+                BOOST_TEST(first_diff_cmpstr(x, y, i) == first_diff_ref(x, y, i));
+        }
+    }
+}
+BOOST_FIXTURE_TEST_CASE(EPU8_first_diff_mask, Fix) {
+    for (auto x : v) {
+        for (auto y : v) {
+            BOOST_TEST(first_diff_mask(x, y) == first_diff_ref(x, y));
+            for (int i=0; i<17; i++)
+                BOOST_TEST(first_diff_mask(x, y, i) == first_diff_ref(x, y, i));
+        }
+    }
+}
+BOOST_FIXTURE_TEST_CASE(EPU8_last_diff_ref, Fix) {
+    BOOST_TEST(last_diff_ref(Pb, Pb) == 16);
+    BOOST_TEST(last_diff_ref(zero, P01) == 1);
+    BOOST_TEST(last_diff_ref(zero, P10) == 0);
+    BOOST_TEST(last_diff_ref(zero, P01, 1) == 16);
+    BOOST_TEST(last_diff_ref(zero, P01, 2) == 1);
+    BOOST_TEST(last_diff_ref(P1, Pa1) == 9);
+    BOOST_TEST(last_diff_ref(P1, Pa1, 12) == 9);
+    BOOST_TEST(last_diff_ref(P1, Pa1, 9) == 8);
+    BOOST_TEST(last_diff_ref(Pa1, Pa2, 2) == 16);
+    BOOST_TEST(last_diff_ref(Pa1, Pa2, 4) == 16);
+    BOOST_TEST(last_diff_ref(Pa1, Pa2, 5) == 16);
+    BOOST_TEST(last_diff_ref(Pa1, Pa2, 6) == 5);
+    BOOST_TEST(last_diff_ref(Pa1, Pa2, 7) == 5);
+    BOOST_TEST(last_diff_ref(Pa1, Pa2) == 5);
+    const std::array<uint8_t, 17> res {
+        16,16,16,16, 3, 3, 3, 3, 3, 3,9,10,11,11,11,11,11
+    };
+    for (int i=0; i<=16; i++)
+        BOOST_TEST(last_diff_ref(Pv, Pw, i) == res[i]);
+}
+BOOST_FIXTURE_TEST_CASE(EPU8_last_diff_cmpstr, Fix) {
+    for (auto x : v) {
+        for (auto y : v) {
+            BOOST_TEST(last_diff_cmpstr(x, y) == last_diff_ref(x, y));
+            for (int i=0; i<17; i++)
+                BOOST_TEST(last_diff_cmpstr(x, y, i) == last_diff_ref(x, y, i));
+        }
+    }
+}
+BOOST_FIXTURE_TEST_CASE(EPU8_last_diff_mask, Fix) {
+    for (auto x : v) {
+        for (auto y : v) {
+            BOOST_TEST(last_diff_mask(x, y) == last_diff_ref(x, y));
+            for (int i=0; i<17; i++)
+                BOOST_TEST(last_diff_mask(x, y, i) == last_diff_ref(x, y, i));
+        }
+    }
 }
 
-BOOST_FIXTURE_TEST_CASE(EPU8_last_diff, Fix) {
-    BOOST_TEST(last_diff(Pb, Pb) == 16);
-    BOOST_TEST(last_diff(zero, P01) == 1);
-    BOOST_TEST(last_diff(zero, P10) == 0);
-    BOOST_TEST(last_diff(zero, P01, 1) == 16);
-    BOOST_TEST(last_diff(zero, P01, 2) == 1);
-    BOOST_TEST(last_diff(P1, Pa1) == 9);
-    BOOST_TEST(last_diff(P1, Pa1, 12) == 9);
-    BOOST_TEST(last_diff(P1, Pa1, 9) == 8);
-    BOOST_TEST(last_diff(Pa1, Pa2, 2) == 16);
-    BOOST_TEST(last_diff(Pa1, Pa2, 4) == 16);
-    BOOST_TEST(last_diff(Pa1, Pa2, 5) == 16);
-    BOOST_TEST(last_diff(Pa1, Pa2, 6) == 5);
-    BOOST_TEST(last_diff(Pa1, Pa2, 7) == 5);
-    BOOST_TEST(last_diff(Pa1, Pa2) == 5);
-}
 
 BOOST_FIXTURE_TEST_CASE(EPU8_is_all_zero, Fix) {
     BOOST_TEST(is_all_zero(zero));
@@ -172,9 +217,7 @@ BOOST_FIXTURE_TEST_CASE(EPU8_shifted_right, Fix) {
 
 BOOST_FIXTURE_TEST_CASE(EPU8_reverted, Fix) {
     EPU8_EQUAL(reverted(epu8id), epu8rev);
-    for (auto x : v) {
-        EPU8_EQUAL(x, reverted(reverted(x)));
-    }
+    for (auto x : v) EPU8_EQUAL(x, reverted(reverted(x)));
 }
 
 
@@ -359,6 +402,10 @@ BOOST_FIXTURE_TEST_CASE(EPU8_eval16_cycle, Fix) {
 
 BOOST_FIXTURE_TEST_CASE(EPU8_eval16_popcount, Fix) {
     for (auto x : v) EPU8_EQUAL(eval16_popcount(x), eval16_ref(x));
+}
+
+BOOST_FIXTURE_TEST_CASE(EPU8_eval16_arr, Fix) {
+    for (auto x : v) EPU8_EQUAL(eval16_arr(x), eval16_ref(x));
 }
 
 BOOST_FIXTURE_TEST_CASE(EPU8_eval16, Fix) {

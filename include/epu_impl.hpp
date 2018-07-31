@@ -53,11 +53,33 @@ inline TPU TPUBuild<TPU>::operator()(std::initializer_list<type_elem> il,
 /** Implementation part for inline functions *********************************/
 /*****************************************************************************/
 
-inline uint64_t first_diff(epu8 a, epu8 b, size_t bound) {
+inline uint64_t first_diff_ref(epu8 a, epu8 b, size_t bound) {
+    for (size_t i=0; i<bound; i++)
+        if (a[i] != b[i]) return i;
+    return 16;
+}
+inline uint64_t first_diff_cmpstr(epu8 a, epu8 b, size_t bound) {
     return unsigned(_mm_cmpestri(a, bound, b, bound, FIRST_DIFF));
 }
-inline uint64_t last_diff(epu8 a, epu8 b, size_t bound) {
+inline uint64_t first_diff_mask(epu8 a, epu8 b, size_t bound) {
+    auto res = _mm_movemask_epi8((a != b) && (epu8id < Epu8(bound)));
+    return  res == 0 ? 16 : _bit_scan_forward(res);
+}
+
+
+inline uint64_t last_diff_ref(epu8 a, epu8 b, size_t bound) {
+    while (bound != 0) {
+        --bound;
+        if (a[bound] != b[bound]) return bound;
+    }
+    return 16;
+}
+inline uint64_t last_diff_cmpstr(epu8 a, epu8 b, size_t bound) {
     return unsigned(_mm_cmpestri(a, bound, b, bound, LAST_DIFF));
+}
+inline uint64_t last_diff_mask(epu8 a, epu8 b, size_t bound) {
+    auto res = _mm_movemask_epi8((a != b) && (epu8id < Epu8(bound)));
+    return  res == 0 ? 16 : _bit_scan_reverse(res);
 }
 
 inline bool less(epu8 a, epu8 b) {
@@ -217,6 +239,15 @@ inline epu8 eval16_ref(epu8 v) {
         if (v[i] < 16)
             res[v[i]]++;
     return res;
+}
+
+inline epu8 eval16_arr(epu8 v8) {
+    TPUBuild<epu8>::array res {};
+    auto v = as_array(v8);
+    for (size_t i = 0; i < 16; i++)
+        if (v[i] < 16)
+            res[v[i]]++;
+    return from_array(res);
 }
 
 inline epu8 eval16_cycle(epu8 v) {

@@ -1,5 +1,5 @@
 //****************************************************************************//
-//       Copyright (C) 2016 Florent Hivert <Florent.Hivert@lri.fr>,           //
+//     Copyright (C) 2016-2018 Florent Hivert <Florent.Hivert@lri.fr>,        //
 //                                                                            //
 //  Distributed under the terms of the GNU General Public License (GPL)       //
 //                                                                            //
@@ -91,6 +91,9 @@ template <class TPU> struct TPUBuild {
     inline HPCOMBI_CONSTEXPR TPU operator()(int c) const {
         return operator()(uint8_t(c));
     }
+    inline HPCOMBI_CONSTEXPR TPU operator()(size_t c) const {
+        return operator()(uint8_t(c));
+    }
 
 };
 
@@ -178,18 +181,6 @@ inline epu8 shifted_left(epu8 a) { return _mm_bsrli_si128(a,1); }
 /** Reverting a #HPCombi::epu8 */
 inline epu8 reverted(epu8 a) { return permuted(a, epu8rev); }
 
-/** The first difference between two #HPCombi::epu8 */
-inline uint64_t first_diff(epu8 a, epu8 b, size_t bound = 16);
-/** The last difference between two #HPCombi::epu8 */
-inline uint64_t last_diff(epu8 a, epu8 b, size_t bound = 16);
-/** Lexicographic comparison between two #HPCombi::epu8 */
-inline bool less(epu8 a, epu8 b);
-/** Partial lexicographic comparison between two #HPCombi::epu8
- * @param a, b : the vectors to compare
- * @param k : the bound for the lexicographic comparison
- * @return a positive, negative or zero char depending on the result
- */
-inline char less_partial(epu8 a, epu8 b, int k);
 
 /** Vector min between two #HPCombi::epu8 0 */
 inline epu8 min(epu8 a, epu8 b) { return _mm_min_epu8(a, b); }
@@ -314,6 +305,11 @@ inline epu8 partial_sums(epu8 v) { return partial_sums_round(v); }
 inline epu8 eval16_ref(epu8 v);
 /** @copydoc common_eval16
  *  @par Algorithm:
+ *  Reference @f$O(n)@f$ algorithm using loop and cast to array
+ */
+inline epu8 eval16_arr(epu8 v);
+/** @copydoc common_eval16
+ *  @par Algorithm:
  *  Vector @f$O(n)@f$ using cyclic shifting
  */
 inline epu8 eval16_cycle(epu8 v);
@@ -324,6 +320,94 @@ inline epu8 eval16_cycle(epu8 v);
 inline epu8 eval16_popcount(epu8 v);
 /** @copydoc common_eval16 */
 inline epu8 eval16(epu8 v) { return eval16_cycle(v); };
+
+
+/** @class common_first_diff
+ * @brief The first difference between two #HPCombi::epu8
+ * @details
+ * @param a, b : two #HPCombi::epu8
+ * @param bound : a \c size_t
+ * @returns the smallest index @f$i<bound@f$ such that \c a[i] and \c b[i] differ,
+ * 16 if there is no differences before bound.
+ * @par Example:
+ * @code
+ * epu8 a { 5, 5, 2, 5, 1, 6,12, 4, 0, 3, 2,11,12,13,14,15};
+ * epu8 b { 5, 5, 2, 9, 1, 6,12, 4, 0, 4, 4, 4,12,13,14,15};
+ * @endcode
+ * then `first_diff(a, b)` returns `3`,
+ * `first_diff(a, b, 3)` returns `16`,
+ * `first_diff(a, b, 4)` returns `3`,
+ * `first_diff(a, b, 7)` returns `3`.
+ * @warning `bound` is assumed to be smaller or equal than 16
+ */
+/** @copydoc common_first_diff
+ *  @par Algorithm:
+ *  Reference @f$O(n)@f$ algorithm using loop and indexed access
+ */
+inline uint64_t first_diff_ref(epu8 a, epu8 b, size_t bound = 16);
+/** @copydoc common_first_diff
+ *  @par Algorithm:
+ *  Using \c cmpestri instruction
+ */
+inline uint64_t first_diff_cmpstr(epu8 a, epu8 b, size_t bound = 16);
+/** @copydoc common_first_diff
+ *  @par Algorithm:
+ *  Using vector comparison and mask
+*/
+inline uint64_t first_diff_mask(epu8 a, epu8 b, size_t bound = 16);
+/** @copydoc common_first_diff */
+inline uint64_t first_diff(epu8 a, epu8 b, size_t bound = 16) {
+    return first_diff_mask(a, b, bound);
+}
+
+
+/** @class common_last_diff
+ * @brief The last difference between two #HPCombi::epu8
+ * @details
+ * @param a, b : two #HPCombi::epu8
+ * @param bound : a \c size_t
+ * @returns the largest index @f$i<bound@f$ such that \c a[i] and \c b[i] differ,
+ * 16 if there is no differences before bound.
+ * @par Example:
+ * @code
+ * epu8 a { 5, 5, 2, 5, 1, 6,12, 4, 0, 3, 2,11,12,13,14,15};
+ * epu8 b { 5, 5, 2, 9, 1, 6,12, 4, 0, 4, 4, 4,12,13,14,15};
+ * @endcode
+ * then `last_diff(a, b)` returns `11`,
+ * `last_diff(a, b, 3)` returns `16`,
+ * `last_diff(a, b, 4)` returns `3`,
+ * `last_diff(a, b, 7)` returns `3`.
+ * @warning `bound` is assumed to be smaller or equal than 16
+ */
+/** @copydoc common_last_diff
+ *  @par Algorithm:
+ *  Reference @f$O(n)@f$ algorithm using loop and indexed access
+ */
+inline uint64_t last_diff_ref(epu8 a, epu8 b, size_t bound = 16);
+/** @copydoc common_last_diff
+ *  @par Algorithm:
+ *  Using \c cmpestri instruction
+ */
+inline uint64_t last_diff_cmpstr(epu8 a, epu8 b, size_t bound = 16);
+/** @copydoc common_last_diff
+ *  @par Algorithm:
+ *  Using vector comparison and mask
+*/
+inline uint64_t last_diff_mask(epu8 a, epu8 b, size_t bound = 16);
+/** @copydoc common_last_diff */
+inline uint64_t last_diff(epu8 a, epu8 b, size_t bound = 16) {
+    return last_diff_mask(a, b, bound);
+}
+
+
+/** Lexicographic comparison between two #HPCombi::epu8 */
+inline bool less(epu8 a, epu8 b);
+/** Partial lexicographic comparison between two #HPCombi::epu8
+ * @param a, b : the vectors to compare
+ * @param k : the bound for the lexicographic comparison
+ * @return a positive, negative or zero char depending on the result
+ */
+inline char less_partial(epu8 a, epu8 b, int k);
 
 /*
 template <char IDX_MODE>
@@ -346,20 +430,12 @@ inline uint64_t first_zero(epu8 v, int bnd) {
 */
 }  // namespace HPCombi
 
-namespace std {
-
-inline std::ostream &operator<<(std::ostream &stream, HPCombi::epu8 const &a);
-
-// We also specialize the templates equal_to, not_equal_to and hash
-
-using HPCombi::epu8;
-/** Vector min between two #HPCombi::epu8 0 */
-inline epu8 min(epu8 a, epu8 b) { return _mm_min_epu8(a, b); }
-/** Vector max between two #HPCombi::epu8 0 */
-inline epu8 max(epu8 a, epu8 b) { return _mm_max_epu8(a, b); }
-
-}  // namespace std
-
+/** We also specialize
+ *  - std::equal_to<epu8>
+ *  - std::not_equal_to<epu8>
+ *  - std::hash<epu8>
+ *  - std::ostream &operator<<
+ */
 
 #include "epu_impl.hpp"
 

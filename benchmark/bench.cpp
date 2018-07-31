@@ -99,7 +99,11 @@ void myBench(const char* name, TF pfunc, const char* label, Sample &sample) {
         }, label, sample);
 }
 
+static const epu8 bla = {0, 2, 1, 4, 3, 6, 5, 8, 7, 10, 9, 12, 11, 14, 13, 15};
+
 #define MYBENCH(nm, fun, lbl, smp) myBench(nm, [](epu8 p) {return fun(p);}, lbl, smp)
+#define MYBENCH2(nm, fun, lbl, smp) \
+    myBench(nm, [](epu8 p) { return fun(p,bla);}, lbl, smp)
 
 //##################################################################################
 int Bench_sort() {
@@ -163,17 +167,39 @@ int Bench_eval() {
 
     myBench("eval_alt", HPCombi::eval16_ref, "ref", bench_data.sample);
     myBench("eval_alt", HPCombi::eval16_popcount, "popcnt", bench_data.sample);
+    myBench("eval_alt", HPCombi::eval16_arr, "arr", bench_data.sample);
     myBench("eval_alt", HPCombi::eval16_cycle, "cycle", bench_data.sample);
 
     MYBENCH("eval_lmbd", HPCombi::eval16_ref, "ref", bench_data.sample);
     MYBENCH("eval_lmbd", HPCombi::eval16_popcount, "popcnt", bench_data.sample);
+    MYBENCH("eval_lmbd", HPCombi::eval16_arr, "arr", bench_data.sample);
     MYBENCH("eval_lmbd", HPCombi::eval16_cycle, "cycle", bench_data.sample);
     return 0;
 }
 
-int dummy1 = Bench_sort();
-int dummy2 = Bench_hsum();
-int dummy3 = Bench_psum();
-int dummy4 = Bench_eval();
+//##################################################################################
+int Bench_first_diff() {
+    MYBENCH2("first_diff", HPCombi::first_diff_ref, "ref", bench_data.sample);
+    MYBENCH2("first_diff", HPCombi::first_diff_cmpstr, "cmpstr", bench_data.sample);
+    MYBENCH2("first_diff", HPCombi::first_diff_mask, "mask", bench_data.sample);
+    return 0;
+}
+
+//##################################################################################
+int Bench_last_diff() {
+    MYBENCH2("last_diff", HPCombi::last_diff_ref, "ref", bench_data.sample);
+    MYBENCH2("last_diff", HPCombi::last_diff_cmpstr, "cmpstr", bench_data.sample);
+    MYBENCH2("last_diff", HPCombi::last_diff_mask, "mask", bench_data.sample);
+    return 0;
+}
+
+auto dummy = {
+    Bench_sort(),
+    Bench_hsum(),
+    Bench_psum(),
+    Bench_eval(),
+    Bench_first_diff(),
+    Bench_last_diff()
+};
 
 BENCHMARK_MAIN();
