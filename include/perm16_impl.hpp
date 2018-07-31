@@ -30,220 +30,41 @@ namespace HPCombi {
 /** Implementation part for inline functions *********************************/
 /*****************************************************************************/
 
-inline Vect16::Vect16(std::initializer_list<uint8_t> il, uint8_t def) {
-  assert(il.size() <= Size());
-  std::copy(il.begin(), il.end(), begin());
-  auto &a = as_array();
-  for (size_t i = il.size(); i < Size(); ++i)
-    a[i] = def;
-}
-
-inline Vect16 Vect16::random(uint16_t bnd) {
-  Vect16 res;
-  std::random_device rd;
-
-  std::default_random_engine e1(rd());
-  std::uniform_int_distribution<int> uniform_dist(0, bnd - 1);
-  for (size_t i = 0; i < Size(); i++)
-    res.v[i] = uniform_dist(e1);
-  return res;
-}
-
-// Comparison mode for _mm_cmpestri
-#define FIRST_DIFF \
-    (_SIDD_UBYTE_OPS | _SIDD_CMP_EQUAL_EACH | _SIDD_NEGATIVE_POLARITY)
-#define LAST_DIFF (_SIDD_UBYTE_OPS | _SIDD_CMP_EQUAL_EACH | \
-                        _SIDD_NEGATIVE_POLARITY | _SIDD_MOST_SIGNIFICANT)
-#define FIRST_ZERO (_SIDD_UBYTE_OPS | _SIDD_CMP_EQUAL_ANY)
-#define LAST_ZERO \
-    (_SIDD_UBYTE_OPS | _SIDD_CMP_EQUAL_ANY | _SIDD_MOST_SIGNIFICANT)
-#define FIRST_NON_ZERO \
-    (_SIDD_UBYTE_OPS | _SIDD_CMP_EQUAL_ANY | _SIDD_MASKED_NEGATIVE_POLARITY)
-#define LAST_NON_ZERO \
-    (_SIDD_UBYTE_OPS | _SIDD_CMP_EQUAL_ANY | _SIDD_MASKED_NEGATIVE_POLARITY | \
-     _SIDD_MOST_SIGNIFICANT)
-  // CLEANUP HERE
 #define FIND_IN_PERM (_SIDD_UBYTE_OPS | _SIDD_CMP_EQUAL_ANY | \
                            _SIDD_UNIT_MASK | _SIDD_NEGATIVE_POLARITY)
 #define FIND_IN_PERM_COMPL (_SIDD_UBYTE_OPS | _SIDD_CMP_EQUAL_ANY | \
                            _SIDD_UNIT_MASK)
 
-inline uint64_t Vect16::first_diff(const Vect16 &b, size_t bound) const {
-  return unsigned(_mm_cmpestri(v, bound, b.v, bound, FIRST_DIFF));
-}
-inline uint64_t Vect16::last_diff(const Vect16 &b, size_t bound) const {
-  return unsigned(_mm_cmpestri(v, bound, b.v, bound, LAST_DIFF));
-}
-inline bool Vect16::operator==(const Vect16 &b) const {
-  return _mm_movemask_epi8(_mm_cmpeq_epi8(v, b.v)) == 0xffff;
-  // return first_diff(b) == Size();
-}
-inline bool Vect16::operator!=(const Vect16 &b) const {
-  return _mm_movemask_epi8(_mm_cmpeq_epi8(v, b.v)) != 0xffff;
-  // return first_diff(b) != Size();
-}
-inline bool Vect16::operator<(const Vect16 &b) const {
-  uint64_t diff = first_diff(b);
-  return (diff < Size()) && v[diff] < b[diff];
-}
-inline char Vect16::less_partial(const Vect16 &b, int k) const {
-  uint64_t diff = first_diff(b, k);
-  return (diff == Size())
-             ? 0
-             : static_cast<char>(v[diff]) - static_cast<char>(b[diff]);
-}
-inline Vect16 Vect16::permuted(const Vect16 &other) const {
-  return _mm_shuffle_epi8(v, other);
+inline bool is_partial_transformation(epu8 v, const size_t k) {
+    uint64_t diff = last_diff(v, epu8id, 16);
+    return
+        (_mm_movemask_epi8(v+Epu8(1) <= Epu8(0x10)) == 0xffff) &&
+        (diff == 16 || diff < k);
 }
 
-inline uint8_t Vect16::sum_ref() const {
-  uint8_t res = 0;
-  for (size_t i = 0; i < Size(); i++)
-    res += v[i];
-  return res;
+inline bool is_transformation(epu8 v, const size_t k) {
+    uint64_t diff = last_diff(v, epu8id, 16);
+    return
+        (_mm_movemask_epi8(v < Epu8(0x10)) == 0xffff) &&
+        (diff == 16 || diff < k);
 }
 
-inline uint8_t Vect16::sum4() const { return partial_sums_round()[15]; }
-
-inline uint8_t Vect16::sum3() const {
-  auto sr = summing_rounds();
-  Vect16 res = *this;
-  res.v += res.permuted(sr[0]).v;
-  res.v += res.permuted(sr[1]).v;
-  res.v += res.permuted(sr[2]).v;
-  return res.v[7] + res.v[15];
-}
-
-inline Vect16 Vect16::partial_sums_ref() const {
-  Vect16 res{};
-  res[0] = v[0];
-  for (size_t i = 1; i < Size(); i++)
-    res[i] = res[i - 1] + v[i];
-  return res;
-}
-inline Vect16 Vect16::partial_sums_round() const {
-  Vect16 res = *this;
-  for (Vect16 round : summing_rounds())
-    res.v += res.permuted(round).v;
-  return res;
-}
-
-inline Vect16 Vect16::eval16_ref() const {
-  Vect16 res;
-  for (size_t i = 0; i < Size(); i++)
-    if (v[i] < Size())
-      res[v[i]]++;
-  return res;
-}
-
-inline Vect16 Vect16::eval16_vect() const {
-  Vect16 res, vp = v;
-  res.v = -(Perm16::one().v == vp.v);
-  for (int i = 1; i < 16; i++) {
-    vp = vp.permuted(Perm16::left_cycle());
-    res.v -= (Perm16::one().v == vp.v);
-  }
-  return res;
-}
-
-template <char IDX_MODE> inline uint64_t Vect16::search_index(int bound) const {
-  return unsigned(_mm_cmpestri(epu8{}, 1, v, bound, IDX_MODE));
-}
-
-inline uint64_t Vect16::last_non_zero(int bnd) const {
-  return search_index<LAST_NON_ZERO>(bnd);
-}
-inline uint64_t Vect16::first_non_zero(int bnd) const {
-  return search_index<FIRST_NON_ZERO>(bnd);
-}
-inline uint64_t Vect16::last_zero(int bnd) const {
-  return search_index<LAST_ZERO>(bnd);
-}
-inline uint64_t Vect16::first_zero(int bnd) const {
-  return search_index<FIRST_ZERO>(bnd);
-}
-
-
-inline bool Vect16::is_partial_transformation(const size_t k) const {
-  uint64_t diff = last_diff(Perm16::one(), Size());
-  return
-    (_mm_movemask_epi8(v+cst_epu8_0x01 <= cst_epu8_0x10) == 0xffff) &&
-    (diff == Size() || diff < k);
-}
-
-inline bool Vect16::is_transformation(const size_t k) const {
-  uint64_t diff = last_diff(Perm16::one(), Size());
-  return
-    (_mm_movemask_epi8(v < cst_epu8_0x10) == 0xffff) &&
-    (diff == Size() || diff < k);
-}
-
-inline bool Vect16::is_permutation(const size_t k) const {
-  uint64_t diff = last_diff(Perm16::one(), Size());
-  // (forall x in v, x in Perm16::one())  and
-  // (forall x in Perm16::one(), x in v)  and
-  // (v = Perm16::one()   or  last diff index < Size())
-  return _mm_cmpestri(Perm16::one(), Size(), v, Size(), FIRST_NON_ZERO) == Size() &&
-         _mm_cmpestri(v, Size(), Perm16::one(), Size(), FIRST_NON_ZERO) == Size() &&
-         (diff == Size() || diff < k);
-}
-
-template<size_t sz>
-inline Vect16 sortedVect16(Vect16 res, std::array<Perm16, sz> rounds) {
-  for (auto round : rounds) {
-    Vect16 b = res.permuted(round);
-
-    Vect16 mask = _mm_cmplt_epi8(round, Perm16::one());
-    Vect16 minab = _mm_min_epu8(res, b);  // unsigned comparison
-    Vect16 maxab = _mm_max_epu8(res, b);  // unsigned comparison
-
-    res = _mm_blendv_epi8(minab, maxab, mask);
-  }
-  return res;
-}
-
-template<size_t sz>
-inline Vect16 revsortedVect16(Vect16 res, std::array<Perm16, sz> rounds) {
-  for (auto round : rounds) {
-    Vect16 b = res.permuted(round);
-
-    Vect16 mask = _mm_cmplt_epi8(round, Perm16::one());
-    Vect16 minab = _mm_min_epu8(res, b);  // unsigned comparison
-    Vect16 maxab = _mm_max_epu8(res, b);  // unsigned comparison
-
-    res = _mm_blendv_epi8(maxab, minab, mask);
-  }
-  return res;
-}
-
-inline Vect16 Vect16::sorted() const {
-  return sortedVect16(*this, sorting_rounds());
-}
-inline Vect16 Vect16::sorted8() const {
-  return sortedVect16(*this, sorting_rounds8());
-};
-inline Vect16 Vect16::revsorted() const {
-  return revsortedVect16(*this, sorting_rounds());
-}
-inline Vect16 Vect16::revsorted8() const {
-  return revsortedVect16(*this, sorting_rounds8());
-};
-
-inline bool Vect16::is_sorted() const {
-  return _mm_movemask_epi8(v > permuted(Perm16::right_shift()).v) == 0;
-}
-
-inline Vect16 Vect16::remove_dups() const {
-  // Ternary operator is not supported by clang.
-  // return (v != permuted(Perm16::right_shift_ff()).v) ? v : cst_epu8_0x00;
-  return _mm_blendv_epi8(cst_epu8_0x00, v, v != permuted(Perm16::right_shift_ff()).v);
+inline bool is_permutation(epu8 v, const size_t k) {
+    uint64_t diff = last_diff(v, epu8id, 16);
+    // (forall x in v, x in Perm16::one())  and
+    // (forall x in Perm16::one(), x in v)  and
+    // (v = Perm16::one()   or  last diff index < 16)
+    return
+        _mm_cmpestri(Perm16::one(), 16, v, 16, FIRST_NON_ZERO) == 16 &&
+        _mm_cmpestri(v, 16, Perm16::one(), 16, FIRST_NON_ZERO) == 16 &&
+        (diff == 16 || diff < k);
 }
 
 inline PTransf16::PTransf16(std::initializer_list<uint8_t> il) {
-  assert(il.size() <= Size());
-  std::copy(il.begin(), il.end(), begin());
-  for (size_t i = il.size(); i < Size(); ++i)
-    v[i] = i;
+    assert(il.size() <= 16);
+    std::copy(il.begin(), il.end(), as_array(v).begin());
+    for (size_t i = il.size(); i < 16; ++i)
+        v[i] = i;
 }
 
 inline uint32_t PTransf16::image() const {
@@ -252,26 +73,27 @@ inline uint32_t PTransf16::image() const {
 
 static HPCOMBI_CONSTEXPR
 uint8_t hilo_exchng_fun(uint8_t i) { return i < 8 ? i + 8 : i - 8; }
-static HPCOMBI_CONSTEXPR epu8 hilo_exchng = make_epu8(hilo_exchng_fun);
+static HPCOMBI_CONSTEXPR epu8 hilo_exchng = Epu8(hilo_exchng_fun);
 static HPCOMBI_CONSTEXPR
 uint8_t hilo_mask_fun(uint8_t i) { return i < 8 ? 0x0 : 0xFF; }
-static HPCOMBI_CONSTEXPR epu8 hilo_mask = make_epu8(hilo_mask_fun);
+static HPCOMBI_CONSTEXPR epu8 hilo_mask = Epu8(hilo_mask_fun);
 
 inline Transf16::Transf16(uint64_t compressed) {
   epu8 res = _mm_set_epi64x(compressed, compressed);
-  v = _mm_blendv_epi8(res & cst_epu8_0x0F, res >> 4, hilo_mask);
+  v = _mm_blendv_epi8(res & Epu8(0x0F), res >> 4, hilo_mask);
 }
 
 inline Transf16::operator uint64_t() const {
-  Vect16 res = static_cast<epu8>(_mm_slli_epi32(v, 4));
-  res = res.permuted(hilo_exchng).v + v;
+  epu8 res = static_cast<epu8>(_mm_slli_epi32(v, 4));
+  res = permuted(res, hilo_exchng) + v;
   return _mm_extract_epi64(res, 0);
 }
 
 
 inline Perm16 Perm16::random() {
   Perm16 res = one();
-  std::random_shuffle(res.begin(), res.end());
+  auto ar = as_array(res);
+  std::random_shuffle(ar.begin(), ar.end());
   return res;
 }
 
@@ -279,7 +101,7 @@ inline Perm16 Perm16::random() {
 Perm16 Perm16::unrankSJT(int n, int r) {
   int j;
   std::array<int, 16> dir;
-  Perm16 res{};
+  epu8 res{};
   for (j = 0; j < n; ++j)
     res[j] = 0xFF;
   for (j = n - 1; j >= 0; --j) {
@@ -305,46 +127,57 @@ Perm16 Perm16::unrankSJT(int n, int r) {
 }
 
 inline Perm16 Perm16::elementary_transposition(uint64_t i) {
-  assert(i < vect::Size());
-  Perm16 res = one();
+  assert(i < vect::16);
+  epu8 res = one();
   res[i] = i + 1;
   res[i + 1] = i;
   return res;
 }
 
 inline Perm16 Perm16::inverse_ref() const {
-  Vect16 res;
-  for (size_t i = 0; i < Size(); ++i)
-    res.v[v[i]] = i;
+  epu8 res;
+  for (size_t i = 0; i < 16; ++i)
+    res[v[i]] = i;
   return res;
 }
 
 inline Perm16 Perm16::inverse_arr() const {
-  Vect16 res;
-  auto &arres = res.as_array();
-  auto self = as_array();
-  for (size_t i = 0; i < Size(); ++i)
+  epu8 res;
+  auto &arres = as_array(res);
+  auto self = as_array(v);
+  for (size_t i = 0; i < 16; ++i)
     arres[self[i]] = i;
   return res;
 }
 
 inline Perm16 Perm16::inverse_sort() const {
   // G++-7 compile this shift by 3 additions.
-  // Vect16 res = (v << 4) + one().v;
+  // epu8 res = (v << 4) + one().v;
   // I call directly the shift intrinsic
-  Vect16 res = static_cast<epu8>(_mm_slli_epi32(v, 4)) + one().v;
-  res = res.sorted().v & cst_epu8_0x0F;
+  epu8 res = static_cast<epu8>(_mm_slli_epi32(v, 4)) + one().v;
+  res = sorted(res) & Epu8(0x0F);
+  return res;
+}
+
+// Gather at the front numbers with (3-i)-th bit not set.
+const std::array<Perm16, 3> Perm16::inverting_rounds() {
+  static std::array<Perm16, 3> res {{
+    //     0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15
+    epu8 { 0,  1,  2,  3,  8,  9, 10, 11,  4,  5,  6,  7, 12, 13, 14, 15},
+    epu8 { 0,  1,  4,  5,  8,  9, 12, 13,  2,  3,  6,  7, 10, 11, 14, 15},
+    epu8 { 0,  2,  4,  6,  8, 10, 12, 14,  1,  3,  5,  7,  9, 11, 13, 15}
+  }};
   return res;
 }
 
 inline Perm16 Perm16::inverse_find() const {
   Perm16 s = *this;
-  Vect16 res;
-  res.v = -static_cast<epu8>(_mm_cmpestrm(s.v, 8, one(), 16, FIND_IN_PERM));
+  epu8 res;
+  res = -static_cast<epu8>(_mm_cmpestrm(s.v, 8, one(), 16, FIND_IN_PERM));
   for (Perm16 round : inverting_rounds()) {
     s = s * round;
-    res.v <<= 1;
-    res.v -= static_cast<epu8>(_mm_cmpestrm(s.v, 8, one(), 16, FIND_IN_PERM));
+    res <<= 1;
+    res -= static_cast<epu8>(_mm_cmpestrm(s.v, 8, one(), 16, FIND_IN_PERM));
   }
   return res;
 }
@@ -387,145 +220,74 @@ inline Perm16 Perm16::inverse_pow() const {
   return pow<lcm_range(16) - 1>(*this);
 }
 
-inline Vect16 Perm16::lehmer_ref() const {
-  Vect16 res;
-  for (size_t i = 0; i < Size(); i++)
-    for (size_t j = i + 1; j < Size(); j++)
+inline epu8 Perm16::lehmer_ref() const {
+  epu8 res;
+  for (size_t i = 0; i < 16; i++)
+    for (size_t j = i + 1; j < 16; j++)
       if (v[i] > v[j])
         res[i]++;
   return res;
 }
 
-inline Vect16 Perm16::lehmer() const {
-  Vect16 vsh = *this, res = -one().v;
+inline epu8 Perm16::lehmer() const {
+  epu8 vsh = *this, res = -one().v;
   for (int i = 1; i < 16; i++) {
-    vsh = vsh.permuted(left_shift_ff());
-    res.v -= (v >= vsh.v);
+      vsh = shifted_left(vsh);
+      res -= (v >= vsh);
   }
   return res;
 }
 
 inline uint8_t Perm16::length_ref() const {
-  uint8_t res = 0;
-  for (size_t i = 0; i < Size(); i++)
-    for (size_t j = i + 1; j < Size(); j++)
-      if (v[i] > v[j])
-        res++;
+    uint8_t res = 0;
+    for (size_t i = 0; i < 16; i++)
+        for (size_t j = i + 1; j < 16; j++)
+            if (v[i] > v[j])
+                res++;
   return res;
 }
-inline uint8_t Perm16::length() const { return lehmer().sum(); }
+inline uint8_t Perm16::length() const { return horiz_sum(lehmer()); }
 
 inline uint8_t Perm16::nb_descent_ref() const {
-  uint8_t res = 0;
-  for (size_t i = 0; i < Size() - 1; i++)
-    if (v[i] > v[i + 1]) res++;
-  return res;
+    uint8_t res = 0;
+    for (size_t i = 0; i < 16 - 1; i++)
+        if (v[i] > v[i + 1]) res++;
+    return res;
 }
 inline uint8_t Perm16::nb_descent() const {
-  return _mm_popcnt_u32(_mm_movemask_epi8(v > permuted(left_shift()).v));
+    return _mm_popcnt_u32(_mm_movemask_epi8(v > shifted_left(v)));
 }
 
 inline uint8_t Perm16::nb_cycles_ref() const {
-  std::array<bool, Size()> b{};
-  uint8_t c = 0;
-  for (size_t i = 0; i < Size(); i++) {
-    if (not b[i]) {
-      for (size_t j = i; not b[j]; j = v[j])
-        b[j] = true;
-      c++;
+    std::array<bool, 16> b{};
+    uint8_t c = 0;
+    for (size_t i = 0; i < 16; i++) {
+        if (not b[i]) {
+            for (size_t j = i; not b[j]; j = v[j])
+                b[j] = true;
+            c++;
+        }
     }
-  }
-  return c;
+    return c;
 }
 
-inline Vect16 Perm16::cycles_mask_unroll() const {
-  Vect16 x0, x1 = one();
+inline epu8 Perm16::cycles_mask_unroll() const {
+  epu8 x0, x1 = one();
   Perm16 p = *this;
-  x0 = _mm_min_epi8(x1, x1.permuted(p));
+  x0 = _mm_min_epi8(x1, permuted(x1, p));
   p = p * p;
-  x1 = _mm_min_epi8(x0, x0.permuted(p));
+  x1 = _mm_min_epi8(x0, permuted(x0, p));
   p = p * p;
-  x0 = _mm_min_epi8(x1, x1.permuted(p));
+  x0 = _mm_min_epi8(x1, permuted(x1, p));
   p = p * p;
-  x1 = _mm_min_epi8(x0, x0.permuted(p));
+  x1 = _mm_min_epi8(x0, permuted(x0, p));
   return x1;
 }
 
 inline uint8_t Perm16::nb_cycles_unroll() const {
-  Vect16 res = one().v == cycles_mask_unroll().v;
-  return _mm_popcnt_u32(_mm_movemask_epi8(res));
+    epu8 res = (epu8id == cycles_mask_unroll());
+    return _mm_popcnt_u32(_mm_movemask_epi8(res));
 }
 
-inline std::ostream &operator<<(std::ostream &stream, Vect16 const &term) {
-  stream << "[" << std::setw(2) << unsigned(term[0]);
-  for (unsigned i = 1; i < Vect16::Size(); ++i)
-    stream << "," << std::setw(2) << unsigned(term[i]);
-  stream << "]";
-  return stream;
-}
-
-// clang-format off
-
-// Sorting network Knuth AoCP3 Fig. 51 p 229.
-const std::array<Perm16, 9> Vect16::sorting_rounds() {
-    static std::array<Perm16, 9> res {{
-    //     0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15
-    epu8 { 1,  0,  3,  2,  5,  4,  7,  6,  9,  8, 11, 10, 13, 12, 15, 14},
-    epu8 { 2,  3,  0,  1,  6,  7,  4,  5, 10, 11,  8,  9, 14, 15, 12, 13},
-    epu8 { 4,  5,  6,  7,  0,  1,  2,  3, 12, 13, 14, 15,  8,  9, 10, 11},
-    epu8 { 8,  9, 10, 11, 12, 13, 14, 15,  0,  1,  2,  3,  4,  5,  6,  7},
-    epu8 { 0,  2,  1, 12,  8, 10,  9, 11,  4,  6,  5,  7,  3, 14, 13, 15},
-    epu8 { 0,  4,  8, 10,  1,  9, 12, 13,  2,  5,  3, 14,  6,  7, 11, 15},
-    epu8 { 0,  1,  4,  5,  2,  3,  8,  9,  6,  7, 12, 13, 10, 11, 14, 15},
-    epu8 { 0,  1,  2,  6,  4,  8,  3, 10,  5, 12,  7, 11,  9, 13, 14, 15},
-    epu8 { 0,  1,  2,  4,  3,  6,  5,  8,  7, 10,  9, 12, 11, 13, 14, 15}
-  }};
-  return res;
-}
-// Batcher odd–even mergesort (ref: wikipedia)
-const std::array<Perm16, 6> Vect16::sorting_rounds8() {
-    static std::array<Perm16, 6> res {{
-    //     0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15
-    epu8 { 1,  0,  3,  2,  5,  4,  7,  6,  9,  8, 11, 10, 13, 12, 15, 14},
-    epu8 { 2,  3,  0,  1,  6,  7,  4,  5, 10, 11,  8,  9, 14, 15, 12, 13},
-    epu8 { 0,  2,  1,  3,  4,  6,  5,  7,  8, 10,  9, 11, 12, 14, 13, 15},
-    epu8 { 4,  5,  6,  7,  0,  1,  2,  3, 12, 13, 14, 15,  8,  9, 10, 11},
-    epu8 { 0,  1,  4,  5,  2,  3,  6,  7,  8,  9, 12, 13, 10, 11, 14, 15},
-    epu8 { 0,  2,  1,  4,  3,  6,  5,  7,  8, 10,  9, 12, 11, 14, 13, 15},
-  }};
-  return res;
-}
-
-// Gather at the front numbers with (3-i)-th bit not set.
-const std::array<Perm16, 3> Perm16::inverting_rounds() {
-  static std::array<Perm16, 3> res {{
-    //     0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15
-    epu8 { 0,  1,  2,  3,  8,  9, 10, 11,  4,  5,  6,  7, 12, 13, 14, 15},
-    epu8 { 0,  1,  4,  5,  8,  9, 12, 13,  2,  3,  6,  7, 10, 11, 14, 15},
-    epu8 { 0,  2,  4,  6,  8, 10, 12, 14,  1,  3,  5,  7,  9, 11, 13, 15}
-  }};
-  return res;
-}
-
-
-#if defined(FF)
-#error FF is defined !
-#endif /* FF */
-#define FF 0xff
-
-const std::array<epu8, 4> Vect16::summing_rounds() {
-  static std::array<epu8, 4> res {{
-    //      0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15
-    epu8 { FF,  0, FF,  2, FF,  4, FF,  6, FF,  8, FF, 10, FF, 12, FF, 14},
-    epu8 { FF, FF,  1,  1, FF, FF,  5,  5, FF, FF,  9,  9, FF, FF, 13, 13},
-    epu8 { FF, FF, FF, FF,  3,  3,  3,  3, FF, FF, FF, FF, 11, 11, 11, 11},
-    epu8 { FF, FF, FF, FF, FF, FF, FF, FF,  7,  7,  7,  7,  7,  7,  7,  7}
-  }};
-  return res;
-}
-
-#undef FF
-
-// clang-format on
 
 }  // namespace HPCombi

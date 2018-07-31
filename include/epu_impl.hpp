@@ -307,5 +307,17 @@ template <> struct hash<HPCombi::epu8> {
     }
 };
 
+
+template <> struct less<HPCombi::epu8> {
+  // WARNING: due to endianess this is not lexicographic comparison,
+  //          but we don't care when using in std::set.
+  // 10% faster than calling the lexicographic comparison operator !
+    inline size_t operator()(const HPCombi::epu8 &v1,
+                             const HPCombi::epu8 &v2) const {
+        __m128 v1v = __m128(v1), v2v = __m128(v2);
+        return v1v[0] == v2v[0] ? v1v[1] < v2v[1] : v1v[0] < v2v[0];
+    }
+};
+
 }  // namespace std
 

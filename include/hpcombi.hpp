@@ -16,6 +16,7 @@
 #ifndef HPCOMBI_HPCOMBI_HPP_INCLUDED
 #define HPCOMBI_HPCOMBI_HPP_INCLUDED
 
+#include "epu.hpp"
 #include "perm16.hpp"
 
 #endif  // HPCOMBI_HPCOMBI_HPP_INCLUDED
