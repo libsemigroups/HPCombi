@@ -3,6 +3,7 @@
 //~ #include "perm_generic.hpp"
 #include "bench_fixture.hpp"
 #include "iostream"
+#include "vect_generic.hpp"
 
 #include <string.h>
 #include <stdlib.h>
@@ -85,6 +86,18 @@ inline epu8 std_sort(epu8 &p) {
     return p;
 }
 
+inline epu8 arr_sort(epu8 &p) {
+    auto &ar = HPCombi::as_array(p);
+    return HPCombi::from_array(HPCombi::sorted_vect(ar));
+}
+
+inline epu8 gen_sort(epu8 p) {
+    HPCombi::VectGeneric<16> &ar =
+        reinterpret_cast<HPCombi::VectGeneric<16>&>(HPCombi::as_array(p));
+    ar.sort();
+    return p;
+}
+
 
 template<typename TF, typename Sample>
 void myBench(const char* name, TF pfunc, const char* label, Sample &sample) {
@@ -101,9 +114,10 @@ void myBench(const char* name, TF pfunc, const char* label, Sample &sample) {
 
 static const epu8 bla = {0, 2, 1, 4, 3, 6, 5, 8, 7, 10, 9, 12, 11, 14, 13, 15};
 
-#define MYBENCH(nm, fun, lbl, smp) myBench(nm, [](epu8 p) {return fun(p);}, lbl, smp)
+#define MYBENCH(nm, fun, lbl, smp)  \
+    myBench(nm, [](epu8 p) { return fun(p); }, lbl, smp)
 #define MYBENCH2(nm, fun, lbl, smp) \
-    myBench(nm, [](epu8 p) { return fun(p,bla);}, lbl, smp)
+    myBench(nm, [](epu8 p) { return fun(p,bla); }, lbl, smp)
 
 //##################################################################################
 int Bench_sort() {
@@ -112,6 +126,8 @@ int Bench_sort() {
     myBench("sort_ref", std_sort, "std3", bench_data.sample);
 
     myBench("sort_alt", std_sort, "std", bench_data.sample);
+    myBench("sort_alt", arr_sort, "arr", bench_data.sample);
+    myBench("sort_alt", gen_sort, "gen", bench_data.sample);
     myBench("sort_alt", insertion_sort, "insert", bench_data.sample);
     myBench("sort_alt", sort_odd_even, "odd_even", bench_data.sample);
     myBench("sort_alt", radix_sort, "radix", bench_data.sample);
@@ -120,6 +136,8 @@ int Bench_sort() {
 
     // lambda function is needed for inlining
     MYBENCH("sort_lmbd", std_sort, "std", bench_data.sample);
+    MYBENCH("sort_lmbd", arr_sort, "arr", bench_data.sample);
+    MYBENCH("sort_lmbd", gen_sort, "gen", bench_data.sample);
     MYBENCH("sort_lmbd", insertion_sort, "insert", bench_data.sample);
     MYBENCH("sort_lmbd", sort_odd_even, "odd_even", bench_data.sample);
     MYBENCH("sort_lmbd", radix_sort, "radix", bench_data.sample);
@@ -135,10 +153,12 @@ int Bench_hsum() {
     myBench("hsum_ref", HPCombi::horiz_sum_ref, "ref3", bench_data.sample);
 
     myBench("hsum_alt", HPCombi::horiz_sum_ref, "ref", bench_data.sample);
+    myBench("hsum_alt", HPCombi::horiz_sum_arr, "arr", bench_data.sample);
     myBench("hsum_alt", HPCombi::horiz_sum4, "sum4", bench_data.sample);
     myBench("hsum_alt", HPCombi::horiz_sum3, "sum3", bench_data.sample);
 
     MYBENCH("hsum_lmbd", HPCombi::horiz_sum_ref, "ref", bench_data.sample);
+    MYBENCH("hsum_lmbd", HPCombi::horiz_sum_arr, "arr", bench_data.sample);
     MYBENCH("hsum_lmbd", HPCombi::horiz_sum4, "sum4", bench_data.sample);
     MYBENCH("hsum_lmbd", HPCombi::horiz_sum3, "sum3", bench_data.sample);
     return 0;

@@ -20,6 +20,8 @@
 #include <initializer_list>
 #include <random>
 
+#include "vect_generic.hpp"
+
 // Comparison mode for _mm_cmpestri
 #define FIRST_DIFF                                                             \
     (_SIDD_UBYTE_OPS | _SIDD_CMP_EQUAL_EACH | _SIDD_NEGATIVE_POLARITY)
@@ -36,18 +38,6 @@
      _SIDD_MOST_SIGNIFICANT)
 
 namespace HPCombi {
-
-template <class TPU>
-inline TPU TPUBuild<TPU>::operator()(std::initializer_list<type_elem> il,
-                                     type_elem def) const {
-    TPU res;
-    assert(il.size() <= size);
-    std::copy(il.begin(), il.end(), as_array(res).begin());
-    for (size_t i = il.size(); i < size; ++i)
-        res[i] = def;
-    return res;
-}
-
 
 /*****************************************************************************/
 /** Implementation part for inline functions *********************************/
@@ -205,6 +195,10 @@ inline uint8_t horiz_sum_ref(epu8 v) {
     uint8_t res = 0;
     for (size_t i = 0; i < 16; i++) res += v[i];
     return res;
+}
+
+inline uint8_t horiz_sum_arr(epu8 v) {
+    return horiz_sum(as_array(v));
 }
 
 inline uint8_t horiz_sum4(epu8 v) {

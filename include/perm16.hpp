@@ -70,6 +70,7 @@ struct PTransf16 {
 
     bool operator==(const PTransf16 &x) const { return equal(v, x.v); }
     bool operator!=(const PTransf16 &x) const { return not_equal(v, x.v); }
+    uint8_t operator[](size_t i) const { return v[i]; }
 
     uint32_t image() const;
 };
@@ -228,21 +229,21 @@ static_assert(std::is_trivial<Perm16>(), "Perm16 is not a trivial class !");
 namespace std {
 
 template <> struct hash<HPCombi::PTransf16> {
-  inline size_t operator()(const HPCombi::PTransf16 &ar) const {
-    return hash()(ar.v);
-  }
+    inline size_t operator()(const HPCombi::PTransf16 &ar) const {
+        return std::hash<HPCombi::epu8>{}(ar.v);
+    }
 };
 
 template <> struct hash<HPCombi::Transf16> {
-  inline size_t operator()(const HPCombi::Transf16 &ar) const {
-    return uint64_t(ar);
-  }
+    inline size_t operator()(const HPCombi::Transf16 &ar) const {
+        return uint64_t(ar);
+    }
 };
 
 template <> struct hash<HPCombi::Perm16> {
-  inline size_t operator()(const HPCombi::Perm16 &ar) const {
-    return uint64_t(ar);
-  }
+    inline size_t operator()(const HPCombi::Perm16 &ar) const {
+        return uint64_t(ar);
+    }
 };
 
 }  // namespace std

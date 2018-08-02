@@ -76,7 +76,14 @@ template <class TPU> struct TPUBuild {
     template <class Fun, std::size_t... Is> static HPCOMBI_CONSTEXPR
     TPU make_helper(Fun f, std::index_sequence<Is...>) { return TPU{f(Is)...}; }
 
-    inline TPU operator()(std::initializer_list<type_elem>, type_elem) const;
+    inline TPU operator()(const std::initializer_list<type_elem> il,
+                          type_elem def) const {
+        assert(il.size() <= size);
+        array res;
+        std::copy(il.begin(), il.end(), res.begin());
+        std::fill(res.begin() + il.size(), res.end(), def);
+        return reinterpret_cast<const TPU &>(res);
+    }
 
     template <class Fun>
     inline HPCOMBI_CONSTEXPR TPU operator()(Fun f) const {
