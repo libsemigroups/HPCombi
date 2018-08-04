@@ -32,6 +32,8 @@
 #include "seq.hpp"
 #endif
 
+#include "vect_generic.hpp"
+
 #ifdef HPCOMBI_CONSTEXPR_FUN_ARGS
 #define HPCOMBI_CONSTEXPR constexpr
 #define HPCOMBI_CONSTEXPR_CONSTRUCTOR constexpr
@@ -167,6 +169,21 @@ inline epu8 from_array(TPUBuild<epu8>::array a) {
     return reinterpret_cast<const epu8 &>(a);
 }
 
+/** Cast a #HPCombi::epu8 to a c++ #HPCombi::VectGeneric
+ *
+ *  This is usually faster for algorithm using a lot of indexed acces.
+ */
+inline VectGeneric<16>& as_VectGeneric(epu8 &v) {
+    return reinterpret_cast<VectGeneric<16>&>(as_array(v));
+}
+
+/** Cast a #HPCombi::epu8 to a c++ #HPCombi::VectGeneric
+ *
+ *  This is usually faster for algorithm using a lot of indexed acces.
+ */
+inline const VectGeneric<16>& as_VectGeneric(const epu8 &v) {
+    return reinterpret_cast<const VectGeneric<16>&>(as_array(v));
+}
 
 /** Test whether all the entries of a #HPCombi::epu8 are zero */
 inline bool is_all_zero(epu8 a) { return _mm_testz_si128(a, a); }
@@ -256,6 +273,12 @@ inline epu8 remove_dups(epu8 a, uint8_t repl=0);
 inline uint8_t horiz_sum_ref(epu8);
 /** @copydoc common_horiz_sum
  *  @par Algorithm:
+ *  Reference @f$O(n)@f$ algorithm using loop and indexed access
+ *  through #HPCombi::VectGeneric
+ */
+inline uint8_t horiz_sum_gen(epu8);
+/** @copydoc common_horiz_sum
+ *  @par Algorithm:
  *  4-stages paralell algorithm
  */
 inline uint8_t horiz_sum4(epu8);
@@ -282,7 +305,13 @@ inline uint8_t horiz_sum(epu8 v) { return horiz_sum3(v); }
  *  @par Algorithm:
  *  Reference @f$O(n)@f$ algorithm using loop and indexed access
  */
-inline epu8 partial_sums_ref(epu8);
+inline epu8 partial_sums_gen(epu8);
+/** @copydoc common_partial_sums
+ *  @par Algorithm:
+ *  Reference @f$O(n)@f$ algorithm using loop and indexed access
+ *  through #HPCombi::VectGeneric
+ */
+inline epu8 partial_sums_round(epu8);
 /** @copydoc common_partial_sums
  *  @par Algorithm:
  *  4-stages paralell algorithm

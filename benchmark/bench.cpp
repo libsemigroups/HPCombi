@@ -92,9 +92,7 @@ inline epu8 arr_sort(epu8 &p) {
 }
 
 inline epu8 gen_sort(epu8 p) {
-    HPCombi::VectGeneric<16> &ar =
-        reinterpret_cast<HPCombi::VectGeneric<16>&>(HPCombi::as_array(p));
-    ar.sort();
+    HPCombi::as_VectGeneric(p).sort();
     return p;
 }
 
@@ -153,12 +151,12 @@ int Bench_hsum() {
     myBench("hsum_ref", HPCombi::horiz_sum_ref, "ref3", bench_data.sample);
 
     myBench("hsum_alt", HPCombi::horiz_sum_ref, "ref", bench_data.sample);
-    myBench("hsum_alt", HPCombi::horiz_sum_arr, "arr", bench_data.sample);
+    myBench("hsum_alt", HPCombi::horiz_sum_gen, "gen", bench_data.sample);
     myBench("hsum_alt", HPCombi::horiz_sum4, "sum4", bench_data.sample);
     myBench("hsum_alt", HPCombi::horiz_sum3, "sum3", bench_data.sample);
 
     MYBENCH("hsum_lmbd", HPCombi::horiz_sum_ref, "ref", bench_data.sample);
-    MYBENCH("hsum_lmbd", HPCombi::horiz_sum_arr, "arr", bench_data.sample);
+    MYBENCH("hsum_lmbd", HPCombi::horiz_sum_gen, "gen", bench_data.sample);
     MYBENCH("hsum_lmbd", HPCombi::horiz_sum4, "sum4", bench_data.sample);
     MYBENCH("hsum_lmbd", HPCombi::horiz_sum3, "sum3", bench_data.sample);
     return 0;
@@ -172,9 +170,11 @@ int Bench_psum() {
     myBench("psum_ref", HPCombi::partial_sums_ref, "ref3", bench_data.sample);
 
     myBench("psum_alt", HPCombi::partial_sums_ref, "ref", bench_data.sample);
+    myBench("psum_alt", HPCombi::partial_sums_gen, "gen", bench_data.sample);
     myBench("psum_alt", HPCombi::partial_sums_round, "rnd", bench_data.sample);
 
     MYBENCH("psum_lmbd", HPCombi::partial_sums_ref, "ref", bench_data.sample);
+    MYBENCH("psum_lmbd", HPCombi::partial_sums_gen, "gen", bench_data.sample);
     MYBENCH("psum_lmbd", HPCombi::partial_sums_round, "rnd", bench_data.sample);
     return 0;
 }
@@ -186,11 +186,13 @@ int Bench_eval() {
     myBench("eval_ref", HPCombi::eval16_ref, "ref3", bench_data.sample);
 
     myBench("eval_alt", HPCombi::eval16_ref, "ref", bench_data.sample);
+    myBench("eval_alt", HPCombi::eval16_gen, "gen", bench_data.sample);
     myBench("eval_alt", HPCombi::eval16_popcount, "popcnt", bench_data.sample);
     myBench("eval_alt", HPCombi::eval16_arr, "arr", bench_data.sample);
     myBench("eval_alt", HPCombi::eval16_cycle, "cycle", bench_data.sample);
 
     MYBENCH("eval_lmbd", HPCombi::eval16_ref, "ref", bench_data.sample);
+    MYBENCH("eval_lmbd", HPCombi::eval16_gen, "gen", bench_data.sample);
     MYBENCH("eval_lmbd", HPCombi::eval16_popcount, "popcnt", bench_data.sample);
     MYBENCH("eval_lmbd", HPCombi::eval16_arr, "arr", bench_data.sample);
     MYBENCH("eval_lmbd", HPCombi::eval16_cycle, "cycle", bench_data.sample);

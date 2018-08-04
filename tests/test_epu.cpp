@@ -27,6 +27,15 @@ using namespace HPCombi;
 #define EPU8_EQUAL(p1, p2)  BOOST_CHECK_PREDICATE(equal, (p1)(p2))
 #define EPU8_NOT_EQUAL(p1, p2)  BOOST_CHECK_PREDICATE(boost::not2(equal), (p1)(p2))
 
+#define TEST_AGREES(ref, fun) \
+    BOOST_FIXTURE_TEST_CASE(EPU8_agrees_##fun, Fix) { \
+        for (auto x : v)  BOOST_TEST(fun(x) == ref(x)); \
+    }
+#define TEST_EPU8_AGREES(ref, fun) \
+    BOOST_FIXTURE_TEST_CASE(EPU8_agrees_##fun, Fix) { \
+        for (auto x : v)  EPU8_EQUAL(fun(x), ref(x));        \
+    }
+
 
 struct Fix {
     Fix() : zero(Epu8({}, 0)), P01(Epu8({0, 1}, 0)),
@@ -54,10 +63,10 @@ struct Fix {
     const std::array<uint8_t, 16> av;
 };
 
-//****************************************************************************//
-BOOST_AUTO_TEST_SUITE(EPU8_test)
-//****************************************************************************//
 
+//****************************************************************************//
+BOOST_AUTO_TEST_SUITE(EPU8_compare)
+//****************************************************************************//
 BOOST_FIXTURE_TEST_CASE(EPU8_first_diff_ref, Fix) {
     BOOST_TEST(first_diff_ref(Pb, Pb) == 16);
     BOOST_TEST(first_diff_ref(zero, P01) == 1);
@@ -92,6 +101,7 @@ BOOST_FIXTURE_TEST_CASE(EPU8_first_diff_mask, Fix) {
         }
     }
 }
+
 BOOST_FIXTURE_TEST_CASE(EPU8_last_diff_ref, Fix) {
     BOOST_TEST(last_diff_ref(Pb, Pb) == 16);
     BOOST_TEST(last_diff_ref(zero, P01) == 1);
@@ -188,7 +198,14 @@ BOOST_FIXTURE_TEST_CASE(EPU8_less, Fix) {
             else
                 BOOST_CHECK_PREDICATE(boost::not2(less), (v[i])(v[j]));
 }
+//****************************************************************************//
+BOOST_AUTO_TEST_SUITE_END()
+//****************************************************************************//
 
+
+//****************************************************************************//
+BOOST_AUTO_TEST_SUITE(EPU8_permute)
+//****************************************************************************//
 BOOST_FIXTURE_TEST_CASE(EPU8_permuted, Fix) {
     EPU8_EQUAL(permuted(epu8{ 0, 1, 3, 2, 4, 5, 6, 7, 8, 9,10,11,12,13,14,15},
                         epu8{ 3, 2, 5, 1, 4, 0, 6, 7, 8, 9,10,11,12,13,14,15}),
@@ -219,8 +236,14 @@ BOOST_FIXTURE_TEST_CASE(EPU8_reverted, Fix) {
     EPU8_EQUAL(reverted(epu8id), epu8rev);
     for (auto x : v) EPU8_EQUAL(x, reverted(reverted(x)));
 }
+//****************************************************************************//
+BOOST_AUTO_TEST_SUITE_END()
+//****************************************************************************//
 
 
+//****************************************************************************//
+BOOST_AUTO_TEST_SUITE(EPU8_array)
+//****************************************************************************//
 BOOST_FIXTURE_TEST_CASE(EPU8_as_array, Fix) {
     epu8 x = Epu8({4, 2, 5, 1, 2, 7, 7, 3, 4, 2}, 1);
     auto & refx = as_array(x);
@@ -237,7 +260,14 @@ BOOST_FIXTURE_TEST_CASE(EPU8_from_array, Fix) {
     }
     EPU8_EQUAL(Pv, from_array(av));
 }
+//****************************************************************************//
+BOOST_AUTO_TEST_SUITE_END()
+//****************************************************************************//
 
+
+//****************************************************************************//
+BOOST_AUTO_TEST_SUITE(EPU8_sorting)
+//****************************************************************************//
 BOOST_FIXTURE_TEST_CASE(EPU8_is_sorted, Fix) {
     BOOST_TEST(is_sorted(epu8id));
     BOOST_TEST(is_sorted(epu8{ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9,10,11,12,13,14,15}));
@@ -291,7 +321,14 @@ BOOST_FIXTURE_TEST_CASE(EPU8_revsorted, Fix) {
         BOOST_TEST(is_sorted(reverted(revsorted(x))));
     } while (std::next_permutation(refx.begin(), refx.begin()+9));
 }
+//****************************************************************************//
+BOOST_AUTO_TEST_SUITE_END()
+//****************************************************************************//
 
+
+//****************************************************************************//
+BOOST_AUTO_TEST_SUITE(EPU8_remove_dups_sum)
+//****************************************************************************//
 BOOST_FIXTURE_TEST_CASE(EPU8_remove_dups, Fix) {
     EPU8_EQUAL(remove_dups(P1), P10);
     EPU8_EQUAL(remove_dups(P11), P10);
@@ -314,7 +351,14 @@ BOOST_FIXTURE_TEST_CASE(EPU8_remove_dups, Fix) {
         EPU8_EQUAL(x, sorted(remove_dups(x, 42)));
     }
 }
+//****************************************************************************//
+BOOST_AUTO_TEST_SUITE_END()
+//****************************************************************************//
 
+
+//****************************************************************************//
+BOOST_AUTO_TEST_SUITE(EPU8_horiz_sum)
+//****************************************************************************//
 BOOST_FIXTURE_TEST_CASE(EPU8_horiz_sum_ref, Fix) {
     BOOST_TEST(horiz_sum_ref(zero) == 0);
     BOOST_TEST(horiz_sum_ref(P01) == 1);
@@ -331,19 +375,18 @@ BOOST_FIXTURE_TEST_CASE(EPU8_horiz_sum_ref, Fix) {
     BOOST_TEST(horiz_sum_ref(epu8rev) == 120);
     BOOST_TEST(horiz_sum_ref(Pb) == 203);
 }
+TEST_AGREES(horiz_sum_ref, horiz_sum_gen)
+TEST_AGREES(horiz_sum_ref, horiz_sum4)
+TEST_AGREES(horiz_sum_ref, horiz_sum3)
+TEST_AGREES(horiz_sum_ref, horiz_sum)
+//****************************************************************************//
+BOOST_AUTO_TEST_SUITE_END()
+//****************************************************************************//
 
-BOOST_FIXTURE_TEST_CASE(EPU8_horiz_sum4, Fix) {
-    for (auto x : v)  BOOST_TEST(horiz_sum4(x) == horiz_sum_ref(x));
-}
 
-BOOST_FIXTURE_TEST_CASE(EPU8_horiz_sum3, Fix) {
-    for (auto x : v) BOOST_TEST(horiz_sum3(x) == horiz_sum_ref(x));
-}
-
-BOOST_FIXTURE_TEST_CASE(EPU8_horiz_sum, Fix) {
-    for (auto x : v) BOOST_TEST(horiz_sum(x) == horiz_sum_ref(x));
-}
-
+//****************************************************************************//
+BOOST_AUTO_TEST_SUITE(EPU8_partial_sums)
+//****************************************************************************//
 BOOST_FIXTURE_TEST_CASE(EPU8_partial_sums_ref, Fix) {
     EPU8_EQUAL(partial_sums_ref(zero), zero);
     EPU8_EQUAL(partial_sums_ref(P01), Epu8({0}, 1));
@@ -369,15 +412,23 @@ BOOST_FIXTURE_TEST_CASE(EPU8_partial_sums_ref, Fix) {
     EPU8_EQUAL(partial_sums_ref(Pb),
                (epu8{23,28,49,54,97,133,140,147,154,161,168,175,182,189,196,203}));
 }
-
+BOOST_FIXTURE_TEST_CASE(EPU8_partial_sum_gen, Fix) {
+    for (auto x : v) EPU8_EQUAL(partial_sums_gen(x), partial_sums_ref(x));
+}
 BOOST_FIXTURE_TEST_CASE(EPU8_partial_sum_round, Fix) {
     for (auto x : v) EPU8_EQUAL(partial_sums_round(x), partial_sums_ref(x));
 }
-
 BOOST_FIXTURE_TEST_CASE(EPU8_partial_sum, Fix) {
     for (auto x : v) EPU8_EQUAL(partial_sums_round(x), partial_sums_ref(x));
 }
+//****************************************************************************//
+BOOST_AUTO_TEST_SUITE_END()
+//****************************************************************************//
 
+
+//****************************************************************************//
+BOOST_AUTO_TEST_SUITE(EPU8_eval16)
+//****************************************************************************//
 BOOST_FIXTURE_TEST_CASE(EPU8_eval16_ref, Fix) {
     EPU8_EQUAL(eval16_ref(zero), Epu8({16}, 0));
     EPU8_EQUAL(eval16_ref(P01), Epu8({15, 1}, 0));
@@ -395,22 +446,11 @@ BOOST_FIXTURE_TEST_CASE(EPU8_eval16_ref, Fix) {
     EPU8_EQUAL(eval16_ref(epu8rev), Epu8({}, 1));
     EPU8_EQUAL(eval16_ref(Pb), Epu8({ 0, 0, 0, 0, 0, 2, 0,10}, 0));
 }
-
-BOOST_FIXTURE_TEST_CASE(EPU8_eval16_cycle, Fix) {
-    for (auto x : v) EPU8_EQUAL(eval16_cycle(x), eval16_ref(x));
-}
-
-BOOST_FIXTURE_TEST_CASE(EPU8_eval16_popcount, Fix) {
-    for (auto x : v) EPU8_EQUAL(eval16_popcount(x), eval16_ref(x));
-}
-
-BOOST_FIXTURE_TEST_CASE(EPU8_eval16_arr, Fix) {
-    for (auto x : v) EPU8_EQUAL(eval16_arr(x), eval16_ref(x));
-}
-
-BOOST_FIXTURE_TEST_CASE(EPU8_eval16, Fix) {
-    for (auto x : v) EPU8_EQUAL(eval16(x), eval16_ref(x));
-}
-
+TEST_EPU8_AGREES(eval16_ref, eval16_cycle)
+TEST_EPU8_AGREES(eval16_ref, eval16_popcount)
+TEST_EPU8_AGREES(eval16_ref, eval16_arr)
+TEST_EPU8_AGREES(eval16_ref, eval16_gen)
+TEST_EPU8_AGREES(eval16_ref, eval16)
+//****************************************************************************//
 BOOST_AUTO_TEST_SUITE_END()
 //****************************************************************************//

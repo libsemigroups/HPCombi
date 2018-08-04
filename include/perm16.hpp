@@ -55,7 +55,7 @@ inline bool is_partial_transformation(epu8 v, const size_t k = 16);
 /** Partial transformation of @f$\{0\dots 15\}@f$
  *
  */
-struct PTransf16 {
+struct alignas(16) PTransf16 {
     epu8 v;
 
     PTransf16() = default;

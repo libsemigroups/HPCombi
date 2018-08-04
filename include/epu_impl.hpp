@@ -191,20 +191,18 @@ constexpr std::array<epu8, 4> summing_rounds
 
 #undef FF
 
+
 inline uint8_t horiz_sum_ref(epu8 v) {
     uint8_t res = 0;
     for (size_t i = 0; i < 16; i++) res += v[i];
     return res;
 }
-
-inline uint8_t horiz_sum_arr(epu8 v) {
-    return horiz_sum(as_array(v));
+inline uint8_t horiz_sum_gen(epu8 v) {
+    return as_VectGeneric(v).horiz_sum();
 }
-
 inline uint8_t horiz_sum4(epu8 v) {
     return partial_sums_round(v)[15];
 }
-
 inline uint8_t horiz_sum3(epu8 v) {
     auto sr = summing_rounds;
     v += permuted(v, sr[0]);
@@ -213,12 +211,17 @@ inline uint8_t horiz_sum3(epu8 v) {
     return v[7] + v[15];
 }
 
+
 inline epu8 partial_sums_ref(epu8 v)  {
     epu8 res {};
     res[0] = v[0];
     for (size_t i = 1; i < 16; i++)
         res[i] = res[i - 1] + v[i];
     return res;
+}
+inline epu8 partial_sums_gen(epu8 v) {
+    as_VectGeneric(v).partial_sums_inplace();
+    return v;
 }
 inline epu8 partial_sums_round(epu8 v) {
     for (epu8 round : summing_rounds)
@@ -234,16 +237,16 @@ inline epu8 eval16_ref(epu8 v) {
             res[v[i]]++;
     return res;
 }
-
 inline epu8 eval16_arr(epu8 v8) {
     TPUBuild<epu8>::array res {};
     auto v = as_array(v8);
     for (size_t i = 0; i < 16; i++)
-        if (v[i] < 16)
-            res[v[i]]++;
+        if (v[i] < 16) res[v[i]]++;
     return from_array(res);
 }
-
+inline epu8 eval16_gen(epu8 v) {
+    return from_array(as_VectGeneric(v).eval().v);
+}
 inline epu8 eval16_cycle(epu8 v) {
     epu8 res = -(epu8id == v);
     for (int i = 1; i < 16; i++) {
@@ -252,7 +255,6 @@ inline epu8 eval16_cycle(epu8 v) {
     }
     return res;
 }
-
 inline epu8 eval16_popcount(epu8 v) {
     epu8 res {};
     for (size_t i = 0; i < 16; i++) {

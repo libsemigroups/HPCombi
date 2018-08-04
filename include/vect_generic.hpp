@@ -32,73 +32,6 @@ std::array<Expo, Size> sorted_vect(std::array<Expo, Size> v) {
     return v;
 }
 
-template <size_t Size, typename Expo = uint8_t>
-uint64_t horiz_sum(const std::array<Expo, Size> &v) {
-    Expo res = 0;
-    for (uint64_t i = 0; i < Size; i++) res += v[i];
-    return res;
-}
-
-template <size_t Size, typename Expo = uint8_t>
-const std::array<Expo, Size> partial_sums(std::array<Expo, Size> v) {
-    for (uint64_t i = 1; i < Size; i++) v[i] += v[i-1];
-    return v;
-}
-
-
-/*
-  
-template <size_t Size, typename Expo = uint8_t>
-  bool operator<(const std::array<Expo, Size> &u) const {
-    uint64_t diff = first_diff(u);
-    return (diff != Size) and v[diff] < u[diff];
-  }
-
-  char less_partial(const std::array<Expo, Size> &u, int k) const {
-    uint64_t diff = first_diff(u, k);
-    return (diff == Size) ? 0
-      : static_cast<char>(v[diff]) - static_cast<char>(u[diff]);
-  }
-
-
-  uint64_t first_non_zero(size_t bound = Size) const {
-    for (uint64_t i = 0; i < bound; i++)
-      if (v[i] != 0)
-        return i;
-    return Size;
-  }
-  uint64_t first_zero(size_t bound = Size) const {
-    for (uint64_t i = 0; i < bound; i++)
-      if (v[i] == 0)
-        return i;
-    return Size;
-  }
-  uint64_t last_non_zero(size_t bound = 16) const {
-    for (int64_t i = bound - 1; i >= 0; i--)
-      if (v[i] != 0)
-        return i;
-    return Size;
-  }
-  uint64_t last_zero(size_t bound = 16) const {
-    for (int64_t i = bound - 1; i >= 0; i--)
-      if (v[i] == 0)
-        return i;
-    return Size;
-  }
-
-  bool is_permutation(const size_t k = Size) const {
-    auto temp = v;
-    std::sort(temp.begin(), temp.end());
-    for (uint64_t i = 0; i < Size; i++)
-      if (temp[i] != i)
-        return false;
-    for (uint64_t i = k; i < Size; i++)
-      if (v[i] != i)
-        return false;
-    return true;
-  }
-};
-*/
 
 template <size_t Size, typename Expo>
 std::ostream &operator<<(std::ostream &stream,
@@ -111,6 +44,8 @@ std::ostream &operator<<(std::ostream &stream,
 }
 
 
+/** A generic class for combinatorial integer vectors.
+ */
 template <size_t _Size, typename Expo = uint8_t>
 struct VectGeneric {
 
@@ -222,6 +157,17 @@ struct VectGeneric {
     VectGeneric partial_sums() const {
         auto res = *this;
         for (uint64_t i = 1; i < Size; i++) res[i] += res[i-1];
+        return res;
+    }
+
+    void partial_sums_inplace() {
+        for (uint64_t i = 1; i < Size; i++) v[i] += v[i-1];
+    }
+
+    VectGeneric eval() {
+        VectGeneric res {};
+        for (size_t i = 0; i < Size; i++)
+            if (v[i] < Size) res[v[i]]++;
         return res;
     }
 
