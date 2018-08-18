@@ -42,23 +42,27 @@ struct Fix {
             P10(Epu8({1, 0}, 0)), P11(Epu8({1, 1}, 0)),
             P1(Epu8({}, 1)),
             P112(Epu8({1, 1}, 2)),
+            Pa(epu8{1, 2, 3, 4, 0, 5, 6, 7, 8, 9,10,11,12,13,14,15}),
+            Pb(epu8{1, 2, 3, 6, 0, 5, 4, 7, 8, 9,10,11,12,15,14,13}),
+            RT(epu8{ 3, 1, 0,14,15,13, 5,10, 2,11, 6,12, 7, 4, 8, 9}),
             Pa1(Epu8({4, 2, 5, 1, 2, 7, 7, 3, 4, 2}, 1)),
             Pa2(Epu8({4, 2, 5, 1, 2, 9, 7, 3, 4, 2}, 1)),
             P51(Epu8({5,1}, 6)),
             Pv(epu8{ 5, 5, 2, 5, 1, 6,12, 4, 0, 3, 2,11,12,13,14,15}),
             Pw(epu8{ 5, 5, 2, 9, 1, 6,12, 4, 0, 4, 4, 4,12,13,14,15}),
             P5(Epu8({}, 5)),
-            Pb(Epu8({23, 5, 21, 5, 43, 36}, 7)),
+            Pc(Epu8({23, 5, 21, 5, 43, 36}, 7)),
             // Elements should be sorted in alphabetic order here
-            v({zero, P01, epu8id, P10, P11, P1, P112, Pa1,
-               Pa2, P51, Pv, Pw, P5, epu8rev, Pb}),
+            v({zero, P01, epu8id, P10, P11, P1, P112, Pa, Pb, RT,
+               Pa1, Pa2, P51, Pv, Pw, P5, epu8rev, Pc}),
             av({ 5, 5, 2, 5, 1, 6,12, 4, 0, 3, 2,11,12,13,14,15})
         {
             BOOST_TEST_MESSAGE("setup fixture");
         }
     ~Fix() { BOOST_TEST_MESSAGE("teardown fixture"); }
 
-    const epu8 zero, P01, P10, P11, P1, P112, Pa1, Pa2, P51, Pv, Pw, P5, Pb;
+    const epu8 zero, P01, P10, P11, P1, P112, Pa, Pb, RT,
+        Pa1, Pa2, P51, Pv, Pw, P5, Pc;
     const std::vector<epu8> v;
     const std::array<uint8_t, 16> av;
 };
@@ -68,7 +72,7 @@ struct Fix {
 BOOST_AUTO_TEST_SUITE(EPU8_compare)
 //****************************************************************************//
 BOOST_FIXTURE_TEST_CASE(EPU8_first_diff_ref, Fix) {
-    BOOST_TEST(first_diff_ref(Pb, Pb) == 16);
+    BOOST_TEST(first_diff_ref(Pc, Pc) == 16);
     BOOST_TEST(first_diff_ref(zero, P01) == 1);
     BOOST_TEST(first_diff_ref(zero, P10) == 0);
     BOOST_TEST(first_diff_ref(zero, P01, 1) == 16);
@@ -103,7 +107,7 @@ BOOST_FIXTURE_TEST_CASE(EPU8_first_diff_mask, Fix) {
 }
 
 BOOST_FIXTURE_TEST_CASE(EPU8_last_diff_ref, Fix) {
-    BOOST_TEST(last_diff_ref(Pb, Pb) == 16);
+    BOOST_TEST(last_diff_ref(Pc, Pc) == 16);
     BOOST_TEST(last_diff_ref(zero, P01) == 1);
     BOOST_TEST(last_diff_ref(zero, P10) == 0);
     BOOST_TEST(last_diff_ref(zero, P01, 1) == 16);
@@ -373,7 +377,7 @@ BOOST_FIXTURE_TEST_CASE(EPU8_horiz_sum_ref, Fix) {
     BOOST_TEST(horiz_sum_ref(Pv) == 110);
     BOOST_TEST(horiz_sum_ref(P5) == 80);
     BOOST_TEST(horiz_sum_ref(epu8rev) == 120);
-    BOOST_TEST(horiz_sum_ref(Pb) == 203);
+    BOOST_TEST(horiz_sum_ref(Pc) == 203);
 }
 TEST_AGREES(horiz_sum_ref, horiz_sum_gen)
 TEST_AGREES(horiz_sum_ref, horiz_sum4)
@@ -409,7 +413,7 @@ BOOST_FIXTURE_TEST_CASE(EPU8_partial_sums_ref, Fix) {
                (epu8{ 5,10,15,20,25,30,35,40,45,50,55,60,65,70,75,80}));
     EPU8_EQUAL(partial_sums_ref(epu8rev),
                (epu8{15,29,42,54,65,75,84,92,99,105,110,114,117,119,120,120}));
-    EPU8_EQUAL(partial_sums_ref(Pb),
+    EPU8_EQUAL(partial_sums_ref(Pc),
                (epu8{23,28,49,54,97,133,140,147,154,161,168,175,182,189,196,203}));
 }
 BOOST_FIXTURE_TEST_CASE(EPU8_partial_sum_gen, Fix) {
@@ -444,7 +448,7 @@ BOOST_FIXTURE_TEST_CASE(EPU8_eval16_ref, Fix) {
                (epu8{ 1, 1, 2, 1, 1, 3, 1, 0, 0, 0, 0, 1, 2, 1, 1, 1}));
     EPU8_EQUAL(eval16_ref(P5), Epu8({ 0, 0, 0, 0, 0, 16}, 0));
     EPU8_EQUAL(eval16_ref(epu8rev), Epu8({}, 1));
-    EPU8_EQUAL(eval16_ref(Pb), Epu8({ 0, 0, 0, 0, 0, 2, 0,10}, 0));
+    EPU8_EQUAL(eval16_ref(Pc), Epu8({ 0, 0, 0, 0, 0, 2, 0,10}, 0));
 }
 TEST_EPU8_AGREES(eval16_ref, eval16_cycle)
 TEST_EPU8_AGREES(eval16_ref, eval16_popcount)
@@ -452,5 +456,74 @@ TEST_EPU8_AGREES(eval16_ref, eval16_arr)
 TEST_EPU8_AGREES(eval16_ref, eval16_gen)
 TEST_EPU8_AGREES(eval16_ref, eval16)
 //****************************************************************************//
+BOOST_AUTO_TEST_SUITE_END()
+//****************************************************************************//
+
+//****************************************************************************//
+BOOST_AUTO_TEST_SUITE(EPU8_PermTransf16_test)
+//****************************************************************************//
+BOOST_FIXTURE_TEST_CASE(IsPTransf, Fix) {
+    BOOST_TEST(is_partial_transformation(zero));
+    BOOST_TEST(is_partial_transformation(P01));
+    BOOST_TEST(is_partial_transformation(P10));
+    BOOST_TEST(not is_partial_transformation(Epu8({16}, 0)));
+    BOOST_TEST(is_partial_transformation(Epu8({}, 0xff)));
+    BOOST_TEST(is_partial_transformation(Epu8({2, 0xff, 3}, 0)));
+
+    BOOST_TEST(not is_partial_transformation(zero, 15));
+    BOOST_TEST(is_partial_transformation(Pa));
+    BOOST_TEST(is_partial_transformation(Pa, 6));
+    BOOST_TEST(is_partial_transformation(Pa, 5));
+    BOOST_TEST(not is_partial_transformation(Pa, 4));
+    BOOST_TEST(not is_partial_transformation(Pa, 1));
+    BOOST_TEST(not is_partial_transformation(Pa, 0));
+
+    BOOST_TEST(is_partial_transformation(RT));
+    BOOST_TEST(is_partial_transformation(RT, 16));
+    BOOST_TEST(not is_partial_transformation(RT, 15));
+}
+
+BOOST_FIXTURE_TEST_CASE(IsTransf, Fix) {
+    BOOST_TEST(is_transformation(zero));
+    BOOST_TEST(is_transformation(P01));
+    BOOST_TEST(is_transformation(P10));
+    BOOST_TEST(not is_transformation(Epu8({16}, 0)));
+    BOOST_TEST(not is_transformation(Epu8({}, 0xff)));
+    BOOST_TEST(not is_transformation(Epu8({2, 0xff, 3}, 0)));
+
+    BOOST_TEST(not is_transformation(zero, 15));
+    BOOST_TEST(is_transformation(Pa));
+    BOOST_TEST(is_transformation(Pa, 6));
+    BOOST_TEST(is_transformation(Pa, 5));
+    BOOST_TEST(not is_transformation(Pa, 4));
+    BOOST_TEST(not is_transformation(Pa, 1));
+    BOOST_TEST(not is_transformation(Pa, 0));
+
+    BOOST_TEST(is_transformation(RT));
+    BOOST_TEST(is_transformation(RT, 16));
+    BOOST_TEST(not is_transformation(RT, 15));
+}
+
+BOOST_FIXTURE_TEST_CASE(IsPerm, Fix) {
+    BOOST_TEST(not is_permutation(zero));
+    BOOST_TEST(not is_permutation(P01));
+    BOOST_TEST(not is_permutation(P10));
+    BOOST_TEST(not is_permutation(Epu8({16}, 0)));
+    BOOST_TEST(not is_permutation(Epu8({}, 0xff)));
+    BOOST_TEST(not is_permutation(Epu8({2, 0xff, 3}, 0)));
+
+    BOOST_TEST(not is_permutation(zero, 15));
+    BOOST_TEST(is_permutation(Pa));
+    BOOST_TEST(is_permutation(Pa, 6));
+    BOOST_TEST(is_permutation(Pa, 5));
+    BOOST_TEST(not is_permutation(Pa, 4));
+    BOOST_TEST(not is_permutation(Pa, 1));
+    BOOST_TEST(not is_permutation(Pa, 0));
+
+    BOOST_TEST(is_permutation(RT));
+    BOOST_TEST(is_permutation(RT, 16));
+    BOOST_TEST(not is_permutation(RT, 15));
+}
+
 BOOST_AUTO_TEST_SUITE_END()
 //****************************************************************************//

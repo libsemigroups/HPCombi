@@ -55,12 +55,12 @@ inline PTransf16 act1(PTransf16 x, PTransf16 y) {
 }
 
 inline PTransf16 act0(PTransf16 x, PTransf16 y) {
-  PTransf16 minab, maxab, mask, b = x.permuted(y);
+  PTransf16 minab, maxab, mask, b = x * y;
   mask = _mm_cmplt_epi8(y, PTransf16::one());
   minab = _mm_min_epi8(x, b);
   maxab = _mm_max_epi8(x, b);
   return static_cast<epu8>(_mm_blendv_epi8(maxab, minab, mask)) |
-    (y.v == HPCombi::cst_epu8_0xFF);
+      (y.v == HPCombi::Epu8(0xFF));
 }
 
 int main() {

@@ -30,8 +30,7 @@ struct PermGeneric : public VectGeneric<_Size, Expo> {
   using vect = VectGeneric<_Size, Expo>;
 
   PermGeneric() = default;
-  // PermGeneric() { for (uint64_t i=0; i < _Size; i++) this->v[i] = i; }
-  PermGeneric(const vect u) : vect(u) {}
+  PermGeneric(const vect v ) : vect(v) {};
   PermGeneric(std::initializer_list<Expo> il) {
     assert(il.size() <= _Size);
     std::copy(il.begin(), il.end(), this->v.begin());
@@ -58,25 +57,9 @@ struct PermGeneric : public VectGeneric<_Size, Expo> {
 
 static_assert(sizeof(VectGeneric<12>) == sizeof(PermGeneric<12>),
               "VectGeneric and PermGeneric have a different memory layout !");
-static_assert(std::is_trivial<VectGeneric<12>>(),
-              "VectGeneric is not a a trivial class !");
 static_assert(std::is_trivial<PermGeneric<12>>(),
               "PermGeneric is not trivial !");
 
 }  //  namespace HPCombi
-
-namespace std {
-
-template <size_t _Size, typename Expo>
-struct hash<HPCombi::VectGeneric<_Size, Expo>> {
-  size_t operator()(const HPCombi::VectGeneric<_Size, Expo> &ar) const {
-    size_t h = 0;
-    for (size_t i = 0; i < HPCombi::VectGeneric<_Size, Expo>::_Size; i++)
-      h = hash<Expo>()(ar[i]) + (h << 6) + (h << 16) - h;
-    return h;
-  }
-};
-
-}  // namespace std
 
 #endif  // HPCOMBI_PERM_GENERIC_HPP

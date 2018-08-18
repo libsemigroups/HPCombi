@@ -35,34 +35,10 @@ namespace HPCombi {
 #define FIND_IN_PERM_COMPL (_SIDD_UBYTE_OPS | _SIDD_CMP_EQUAL_ANY | \
                            _SIDD_UNIT_MASK)
 
-inline bool is_partial_transformation(epu8 v, const size_t k) {
-    uint64_t diff = last_diff(v, epu8id, 16);
-    return
-        (_mm_movemask_epi8(v+Epu8(1) <= Epu8(0x10)) == 0xffff) &&
-        (diff == 16 || diff < k);
-}
-
-inline bool is_transformation(epu8 v, const size_t k) {
-    uint64_t diff = last_diff(v, epu8id, 16);
-    return
-        (_mm_movemask_epi8(v < Epu8(0x10)) == 0xffff) &&
-        (diff == 16 || diff < k);
-}
-
-inline bool is_permutation(epu8 v, const size_t k) {
-    uint64_t diff = last_diff(v, epu8id, 16);
-    // (forall x in v, x in Perm16::one())  and
-    // (forall x in Perm16::one(), x in v)  and
-    // (v = Perm16::one()   or  last diff index < 16)
-    return
-        _mm_cmpestri(Perm16::one(), 16, v, 16, FIRST_NON_ZERO) == 16 &&
-        _mm_cmpestri(v, 16, Perm16::one(), 16, FIRST_NON_ZERO) == 16 &&
-        (diff == 16 || diff < k);
-}
 
 inline PTransf16::PTransf16(std::initializer_list<uint8_t> il) {
     assert(il.size() <= 16);
-    std::copy(il.begin(), il.end(), as_array(v).begin());
+    std::copy(il.begin(), il.end(), HPCombi::as_array(v).begin());
     for (size_t i = il.size(); i < 16; ++i)
         v[i] = i;
 }
@@ -85,14 +61,14 @@ inline Transf16::Transf16(uint64_t compressed) {
 
 inline Transf16::operator uint64_t() const {
   epu8 res = static_cast<epu8>(_mm_slli_epi32(v, 4));
-  res = permuted(res, hilo_exchng) + v;
+  res = HPCombi::permuted(res, hilo_exchng) + v;
   return _mm_extract_epi64(res, 0);
 }
 
 
 inline Perm16 Perm16::random() {
   Perm16 res = one();
-  auto ar = as_array(res);
+  auto ar = res.as_array();
   std::random_shuffle(ar.begin(), ar.end());
   return res;
 }
@@ -143,8 +119,8 @@ inline Perm16 Perm16::inverse_ref() const {
 
 inline Perm16 Perm16::inverse_arr() const {
   epu8 res;
-  auto &arres = as_array(res);
-  auto self = as_array(v);
+  auto &arres = HPCombi::as_array(res);
+  auto self = as_array();
   for (size_t i = 0; i < 16; ++i)
     arres[self[i]] = i;
   return res;
@@ -274,13 +250,13 @@ inline uint8_t Perm16::nb_cycles_ref() const {
 inline epu8 Perm16::cycles_mask_unroll() const {
   epu8 x0, x1 = one();
   Perm16 p = *this;
-  x0 = _mm_min_epi8(x1, permuted(x1, p));
+  x0 = _mm_min_epi8(x1, HPCombi::permuted(x1, p));
   p = p * p;
-  x1 = _mm_min_epi8(x0, permuted(x0, p));
+  x1 = _mm_min_epi8(x0, HPCombi::permuted(x0, p));
   p = p * p;
-  x0 = _mm_min_epi8(x1, permuted(x1, p));
+  x0 = _mm_min_epi8(x1, HPCombi::permuted(x1, p));
   p = p * p;
-  x1 = _mm_min_epi8(x0, permuted(x0, p));
+  x1 = _mm_min_epi8(x0, HPCombi::permuted(x0, p));
   return x1;
 }
 

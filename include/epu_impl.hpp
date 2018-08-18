@@ -263,6 +263,32 @@ inline epu8 eval16_popcount(epu8 v) {
     return res;
 }
 
+
+inline bool is_partial_transformation(epu8 v, const size_t k) {
+    uint64_t diff = last_diff(v, epu8id, 16);
+    return
+        (_mm_movemask_epi8(v+Epu8(1) <= Epu8(0x10)) == 0xffff) &&
+        (diff == 16 || diff < k);
+}
+
+inline bool is_transformation(epu8 v, const size_t k) {
+    uint64_t diff = last_diff(v, epu8id, 16);
+    return
+        (_mm_movemask_epi8(v < Epu8(0x10)) == 0xffff) &&
+        (diff == 16 || diff < k);
+}
+
+inline bool is_permutation(epu8 v, const size_t k) {
+    uint64_t diff = last_diff(v, epu8id, 16);
+    // (forall x in v, x in Perm16::one())  and
+    // (forall x in Perm16::one(), x in v)  and
+    // (v = Perm16::one()   or  last diff index < 16)
+    return
+        _mm_cmpestri(epu8id, 16, v, 16, FIRST_NON_ZERO) == 16 &&
+        _mm_cmpestri(v, 16, epu8id, 16, FIRST_NON_ZERO) == 16 &&
+        (diff == 16 || diff < k);
+}
+
 }  // namespace HPCombi
 
 namespace std {

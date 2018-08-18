@@ -464,6 +464,59 @@ inline uint64_t first_zero(epu8 v, int bnd) {
     return search_index<FIRST_ZERO>(v,bnd);
 }
 */
+
+
+/** Test for partial transformation
+ * @details
+ * @returns whether \c v is a partial transformation.
+ * @param v the vector to test
+ * @param k the size of \c *this (default 16)
+ *
+ * Points where the function is undefined are mapped to \c 0xff. If \c *this
+ * is a tranformation of @f$0\dots n-1@f$ for @f$n<16@f$, it should be completed
+ * to a transformation of @f$0\dots 15@f$ by adding fixed points. That is the
+ * values @f$i\geq n@f$ should be mapped to themself.
+ * @par Example:
+ * The partial tranformation
+ * @f$\begin{matrix}0 1 2 3 4 5\\ 2 0 5 . . 4 \end{matrix}@f$
+ * is encoded by the array {2,0,5,0xff,0xff,4,6,7,8,9,10,11,12,13,14,15}
+ */
+inline bool is_partial_transformation(epu8 v, const size_t k = 16);
+
+/** Test for transformation
+ * @details
+ * @returns whether \c *this is a transformation.
+ * @param v the vector to test
+ * @param k the size of \c *this (default 16)
+ *
+ * If \c *this is a tranformation of @f$0\dots n-1@f$ for @f$n<16@f$,
+ * it should be completed to a transformation of @f$0\dots 15@f$
+ * by adding fixed points. That is the values @f$i\geq n@f$ should be
+ * mapped to themself.
+ * @par Example:
+ * The tranformation
+ * @f$\begin{matrix}0 1 2 3 4 5\\ 2 0 5 2 1 4 \end{matrix}@f$
+ * is encoded by the array {2,0,5,2,1,4,6,7,8,9,10,11,12,13,14,15}
+ */
+inline bool is_transformation(epu8 v, const size_t k = 16);
+
+/** Test for permutations
+ * @details
+ * @returns whether \c *this is a permutation.
+ * @param v the vector to test
+ * @param k the size of \c *this (default 16)
+ *
+ * If \c *this is a permutation of @f$0\dots n-1@f$ for @f$n<16@f$,
+ * it should be completed to a permutaition of @f$0\dots 15@f$
+ * by adding fixed points. That is the values @f$i\geq n@f$ should be
+ * mapped to themself.
+ * @par Example:
+ * The permutation
+ * @f$\begin{matrix}0 1 2 3 4 5\\ 2 0 5 3 1 4 \end{matrix}@f$
+ * is encoded by the array {2,0,5,3,1,4,6,7,8,9,10,11,12,13,14,15}
+ */
+inline bool is_permutation(epu8 v, const size_t k = 16);
+
 }  // namespace HPCombi
 
 /** We also specialize

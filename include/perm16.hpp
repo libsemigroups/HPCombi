@@ -25,6 +25,7 @@
 #include <x86intrin.h>
 
 #include "epu.hpp"
+#include "vect16.hpp"
 
 namespace HPCombi {
 
@@ -36,104 +37,78 @@ struct Transf16;
 
 
 
-/** Test for partial transformation
- * @details
- * @returns whether \c v is a partial transformation.
- * @param v the vector to test
- * @param k the size of \c *this (default 16)
- *
- * Points where the function is undefined are mapped to \c 0xff. If \c *this
- * is a tranformation of @f$0\dots n-1@f$ for @f$n<16@f$, it should be completed
- * to a transformation of @f$0\dots 15@f$ by adding fixed points. That is the
- * values @f$i\geq n@f$ should be mapped to themself.
- * @par Example:
- * The partial tranformation
- * @f$\begin{matrix}0 1 2 3 4 5\\ 2 0 5 . . 4 \end{matrix}@f$
- * is encoded by the array {2,0,5,0xff,0xff,4,6,7,8,9,10,11,12,13,14,15}
- */
-inline bool is_partial_transformation(epu8 v, const size_t k = 16);
 /** Partial transformation of @f$\{0\dots 15\}@f$
  *
  */
-struct alignas(16) PTransf16 {
-    epu8 v;
+struct alignas(16) PTransf16 : public Vect16 {
+
+    static constexpr size_t Size() { return 16; };
+
+    using vect = HPCombi::Vect16;
+    using array = TPUBuild<epu8>::array;
 
     PTransf16() = default;
-    HPCOMBI_CONSTEXPR_CONSTRUCTOR PTransf16(const epu8 x) : v(x) {}
+    HPCOMBI_CONSTEXPR_CONSTRUCTOR PTransf16(const PTransf16 &v) = default;
+    HPCOMBI_CONSTEXPR_CONSTRUCTOR PTransf16(const epu8 x) : Vect16(x) {}
     PTransf16(std::initializer_list<uint8_t> il);
-    operator epu8() const { return v; };
 
-    static HPCOMBI_CONSTEXPR PTransf16 one() { return epu8id; }
-    PTransf16 inline operator*(const PTransf16 &p) const {
-        return permuted(v, p.v) | (v == Epu8(0xFF));
-    }
+    PTransf16 &operator=(const PTransf16 &) = default;
+    PTransf16 &operator=(const epu8 &vv) { v = vv; return *this; }
 
     bool operator==(const PTransf16 &x) const { return equal(v, x.v); }
     bool operator!=(const PTransf16 &x) const { return not_equal(v, x.v); }
-    uint8_t operator[](size_t i) const { return v[i]; }
+
+    array &as_array() { return HPCombi::as_array(v); }
+    const array &as_array() const { return HPCombi::as_array(v); }
+
+    const uint8_t &operator[](uint64_t i) const { return as_array()[i]; }
+    uint8_t &operator[](uint64_t i) { return as_array()[i]; }
+
+    static HPCOMBI_CONSTEXPR PTransf16 one() { return epu8id; }
+    PTransf16 inline operator*(const PTransf16 &p) const {
+        return HPCombi::permuted(v, p.v) | (v == Epu8(0xFF));
+    }
 
     uint32_t image() const;
 };
 
-/** Test for transformation
- * @details
- * @returns whether \c *this is a transformation.
- * @param v the vector to test
- * @param k the size of \c *this (default 16)
- *
- * If \c *this is a tranformation of @f$0\dots n-1@f$ for @f$n<16@f$,
- * it should be completed to a transformation of @f$0\dots 15@f$
- * by adding fixed points. That is the values @f$i\geq n@f$ should be
- * mapped to themself.
- * @par Example:
- * The tranformation
- * @f$\begin{matrix}0 1 2 3 4 5\\ 2 0 5 2 1 4 \end{matrix}@f$
- * is encoded by the array {2,0,5,2,1,4,6,7,8,9,10,11,12,13,14,15}
- */
-inline bool is_transformation(epu8 v, const size_t k = 16);
+
 /** Full transformation of @f$\{0\dots 15\}@f$
  *
  */
 struct Transf16 : public PTransf16 {
 
     Transf16() = default;
+    HPCOMBI_CONSTEXPR_CONSTRUCTOR Transf16(const Transf16 &v) = default;
     HPCOMBI_CONSTEXPR_CONSTRUCTOR Transf16(const epu8 x) : PTransf16(x) {}
     Transf16(std::initializer_list<uint8_t> il) : PTransf16(il) {}
     explicit Transf16(uint64_t compressed);
+    Transf16 &operator=(const Transf16 &) = default;
 
     explicit operator uint64_t() const;
 
     static HPCOMBI_CONSTEXPR Transf16 one() { return epu8id; }
-    Transf16 inline operator*(const Transf16 &p) const { return permuted(v, p.v); }
+    Transf16 inline operator*(const Transf16 &p) const {
+        return HPCombi::permuted(v, p.v);
+    }
 };
 
 
-/** Test for permutations
- * @details
- * @returns whether \c *this is a permutation.
- * @param v the vector to test
- * @param k the size of \c *this (default 16)
- *
- * If \c *this is a permutation of @f$0\dots n-1@f$ for @f$n<16@f$,
- * it should be completed to a permutaition of @f$0\dots 15@f$
- * by adding fixed points. That is the values @f$i\geq n@f$ should be
- * mapped to themself.
- * @par Example:
- * The permutation
- * @f$\begin{matrix}0 1 2 3 4 5\\ 2 0 5 3 1 4 \end{matrix}@f$
- * is encoded by the array {2,0,5,3,1,4,6,7,8,9,10,11,12,13,14,15}
- */
-inline bool is_permutation(epu8 v, const size_t k = 16);
 /** Permutations of @f$\{0\dots 15\}@f$
  *
  */
 struct Perm16 : public Transf16 {
 
-  Perm16() = default;
-  HPCOMBI_CONSTEXPR_CONSTRUCTOR Perm16(const epu8 x) : Transf16(x) {}
-  Perm16(std::initializer_list<uint8_t> il) : Transf16(il) {}
-  explicit Perm16(uint64_t compressed) : Transf16(compressed) {}
-  Perm16 inline operator*(const Perm16 &p) const { return permuted(v, p.v); }
+    Perm16() = default;
+    HPCOMBI_CONSTEXPR_CONSTRUCTOR Perm16(const Perm16&) = default;
+    HPCOMBI_CONSTEXPR_CONSTRUCTOR Perm16(const epu8 x) : Transf16(x) {}
+    Perm16 &operator=(const Perm16 &) = default;
+    Perm16(std::initializer_list<uint8_t> il) : Transf16(il) {}
+    explicit Perm16(uint64_t compressed) : Transf16(compressed) {}
+
+    Perm16 inline operator*(const Perm16 &p) const {
+        return HPCombi::permuted(v, p.v);
+    }
 
   /** @class common_inverse
    * @brief The inverse permutation

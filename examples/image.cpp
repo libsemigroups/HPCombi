@@ -64,14 +64,14 @@ int main() {
   int lg = 0;
   int total = 0;
 
-  vector<PTransf16> todo, newtodo;
-  // res[PTransf16::one().image()] = make_tuple(0xFFFF, 0xFFFF, {});
-  get<0>(res[PTransf16::one().image()]) = 0xFFFF;
-  get<1>(res[PTransf16::one().image()]) = 0xFFFF;
+  vector<Transf16> todo, newtodo;
+  // res[Transf16::one().image()] = make_tuple(0xFFFF, 0xFFFF, {});
+  get<0>(res[Transf16::one().image()]) = 0xFFFF;
+  get<1>(res[Transf16::one().image()]) = 0xFFFF;
   cout << "start" << endl;
 
   libsemigroups::Timer t;
-  todo.push_back(PTransf16::one());
+  todo.push_back(Transf16::one());
   while (todo.size()) {
     newtodo.clear();
     lg++;
@@ -79,7 +79,7 @@ int main() {
       total++;
       uint32_t vim = v.image();
       for (uint8_t i = 0; i < gens.size(); i++) {
-        PTransf16 el = gens[i] * v;
+        Transf16 el = gens[i] * v;
         uint32_t im = el.image();
         get<2>(res[vim])[i] = im;
         if (get<0>(res[im]) == 0) {
