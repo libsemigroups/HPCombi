@@ -20,17 +20,14 @@
 
 #include <boost/mpl/list.hpp>
 #include <boost/test/unit_test.hpp>
+#include <boost/functional.hpp>
 #include <boost/test/test_case_template.hpp>
 
 //____________________________________________________________________________//
 
 template <class VectType> struct IsPermFunctions {
-  static bool is_perm(const VectType a) { return a.is_permutation(); };
-  static bool is_not_perm(const VectType a) { return not a.is_permutation(); };
-  static bool is_perm2(const VectType a, size_t i) { return a.is_permutation(i); };
-  static bool is_not_perm2(const VectType a, size_t i) {
-    return not a.is_permutation(i);
-  };
+    static bool is_perm(const VectType a) { return a.is_permutation(); };
+    static bool is_perm2(const VectType a, size_t i) { return a.is_permutation(i); };
 };
 
 #include "perm16.hpp"
@@ -204,6 +201,8 @@ BOOST_FIXTURE_TEST_CASE_TEMPLATE(last_non_zero_test, F, Fixtures, F) {
   BOOST_CHECK_EQUAL(F::PPa.last_non_zero(3), 2u);
 }
 
+*/
+
 BOOST_FIXTURE_TEST_CASE_TEMPLATE(permuted_test, F, Fixtures, F) {
   BOOST_CHECK_EQUAL(F::zero.permuted(F::zero), F::zero);
   BOOST_CHECK_EQUAL(F::V01.permuted(F::V01), F::V01);
@@ -241,19 +240,19 @@ BOOST_FIXTURE_TEST_CASE_TEMPLATE(operator_insert_test, F, Fixtures, F) {
 }
 
 BOOST_FIXTURE_TEST_CASE_TEMPLATE(is_permutation_test, F, Fixtures, F) {
-  BOOST_CHECK_PREDICATE(F::is_not_perm, (F::zero));
-  BOOST_CHECK_PREDICATE(F::is_perm, (F::PPa)(16));
-  BOOST_CHECK_PREDICATE(F::is_not_perm, (F::PPb));
+  BOOST_CHECK_PREDICATE(boost::not1(F::is_perm), (F::zero));
+  BOOST_CHECK_PREDICATE(F::is_perm, (F::PPa));
+  BOOST_CHECK_PREDICATE(boost::not1(F::is_perm), (F::PPb));
   BOOST_CHECK_PREDICATE(F::is_perm, (F::RandPerm));
-  BOOST_CHECK_PREDICATE(F::is_not_perm,
+  BOOST_CHECK_PREDICATE(boost::not1(F::is_perm),
                         (typename F::VectType({3, 1, 0, 14, 15, 13, 3, 10, 2,
                                                11, 6, 12, 7, 4, 8, 9})));
-  BOOST_CHECK_PREDICATE(F::is_not_perm, (F::RandPerm)(4));
-  BOOST_CHECK_PREDICATE(F::is_perm, (F::PPa)(5));
-  BOOST_CHECK_PREDICATE(F::is_not_perm, (F::PPa)(4));
+  BOOST_CHECK_PREDICATE(F::is_perm2, (F::PPa)(16));
+  BOOST_CHECK_PREDICATE(boost::not2(F::is_perm2), (F::RandPerm)(4));
+  BOOST_CHECK_PREDICATE(F::is_perm2, (F::PPa)(5));
+  BOOST_CHECK_PREDICATE(boost::not2(F::is_perm2), (F::PPa)(4));
 }
 
-*/
 
 BOOST_AUTO_TEST_SUITE_END()
 
@@ -293,9 +292,6 @@ BOOST_AUTO_TEST_SUITE(PermType_test)
 BOOST_FIXTURE_TEST_CASE_TEMPLATE(constructor_is_permutation_test, F,
                                  PermFixtures, F) {
     for (auto x : F::Plist)
-        BOOST_TEST(x.is_permutation());
-    
-    for (auto x : F::Plist)
         BOOST_CHECK_PREDICATE(F::is_perm, (x));
 
   // Default constructor doesn't initialize
@@ -303,7 +299,7 @@ BOOST_FIXTURE_TEST_CASE_TEMPLATE(constructor_is_permutation_test, F,
   BOOST_CHECK_PREDICATE(F::is_perm, (typename F::PermType({})));
   BOOST_CHECK_PREDICATE(F::is_perm, (typename F::PermType({1, 0})));
   BOOST_CHECK_PREDICATE(F::is_perm, (typename F::PermType({1, 2, 0})));
-  BOOST_CHECK_PREDICATE(F::is_not_perm, (typename F::PermType({1, 2})));
+  BOOST_CHECK_PREDICATE(boost::not1(F::is_perm), (typename F::PermType({1, 2})));
 }
 
 BOOST_FIXTURE_TEST_CASE_TEMPLATE(operator_mult_coxeter_test, F, PermFixtures,
