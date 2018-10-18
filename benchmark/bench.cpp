@@ -107,7 +107,8 @@ template<typename TF, typename Sample>
 void myBench(const char* name, TF pfunc, const char* label, Sample &sample) {
 	char fullName[100];
 	strcpy(fullName, name);
-	strcat(fullName, ("_" + CXX_VER + "_proc-" + PROCID + "_" + SIMDSET).c_str());
+	//~ strcat(fullName, ("_" + CXX_VER + "_proc-" + PROCID + "_" + SIMDSET).c_str());
+	strcat(fullName, ("_" + CXX_VER + "_proc-" + PROCID).c_str());
     benchmark::RegisterBenchmark(fullName,
         [pfunc](benchmark::State& st, const char* label, Sample &sample) {
             for (auto _ : st) {
