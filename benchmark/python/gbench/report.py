@@ -28,12 +28,15 @@ class BenchmarkColor(object):
 # Benchmark Colors Enumeration
 BC_NONE = BenchmarkColor('NONE', '')
 BC_MAGENTA = BenchmarkColor('MAGENTA', '\033[95m')
+BC_ORANGE = BenchmarkColor('ORANGE', '\033[33m')
 BC_CYAN = BenchmarkColor('CYAN', '\033[96m')
 BC_OKBLUE = BenchmarkColor('OKBLUE', '\033[94m')
+BC_BLUE = BenchmarkColor('BLUE', '\033[90m')
 BC_HEADER = BenchmarkColor('HEADER', '\033[92m')
 BC_WARNING = BenchmarkColor('WARNING', '\033[93m')
 BC_WHITE = BenchmarkColor('WHITE', '\033[97m')
 BC_FAIL = BenchmarkColor('FAIL', '\033[91m')
+BC_RED = BenchmarkColor('RED', '\033[31m')
 BC_ENDC = BenchmarkColor('ENDC', '\033[0m')
 BC_BOLD = BenchmarkColor('BOLD', '\033[1m')
 BC_UNDERLINE = BenchmarkColor('UNDERLINE', '\033[4m')
@@ -98,35 +101,55 @@ def calculate_speedup(old_val, new_val):
     return float(old_val) / abs(new_val)
 
 
-def filter_benchmark(json_orig, family, replacement=""):
+def filter_benchmark(json_orig, family, replacement="", expFilter=""):
     """
     Apply a filter to the json, and only leave the 'family' of benchmarks.
     """
     regex = re.compile(family)
+    regexFilter = re.compile(expFilter)
     filtered = {}
     filtered['benchmarks'] = []
     for be in json_orig['benchmarks']:
         if not regex.search(be['name']):
             continue
-        filteredbench = copy.deepcopy(be) # Do NOT modify the old name!
-        filteredbench['name'] = regex.sub(replacement, filteredbench['name'])
-        filtered['benchmarks'].append(filteredbench)
+        if regexFilter.search(be['name']) or regexFilter.search(replacement):
+            filteredbench = copy.deepcopy(be) # Do NOT modify the old name!
+            filteredbench['name'] = regex.sub(replacement, filteredbench['name'])
+            filtered['benchmarks'].append(filteredbench)
     return filtered
 
+
+def find_test(ref, json):
+    out = []
+    for b in json['benchmarks']:
+        if b['name'] == ref['name'] :
+        # ~ if b['name'].find("[ref vs. ") == -1:
+            # ~ if b['label'] == ref['label']:
+                # ~ out.append(b)
+        # ~ elif b['name'] == ref['name']:# and b['label'] != ref['label']:
+            out.append(b)
+    return out
+
+def get_color(res):
+    if res < 0.01:
+        return BC_BLUE
+    elif res < 0.95:
+        return BC_OKBLUE
+    elif res < 1.05:
+        return BC_WHITE
+    elif res < 5:
+        return BC_ORANGE
+    elif res < 25:
+        return BC_FAIL
+    else:
+        return BC_RED
 
 def generate_difference_report(json1, json2, use_color=True):
     """
     Calculate and report the difference between each test of two benchmarks
     runs specified as 'json1' and 'json2'.
     """
-    first_col_width = find_longest_name(json1['benchmarks']) + find_longest_label(json2['benchmarks'])
-    first_col_width += 4
-    def find_test(name):
-        out = []
-        for b in json2['benchmarks']:
-            if b['name'].find(name) != -1 :
-                out.append(b)
-        return out
+    first_col_width = find_longest_name(json1['benchmarks'])
     first_col_width = max(first_col_width, len('Benchmark'))
     first_line = "{:<{}s}Time             CPU      Time Old      Time New       CPU Old       CPU New".format(
         'Benchmark', 12 + first_col_width)
@@ -134,30 +157,19 @@ def generate_difference_report(json1, json2, use_color=True):
 
     gen = (bn for bn in json1['benchmarks'] if 'real_time' in bn and 'cpu_time' in bn)
     for bn in gen:
-        other_benchs = find_test(bn['name'])
+        other_benchs = find_test(bn, json2)
         for other_bench in other_benchs :
             if not other_bench:
                 continue
-            if 'label' in other_bench :
-                label = ' -- ' + other_bench['label']
-            else :
-                label = ''
     
             if bn['time_unit'] != other_bench['time_unit']:
                 continue
-    
-            def get_color(res):
-                if res < 0.95:
-                    return BC_FAIL
-                elif res < 1.05:
-                    return BC_WHITE
-                else:
-                    return BC_CYAN
+
             fmt_str = "{}{:<{}s}{endc}{}{:16.2f}{endc}{}{:16.2f}{endc}{:14.2f}{:14.2f}{endc}{:14.2f}{:14.2f}"
             tres = calculate_speedup(bn['real_time'], other_bench['real_time'])
             cpures = calculate_speedup(bn['cpu_time'], other_bench['cpu_time'])
             output_strs += [color_format(use_color, fmt_str,
-                BC_HEADER, bn['name'] + label, first_col_width,
+                BC_HEADER, other_bench['name'], first_col_width,
                 get_color(tres), tres, get_color(cpures), cpures,
                 bn['real_time'], other_bench['real_time'],
                 bn['cpu_time'], other_bench['cpu_time'],

@@ -5,6 +5,8 @@ import os
 import tempfile
 import subprocess
 import sys
+import re
+import copy
 
 # Input file type enumeration
 IT_Invalid    = 0
@@ -157,3 +159,83 @@ def run_or_load_benchmark(filename, benchmark_flags):
         return run_benchmark(filename, benchmark_flags)
     else:
         assert False # This branch is unreachable
+      
+def get_same_set(same, nameSets):
+    newSame = set()
+    if not same:
+        return same
+    # Get all matching word
+    for exp in same :
+        # \ have been added in the bench names to excape regex interpretation
+        # It is necesarie to add \\ into the regex to match the \ in the names
+        exp = exp.replace('\\', '\\\\\\')
+        regex = re.compile(exp)
+        for wordSet in nameSets:
+            for word in wordSet:
+                if regex.search(word):
+                    newSame.add(word)
+
+    return newSame
+
+def get_files_set(fileName):
+    path = os.path.split( os.path.abspath(fileName) )[0]
+    filelist = os.listdir(path)
+    regex = re.compile( fileName )
+    outList = set()
+    for name in filelist :
+        if regex.search(name):
+            outList.add(name)
+    return outList
+            
+def get_comps_list(json1_orig, compsIn, same, nameSets):  
+    comps1 = set()
+    comps2 = set()
+
+	# Generate comparisons with the regex comps arguments
+    for comp in compsIn:
+        try:
+            a, b = comp.split('/')
+        except ValueError:
+            a, b = "", ""
+        # \ have been added in the bench names to excape regex interpretation
+        # It is necesarie to add \\ into the regex to match the \ in the names
+        a = re.compile( a.replace('\\', '\\\\\\') )
+        b = re.compile( b.replace('\\', '\\\\\\') )
+        # TODO could do better thant nesting 3 loops
+        for wordSet in nameSets[1:]:
+            for word1 in wordSet: 
+                if a.search(word1):
+                    for word2 in wordSet:
+                        if b.search(word2) and \
+                            (word1 != word2) and \
+                            (word2 + '/' + word1 not in comps1): # One side comparison only needed
+                            comps1.add(word1 + '/' + word2)
+
+	# Generate comparisons with the constante arguments
+    # No comparison are generated for the first parameter
+    # TODO could do better thant nesting 3 loops
+    for wordSet in nameSets[1:]:
+        if not (same & wordSet):
+            for word1 in wordSet:
+                for word2 in wordSet:
+                    if (word1 != word2): # Do not impose one side comparison it is already done in comps1
+                        comps2.add(word1 + '/' + word2)
+    return comps1 & comps2
+
+def get_regex(same, nameSets):
+    expFilter = ''
+    # Starts can be one of the following _ [ ^ or space
+    start = '(_|^|\[| )'
+    # Ends can be one of the following _ ] $ or space
+    end = '(_|$|\]| )'
+
+    expParts = set()
+    # If word are in the same group regex should match one of them (logical or)
+    for wordSet in nameSets:
+        toAdd = same & wordSet
+        if toAdd:
+            expParts.add( start + '(' + '|'.join(toAdd) + ')' + end )
+    if expParts:
+        # If word are not in the same group regex should match all of them (logical and)
+        expFilter = ''.join([ '(?=.*', (')(?=.*').join( expParts ), ')' ]) # et
+    return expFilter
