@@ -112,7 +112,7 @@ def filter_benchmark(json_orig, family, replacement="", expFilter=""):
     for be in json_orig['benchmarks']:
         if not regex.search(be['name']):
             continue
-        if regexFilter.search(be['name']) or regexFilter.search(replacement):
+        if regexFilter.search(be['name']): # or regexFilter.search(replacement):
             filteredbench = copy.deepcopy(be) # Do NOT modify the old name!
             filteredbench['name'] = regex.sub(replacement, filteredbench['name'])
             filtered['benchmarks'].append(filteredbench)
@@ -123,10 +123,6 @@ def find_test(ref, json):
     out = []
     for b in json['benchmarks']:
         if b['name'] == ref['name'] :
-        # ~ if b['name'].find("[ref vs. ") == -1:
-            # ~ if b['label'] == ref['label']:
-                # ~ out.append(b)
-        # ~ elif b['name'] == ref['name']:# and b['label'] != ref['label']:
             out.append(b)
     return out
 

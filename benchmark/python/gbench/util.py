@@ -159,13 +159,44 @@ def run_or_load_benchmark(filename, benchmark_flags):
         return run_benchmark(filename, benchmark_flags)
     else:
         assert False # This branch is unreachable
-      
-def get_same_set(same, nameSets):
+        
+########################################################################
+# Added for hpcombi -- Daniel Vanzo -- Start
+########################################################################
+
+def get_name_sets(json):
+    """
+    The parameters names are regrouped in a list of sets.
+    The first set contains the first parameter, the second contains the second parameters etc.
+    Exemple: We have tow benchmarks named:
+        sort_radix_lmbd
+        sort_ref_nolmbd
+    the output shoudl be [{sort}, {radix, ref}, {lmbd, nolmbd}]
+    """
+    names = [ bench['name'].split('_') for bench in json['benchmarks'] ]
+    special = ['+', '*', '(', ')', '[', ']', '{', '}', '^', '$'] 
+    nameSets = []
+    for name in names :
+        for i, word in enumerate(name) :
+            # Escape special caractere for regular expression
+            for car in special :
+                word = word.replace(car, '\\' + car)
+            try:
+                nameSets[i].add(word)
+            except IndexError:
+                nameSets.append( {word} )
+    return nameSets
+    
+def get_constant_set(constant, nameSets):
+    """
+    Return a set containing all the parameters names 
+    matching one of the regex in "constant" input.
+    """
     newSame = set()
-    if not same:
-        return same
+    if not constant:
+        return constant
     # Get all matching word
-    for exp in same :
+    for exp in constant :
         # \ have been added in the bench names to excape regex interpretation
         # It is necesarie to add \\ into the regex to match the \ in the names
         exp = exp.replace('\\', '\\\\\\')
@@ -178,6 +209,10 @@ def get_same_set(same, nameSets):
     return newSame
 
 def get_files_set(fileName):
+    """
+    Return a set containing all the file names 
+    matching the input regex "fileName".
+    """
     path = os.path.split( os.path.abspath(fileName) )[0]
     filelist = os.listdir(path)
     regex = re.compile( fileName )
@@ -187,11 +222,17 @@ def get_files_set(fileName):
             outList.add(name)
     return outList
             
-def get_comps_list(json1_orig, compsIn, same, nameSets):  
+def get_comp_set(json1_orig, compsIn, constant, nameSets):
+    """
+    Generate a set of parameters comparison to do in the format:
+            {"param1/param2", "param3/param4", ...}
+    Both the comparison aked by the user "compIn" 
+    and the constant parameter "constant" are taken into account.
+    """
     comps1 = set()
     comps2 = set()
 
-	# Generate comparisons with the regex comps arguments
+    # Generate comparisons with the compsIn arguments as regex
     for comp in compsIn:
         try:
             a, b = comp.split('/')
@@ -201,7 +242,7 @@ def get_comps_list(json1_orig, compsIn, same, nameSets):
         # It is necesarie to add \\ into the regex to match the \ in the names
         a = re.compile( a.replace('\\', '\\\\\\') )
         b = re.compile( b.replace('\\', '\\\\\\') )
-        # TODO could do better thant nesting 3 loops
+        # TODO could be prettier than that
         for wordSet in nameSets[1:]:
             for word1 in wordSet: 
                 if a.search(word1):
@@ -211,31 +252,43 @@ def get_comps_list(json1_orig, compsIn, same, nameSets):
                             (word2 + '/' + word1 not in comps1): # One side comparison only needed
                             comps1.add(word1 + '/' + word2)
 
-	# Generate comparisons with the constante arguments
+    # Generate comparisons based on the constant arguments
     # No comparison are generated for the first parameter
-    # TODO could do better thant nesting 3 loops
+    # TODO could be prettier than that
     for wordSet in nameSets[1:]:
-        if not (same & wordSet):
+        if not (constant & wordSet):
             for word1 in wordSet:
                 for word2 in wordSet:
                     if (word1 != word2): # Do not impose one side comparison it is already done in comps1
                         comps2.add(word1 + '/' + word2)
     return comps1 & comps2
 
-def get_regex(same, nameSets):
+def get_regex(constant, nameSets):
+    """
+    Generate a regex to filter the comparisons.
+    Only the bench parameters matching this regex should be printed.
+    If two parameters are in the same group, of parameters
+    bench names should be mathcing one or the other.
+    If two parameters are in differents groups of parameters,
+    bench names should be matching both parameters. 
+    """
     expFilter = ''
-    # Starts can be one of the following _ [ ^ or space
-    start = '(_|^|\[| )'
-    # Ends can be one of the following _ ] $ or space
-    end = '(_|$|\]| )'
+    # Starts can be one of the following _ or start of string
+    start = '(_|^)'
+    # Ends can be one of the following _ or end of string
+    end = '(_|$)'
 
     expParts = set()
-    # If word are in the same group regex should match one of them (logical or)
+    # Logical OR for parameters in the same group
     for wordSet in nameSets:
-        toAdd = same & wordSet
+        toAdd = constant & wordSet
         if toAdd:
             expParts.add( start + '(' + '|'.join(toAdd) + ')' + end )
     if expParts:
-        # If word are not in the same group regex should match all of them (logical and)
-        expFilter = ''.join([ '(?=.*', (')(?=.*').join( expParts ), ')' ]) # et
+        # Logical AND for parameters in diferent groups
+        expFilter = ''.join([ '(?=.*', (')(?=.*').join( expParts ), ')' ])
     return expFilter
+    
+########################################################################
+# Added for hpcombi -- Daniel Vanzo -- End
+########################################################################

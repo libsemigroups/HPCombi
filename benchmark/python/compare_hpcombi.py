@@ -224,9 +224,9 @@ def main():
                                 ( ', '.join( comps ), ', '.join( same ) ) \
                                  + '\nFiles: ' + ', '.join( (tests_baseline | tests_contender) )
 
-    for testA in tests_baseline :
-        for testB in tests_contender :
-            check_inputs(testA, testB, benchmark_options)
+    # ~ for testA in tests_baseline :
+        # ~ for testB in tests_contender :
+            # ~ check_inputs(testA, testB, benchmark_options)
 
     options_baseline = []
     options_contender = []
@@ -245,19 +245,7 @@ def main():
         json2_orig['benchmarks'] += gbench.util.run_or_load_benchmark(
             testB, benchmark_options + options_contender)['benchmarks']
 
-    names = [ bench['name'].split('_') for bench in json1_orig['benchmarks'] ]
-    special = ['+', '*', '(', ')', '[', ']', '{', '}', '^', '$'] 
-    nameSets = []
-    for name in names :
-        for i, word in enumerate(name) :
-            # Escape special caractere for regular expression
-            for car in special :
-               word = word.replace(car, '\\' + car)
-            try:
-                nameSets[i].add(word)
-            except IndexError:
-                nameSets.append( {word} )
-    
+    nameSets = gbench.util.get_name_sets(json1_orig)
     same = gbench.util.get_same_set(same, nameSets)
     comps = gbench.util.get_comps_list( json1_orig, comps, same, nameSets)
     expFilter = gbench.util.get_regex(same, nameSets)

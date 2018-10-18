@@ -130,6 +130,32 @@ def create_parser():
         metavar='benchmark_options',
         nargs=argparse.REMAINDER,
         help='Arguments to pass when running benchmark executables')
+    parser_d = subparsers.add_parser(
+        'hpcombi', help='Compare filter one with the filter two of benchmark')
+
+    parser_d.add_argument(
+        'tests',
+        metavar='tests',
+        type=str,
+        nargs=1,
+        help='Benchmark executable or JSON output files. They should be separeted by comas.\nExample: "file1,file2".\nThey will be interpreted as regex.')
+    parser_d.add_argument(
+        'comps',
+        metavar='comps',
+        type=str,
+        nargs=1,
+        help='A list of comparisons to do separeted by comas.\nExample: "param1/param2,param3/param4", meaning "param1" should be compared with "param2" and "param3" should be compared with "param4".\nParameters will be interpreted as regex.')
+    parser_d.add_argument(
+        'constant',
+        metavar='constant',
+        type=str,
+        nargs=1,
+        help='A list of constant parameters, meaning parameters that should be present but not compared, separated by comas.\nExample: "param1,param2".\nParameters will be interpreted as regex.')
+    parser_d.add_argument(
+        'benchmark_options',
+        metavar='benchmark_options',
+        nargs=argparse.REMAINDER,
+        help='Arguments to pass when running benchmark executables')
 
     return parser
 
@@ -142,42 +168,91 @@ def main():
     benchmark_options = args.benchmark_options
 
     if args.mode == 'benchmarks':
-        test_baseline = args.test_baseline[0].name
-        test_contender = args.test_contender[0].name
+        tests_baseline = {args.test_baseline[0].name}
+        tests_contender = {args.test_contender[0].name}
         filter_baseline = ''
         filter_contender = ''
 
         # NOTE: if test_baseline == test_contender, you are analyzing the stdev
 
-        description = 'Comparing %s to %s' % (test_baseline, test_contender)
+        description = 'Comparing %s to %s' % \
+                        ( \
+                        ', '.join(tests_baseline), \
+                        ', '.join(tests_contender) \
+                        )
     elif args.mode == 'filters':
-        test_baseline = args.test[0].name
-        test_contender = args.test[0].name
+        tests_baseline = {args.test[0].name}
+        tests_contender = {args.test[0].name}
         filter_baseline = args.filter_baseline[0]
         filter_contender = args.filter_contender[0]
 
         # NOTE: if filter_baseline == filter_contender, you are analyzing the
         # stdev
 
-        description = 'Comparing %s to %s (from %s)' % (
-            filter_baseline, filter_contender, args.test[0].name)
+        description = 'Comparing %s to %s (from %s)' % \
+                            ( \
+                            filter_baseline, \
+                            filter_contender, \
+                            args.test[0].name \
+                            )
+            
+    elif args.mode == 'hpcombi':
+        tests_baseline = set( args.tests[0].split(',') )
+        tests_contender = set( args.tests[0].split(',') )
+        comps = set( args.comps[0].split(',') )
+        constant = set( args.constant[0].split(',') )
+        constant.discard('')
+        filter_baseline = ''
+        filter_contender = ''
+        
+        # Merges all file matching the regex in one file list.
+        new_tests_baseline = set()
+        for test in tests_baseline:
+            new_tests_baseline |= get_files_set(test)
+        tests_baseline = new_tests_baseline
+        new_tests_contender = set()
+        for test in tests_contender:
+            new_tests_contender |= get_files_set(test)
+        tests_contender = new_tests_contender
+        
+        description = 'Comparisons: %s\nConstant parameters: %s\nFiles: %s'% \
+                                ( \
+                                ', '.join( comps ), \
+                                ', '.join( constant ),  \
+                                ', '.join( (tests_baseline | tests_contender) ) \
+                                )
+                                 
     elif args.mode == 'benchmarksfiltered':
-        test_baseline = args.test_baseline[0].name
-        test_contender = args.test_contender[0].name
+        tests_baseline = {args.test_baseline[0].name}
+        tests_contender = {args.test_contender[0].name}
         filter_baseline = args.filter_baseline[0]
         filter_contender = args.filter_contender[0]
 
         # NOTE: if test_baseline == test_contender and
         # filter_baseline == filter_contender, you are analyzing the stdev
 
-        description = 'Comparing %s (from %s) to %s (from %s)' % (
-            filter_baseline, test_baseline, filter_contender, test_contender)
+        description = 'Comparing %s (from %s) to %s (from %s)' % \
+                                ( \
+                                filter_baseline, \
+                                ', '.join(tests_baseline), \
+                                filter_contender, \
+                                ', '.join(tests_contender) \
+                                )
     else:
         # should never happen
         print("Unrecognized mode of operation: '%s'" % args.mode)
         exit(1)
 
-    check_inputs(test_baseline, test_contender, benchmark_options)
+    """
+    In hpcombi mode all input combinations should be tested.
+    As it can be time consuming, it has been commented temporarily.
+    Uncomment the tree following lines to do all the tests.
+    TODO: the check_inputs function should be modified 
+    to handle the case where more than to file are given
+    """
+    # for testA in tests_baseline :
+        # for testB in tests_contender :
+            # check_inputs(testA, testB, benchmark_options)
 
     options_baseline = []
     options_contender = []
@@ -186,20 +261,42 @@ def main():
         options_baseline = ['--benchmark_filter=%s' % filter_baseline]
         options_contender = ['--benchmark_filter=%s' % filter_contender]
 
-    # Run the benchmarks and report the results
-    json1 = json1_orig = gbench.util.run_or_load_benchmark(
-        test_baseline, benchmark_options + options_baseline)
-    json2 = json2_orig = gbench.util.run_or_load_benchmark(
-        test_contender, benchmark_options + options_contender)
+    # Run the benchmarks
+    json1_orig = {'benchmarks':[]}
+    json2_orig = {'benchmarks':[]}
+    for testA in tests_baseline :
+        json1_orig['benchmarks'] += gbench.util.run_or_load_benchmark(
+            testA, benchmark_options + options_baseline)['benchmarks']
+    for testB in tests_contender :
+        json2_orig['benchmarks'] += gbench.util.run_or_load_benchmark(
+            testB, benchmark_options + options_contender)['benchmarks']
 
-    # Now, filter the benchmarks so that the difference report can work
-    if filter_baseline and filter_contender:
-        replacement = '[%s vs. %s]' % (filter_baseline, filter_contender)
-        json1 = gbench.report.filter_benchmark(
-            json1_orig, filter_baseline, replacement)
-        json2 = gbench.report.filter_benchmark(
-            json2_orig, filter_contender, replacement)
+    if args.mode == 'benchmarks':
+        json1 = json1_orig
+        json2 = json2_orig
+    else :
+        json1 = {'benchmarks':[]}
+        json2 = {'benchmarks':[]}
+		
+        # Get the comparisons filter and the constant parameters filters
+        if args.mode == 'hpcombi':
+            nameSets = gbench.util.get_name_sets(json1_orig)
+            constant = gbench.util.get_constant_set(constant, nameSets)
+            comps = gbench.util.get_comp_set(json1_orig, comps, constant, nameSets)
+            expFilter = gbench.util.get_regex(constant, nameSets)
+        else:
+            comps = [filter_baseline + '/' + filter_contender]
+            expFilter = ''
 
+        # Now, filter the benchmarks so that the difference report can work
+        for comp in comps:
+            replacement = '[%s vs. %s]' % tuple(comp.split('/'))
+            json1['benchmarks'] += gbench.report.filter_benchmark(
+                json1_orig, comp.split('/')[0], replacement, expFilter)['benchmarks']
+            json2['benchmarks'] += gbench.report.filter_benchmark(
+                json2_orig, comp.split('/')[1], replacement, expFilter)['benchmarks']
+		 
+	    
     # Diff and output
     output_lines = gbench.report.generate_difference_report(json1, json2)
     print(description)
