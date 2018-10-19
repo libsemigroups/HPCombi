@@ -101,19 +101,29 @@ def calculate_speedup(old_val, new_val):
     return float(old_val) / abs(new_val)
 
 
-def filter_benchmark(json_orig, family, replacement="", expFilter=""):
+def filter_benchmark(json_orig, comps, expFilter=""):
     """
-    Apply a filter to the json, and only leave the 'family' of benchmarks.
+    Apply a filter to the json, and only leave the benchmarks correponding to the parameters in the comparisons.
     """
     regexFilter = re.compile(expFilter)
-    filtered = {}
-    filtered['benchmarks'] = []
+    filtered1 = {}
+    filtered1['benchmarks'] = []
+    filtered2 = {}
+    filtered2['benchmarks'] = []
     for be in json_orig['benchmarks']:
-        if regexFilter.search(be['name']) and be['name'].find(family) != -1:
-            filteredbench = copy.deepcopy(be) # Do NOT modify the old name!
-            filteredbench['name'] = filteredbench['name'].replace(family, replacement)
-            filtered['benchmarks'].append(filteredbench)
-    return filtered
+        if regexFilter.search(be['name']): # The regex search can be slow
+            for comp in comps :
+                family1, family2 = comp.split('/')
+                replacement = '[%s vs. %s]' % (family1, family2)
+                if be['name'].find(family1) != -1:
+                    filteredbench = copy.deepcopy(be) # Do NOT modify the old name!
+                    filteredbench['name'] = filteredbench['name'].replace(family1, replacement)
+                    filtered1['benchmarks'].append(filteredbench)
+                elif be['name'].find(family2) != -1:
+                    filteredbench = copy.deepcopy(be) # Do NOT modify the old name!
+                    filteredbench['name'] = filteredbench['name'].replace(family2, replacement)
+                    filtered2['benchmarks'].append(filteredbench)
+    return filtered1, filtered2
 
 
 def find_test(ref, json):

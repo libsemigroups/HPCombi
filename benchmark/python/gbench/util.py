@@ -20,8 +20,9 @@ def is_executable_file(filename):
     an executable. A file is considered an executable if it starts with the
     magic bytes for a EXE, Mach O, or ELF file.
     """
-    if not os.path.isfile(filename):
-        return False
+    # Test for file is already done in the one and only caller function classify_input_file
+    # if not os.path.isfile(filename):
+        # return False
     with open(filename, mode='rb') as f:
         magic_bytes = f.read(_num_magic_bytes)
     if sys.platform == 'darwin':
@@ -59,20 +60,19 @@ def classify_input_file(filename):
     of 'filename'. If 'type' is 'IT_Invalid' then 'msg' is a human readable
     string represeting the error.
     """
+    # Test for file existance is already done by the parser
     ftype = IT_Invalid
     err_msg = None
-    if not os.path.exists(filename):
-        err_msg = "'%s' does not exist" % filename
-    elif not os.path.isfile(filename):
-        err_msg = "'%s' does not name a file" % filename
-    elif is_executable_file(filename):
-        ftype = IT_Executable
-    elif is_json_file(filename):
+    try:
+        with open(filename, 'r') as f:
+            json.load(f)
         ftype = IT_JSON
-    else:
-        err_msg = "'%s' does not name a valid benchmark executable or JSON file" % filename
+    except ValueError:
+        if is_executable_file(filename):
+            ftype = IT_Executable
+        else:
+            err_msg = "'%s' does not name a valid benchmark executable or JSON file" % filename
     return ftype, err_msg
-
 
 def check_input_file(filename):
     """

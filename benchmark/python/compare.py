@@ -9,7 +9,7 @@ from argparse import ArgumentParser
 import sys
 import gbench
 from gbench import util, report
-from gbench.util import *
+# ~ from gbench.util import *
 
 
 def check_inputs(in1, in2, flags):
@@ -166,7 +166,6 @@ def main():
     args, unknown_args = parser.parse_known_args()
     assert not unknown_args
     benchmark_options = args.benchmark_options
-
     if args.mode == 'benchmarks':
         tests_baseline = {args.test_baseline[0].name}
         tests_contender = {args.test_contender[0].name}
@@ -208,11 +207,11 @@ def main():
         # Merges all file matching the regex in one file list.
         new_tests_baseline = set()
         for test in tests_baseline:
-            new_tests_baseline |= get_files_set(test)
+            new_tests_baseline |= gbench.util.get_files_set(test)
         tests_baseline = new_tests_baseline
         new_tests_contender = set()
         for test in tests_contender:
-            new_tests_contender |= get_files_set(test)
+            new_tests_contender |= gbench.util.get_files_set(test)
         tests_contender = new_tests_contender
         
         description = 'Comparisons: %s\nConstant parameters: %s\nFiles: %s'% \
@@ -256,47 +255,44 @@ def main():
 
     options_baseline = []
     options_contender = []
-
     if filter_baseline and filter_contender:
         options_baseline = ['--benchmark_filter=%s' % filter_baseline]
         options_contender = ['--benchmark_filter=%s' % filter_contender]
-
-    # Run the benchmarks
+    
     json1_orig = {'benchmarks':[]}
     json2_orig = {'benchmarks':[]}
-    for testA in tests_baseline :
-        json1_orig['benchmarks'] += gbench.util.run_or_load_benchmark(
-            testA, benchmark_options + options_baseline)['benchmarks']
-    for testB in tests_contender :
-        json2_orig['benchmarks'] += gbench.util.run_or_load_benchmark(
-            testB, benchmark_options + options_contender)['benchmarks']
 
     if args.mode == 'benchmarks':
+        # Run the benchmarks
+        for testA in tests_baseline :
+            json1_orig['benchmarks'] += gbench.util.run_or_load_benchmark(
+                testA, benchmark_options + options_baseline)['benchmarks']
+        for testB in tests_contender :
+            json2_orig['benchmarks'] += gbench.util.run_or_load_benchmark(
+                testB, benchmark_options + options_contender)['benchmarks']
+                
         json1 = json1_orig
         json2 = json2_orig
     else :
         json1 = {'benchmarks':[]}
         json2 = {'benchmarks':[]}
-		
+        # Run the benchmarks
+        for testA in tests_baseline :
+            json1_orig['benchmarks'] += gbench.util.run_or_load_benchmark(
+                testA, benchmark_options + options_baseline)['benchmarks']
+
         # Get the comparisons filter and the constant parameters filters
         if args.mode == 'hpcombi':
             nameSets = gbench.util.get_name_sets(json1_orig)
             constant = gbench.util.get_constant_set(constant, nameSets)
-            comps = gbench.util.get_comp_set(json1_orig, comps, constant, nameSets)
             expFilter = gbench.util.get_regex(constant, nameSets)
+            comps = gbench.util.get_comp_set(json1_orig, comps, constant, nameSets)
         else:
             comps = [filter_baseline + '/' + filter_contender]
             expFilter = ''
 
-        # Now, filter the benchmarks so that the difference report can work
-        for comp in comps:
-            replacement = '[%s vs. %s]' % tuple(comp.split('/'))
-            json1['benchmarks'] += gbench.report.filter_benchmark(
-                json1_orig, comp.split('/')[0], replacement, expFilter)['benchmarks']
-            json2['benchmarks'] += gbench.report.filter_benchmark(
-                json2_orig, comp.split('/')[1], replacement, expFilter)['benchmarks']
-		 
-	    
+        json1, json2 = gbench.report.filter_benchmark(json1_orig, comps, expFilter)
+        
     # Diff and output
     output_lines = gbench.report.generate_difference_report(json1, json2)
     print(description)
