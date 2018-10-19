@@ -161,7 +161,7 @@ def run_or_load_benchmark(filename, benchmark_flags):
         assert False # This branch is unreachable
         
 ########################################################################
-# Added for hpcombi -- Daniel Vanzo -- Start
+# Added for hpcombi -- Start
 ########################################################################
 
 def get_name_sets(json):
@@ -174,13 +174,9 @@ def get_name_sets(json):
     the output shoudl be [{sort}, {radix, ref}, {lmbd, nolmbd}]
     """
     names = [ bench['name'].split('_') for bench in json['benchmarks'] ]
-    special = ['+', '*', '(', ')', '[', ']', '{', '}', '^', '$'] 
     nameSets = []
     for name in names :
         for i, word in enumerate(name) :
-            # Escape special caractere for regular expression
-            for car in special :
-                word = word.replace(car, '\\' + car)
             try:
                 nameSets[i].add(word)
             except IndexError:
@@ -199,7 +195,7 @@ def get_constant_set(constant, nameSets):
     for exp in constant :
         # \ have been added in the bench names to excape regex interpretation
         # It is necesarie to add \\ into the regex to match the \ in the names
-        exp = exp.replace('\\', '\\\\\\')
+        exp = exp
         regex = re.compile(exp)
         for wordSet in nameSets:
             for word in wordSet:
@@ -215,7 +211,7 @@ def get_files_set(fileName):
     """
     path = os.path.split( os.path.abspath(fileName) )[0]
     filelist = os.listdir(path)
-    regex = re.compile( fileName )
+    regex = re.compile(fileName)
     outList = set()
     for name in filelist :
         if regex.search(name):
@@ -240,8 +236,8 @@ def get_comp_set(json1_orig, compsIn, constant, nameSets):
             a, b = "", ""
         # \ have been added in the bench names to excape regex interpretation
         # It is necesarie to add \\ into the regex to match the \ in the names
-        a = re.compile( a.replace('\\', '\\\\\\') )
-        b = re.compile( b.replace('\\', '\\\\\\') )
+        a = re.compile(a)
+        b = re.compile(b)
         # TODO could be prettier than that
         for wordSet in nameSets[1:]:
             for word1 in wordSet: 
@@ -290,5 +286,5 @@ def get_regex(constant, nameSets):
     return expFilter
     
 ########################################################################
-# Added for hpcombi -- Daniel Vanzo -- End
+# Added for hpcombi -- End
 ########################################################################

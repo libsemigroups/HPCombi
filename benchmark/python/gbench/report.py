@@ -105,16 +105,13 @@ def filter_benchmark(json_orig, family, replacement="", expFilter=""):
     """
     Apply a filter to the json, and only leave the 'family' of benchmarks.
     """
-    regex = re.compile(family)
     regexFilter = re.compile(expFilter)
     filtered = {}
     filtered['benchmarks'] = []
     for be in json_orig['benchmarks']:
-        if not regex.search(be['name']):
-            continue
-        if regexFilter.search(be['name']): # or regexFilter.search(replacement):
+        if regexFilter.search(be['name']) and be['name'].find(family) != -1:
             filteredbench = copy.deepcopy(be) # Do NOT modify the old name!
-            filteredbench['name'] = regex.sub(replacement, filteredbench['name'])
+            filteredbench['name'] = filteredbench['name'].replace(family, replacement)
             filtered['benchmarks'].append(filteredbench)
     return filtered
 
