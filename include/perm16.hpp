@@ -49,6 +49,7 @@ struct alignas(16) PTransf16 : public Vect16 {
 
     PTransf16() = default;
     HPCOMBI_CONSTEXPR_CONSTRUCTOR PTransf16(const PTransf16 &v) = default;
+    HPCOMBI_CONSTEXPR_CONSTRUCTOR PTransf16(const vect v) : Vect16(v) {}
     HPCOMBI_CONSTEXPR_CONSTRUCTOR PTransf16(const epu8 x) : Vect16(x) {}
     PTransf16(std::initializer_list<uint8_t> il);
 
@@ -80,6 +81,7 @@ struct Transf16 : public PTransf16 {
 
     Transf16() = default;
     HPCOMBI_CONSTEXPR_CONSTRUCTOR Transf16(const Transf16 &v) = default;
+    HPCOMBI_CONSTEXPR_CONSTRUCTOR Transf16(const vect v) : PTransf16(v) {}
     HPCOMBI_CONSTEXPR_CONSTRUCTOR Transf16(const epu8 x) : PTransf16(x) {}
     Transf16(std::initializer_list<uint8_t> il) : PTransf16(il) {}
     explicit Transf16(uint64_t compressed);
@@ -101,6 +103,7 @@ struct Perm16 : public Transf16 {
 
     Perm16() = default;
     HPCOMBI_CONSTEXPR_CONSTRUCTOR Perm16(const Perm16&) = default;
+    HPCOMBI_CONSTEXPR_CONSTRUCTOR Perm16(const vect v) : Transf16(v) {}
     HPCOMBI_CONSTEXPR_CONSTRUCTOR Perm16(const epu8 x) : Transf16(x) {}
     Perm16 &operator=(const Perm16 &) = default;
     Perm16(std::initializer_list<uint8_t> il) : Transf16(il) {}
