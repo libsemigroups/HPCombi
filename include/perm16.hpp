@@ -159,7 +159,7 @@ struct Perm16 : public Transf16 {
   /** @copydoc common_inverse
    *
    *  Frontend method: currently aliased to #inverse_cycl */
-  inline Perm16 inverse() { return inverse_cycl(); }
+  inline Perm16 inverse() const { return inverse_cycl(); }
 
   // It's not possible to have a static constexpr member of same type as class
   // being defined (see https://stackoverflow.com/questions/11928089/)
