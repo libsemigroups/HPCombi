@@ -15,13 +15,9 @@ using namespace FeatureDetector;
 using namespace std;
 using HPCombi::epu8;
 
-const Fix_perm16 bench_data;
+const Fix_epu8 sample;
 const std::string SIMDSET = cpu_x86::get_highest_SIMD();
 const std::string PROCID = cpu_x86::get_proc_string();
-
-#define ASSERT(test) if (!(test)) cout << "Test failed in file " << __FILE__ \
-                                       << " line " << __LINE__ << ": " #test << endl
-
 
 struct RoundsMask {
   // commented out due to a bug in gcc
@@ -129,99 +125,107 @@ static const epu8 bla = {0, 2, 1, 4, 3, 6, 5, 8, 7, 10, 9, 12, 11, 14, 13, 15};
 
 //##################################################################################
 int Bench_sort() {
-    myBench("sort_std1_nolmbd", std_sort, "std1", bench_data.sample);
-    myBench("sort_std2_nolmbd", std_sort, "std2", bench_data.sample);
-    myBench("sort_std3_nolmbd", std_sort, "std3", bench_data.sample);
+    myBench("sort_std1_nolmbd", std_sort, "std1", sample.perms);
+    myBench("sort_std2_nolmbd", std_sort, "std2", sample.perms);
+    myBench("sort_std3_nolmbd", std_sort, "std3", sample.perms);
 
-    myBench("sort_std_nolmbd", std_sort, "std", bench_data.sample);
-    myBench("sort_arr_nolmbd", arr_sort, "arr", bench_data.sample);
-    myBench("sort_gen_nolmbd", gen_sort, "gen", bench_data.sample);
-    myBench("sort_insert_nolmbd", insertion_sort, "insert", bench_data.sample);
-    myBench("sort_oddEven_nolmbd", sort_odd_even, "odd_even", bench_data.sample);
-    myBench("sort_radix_nolmbd", radix_sort, "radix", bench_data.sample);
-    myBench("sort_pair_nolmbd", sort_pair, "pair", bench_data.sample);
-    myBench("sort_netw_nolmbd", HPCombi::sorted, "netw", bench_data.sample);
+    myBench("sort_std_nolmbd", std_sort, "std", sample.perms);
+    myBench("sort_arr_nolmbd", arr_sort, "arr", sample.perms);
+    myBench("sort_gen_nolmbd", gen_sort, "gen", sample.perms);
+    myBench("sort_insert_nolmbd", insertion_sort, "insert", sample.perms);
+    myBench("sort_oddEven_nolmbd", sort_odd_even, "odd_even", sample.perms);
+    myBench("sort_radix_nolmbd", radix_sort, "radix", sample.perms);
+    myBench("sort_pair_nolmbd", sort_pair, "pair", sample.perms);
+    myBench("sort_netw_nolmbd", HPCombi::sorted, "netw", sample.perms);
 
     // lambda function is needed for inlining
-    MYBENCH("sort_std_lmbd", std_sort, "std", bench_data.sample);
-    MYBENCH("sort_arr_lmbd", arr_sort, "arr", bench_data.sample);
-    MYBENCH("sort_gen_lmbd", gen_sort, "gen", bench_data.sample);
-    MYBENCH("sort_insert_lmbd", insertion_sort, "insert", bench_data.sample);
-    MYBENCH("sort_oddEven_lmbd", sort_odd_even, "odd_even", bench_data.sample);
-    MYBENCH("sort_radix_lmbd", radix_sort, "radix", bench_data.sample);
-    MYBENCH("sort_pair_lmbd", sort_pair, "pair", bench_data.sample);
-    MYBENCH("sort_netw_lmbd", HPCombi::sorted, "netw", bench_data.sample);
+    MYBENCH("sort_std_lmbd", std_sort, "std", sample.perms);
+    MYBENCH("sort_arr_lmbd", arr_sort, "arr", sample.perms);
+    MYBENCH("sort_gen_lmbd", gen_sort, "gen", sample.perms);
+    MYBENCH("sort_insert_lmbd", insertion_sort, "insert", sample.perms);
+    MYBENCH("sort_oddEven_lmbd", sort_odd_even, "odd_even", sample.perms);
+    MYBENCH("sort_radix_lmbd", radix_sort, "radix", sample.perms);
+    MYBENCH("sort_pair_lmbd", sort_pair, "pair", sample.perms);
+    MYBENCH("sort_netw_lmbd", HPCombi::sorted, "netw", sample.perms);
+
+    MYBENCH("sort8_std_lmbd", std_sort, "std", sample.vects);
+    MYBENCH("sort8_arr_lmbd", arr_sort, "arr", sample.vects);
+    MYBENCH("sort8_gen_lmbd", gen_sort, "gen", sample.vects);
+    MYBENCH("sort8_insert_lmbd", insertion_sort, "insert", sample.vects);
+    MYBENCH("sort8_oddEven_lmbd", sort_odd_even, "odd_even", sample.vects);
+    MYBENCH("sort8_pair_lmbd", sort_pair, "pair", sample.vects);
+    MYBENCH("sort8_netw_lmbd", HPCombi::sorted, "netw", sample.vects);
     return 0;
 }
 
 //##################################################################################
 int Bench_hsum() {
-    myBench("hsum_ref1_nolmbd", HPCombi::horiz_sum_ref, "ref1", bench_data.sample);
-    myBench("hsum_ref2_nolmbd", HPCombi::horiz_sum_ref, "ref2", bench_data.sample);
-    myBench("hsum_ref3_nolmbd", HPCombi::horiz_sum_ref, "ref3", bench_data.sample);
+    myBench("hsum_ref1_nolmbd", HPCombi::horiz_sum_ref, "ref1", sample.perms);
+    myBench("hsum_ref2_nolmbd", HPCombi::horiz_sum_ref, "ref2", sample.perms);
+    myBench("hsum_ref3_nolmbd", HPCombi::horiz_sum_ref, "ref3", sample.perms);
 
-    myBench("hsum_ref_nolmbd", HPCombi::horiz_sum_ref, "ref", bench_data.sample);
-    myBench("hsum_gen_nolmbd", HPCombi::horiz_sum_gen, "gen", bench_data.sample);
-    myBench("hsum_sum4_nolmbd", HPCombi::horiz_sum4, "sum4", bench_data.sample);
-    myBench("hsum_sum3_nolmbd", HPCombi::horiz_sum3, "sum3", bench_data.sample);
+    myBench("hsum_ref_nolmbd", HPCombi::horiz_sum_ref, "ref", sample.perms);
+    myBench("hsum_gen_nolmbd", HPCombi::horiz_sum_gen, "gen", sample.perms);
+    myBench("hsum_sum4_nolmbd", HPCombi::horiz_sum4, "sum4", sample.perms);
+    myBench("hsum_sum3_nolmbd", HPCombi::horiz_sum3, "sum3", sample.perms);
 
-    MYBENCH("hsum_ref_lmbd", HPCombi::horiz_sum_ref, "ref", bench_data.sample);
-    MYBENCH("hsum_gen_lmbd", HPCombi::horiz_sum_gen, "gen", bench_data.sample);
-    MYBENCH("hsum_sum4_lmbd", HPCombi::horiz_sum4, "sum4", bench_data.sample);
-    MYBENCH("hsum_sum3_lmbd", HPCombi::horiz_sum3, "sum3", bench_data.sample);
+    MYBENCH("hsum_ref_lmbd", HPCombi::horiz_sum_ref, "ref", sample.perms);
+    MYBENCH("hsum_gen_lmbd", HPCombi::horiz_sum_gen, "gen", sample.perms);
+    MYBENCH("hsum_sum4_lmbd", HPCombi::horiz_sum4, "sum4", sample.perms);
+    MYBENCH("hsum_sum3_lmbd", HPCombi::horiz_sum3, "sum3", sample.perms);
     return 0;
 }
 
 
 //##################################################################################
 int Bench_psum() {
-    myBench("psum_ref1_nolmbd", HPCombi::partial_sums_ref, "ref1", bench_data.sample);
-    myBench("psum_ref2_nolmbd", HPCombi::partial_sums_ref, "ref2", bench_data.sample);
-    myBench("psum_ref3_nolmbd", HPCombi::partial_sums_ref, "ref3", bench_data.sample);
+    myBench("psum_ref1_nolmbd", HPCombi::partial_sums_ref, "ref1", sample.perms);
+    myBench("psum_ref2_nolmbd", HPCombi::partial_sums_ref, "ref2", sample.perms);
+    myBench("psum_ref3_nolmbd", HPCombi::partial_sums_ref, "ref3", sample.perms);
     
-    myBench("psum_ref_nolmbd", HPCombi::partial_sums_ref, "ref", bench_data.sample);
-    myBench("psum_gen_nolmbd", HPCombi::partial_sums_gen, "gen", bench_data.sample);
-    myBench("psum_rnd_nolmbd", HPCombi::partial_sums_round, "rnd", bench_data.sample);
+    myBench("psum_ref_nolmbd", HPCombi::partial_sums_ref, "ref", sample.perms);
+    myBench("psum_gen_nolmbd", HPCombi::partial_sums_gen, "gen", sample.perms);
+    myBench("psum_rnd_nolmbd", HPCombi::partial_sums_round, "rnd", sample.perms);
 
-    MYBENCH("psum_ref_lmbd", HPCombi::partial_sums_ref, "ref", bench_data.sample);
-    MYBENCH("psum_gen_lmbd", HPCombi::partial_sums_gen, "gen", bench_data.sample);
-    MYBENCH("psum_rnd_lmbd", HPCombi::partial_sums_round, "rnd", bench_data.sample);
+    MYBENCH("psum_ref_lmbd", HPCombi::partial_sums_ref, "ref", sample.perms);
+    MYBENCH("psum_gen_lmbd", HPCombi::partial_sums_gen, "gen", sample.perms);
+    MYBENCH("psum_rnd_lmbd", HPCombi::partial_sums_round, "rnd", sample.perms);
     return 0;
 }
 
 //##################################################################################
 int Bench_eval() {
-    myBench("eval_ref1_nolmbd", HPCombi::eval16_ref, "ref1", bench_data.sample);
-    myBench("eval_ref2_nolmbd", HPCombi::eval16_ref, "ref2", bench_data.sample);
-    myBench("eval_ref3_nolmbd", HPCombi::eval16_ref, "ref3", bench_data.sample);
+    myBench("eval_ref1_nolmbd", HPCombi::eval16_ref, "ref1", sample.perms);
+    myBench("eval_ref2_nolmbd", HPCombi::eval16_ref, "ref2", sample.perms);
+    myBench("eval_ref3_nolmbd", HPCombi::eval16_ref, "ref3", sample.perms);
 
-    myBench("eval_ref_nolmbd", HPCombi::eval16_ref, "ref", bench_data.sample);
-    myBench("eval_gen_nolmbd", HPCombi::eval16_gen, "gen", bench_data.sample);
-    myBench("eval_popcnt_nolmbd", HPCombi::eval16_popcount, "popcnt", bench_data.sample);
-    myBench("eval_arr_nolmbd", HPCombi::eval16_arr, "arr", bench_data.sample);
-    myBench("eval_cycle_nolmbd", HPCombi::eval16_cycle, "cycle", bench_data.sample);
+    myBench("eval_ref_nolmbd", HPCombi::eval16_ref, "ref", sample.perms);
+    myBench("eval_gen_nolmbd", HPCombi::eval16_gen, "gen", sample.perms);
+    myBench("eval_popcnt_nolmbd", HPCombi::eval16_popcount, "popcnt", sample.perms);
+    myBench("eval_arr_nolmbd", HPCombi::eval16_arr, "arr", sample.perms);
+    myBench("eval_cycle_nolmbd", HPCombi::eval16_cycle, "cycle", sample.perms);
 
-    MYBENCH("eval_ref_lmbd", HPCombi::eval16_ref, "ref", bench_data.sample);
-    MYBENCH("eval_gen_lmbd", HPCombi::eval16_gen, "gen", bench_data.sample);
-    MYBENCH("eval_popcnt_lmbd", HPCombi::eval16_popcount, "popcnt", bench_data.sample);
-    MYBENCH("eval_arr_lmbd", HPCombi::eval16_arr, "arr", bench_data.sample);
-    MYBENCH("eval_cycle_lmbd", HPCombi::eval16_cycle, "cycle", bench_data.sample);
+    MYBENCH("eval_ref_lmbd", HPCombi::eval16_ref, "ref", sample.perms);
+    MYBENCH("eval_gen_lmbd", HPCombi::eval16_gen, "gen", sample.perms);
+    MYBENCH("eval_popcnt_lmbd", HPCombi::eval16_popcount, "popcnt", sample.perms);
+    MYBENCH("eval_arr_lmbd", HPCombi::eval16_arr, "arr", sample.perms);
+    MYBENCH("eval_cycle_lmbd", HPCombi::eval16_cycle, "cycle", sample.perms);
     return 0;
 }
 
 //##################################################################################
 int Bench_first_diff() {
-    MYBENCH2("firstDiff_ref_lmbd", HPCombi::first_diff_ref, "ref", bench_data.sample);
-    MYBENCH2("firstDiff_cmpstr_lmbd", HPCombi::first_diff_cmpstr, "cmpstr", bench_data.sample);
-    MYBENCH2("firstDiff_mask_lmbd", HPCombi::first_diff_mask, "mask", bench_data.sample);
+    MYBENCH2("firstDiff_ref_lmbd", HPCombi::first_diff_ref, "ref", sample.perms);
+    MYBENCH2("firstDiff_cmpstr_lmbd", HPCombi::first_diff_cmpstr, "cmpstr", sample.perms);
+    MYBENCH2("firstDiff_mask_lmbd", HPCombi::first_diff_mask, "mask", sample.perms);
     return 0;
 }
 
 //##################################################################################
 int Bench_last_diff() {
-    MYBENCH2("lastDiff_ref_lmbd", HPCombi::last_diff_ref, "ref", bench_data.sample);
-    MYBENCH2("lastDiff_cmpstr_lmbd", HPCombi::last_diff_cmpstr, "cmpstr", bench_data.sample);
-    MYBENCH2("lastDiff_mask_lmbd", HPCombi::last_diff_mask, "mask", bench_data.sample);
+    MYBENCH2("lastDiff_ref_lmbd", HPCombi::last_diff_ref, "ref", sample.perms);
+    MYBENCH2("lastDiff_cmpstr_lmbd", HPCombi::last_diff_cmpstr, "cmpstr", sample.perms);
+    MYBENCH2("lastDiff_mask_lmbd", HPCombi::last_diff_mask, "mask", sample.perms);
     return 0;
 }
 
