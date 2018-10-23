@@ -15,7 +15,7 @@
 
 include_directories(${CMAKE_SOURCE_DIR}/include ${CMAKE_SOURCE_DIR}/include/fallback ${PROJECT_BINARY_DIR})
 
-set(benchmark_src bench.cpp sort.cpp)
+set(benchmark_src bench_epu8.cpp sort.cpp)
 
 foreach(f ${benchmark_src})
   get_filename_component(benchName ${f} NAME_WE)
