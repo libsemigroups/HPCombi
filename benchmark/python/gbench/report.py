@@ -119,7 +119,7 @@ def filter_benchmark(json_orig, comps, expFilter=""):
                     filteredbench = copy.deepcopy(be) # Do NOT modify the old name!
                     filteredbench['name'] = filteredbench['name'].replace(family1, replacement)
                     filtered1['benchmarks'].append(filteredbench)
-                elif be['name'].find(family2) != -1:
+                if be['name'].find(family2) != -1:
                     filteredbench = copy.deepcopy(be) # Do NOT modify the old name!
                     filteredbench['name'] = filteredbench['name'].replace(family2, replacement)
                     filtered2['benchmarks'].append(filteredbench)
