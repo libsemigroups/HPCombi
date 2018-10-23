@@ -89,6 +89,12 @@ inline std::ostream &operator<<(std::ostream &stream,
     return operator<<(stream, ar.v);
 }
 
+template <> struct hash<HPCombi::Vect16> {
+    inline size_t operator()(const HPCombi::Vect16 &ar) const {
+        return std::hash<HPCombi::epu8>{}(ar.v);
+    }
+};
+
 }  // namespace std
 
 #endif  // HPCOMBI_VECT16_HPP_INCLUDED
