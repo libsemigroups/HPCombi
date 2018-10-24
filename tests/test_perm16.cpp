@@ -64,7 +64,7 @@ struct Fix {
             PPb({1, 2, 3, 6, 0, 5, 4, 7, 8, 9, 10, 11, 12, 15, 14, 13}),
             RandPerm(RandT),
             Tlist({zero, P01, P10, P11, P1, RandT, epu8(PPa), epu8(PPb)}),
-            Plist(all_perms(9))
+            PlistSmall(all_perms(6)), Plist(all_perms(9))
         {
         BOOST_TEST_MESSAGE("setup fixture");
     }
@@ -73,7 +73,7 @@ struct Fix {
     const Transf16 zero, P01, P10, P11, P1, RandT;
     const Perm16 PPa, PPb, RandPerm;
     const std::vector<Transf16> Tlist;
-    const std::vector<Perm16> Plist;
+    const std::vector<Perm16> PlistSmall, Plist;
 
 };
 
@@ -193,3 +193,21 @@ BOOST_FIXTURE_TEST_CASE(Perm16_nb_cycles_ref, Fix) {
     BOOST_TEST(PPb.nb_cycles_ref() == 10);
 }
 TEST_AGREES(nb_cycles_ref, nb_cycles);
+
+
+//****************************************************************************//
+BOOST_FIXTURE_TEST_CASE(Perm16_left_weak_leq_ref, Fix) {
+    BOOST_TEST(Perm16::one().left_weak_leq_ref(Perm16::one()));
+    BOOST_TEST(Perm16::one().left_weak_leq_ref(PPa));
+    BOOST_TEST(Perm16::one().left_weak_leq_ref(PPb));
+    BOOST_TEST(PPa.left_weak_leq_ref(PPa));
+    BOOST_TEST(PPb.left_weak_leq_ref(PPb));
+}
+
+BOOST_FIXTURE_TEST_CASE(Perm16_left_weak_leq, Fix) {
+    for (auto u : PlistSmall) {
+        for (auto v : PlistSmall) {
+            BOOST_TEST(u.left_weak_leq(v) == u.left_weak_leq_ref(v));
+        }
+    }
+}

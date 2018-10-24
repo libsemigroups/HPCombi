@@ -104,12 +104,35 @@ int Bench_nb_cycles() {
     return 0;
 }
 
+int Bench_left_weak_leq() {
+    myBench("leqweak_ref1",
+            [](Perm16 p) {
+                for (Perm16 p1 : sample.perms)
+                    benchmark::DoNotOptimize(p.left_weak_leq_ref(p1));
+                return 1;
+            }, sample.perms);
+    myBench("leqweak_ref2",
+            [](Perm16 p) {
+                for (Perm16 p1 : sample.perms)
+                    benchmark::DoNotOptimize(p.left_weak_leq_ref(p1));
+                return 1;
+            }, sample.perms);
+    myBench("leqweak_opt",
+            [](Perm16 p) {
+                for (Perm16 p1 : sample.perms)
+                    benchmark::DoNotOptimize(p.left_weak_leq(p1));
+                return 1;
+            }, sample.perms);
+    return 0;
+}
+
 auto dummy = {
     Bench_inverse(),
     Bench_lehmer(),
     Bench_length(),
     Bench_nb_descents(),
-    Bench_nb_cycles()
+    Bench_nb_cycles(),
+    Bench_left_weak_leq()
 };
 
 BENCHMARK_MAIN();

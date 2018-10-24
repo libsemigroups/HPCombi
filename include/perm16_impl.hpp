@@ -103,7 +103,7 @@ Perm16 Perm16::unrankSJT(int n, int r) {
 }
 
 inline Perm16 Perm16::elementary_transposition(uint64_t i) {
-  assert(i < vect::16);
+  assert(i < 16);
   epu8 res = one();
   res[i] = i + 1;
   res[i + 1] = i;
@@ -286,5 +286,25 @@ inline uint8_t Perm16::nb_cycles_unroll() const {
     return _mm_popcnt_u32(_mm_movemask_epi8(res));
 }
 
+inline bool Perm16::left_weak_leq_ref(Perm16 other) const {
+    for (size_t i = 0; i < 16; i++) {
+        for (size_t j = i+1; j < 16; j++) {
+            if ((v[i] > v[j]) && (other[i] < other[j])) return false;
+        }
+    }
+    return true;
+}
+
+inline bool Perm16::left_weak_leq(Perm16 other) const {
+    epu8 srot = v, orot = other;
+    for (size_t i = 0; i < 15; i++) {
+        srot = shifted_right(srot);
+        orot = shifted_right(orot);
+        uint64_t sinv = _mm_movemask_epi8(v < srot);
+        uint64_t oinv = _mm_movemask_epi8(other.v < orot);
+        if ((sinv & oinv) != sinv) return false;
+    }
+    return true;
+}
 
 }  // namespace HPCombi

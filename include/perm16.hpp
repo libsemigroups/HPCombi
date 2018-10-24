@@ -184,8 +184,8 @@ struct Perm16 : public Transf16 {
    * Perm16 x = {0,3,2,4,1,5,6,7,8,9,10,11,12,13,14,15};
    * x.lehmer()
    * @endcode
+   * Returns
    * @verbatim {0,2,1,1,0,0,0,0,0,0,0,0,0,0,0,0} @endverbatim
-   * Returns 
    */
   /** @copydoc common_lehmer
    *  @par Algorithm:
@@ -213,6 +213,26 @@ struct Perm16 : public Transf16 {
   inline epu8 cycles_mask_unroll() const;
   inline uint8_t nb_cycles_unroll() const;
   inline uint8_t nb_cycles() const { return nb_cycles_unroll(); }
+
+  /** @class common_left_weak_leq
+   * @brief Compare two permutations for the left weak order
+   * @par Example:
+   * @code
+   * Perm16 x{2,0,3,1}, y{3,0,2,1};
+   * x.left_weak_leq(y)
+   * @endcode
+   * Returns @verbatim true @endverbatim
+   */
+  /** @copydoc common_left_weak_leq
+   *  @par Algorithm:
+   *  Reference @f$O(n^2)@f$ testing inclusion of inversions one by one
+   */
+  inline bool left_weak_leq_ref(Perm16 other) const;
+  /** @copydoc common_left_weak_leq
+   *  @par Algorithm:
+   *  Reference @f$O(n)@f$ with vectorized test of inclusion
+   */
+  inline bool left_weak_leq(Perm16 other) const;
 
  private:
   inline static const std::array<Perm16, 3> inverting_rounds();
