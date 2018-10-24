@@ -174,13 +174,38 @@ struct Perm16 : public Transf16 {
   inline static Perm16 random();
   inline static Perm16 unrankSJT(int n, int r);
 
+  /** @class common_lehmer
+   * @brief The Lehmer code of a permutation
+   * @details
+   * @returns the Lehmer code of \c *this
+   * @par Example:
+   * @code
+   * Perm16 x = {0,3,2,4,1,5,6,7,8,9,10,11,12,13,14,15};
+   * x.inverse()
+   * @endcode
+   * Returns {0,4,2,1,3,5,6,7,8,9,10,11,12,13,14,15}
+   */
+  /** @copydoc common_lehmer
+   *  @par Algorithm:
+   *  Reference @f$O(n^2)@f$ algorithm using loop and indexed access
+   */
   inline epu8 lehmer_ref() const;
+  /** @copydoc common_lehmer
+   *  @par Algorithm:
+   *  Reference @f$O(n^2)@f$ algorithm using array, loop and indexed access
+   */
+  inline epu8 lehmer_arr() const;
+  /** @copydoc common_lehmer
+   *  @par Algorithm:
+   *  Reference @f$O(n)@f$ algorithm using vector comparison
+   */
   inline epu8 lehmer() const;
   inline uint8_t length_ref() const;
+  inline uint8_t length_arr() const;
   inline uint8_t length() const;
 
-  inline uint8_t nb_descent_ref() const;
-  inline uint8_t nb_descent() const;
+  inline uint8_t nb_descents_ref() const;
+  inline uint8_t nb_descents() const;
 
   inline uint8_t nb_cycles_ref() const;
   inline epu8 cycles_mask_unroll() const;

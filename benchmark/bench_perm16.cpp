@@ -48,58 +48,68 @@ void myBench(const string &name, TF pfunc, Sample &sample) {
         [pfunc](benchmark::State& st, Sample &sample) {
             for (auto _ : st) {
                 for (auto elem : sample) {
-                    for (int i = 0; i < 100; i++)
-                        elem = pfunc(elem);
-                    benchmark::DoNotOptimize(elem);
+                    benchmark::DoNotOptimize(pfunc(elem));
                 }
             }
         }, sample);
 }
 
-#define MYBENCH(nm, fun, smp)  \
-    myBench(nm, [](epu8 p) { return fun(p); }, smp)
-#define MYBENCH2(nm, fun, smp) \
-    myBench(nm, [](epu8 p) { return fun(p,bla); }, smp)
+#define myBenchLoop(nm, methmame, smp)  \
+    myBench(nm, [](Perm16 p) { \
+        for (int i = 0; i < 100; i++) p = p.methmame(); \
+        return p; }, smp)
+#define myBenchMeth(nm, methmame, smp) \
+    myBench(nm, [](Perm16 p) { return p.methmame(); }, smp)
 
 
 //##################################################################################
 int Bench_inverse() {
-    myBench("inverse_ref1", [](Perm16 p) { return p.inverse_ref(); }, sample.perms);
-    myBench("inverse_ref2", [](Perm16 p) { return p.inverse_ref(); }, sample.perms);
-    myBench("inverse_arr", [](Perm16 p) { return p.inverse_arr(); }, sample.perms);
-    myBench("inverse_sort", [](Perm16 p) { return p.inverse_sort(); }, sample.perms);
-    myBench("inverse_find", [](Perm16 p) { return p.inverse_find(); }, sample.perms);
-    myBench("inverse_pow", [](Perm16 p) { return p.inverse_pow(); }, sample.perms);
-    myBench("inverse_cycl", [](Perm16 p) { return p.inverse_cycl(); }, sample.perms);
+    myBenchLoop("inverse_ref1", inverse_ref, sample.perms);
+    myBenchLoop("inverse_ref2", inverse_ref, sample.perms);
+    myBenchLoop("inverse_arr", inverse_arr, sample.perms);
+    myBenchLoop("inverse_sort", inverse_sort, sample.perms);
+    myBenchLoop("inverse_find", inverse_find, sample.perms);
+    myBenchLoop("inverse_pow", inverse_pow, sample.perms);
+    myBenchLoop("inverse_cycl", inverse_cycl, sample.perms);
     return 0;
 }
 
-/*
-
-int RegisterFromFunction() {
-    auto REF_SUM = benchmark::RegisterBenchmark("sum_ref", &generic_register<Perm16, UNINT8_OUT_FUNC>, "ref", perm16_bench_data.sample, &Perm16::sum_ref);
-    auto ALT_SUM_REF = benchmark::RegisterBenchmark("sum_alt", &generic_register<Perm16, UNINT8_OUT_FUNC>, "ref", perm16_bench_data.sample, &Perm16::sum_ref);
-    auto ALT_SUM3 = benchmark::RegisterBenchmark("sum_alt", &generic_register<Perm16, UNINT8_OUT_FUNC>, "sum3", perm16_bench_data.sample, &Perm16::sum3);
-    auto ALT_SUM4 = benchmark::RegisterBenchmark("sum_alt", &generic_register<Perm16, UNINT8_OUT_FUNC>, "sum4", perm16_bench_data.sample, &Perm16::sum4);
-
-    auto REF_LENGTH = benchmark::RegisterBenchmark("length_ref", &generic_register<Perm16, UNINT8_OUT_FUNC>, "ref", perm16_bench_data.sample, &Perm16::length_ref);
-    auto ALT_LENGTH_REF = benchmark::RegisterBenchmark("length_alt", &generic_register<Perm16, UNINT8_OUT_FUNC>, "ref", perm16_bench_data.sample, &Perm16::length_ref);
-    auto ALT_LENGTH = benchmark::RegisterBenchmark("length_alt", &generic_register<Perm16, UNINT8_OUT_FUNC>, "length", perm16_bench_data.sample, &Perm16::length);
-
-    auto REF_NB_DESCENT = benchmark::RegisterBenchmark("nb_descent_ref", &generic_register<Perm16, UNINT8_OUT_FUNC>, "ref", perm16_bench_data.sample, &Perm16::nb_descent_ref);
-    auto ALT_NB_DESCENT_REF = benchmark::RegisterBenchmark("nb_descent_alt", &generic_register<Perm16, UNINT8_OUT_FUNC>, "ref", perm16_bench_data.sample, &Perm16::nb_descent_ref);
-    auto ALT_NB_DESCENT = benchmark::RegisterBenchmark("nb_descent_alt", &generic_register<Perm16, UNINT8_OUT_FUNC>, "nb_descent", perm16_bench_data.sample, &Perm16::nb_descent);
-
-    auto REF_NB_CYCLES = benchmark::RegisterBenchmark("nb_cycles_ref", &generic_register<Perm16, UNINT8_OUT_FUNC>, "ref", perm16_bench_data.sample, &Perm16::nb_cycles_ref);
-    auto ALT_NB_CYCLES_REF = benchmark::RegisterBenchmark("nb_cycles_alt", &generic_register<Perm16, UNINT8_OUT_FUNC>, "ref", perm16_bench_data.sample, &Perm16::nb_cycles_ref);
-    auto ALT_NB_CYCLES_UNROLL = benchmark::RegisterBenchmark("nb_cycles_alt", &generic_register<Perm16, UNINT8_OUT_FUNC>, "unroll", perm16_bench_data.sample, &Perm16::nb_cycles_unroll);
-
-	return 0;
+int Bench_lehmer() {
+    myBenchMeth("lehmer_ref1", lehmer_ref, sample.perms);
+    myBenchMeth("lehmer_ref2", lehmer_ref, sample.perms);
+    myBenchMeth("lehmer_arr", lehmer_arr, sample.perms);
+    myBenchMeth("lehmer_opt", lehmer, sample.perms);
+    return 0;
 }
-*/
+
+int Bench_length() {
+    myBenchMeth("length_ref1", length_ref, sample.perms);
+    myBenchMeth("length_ref2", length_ref, sample.perms);
+    myBenchMeth("length_arr", length_arr, sample.perms);
+    myBenchMeth("length_opt", length, sample.perms);
+    return 0;
+}
+
+int Bench_nb_descents() {
+    myBenchMeth("nb_descents_ref1", nb_descents_ref, sample.perms);
+    myBenchMeth("nb_descents_ref2", nb_descents_ref, sample.perms);
+    myBenchMeth("nb_descents_opt", nb_descents, sample.perms);
+    return 0;
+}
+
+int Bench_nb_cycles() {
+    myBenchMeth("nb_cycles_ref1", nb_cycles_ref, sample.perms);
+    myBenchMeth("nb_cycles_ref2", nb_cycles_ref, sample.perms);
+    myBenchMeth("nb_cycles_opt", nb_cycles, sample.perms);
+    return 0;
+}
 
 auto dummy = {
-    Bench_inverse()
+    Bench_inverse(),
+    Bench_lehmer(),
+    Bench_length(),
+    Bench_nb_descents(),
+    Bench_nb_cycles()
 };
 
 BENCHMARK_MAIN();

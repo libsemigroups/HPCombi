@@ -205,6 +205,16 @@ inline epu8 Perm16::lehmer_ref() const {
   return res;
 }
 
+inline epu8 Perm16::lehmer_arr() const {
+    TPUBuild<epu8>::array res {};
+    TPUBuild<epu8>::array ar = as_array();
+    for (size_t i = 0; i < 16; i++)
+        for (size_t j = i + 1; j < 16; j++)
+            if (ar[i] > ar[j])
+                res[i]++;
+    return from_array(res);
+}
+
 inline epu8 Perm16::lehmer() const {
   epu8 vsh = *this, res = -one().v;
   for (int i = 1; i < 16; i++) {
@@ -222,16 +232,27 @@ inline uint8_t Perm16::length_ref() const {
                 res++;
   return res;
 }
+
+inline uint8_t Perm16::length_arr() const {
+    uint8_t res = 0;
+    TPUBuild<epu8>::array ar = as_array();
+    for (size_t i = 0; i < 16; i++)
+        for (size_t j = i + 1; j < 16; j++)
+            if (ar[i] > ar[j])
+                res++;
+    return res;
+}
+
 inline uint8_t Perm16::length() const { return horiz_sum(lehmer()); }
 
-inline uint8_t Perm16::nb_descent_ref() const {
+inline uint8_t Perm16::nb_descents_ref() const {
     uint8_t res = 0;
     for (size_t i = 0; i < 16 - 1; i++)
         if (v[i] > v[i + 1]) res++;
     return res;
 }
-inline uint8_t Perm16::nb_descent() const {
-    return _mm_popcnt_u32(_mm_movemask_epi8(v > shifted_left(v)));
+inline uint8_t Perm16::nb_descents() const {
+    return _mm_popcnt_u32(_mm_movemask_epi8(v < shifted_right(v)));
 }
 
 inline uint8_t Perm16::nb_cycles_ref() const {
