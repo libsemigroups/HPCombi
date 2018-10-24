@@ -197,7 +197,7 @@ inline Perm16 Perm16::inverse_pow() const {
 }
 
 inline epu8 Perm16::lehmer_ref() const {
-  epu8 res;
+  epu8 res {};
   for (size_t i = 0; i < 16; i++)
     for (size_t j = i + 1; j < 16; j++)
       if (v[i] > v[j])
@@ -216,7 +216,7 @@ inline epu8 Perm16::lehmer_arr() const {
 }
 
 inline epu8 Perm16::lehmer() const {
-  epu8 vsh = *this, res = -one().v;
+  epu8 vsh = v, res = -one().v;
   for (int i = 1; i < 16; i++) {
       vsh = shifted_left(vsh);
       res -= (v >= vsh);

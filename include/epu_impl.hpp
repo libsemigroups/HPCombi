@@ -52,7 +52,7 @@ inline uint64_t first_diff_cmpstr(epu8 a, epu8 b, size_t bound) {
     return unsigned(_mm_cmpestri(a, bound, b, bound, FIRST_DIFF));
 }
 inline uint64_t first_diff_mask(epu8 a, epu8 b, size_t bound) {
-    auto res = _mm_movemask_epi8((a != b) && (epu8id < Epu8(bound)));
+    uint64_t res = _mm_movemask_epi8((a != b) & (epu8id < Epu8(bound)));
     return  res == 0 ? 16 : _bit_scan_forward(res);
 }
 
@@ -68,13 +68,13 @@ inline uint64_t last_diff_cmpstr(epu8 a, epu8 b, size_t bound) {
     return unsigned(_mm_cmpestri(a, bound, b, bound, LAST_DIFF));
 }
 inline uint64_t last_diff_mask(epu8 a, epu8 b, size_t bound) {
-    auto res = _mm_movemask_epi8((a != b) && (epu8id < Epu8(bound)));
+    auto res = _mm_movemask_epi8((a != b) & (epu8id < Epu8(bound)));
     return  res == 0 ? 16 : _bit_scan_reverse(res);
 }
 
 inline bool less(epu8 a, epu8 b) {
     uint64_t diff = first_diff(a, b);
-    return (diff < 16) && a[diff] < b[diff];
+    return (diff < 16) && (a[diff] < b[diff]);
 }
 inline char less_partial(epu8 a, epu8 b, int k) {
     uint64_t diff = first_diff(a, b, k);
