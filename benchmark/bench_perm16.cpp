@@ -45,13 +45,13 @@ template<typename TF, typename Sample>
 void myBench(const string &name, TF pfunc, Sample &sample) {
     string fullname = name + "_" + CXX_VER + "_proc-" + PROCID;
     benchmark::RegisterBenchmark(fullname.c_str(),
-        [pfunc](benchmark::State& st, Sample &sample) {
+       [pfunc, sample](benchmark::State& st) {
             for (auto _ : st) {
                 for (auto elem : sample) {
                     benchmark::DoNotOptimize(pfunc(elem));
                 }
             }
-        }, sample);
+        });
 }
 
 #define myBenchLoop(nm, methmame, smp)  \
