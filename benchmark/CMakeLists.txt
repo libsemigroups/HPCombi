@@ -10,12 +10,12 @@
 #                                                                            #
 #  The full text of the GPL is available at:                                 #
 #                                                                            #
-#                  http://www.gnu.org/licenses/                               #
+#                  http://www.gnu.org/licenses/                              #
 #****************************************************************************#
 
 include_directories(${CMAKE_SOURCE_DIR}/include ${CMAKE_SOURCE_DIR}/include/fallback ${PROJECT_BINARY_DIR})
 
-set(benchmark_src bench_epu8.cpp sort.cpp)
+set(benchmark_src bench_epu8.cpp bench_perm16.cpp sort.cpp inverse.cpp)
 
 foreach(f ${benchmark_src})
   get_filename_component(benchName ${f} NAME_WE)

@@ -30,9 +30,10 @@ using namespace std;
 using namespace std::chrono;
 using namespace HPCombi;
 
-template <typename Func>
-double timecheck(Func fun, const std::vector<Perm16> &sample,
-                 std::vector<Perm16> &ref, double reftime = 0) {
+
+template <typename Func, typename Sample, typename SampleRef>
+double timecheck(Func fun, Sample &sample,
+                 SampleRef &ref, double reftime = 0) {
   std::vector<Perm16> cur(sample.size());
   double time = timethat(
       [&sample, &cur, fun]() {

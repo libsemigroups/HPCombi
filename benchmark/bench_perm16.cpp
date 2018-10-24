@@ -1,10 +1,38 @@
-#include <benchmark/benchmark.h>
-//~ #include "perm16.hpp"
-//~ #include "perm_generic.hpp"
-#include "bench_fixture.hpp"
+//****************************************************************************//
+//       Copyright (C) 2018 Florent Hivert <Florent.Hivert@lri.fr>,           //
+//                                                                            //
+//  Distributed under the terms of the GNU General Public License (GPL)       //
+//                                                                            //
+//    This code is distributed in the hope that it will be useful,            //
+//    but WITHOUT ANY WARRANTY; without even the implied warranty of          //
+//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU       //
+//   General Public License for more details.                                 //
+//                                                                            //
+//  The full text of the GPL is available at:                                 //
+//                                                                            //
+//                  http://www.gnu.org/licenses/                              //
+//****************************************************************************//
 
+#include <iostream>
+#include <benchmark/benchmark.h>
 #include <string.h>
 #include <stdlib.h>
+
+#include "compilerinfo.hpp"
+#include "cpu_x86_impl.hpp"
+#include "bench_fixture.hpp"
+
+#include "perm16.hpp"
+#include "perm_generic.hpp"
+
+using namespace FeatureDetector;
+using namespace std;
+using HPCombi::epu8;
+
+// const Fix_perm16 sample;
+const Fix_epu8 sample;
+const std::string SIMDSET = cpu_x86::get_highest_SIMD();
+const std::string PROCID = cpu_x86::get_proc_string();
 
 using HPCombi::epu8;
 using HPCombi::Vect16;
@@ -12,44 +40,37 @@ using HPCombi::PTransf16;
 using HPCombi::Transf16;
 using HPCombi::Perm16;
 
-const Fix_perm16 perm16_bench_data;
-
 //##################################################################################
-// Register fuction for generic operation that take zeros argument
 template<typename TF, typename Sample>
-void bench_inv(const char* name, TF pfunc, const char* label, Sample sample) {
-    benchmark::RegisterBenchmark(name,
-        [pfunc, sample](benchmark::State& st, const char* label) {
+void myBench(const string &name, TF pfunc, Sample &sample) {
+    string fullname = name + "_" + CXX_VER + "_proc-" + PROCID;
+    benchmark::RegisterBenchmark(fullname.c_str(),
+        [pfunc](benchmark::State& st, Sample &sample) {
             for (auto _ : st) {
                 for (auto elem : sample) {
-                    auto res = elem;
-                    for (uint_fast64_t i = 0; i < repeat; i++) res = pfunc(res);
-                    benchmark::DoNotOptimize(res);
+                    for (int i = 0; i < 100; i++)
+                        elem = pfunc(elem);
+                    benchmark::DoNotOptimize(elem);
                 }
             }
-            st.SetLabel(label);
-            st.SetItemsProcessed(st.iterations()*repeat*perm16_bench_data.sample.size());
-        }, label);
+        }, sample);
 }
 
+#define MYBENCH(nm, fun, smp)  \
+    myBench(nm, [](epu8 p) { return fun(p); }, smp)
+#define MYBENCH2(nm, fun, smp) \
+    myBench(nm, [](epu8 p) { return fun(p,bla); }, smp)
 
 
 //##################################################################################
 int Bench_inverse() {
-    bench_inv("inverse_ref", [](Perm16 p) { return p.inverse_ref(); },
-              "ref", perm16_bench_data.sample);
-    bench_inv("inverse_alt", [](Perm16 p) { return p.inverse_ref(); },
-              "ref2", perm16_bench_data.sample);
-    bench_inv("inverse_alt", [](Perm16 p) { return p.inverse_arr(); },
-              "arr", perm16_bench_data.sample);
-    bench_inv("inverse_alt", [](Perm16 p) { return p.inverse_sort(); },
-              "sort", perm16_bench_data.sample);
-    bench_inv("inverse_alt", [](Perm16 p) { return p.inverse_find(); },
-              "find", perm16_bench_data.sample);
-    bench_inv("inverse_alt", [](Perm16 p) { return p.inverse_pow(); },
-              "pow", perm16_bench_data.sample);
-    bench_inv("inverse_alt", [](Perm16 p) { return p.inverse_cycl(); },
-              "cycl", perm16_bench_data.sample);
+    myBench("inverse_ref1", [](Perm16 p) { return p.inverse_ref(); }, sample.perms);
+    myBench("inverse_ref2", [](Perm16 p) { return p.inverse_ref(); }, sample.perms);
+    myBench("inverse_arr", [](Perm16 p) { return p.inverse_arr(); }, sample.perms);
+    myBench("inverse_sort", [](Perm16 p) { return p.inverse_sort(); }, sample.perms);
+    myBench("inverse_find", [](Perm16 p) { return p.inverse_find(); }, sample.perms);
+    myBench("inverse_pow", [](Perm16 p) { return p.inverse_pow(); }, sample.perms);
+    myBench("inverse_cycl", [](Perm16 p) { return p.inverse_cycl(); }, sample.perms);
     return 0;
 }
 
@@ -76,8 +97,9 @@ int RegisterFromFunction() {
 	return 0;
 }
 */
-// int dummy1 = RegisterFromFunction();
 
-int dummy1 = Bench_inverse();
+auto dummy = {
+    Bench_inverse()
+};
 
 BENCHMARK_MAIN();

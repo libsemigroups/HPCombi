@@ -28,8 +28,22 @@ constexpr unsigned int factorial(unsigned int n) {
   return n > 1 ? n * factorial(n - 1) : 1;
 }
 
-std::vector<Perm16> rand_perms(int sz);
-std::vector<Perm16> all_perms(int n);
+inline epu8 rand_perm() {
+  epu8 res = HPCombi::epu8id;
+  auto &ar = HPCombi::as_array(res);
+  std::random_shuffle(ar.begin(), ar.end());
+  return res;
+}
+
+inline std::vector<epu8> rand_perms(int sz) {
+  std::vector<epu8> res(sz);
+  std::srand(std::time(0));
+  for (int i = 0; i < sz; i++)
+    res[i] = rand_perm();
+  return res;
+}
+
+// std::vector<Perm16> all_perms(int n);
 
 // using a template allows us to ignore the differences between functors,
 // function pointers and lambda
