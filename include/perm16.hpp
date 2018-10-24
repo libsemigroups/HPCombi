@@ -122,7 +122,8 @@ struct Perm16 : public Transf16 {
    * Perm16 x = {0,3,2,4,1,5,6,7,8,9,10,11,12,13,14,15};
    * x.inverse()
    * @endcode
-   * Returns {0,4,2,1,3,5,6,7,8,9,10,11,12,13,14,15}
+   * Returns
+   * @verbatim {0,4,2,1,3,5,6,7,8,9,10,11,12,13,14,15} @endverbatim
    */
   /** @copydoc common_inverse
    *  @par Algorithm:
@@ -181,9 +182,10 @@ struct Perm16 : public Transf16 {
    * @par Example:
    * @code
    * Perm16 x = {0,3,2,4,1,5,6,7,8,9,10,11,12,13,14,15};
-   * x.inverse()
+   * x.lehmer()
    * @endcode
-   * Returns {0,4,2,1,3,5,6,7,8,9,10,11,12,13,14,15}
+   * @verbatim {0,2,1,1,0,0,0,0,0,0,0,0,0,0,0,0} @endverbatim
+   * Returns 
    */
   /** @copydoc common_lehmer
    *  @par Algorithm:

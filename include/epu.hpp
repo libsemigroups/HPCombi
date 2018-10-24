@@ -62,7 +62,7 @@ namespace {  // Implementation detail code
 
 /// A handmade C++11 constexpr lambda
 template <typename T> struct ConstFun {
-    HPCOMBI_CONSTEXPR ConstFun(T cc) : cst(cc) {}
+    HPCOMBI_CONSTEXPR_CONSTRUCTOR ConstFun(T cc) : cst(cc) {}
     HPCOMBI_CONSTEXPR T operator()(T) const { return cst; }
     T cst;
 };
