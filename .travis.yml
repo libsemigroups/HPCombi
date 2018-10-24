@@ -11,7 +11,7 @@ matrix:
           sources:
           - ubuntu-toolchain-r-test
           packages:
-          - libboost-test-dev
+          - libboost-test1.62-dev
     - env: TEST_SUITE=standard MATRIX_EVAL="CC=gcc-5 && CXX=g++-5"
       addons:
         apt:
@@ -20,7 +20,7 @@ matrix:
           packages:
             - gcc-5
             - g++-5
-            - libboost-test-dev
+            - libboost-test1.62-dev
     - compiler: clang
       env: TEST_SUITE=standard MATRIX_EVAL="CC=clang-5.0 && CXX=clang++-5.0"
       addons:
@@ -30,7 +30,7 @@ matrix:
             - ubuntu-toolchain-r-test
           packages:
             - clang-5.0
-            - libboost-test-dev
+            - libboost-test1.62-dev
     - env: TEST_SUITE=libsemigroups
       addons:
         apt:
@@ -39,7 +39,7 @@ matrix:
           packages:
             - gcc-5
             - g++-5
-            - libboost-test-dev
+            - libboost-test1.62-dev
 before_install:
     - eval "${MATRIX_EVAL}"
     - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo add-apt-repository ppa:dns/gnu -y; fi
