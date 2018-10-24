@@ -5,7 +5,7 @@ echo "Git version:"
 git --version
 
 echo "installing boost tests from sources"
-wget --no-verbose --output-document=boost-trunk.tar.bz2 http://sourceforge.net/projects/boost/files/boost/1.55.0/boost_1_55_0.tar.bz2/download
+wget --no-verbose --output-document=boost-trunk.tar.bz2 http://sourceforge.net/projects/boost/files/boost/1.60.0/boost_1_60_0.tar.bz2/download
 export BOOST_ROOT="$TRAVIS_BUILD_DIR/../boost-trunk"
 export CMAKE_MODULE_PATH="$BOOST_ROOT"
 mkdir -p $BOOST_ROOT
