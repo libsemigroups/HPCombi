@@ -114,13 +114,13 @@ template<typename TF, typename Sample>
 void myBench(const string &name, TF pfunc, Sample &sample) {
     string fullname = name + "_" + CXX_VER + "_proc-" + PROCID;
     benchmark::RegisterBenchmark(fullname.c_str(),
-        [pfunc](benchmark::State& st, Sample &sample) {
+        [pfunc, sample](benchmark::State& st) {
             for (auto _ : st) {
                 for (auto elem : sample) {
                     benchmark::DoNotOptimize(pfunc(elem));
                 }
             }
-        }, sample);
+        });
 }
 
 static const epu8 bla = {0, 2, 1, 4, 3, 6, 5, 8, 7, 10, 9, 12, 11, 14, 13, 15};
