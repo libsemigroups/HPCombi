@@ -1,5 +1,5 @@
 //****************************************************************************//
-//       Copyright (C) 2016 Florent Hivert <Florent.Hivert@lri.fr>,           //
+//       Copyright (C) 2018 Florent Hivert <Florent.Hivert@lri.fr>,           //
 //                                                                            //
 //  Distributed under the terms of the GNU General Public License (GPL)       //
 //                                                                            //
@@ -13,11 +13,22 @@
 //                  http://www.gnu.org/licenses/                              //
 //****************************************************************************//
 
-#ifndef HPCOMBI_HPCOMBI_HPP_INCLUDED
-#define HPCOMBI_HPCOMBI_HPP_INCLUDED
+// We check that multiple inclusion of HPCombi works
 
-#include "epu.hpp"
-#include "perm16.hpp"
-#include "bmat8.hpp"
+#include "hpcombi.hpp"
 
-#endif  // HPCOMBI_HPCOMBI_HPP_INCLUDED
+#define PPCAT_NX(A, B) A ## B
+#define PPCAT(A, B) PPCAT_NX(A, B)
+
+int PPCAT(foo, CONST_TO_BE_CHANGED)() {
+    HPCombi::Perm16 res = HPCombi::Perm16::one();
+    res = res * res;
+    res = res * res;
+    res = res * res;
+    HPCombi::epu8 rnd = HPCombi::random_epu8(255);
+    rnd = rnd + rnd;
+    HPCombi::BMat8 resb = HPCombi::BMat8::one();
+    resb = resb * resb;
+    HPCombi::BMat8 rndb = HPCombi::BMat8::random();
+    return CONST_TO_BE_CHANGED;
+}

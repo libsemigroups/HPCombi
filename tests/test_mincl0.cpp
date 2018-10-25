@@ -15,12 +15,5 @@
 
 // We check that multiple inclusion of HPCombi works
 
-#include "hpcombi.hpp"
-
-int foo0() {
-  HPCombi::Perm16 res = HPCombi::Perm16::one();
-  res = res * res;
-  res = res * res;
-  res = res * res;
-  return res[0];
-}
+#define CONST_TO_BE_CHANGED 0
+#include "test_mincl_common.cpp"
