@@ -329,6 +329,8 @@ BOOST_FIXTURE_TEST_CASE(BMat8_row_space_size, Fix) {
     BOOST_TEST(bmm1.row_space_size() == 6);
 }
 TEST_AGREES(BMat8, row_space_size_ref, row_space_size, BMlist);
+TEST_AGREES(BMat8, row_space_size_ref, row_space_size_incl, BMlist);
+TEST_AGREES(BMat8, row_space_size_ref, row_space_size_bitset, BMlist);
 
 //****************************************************************************//
 BOOST_AUTO_TEST_SUITE_END()

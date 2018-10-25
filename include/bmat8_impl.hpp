@@ -162,7 +162,7 @@ inline BMat8 BMat8::transpose() const {
 static constexpr epu8 rotlow{ 7, 0, 1, 2, 3, 4, 5, 6};
 static constexpr epu8 rothigh
     { 0, 1, 2, 3, 4, 5, 6, 7,15, 8, 9,10,11,12,13,14};
-static constexpr epu8 rot
+static constexpr epu8 rotboth
     { 7, 0, 1, 2, 3, 4, 5, 6,15, 8, 9,10,11,12,13,14};
 static constexpr epu8 rot2
     {6, 7, 0, 1, 2, 3, 4, 5,14,15, 8, 9,10,11,12,13};
@@ -182,7 +182,7 @@ BMat8 BMat8::operator*(BMat8 const &that) const {
     return BMat8(_mm_extract_epi64(data, 0) | _mm_extract_epi64(data, 1));
 }
 
-epu8 BMat8::row_space_basis_internal() const {
+inline epu8 BMat8::row_space_basis_internal() const {
     epu8 res = remove_dups(revsorted8(_mm_set_epi64x(0, _data)));
     epu8 rescy = res;
     // We now compute the union of all the included different rows
@@ -232,7 +232,7 @@ inline void update_bitset(epu8 block, epu8 &set0, epu8 &set1) {
         }
 }
 
-uint64_t BMat8::row_space_size() const {
+uint64_t BMat8::row_space_size_bitset() const {
     epu8 in = _mm_set_epi64x(0, _data);
     epu8 block0 {}, block1 {};
     for (epu8 m : masks) {
@@ -250,7 +250,25 @@ uint64_t BMat8::row_space_size() const {
             _mm_popcnt_u64(_mm_extract_epi64(res1, 1)));
 }
 
-std::vector<uint8_t> BMat8::rows() const {
+uint64_t BMat8::row_space_size_incl() const {
+    epu8 in = _mm_set_epi64x(_data, _data);
+    epu8 block = epu8id;
+    uint64_t res = 0;
+    for (size_t r=0; r < 16; r++) {
+        epu8 andincl{};
+        for (int i = 0; i < 8; i++) {
+            // andincl |= (in | block) == block ? in : epu8 {};
+            andincl |= static_cast<epu8>(
+                _mm_blendv_epi8(epu8{}, in, (in | block) == block));
+            in = permuted(in, rotboth);
+        }
+        res += _mm_popcnt_u64(_mm_movemask_epi8(block == andincl));
+        block += Epu8(16);
+    }
+    return res;
+}
+
+inline std::vector<uint8_t> BMat8::rows() const {
     std::vector<uint8_t> rows;
     for (size_t i = 0; i < 8; ++i) {
         uint8_t row = static_cast<uint8_t>(_data << (8 * i) >> 56);

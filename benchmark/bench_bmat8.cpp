@@ -65,8 +65,10 @@ void myBench(const string &name, TF pfunc, Sample &sample) {
 
 //##################################################################################
 int Bench_row_space_size() {
-    myBenchMeth("row_space_size", row_space_size, sample);
     myBenchMeth("row_space_size_ref", row_space_size_ref, sample);
+    myBenchMeth("row_space_size_bitset", row_space_size_bitset, sample);
+    myBenchMeth("row_space_size_incl", row_space_size_incl, sample);
+    myBenchMeth("row_space_size", row_space_size, sample);
     return 0;
 }
 

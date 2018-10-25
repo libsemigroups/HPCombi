@@ -148,8 +148,10 @@ class BMat8 {
         return transpose().row_space_basis().transpose();
     }
     std::vector<uint8_t> rows() const;
-    inline uint64_t row_space_size() const;
+    inline uint64_t row_space_size_incl() const;
+    inline uint64_t row_space_size_bitset() const;
     inline uint64_t row_space_size_ref() const;
+    inline uint64_t row_space_size() const { return row_space_size_incl(); }
 
     //! Returns the identity BMat8
     //!
