@@ -46,6 +46,16 @@ inline PTransf16::PTransf16(std::initializer_list<uint8_t> il) {
 inline uint32_t PTransf16::image() const {
   return _mm_movemask_epi8(_mm_cmpestrm(v, 16, one().v, 16, FIND_IN_PERM_COMPL));
 }
+inline uint32_t PTransf16::rank_ref() const {
+    TPUBuild<epu8>::array tmp {};
+    for (size_t i=0; i<16; i++) tmp[v[i]] = 1;
+    uint32_t res = 0;
+    for (size_t i=0; i<16; i++) res += tmp[i];
+    return res;
+}
+inline uint32_t PTransf16::rank() const {
+    return _mm_popcnt_u32(image());
+}
 
 static HPCOMBI_CONSTEXPR
 uint8_t hilo_exchng_fun(uint8_t i) { return i < 8 ? i + 8 : i - 8; }
@@ -63,6 +73,19 @@ inline Transf16::operator uint64_t() const {
   epu8 res = static_cast<epu8>(_mm_slli_epi32(v, 4));
   res = HPCombi::permuted(res, hilo_exchng) + v;
   return _mm_extract_epi64(res, 0);
+}
+
+inline PPerm16 PPerm16::inverse_ref() const {
+    epu8 res = Epu8(0xFF);
+    for (size_t i = 0; i < 16; ++i)
+        if (v[i] < 16)
+            res[v[i]] = i;
+    return res;
+}
+
+inline PPerm16 PPerm16::inverse_find() const {
+    epu8 mask = _mm_cmpestrm(v, 16, one(), 16, FIND_IN_PERM);
+    return Perm16(this->v).inverse_find().v | mask;
 }
 
 

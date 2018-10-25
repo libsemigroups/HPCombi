@@ -27,18 +27,19 @@ using HPCombi::is_permutation;
 
 using HPCombi::PTransf16;
 using HPCombi::Transf16;
+using HPCombi::PPerm16;
 using HPCombi::Perm16;
 
 #define EPU8_EQUAL(p1, p2)  BOOST_CHECK_PREDICATE(equal, (p1)(p2))
 #define EPU8_NOT_EQUAL(p1, p2)  BOOST_CHECK_PREDICATE(boost::not2(equal), (p1)(p2))
 
-#define TEST_AGREES(ref, fun) \
-    BOOST_FIXTURE_TEST_CASE(EPU8_agrees_##fun, Fix) { \
-        for (auto p : Plist)  BOOST_TEST(p.fun() == p.ref()); \
+#define TEST_AGREES(type, ref, fun, vct)                     \
+    BOOST_FIXTURE_TEST_CASE(type##_agrees_##fun, Fix) {      \
+        for (type p : vct)  BOOST_TEST(p.fun() == p.ref());  \
     }
-#define TEST_EPU8_AGREES(ref, fun) \
-    BOOST_FIXTURE_TEST_CASE(EPU8_agrees_##fun, Fix) { \
-        for (auto p : Plist)  EPU8_EQUAL(p.fun(), p.ref());        \
+#define TEST_EPU8_AGREES(type, ref, fun, vct)                \
+    BOOST_FIXTURE_TEST_CASE(type##_agrees_##fun, Fix) {      \
+        for (type p : vct)  EPU8_EQUAL(p.fun(), p.ref());    \
     }
 
 std::vector<Perm16> all_perms(uint8_t sz){
@@ -52,6 +53,16 @@ std::vector<Perm16> all_perms(uint8_t sz){
     return res;
 };
 
+std::vector<PPerm16> all_pperms(std::vector<Perm16> perms,
+                                std::vector<epu8> masks){
+    std::vector<PPerm16> res {};
+    for (epu8 mask : masks) {
+        for (Perm16 p : perms) {
+            res.push_back(p.v | mask);
+        }
+    }
+    return res;
+}
 
 struct Fix {
     Fix() : zero(Epu8({}, 0)),
@@ -64,17 +75,24 @@ struct Fix {
             PPb({1, 2, 3, 6, 0, 5, 4, 7, 8, 9, 10, 11, 12, 15, 14, 13}),
             RandPerm(RandT),
             Tlist({zero, P01, P10, P11, P1, RandT, epu8(PPa), epu8(PPb)}),
-            PlistSmall(all_perms(6)), Plist(all_perms(9))
+            PlistSmall(all_perms(6)), Plist(all_perms(9)),
+            PPmasks({
+                    Epu8(0), Epu8(0xFF), Epu8({0}, 0xFF), Epu8({0, 0}, 0xFF),
+                    Epu8({0, 0xFF, 0}, 0xFF), Epu8({0, 0xFF, 0}, 0),
+                    Epu8({0, 0xFF, 0, 0xFF, 0, 0, 0, 0xFF, 0xFF}, 0)
+                }),
+            PPlist(all_pperms(PlistSmall, PPmasks))
         {
-        BOOST_TEST_MESSAGE("setup fixture");
-    }
+            BOOST_TEST_MESSAGE("setup fixture");
+        }
     ~Fix() { BOOST_TEST_MESSAGE("teardown fixture"); }
 
     const Transf16 zero, P01, P10, P11, P1, RandT;
     const Perm16 PPa, PPb, RandPerm;
     const std::vector<Transf16> Tlist;
     const std::vector<Perm16> PlistSmall, Plist;
-
+    const std::vector<epu8> PPmasks;
+    const std::vector<PPerm16> PPlist;
 };
 
 
@@ -128,11 +146,48 @@ BOOST_AUTO_TEST_CASE(Perm16TestEq) {
 
 
 BOOST_AUTO_TEST_CASE(PTransf16_image) {
-    BOOST_TEST(PTransf16({}).image(), 0xffff);
-    BOOST_TEST(PTransf16({4,4,4,4}).image(), 0xfff0);
-    BOOST_TEST(PTransf16({1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1}).image(), 0x02);
-    BOOST_TEST(PTransf16({2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2}).image(), 0x04);
+    BOOST_TEST(PTransf16({}).image() == 0xffff);
+    BOOST_TEST(PTransf16({4,4,4,4}).image() == 0xfff0);
+    BOOST_TEST(PTransf16({1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1}).image() == 0x02);
+    BOOST_TEST(PTransf16({2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2}).image() == 0x04);
+    BOOST_TEST(PTransf16({2,2,2,0xf,2,2,2,2,2,2,2,2,2,2,2,2}).image() == 0x8004);
+    BOOST_TEST(PTransf16({0,2,2,0xf,2,2,2,2,5,2,2,2,2,2,2,2}).image() == 0x8025);
 }
+
+BOOST_AUTO_TEST_CASE(PTransf16_rank_ref) {
+    BOOST_TEST(PTransf16({}).rank_ref() == 16);
+    BOOST_TEST(PTransf16({4,4,4,4}).rank() == 12);
+    BOOST_TEST(PTransf16({1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1}).rank_ref() == 1);
+    BOOST_TEST(PTransf16({2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2}).rank_ref() == 1);
+    BOOST_TEST(PTransf16({2,2,2,0xf,2,2,2,2,2,2,2,2,2,2,2,2}).rank_ref() == 2);
+    BOOST_TEST(PTransf16({0,2,2,0xf,2,2,2,2,5,2,2,2,2,2,2,2}).rank_ref() == 4);
+}
+
+BOOST_AUTO_TEST_CASE(PTransf16_rank) {
+    BOOST_TEST(PTransf16({}).rank() == 16);
+    BOOST_TEST(PTransf16({4,4,4,4}).rank() == 12);
+    BOOST_TEST(PTransf16({1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1}).rank() == 1);
+    BOOST_TEST(PTransf16({2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2}).rank() == 1);
+    BOOST_TEST(PTransf16({2,2,2,0xf,2,2,2,2,2,2,2,2,2,2,2,2}).rank() == 2);
+    BOOST_TEST(PTransf16({0,2,2,0xf,2,2,2,2,5,2,2,2,2,2,2,2}).rank() == 4);
+}
+
+
+//****************************************************************************//
+BOOST_FIXTURE_TEST_CASE(PPerm16_inverse_ref, Fix) {
+    for (epu8 mask : PPmasks) {
+        for (Perm16 p : Plist) {
+            PPerm16 pp (p.v | mask);
+            PPerm16 pi = pp.inverse_ref();
+            BOOST_TEST(pp * pi * pp == pp);
+            BOOST_TEST(pi * pp * pi == pi);
+            BOOST_TEST(pp.inverse_ref().inverse_ref() == pp);
+        }
+    }
+}
+TEST_AGREES(PPerm16, inverse_ref, inverse_find, PPlist);
+
+
 
 
 //****************************************************************************//
@@ -149,12 +204,12 @@ BOOST_FIXTURE_TEST_CASE(Perm16_inverse_ref, Fix) {
         BOOST_TEST(p.inverse() * p == Perm16::one());
     }
 }
-TEST_AGREES(inverse_ref, inverse_arr);
-TEST_AGREES(inverse_ref, inverse_sort);
-TEST_AGREES(inverse_ref, inverse_find);
-TEST_AGREES(inverse_ref, inverse_pow);
-TEST_AGREES(inverse_ref, inverse_cycl);
-TEST_AGREES(inverse_ref, inverse);
+TEST_AGREES(Perm16, inverse_ref, inverse_arr, Plist);
+TEST_AGREES(Perm16, inverse_ref, inverse_sort, Plist);
+TEST_AGREES(Perm16, inverse_ref, inverse_find, Plist);
+TEST_AGREES(Perm16, inverse_ref, inverse_pow, Plist);
+TEST_AGREES(Perm16, inverse_ref, inverse_cycl, Plist);
+TEST_AGREES(Perm16, inverse_ref, inverse, Plist);
 
 
 //****************************************************************************//
@@ -165,8 +220,8 @@ BOOST_FIXTURE_TEST_CASE(Perm16_lehmer_ref, Fix) {
     EPU8_EQUAL(PPb.lehmer(),
                (epu8 { 1, 1, 1, 3, 0, 1, 0, 0, 0, 0, 0, 0, 0, 2, 1, 0}));
 }
-TEST_EPU8_AGREES(lehmer_ref, lehmer_arr);
-TEST_EPU8_AGREES(lehmer_ref, lehmer);
+TEST_EPU8_AGREES(Perm16, lehmer_ref, lehmer_arr, Plist);
+TEST_EPU8_AGREES(Perm16, lehmer_ref, lehmer, Plist);
 
 //****************************************************************************//
 BOOST_FIXTURE_TEST_CASE(Perm16_length_ref, Fix) {
@@ -174,8 +229,8 @@ BOOST_FIXTURE_TEST_CASE(Perm16_length_ref, Fix) {
     BOOST_TEST(PPa.length() == 4);
     BOOST_TEST(PPb.length() == 10);
 }
-TEST_AGREES(length_ref, length_arr);
-TEST_AGREES(length_ref, length);
+TEST_AGREES(Perm16, length_ref, length_arr, Plist);
+TEST_AGREES(Perm16, length_ref, length, Plist);
 
 //****************************************************************************//
 BOOST_FIXTURE_TEST_CASE(Perm16_nb_descents_ref, Fix) {
@@ -184,7 +239,7 @@ BOOST_FIXTURE_TEST_CASE(Perm16_nb_descents_ref, Fix) {
     BOOST_TEST(PPb.nb_descents_ref() == 4);
     BOOST_TEST(Perm16::one().nb_descents() == 0);
 }
-TEST_AGREES(nb_descents_ref, nb_descents);
+TEST_AGREES(Perm16, nb_descents_ref, nb_descents, Plist);
 
 //****************************************************************************//
 BOOST_FIXTURE_TEST_CASE(Perm16_nb_cycles_ref, Fix) {
@@ -192,7 +247,7 @@ BOOST_FIXTURE_TEST_CASE(Perm16_nb_cycles_ref, Fix) {
     BOOST_TEST(PPa.nb_cycles_ref() == 12);
     BOOST_TEST(PPb.nb_cycles_ref() == 10);
 }
-TEST_AGREES(nb_cycles_ref, nb_cycles);
+TEST_AGREES(Perm16, nb_cycles_ref, nb_cycles, Plist);
 
 
 //****************************************************************************//

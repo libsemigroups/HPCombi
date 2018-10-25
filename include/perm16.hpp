@@ -67,10 +67,13 @@ struct alignas(16) PTransf16 : public Vect16 {
 
     static HPCOMBI_CONSTEXPR PTransf16 one() { return epu8id; }
     PTransf16 inline operator*(const PTransf16 &p) const {
-        return HPCombi::permuted(v, p.v) | (v == Epu8(0xFF));
+        return HPCombi::permuted(v, p.v) | (p.v == Epu8(0xFF));
     }
 
     uint32_t image() const;
+
+    uint32_t rank_ref() const;
+    uint32_t rank() const;
 };
 
 
@@ -95,11 +98,47 @@ struct Transf16 : public PTransf16 {
     }
 };
 
+/** Partial permutationof @f$\{0\dots 15\}@f$
+ *
+ */
+struct PPerm16 : public PTransf16 {
+
+    PPerm16() = default;
+    HPCOMBI_CONSTEXPR_CONSTRUCTOR PPerm16(const PPerm16 &v) = default;
+    HPCOMBI_CONSTEXPR_CONSTRUCTOR PPerm16(const vect v) : PTransf16(v) {}
+    HPCOMBI_CONSTEXPR_CONSTRUCTOR PPerm16(const epu8 x) : PTransf16(x) {}
+    PPerm16(std::initializer_list<uint8_t> il) : PTransf16(il) {}
+    PPerm16 &operator=(const PPerm16 &) = default;
+
+    static HPCOMBI_CONSTEXPR PPerm16 one() { return epu8id; }
+    PPerm16 inline operator*(const PPerm16 &p) const {
+        return this->PTransf16::operator*(p);
+        return static_cast<PTransf16>(v) * static_cast<PTransf16>(p.v);
+    }
+
+    /** @copydoc common_inverse
+     *  @par Algorithm:
+     *  @f$O(n)@f$ algorithm using reference cast to arrays
+     */
+    inline PPerm16 inverse_ref() const;
+    /** @copydoc common_inverse
+     *  @par Algorithm:
+     *  @f$O(\log n)@f$ algorithm using some kind of vectorized dichotomic search.
+     */
+    inline PPerm16 inverse_find() const;
+    /** @copydoc common_inverse
+     *  @par Algorithm:
+     *
+     * Raise \e *this to power @f$\text{LCM}(1, 2, ..., n) - 1@f$ so complexity
+     * is in @f$O(log (\text{LCM}(1, 2, ..., n) - 1)) = O(n)@f$
+     */
+
+};
 
 /** Permutations of @f$\{0\dots 15\}@f$
  *
  */
-struct Perm16 : public Transf16 {
+struct Perm16 : public Transf16 /* public PPerm : diamond problem */ {
 
     Perm16() = default;
     HPCOMBI_CONSTEXPR_CONSTRUCTOR Perm16(const Perm16&) = default;
@@ -234,7 +273,6 @@ struct Perm16 : public Transf16 {
    */
   inline bool left_weak_leq(Perm16 other) const;
 
- private:
   inline static const std::array<Perm16, 3> inverting_rounds();
 };
 

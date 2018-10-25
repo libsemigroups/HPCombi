@@ -54,23 +54,33 @@ void myBench(const string &name, TF pfunc, Sample &sample) {
         });
 }
 
-#define myBenchLoop(nm, methmame, smp)  \
-    myBench(nm, [](Perm16 p) { \
-        for (int i = 0; i < 100; i++) p = p.methmame(); \
+#define myBenchLoop(descr, methname, smp)  \
+    myBench(descr, [](Perm16 p) { \
+        for (int i = 0; i < 100; i++) p = p.methname(); \
         return p; }, smp)
-#define myBenchMeth(nm, methmame, smp) \
-    myBench(nm, [](Perm16 p) { return p.methmame(); }, smp)
+#define myBenchMeth(descr, methname, smp) \
+    myBench(descr, [](Perm16 p) { \
+        for (int i = 0; i < 10; i++) benchmark::DoNotOptimize(p.methname()); \
+        return p.methname(); }, smp)
+
+#define myBenchMeth2(descr, methname, smp) \
+    myBench(descr, \
+            [](Perm16 p) {                                              \
+                for (Perm16 p1 : smp) benchmark::DoNotOptimize(p.methname(p1)); \
+                return 1; \
+            }, smp);
+
 
 
 //##################################################################################
 int Bench_inverse() {
-    myBenchLoop("inverse_ref1", inverse_ref, sample.perms);
-    myBenchLoop("inverse_ref2", inverse_ref, sample.perms);
-    myBenchLoop("inverse_arr", inverse_arr, sample.perms);
-    myBenchLoop("inverse_sort", inverse_sort, sample.perms);
-    myBenchLoop("inverse_find", inverse_find, sample.perms);
-    myBenchLoop("inverse_pow", inverse_pow, sample.perms);
-    myBenchLoop("inverse_cycl", inverse_cycl, sample.perms);
+    myBenchMeth("inverse_ref1", inverse_ref, sample.perms);
+    myBenchMeth("inverse_ref2", inverse_ref, sample.perms);
+    myBenchMeth("inverse_arr", inverse_arr, sample.perms);
+    myBenchMeth("inverse_sort", inverse_sort, sample.perms);
+    myBenchMeth("inverse_find", inverse_find, sample.perms);
+    myBenchMeth("inverse_pow", inverse_pow, sample.perms);
+    myBenchMeth("inverse_cycl", inverse_cycl, sample.perms);
     return 0;
 }
 
@@ -105,24 +115,18 @@ int Bench_nb_cycles() {
 }
 
 int Bench_left_weak_leq() {
-    myBench("leqweak_ref1",
-            [](Perm16 p) {
-                for (Perm16 p1 : sample.perms)
-                    benchmark::DoNotOptimize(p.left_weak_leq_ref(p1));
-                return 1;
-            }, sample.perms);
-    myBench("leqweak_ref2",
-            [](Perm16 p) {
-                for (Perm16 p1 : sample.perms)
-                    benchmark::DoNotOptimize(p.left_weak_leq_ref(p1));
-                return 1;
-            }, sample.perms);
-    myBench("leqweak_opt",
-            [](Perm16 p) {
-                for (Perm16 p1 : sample.perms)
-                    benchmark::DoNotOptimize(p.left_weak_leq(p1));
-                return 1;
-            }, sample.perms);
+    myBenchMeth2("leqweak_ref1", left_weak_leq_ref, sample.perms);
+    myBenchMeth2("leqweak_ref2", left_weak_leq_ref, sample.perms);
+    myBenchMeth2("leqweak_ref3", left_weak_leq_ref, sample.perms);
+    myBenchMeth2("leqweak_opt", left_weak_leq, sample.perms);
+    return 0;
+}
+
+int Bench_rank() {
+    myBenchMeth("rank_ref1", rank_ref, sample.perms);
+    myBenchMeth("rank_ref2", rank_ref, sample.perms);
+    myBenchMeth("rank_ref3", rank_ref, sample.perms);
+    myBenchMeth("rank_opt", rank, sample.perms);
     return 0;
 }
 
@@ -132,7 +136,8 @@ auto dummy = {
     Bench_length(),
     Bench_nb_descents(),
     Bench_nb_cycles(),
-    Bench_left_weak_leq()
+    Bench_left_weak_leq(),
+    Bench_rank()
 };
 
 BENCHMARK_MAIN();
