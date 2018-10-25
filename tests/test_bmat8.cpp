@@ -28,18 +28,17 @@ using namespace HPCombi;
 #define EPU8_EQUAL(p1, p2)  BOOST_CHECK_PREDICATE(equal, (p1)(p2))
 #define EPU8_NOT_EQUAL(p1, p2)  BOOST_CHECK_PREDICATE(boost::not2(equal), (p1)(p2))
 
-#define TEST_AGREES(ref, fun) \
-    BOOST_FIXTURE_TEST_CASE(EPU8_agrees_##fun, Fix) { \
-        for (auto x : v)  BOOST_TEST(fun(x) == ref(x)); \
+#define TEST_AGREES(type, ref, fun, vct)                     \
+    BOOST_FIXTURE_TEST_CASE(type##_agrees_##fun, Fix) {      \
+        for (type p : vct)  BOOST_TEST(p.fun() == p.ref());  \
     }
-#define TEST_EPU8_AGREES(ref, fun) \
-    BOOST_FIXTURE_TEST_CASE(EPU8_agrees_##fun, Fix) { \
-        for (auto x : v)  EPU8_EQUAL(fun(x), ref(x));        \
+#define TEST_EPU8_AGREES(type, ref, fun, vct)                \
+    BOOST_FIXTURE_TEST_CASE(type##_agrees_##fun, Fix) {      \
+        for (type p : vct)  EPU8_EQUAL(p.fun(), p.ref());    \
     }
-
 
 struct Fix {
-    Fix() : zero(0), one1(1), one2(0x21),
+    Fix() : zero(0), one1(1), one2(0x201),
             ones(0xffffffffffffffff),
             bm({{0, 0, 0, 1, 0, 0, 1, 1},
                 {1, 1, 1, 1, 1, 1, 0, 1},
@@ -315,6 +314,21 @@ BOOST_AUTO_TEST_CASE(BMat8_col_space_basis) {
     }
 }
 
+//****************************************************************************//
+BOOST_FIXTURE_TEST_CASE(BMat8_row_space_size, Fix) {
+    BOOST_TEST(zero.row_space_size() == 1);
+    BOOST_TEST(one1.row_space_size() == 2);
+    BOOST_TEST(one2.row_space_size() == 4);
+    BOOST_TEST(BMat8::one().row_space_size() == 256);
+    BOOST_TEST(bm.row_space_size() == 22);
+    BOOST_TEST(bm1.row_space_size() == 31);
+    BOOST_TEST(bm2.row_space_size() == 3);
+    BOOST_TEST(bm2t.row_space_size() == 3);
+    BOOST_TEST(bm3.row_space_size() == 21);
+    BOOST_TEST(bm3t.row_space_size() == 21);
+    BOOST_TEST(bmm1.row_space_size() == 6);
+}
+TEST_AGREES(BMat8, row_space_size_ref, row_space_size, BMlist);
 
 //****************************************************************************//
 BOOST_AUTO_TEST_SUITE_END()

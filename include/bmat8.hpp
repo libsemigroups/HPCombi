@@ -147,6 +147,9 @@ class BMat8 {
     inline BMat8 col_space_basis() const {
         return transpose().row_space_basis().transpose();
     }
+    std::vector<uint8_t> rows() const;
+    inline uint64_t row_space_size() const;
+    inline uint64_t row_space_size_ref() const;
 
     //! Returns the identity BMat8
     //!
@@ -180,6 +183,8 @@ class BMat8 {
 
   private:
     uint64_t _data;
+
+    epu8 row_space_basis_internal() const;
 };
 
 }  // namespace HPCombi

@@ -182,7 +182,7 @@ BMat8 BMat8::operator*(BMat8 const &that) const {
     return BMat8(_mm_extract_epi64(data, 0) | _mm_extract_epi64(data, 1));
 }
 
-BMat8 BMat8::row_space_basis() const {
+epu8 BMat8::row_space_basis_internal() const {
     epu8 res = remove_dups(revsorted8(_mm_set_epi64x(0, _data)));
     epu8 rescy = res;
     // We now compute the union of all the included different rows
@@ -195,7 +195,93 @@ BMat8 BMat8::row_space_basis() const {
     }
     // res = (res != andincl) ? res : epu8 {};
     res = _mm_blendv_epi8(epu8{}, res, (res != andincl));
-    return BMat8(_mm_extract_epi64(sorted8(res), 0));
+    return res;
+}
+
+BMat8 BMat8::row_space_basis() const {
+    return BMat8(_mm_extract_epi64(sorted8(row_space_basis_internal()), 0));
+}
+
+#if defined(FF)
+#error FF is defined !
+#endif /* FF */
+#define FF 0xff
+
+constexpr std::array<epu8, 4> masks {{
+// clang-format off
+        {FF, 0,FF, 0,FF, 0,FF, 0,FF, 0,FF, 0,FF, 0,FF, 0},
+        {FF,FF, 1, 1,FF,FF, 1, 1,FF,FF, 1, 1,FF,FF, 1, 1},
+        {FF,FF,FF,FF, 2, 2, 2, 2,FF,FF,FF,FF, 2, 2, 2, 2},
+        {FF,FF,FF,FF,FF,FF,FF,FF, 3, 3, 3, 3, 3, 3, 3, 3}
+    }};
+#undef FF
+
+// shift to multiply by 8
+static const epu8 bound08 = _mm_slli_epi32(epu8id, 3);
+static const epu8 bound18 = bound08 + Epu8(0x80);
+static const epu8 shiftres {1, 2, 4, 8, 0x10, 0x20, 0x40, 0x80};
+
+inline void update_bitset(epu8 block, epu8 &set0, epu8 &set1) {
+    // std::cout << mask3 << std::endl;
+    for (size_t slice8 = 0; slice8 < 16; slice8++) {
+        epu8 bm5 = Epu8(0xf8) & block; /* 11111000 */
+        epu8 shft = _mm_shuffle_epi8(shiftres, block - bm5);
+        set0 |= (bm5 == bound08) & shft;
+        set1 |= (bm5 == bound18) & shft;
+        block = _mm_shuffle_epi8(block, right_cycle);
+        }
+}
+
+uint64_t BMat8::row_space_size() const {
+    epu8 in = _mm_set_epi64x(0, _data);
+    epu8 block0 {}, block1 {};
+    for (epu8 m : masks) {
+        block0 |= static_cast<epu8>(_mm_shuffle_epi8(in, m));
+        block1 |= static_cast<epu8>(_mm_shuffle_epi8(in, m | Epu8(4)));
+    }
+    epu8 res0 {}, res1 {};
+    for (size_t r=0; r < 16; r++) {
+        update_bitset(block0 | block1, res0, res1);
+        block1 = _mm_shuffle_epi8(block1, right_cycle);
+    }
+    return (_mm_popcnt_u64(_mm_extract_epi64(res0, 0)) +
+            _mm_popcnt_u64(_mm_extract_epi64(res1, 0)) +
+            _mm_popcnt_u64(_mm_extract_epi64(res0, 1)) +
+            _mm_popcnt_u64(_mm_extract_epi64(res1, 1)));
+}
+
+std::vector<uint8_t> BMat8::rows() const {
+    std::vector<uint8_t> rows;
+    for (size_t i = 0; i < 8; ++i) {
+        uint8_t row = static_cast<uint8_t>(_data << (8 * i) >> 56);
+        rows.push_back(row);
+    }
+    return rows;
+}
+
+size_t BMat8::row_space_size_ref() const {
+    std::array<char, 256> lookup {};
+    std::vector<uint8_t> row_vec = row_space_basis().rows();
+    row_vec.erase(std::remove_if(row_vec.begin(), row_vec.end(),
+                                 [](uint8_t val) { return val == 0; }),
+                  row_vec.end());
+//    auto last = std::remove(row_vec.begin(), row_vec.end(), 0);
+//    row_vec.erase(last, row_vec.end());
+    for (uint8_t x : row_vec) {
+        lookup[x] = true;
+    }
+    std::vector<uint8_t> row_space(row_vec.begin(), row_vec.end());
+    row_space.reserve(256);
+    for (size_t i = 0; i < row_space.size(); ++i) {
+        for (uint8_t row : row_vec) {
+            uint8_t x = row_space[i] | row;
+            if (!lookup[x]) {
+                row_space.push_back(x);
+                lookup[x] = true;
+            }
+        }
+    }
+    return row_space.size() + 1;
 }
 
 inline std::ostream &BMat8::write(std::ostream &os) const {
