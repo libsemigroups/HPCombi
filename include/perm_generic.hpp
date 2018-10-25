@@ -27,28 +27,28 @@ namespace HPCombi {
 template <size_t _Size, typename Expo = uint8_t>
 struct PermGeneric : public VectGeneric<_Size, Expo> {
 
-  using vect = VectGeneric<_Size, Expo>;
+    using vect = VectGeneric<_Size, Expo>;
 
-  PermGeneric() = default;
-  PermGeneric(const vect v ) : vect(v) {};
-  PermGeneric(std::initializer_list<Expo> il) {
-    assert(il.size() <= _Size);
-    std::copy(il.begin(), il.end(), this->v.begin());
-    for (uint64_t i = il.size(); i < _Size; i++)
-      this->v[i] = i;
-  }
+    PermGeneric() = default;
+    PermGeneric(const vect v) : vect(v){};
+    PermGeneric(std::initializer_list<Expo> il) {
+        assert(il.size() <= _Size);
+        std::copy(il.begin(), il.end(), this->v.begin());
+        for (uint64_t i = il.size(); i < _Size; i++)
+            this->v[i] = i;
+    }
 
-  PermGeneric operator*(const PermGeneric &p) const {
-    return this->permuted(p);
-  }
-  static PermGeneric one() { return PermGeneric({}); }
-  static PermGeneric elementary_transposition(uint64_t i) {
-    assert(i < _Size);
-    PermGeneric res{{}};
-    res[i] = i + 1;
-    res[i + 1] = i;
-    return res;
-  }
+    PermGeneric operator*(const PermGeneric &p) const {
+        return this->permuted(p);
+    }
+    static PermGeneric one() { return PermGeneric({}); }
+    static PermGeneric elementary_transposition(uint64_t i) {
+        assert(i < _Size);
+        PermGeneric res{{}};
+        res[i] = i + 1;
+        res[i + 1] = i;
+        return res;
+    }
 };
 
 /*****************************************************************************/

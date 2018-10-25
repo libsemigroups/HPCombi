@@ -16,12 +16,12 @@
 #ifndef HPCOMBI_VECT_GENERIC_HPP
 #define HPCOMBI_VECT_GENERIC_HPP
 
-#include <type_traits>
 #include <algorithm>
 #include <array>
 #include <cassert>
 #include <cstdint>
 #include <ostream>
+#include <type_traits>
 
 namespace HPCombi {
 
@@ -31,18 +31,16 @@ std::array<Expo, Size> sorted_vect(std::array<Expo, Size> v) {
     return v;
 }
 
-
 /** A generic class for combinatorial integer vectors.
  */
-template <size_t _Size, typename Expo = uint8_t>
-struct VectGeneric {
+template <size_t _Size, typename Expo = uint8_t> struct VectGeneric {
 
     static constexpr size_t Size() { return _Size; };
     using array = std::array<Expo, _Size>;
     array v;
 
     VectGeneric() = default;
-    VectGeneric(std::array<Expo, _Size> _v) : v(_v) {};
+    VectGeneric(std::array<Expo, _Size> _v) : v(_v){};
     VectGeneric(std::initializer_list<Expo> il, Expo def = 0) {
         assert(il.size() <= _Size);
         std::copy(il.begin(), il.end(), v.begin());
@@ -50,21 +48,26 @@ struct VectGeneric {
     }
 
     VectGeneric &operator=(const VectGeneric &) = default;
-    VectGeneric &operator=(const array &vv) { v = vv; return *this; }
+    VectGeneric &operator=(const array &vv) {
+        v = vv;
+        return *this;
+    }
 
     Expo operator[](uint64_t i) const { return v[i]; }
     Expo &operator[](uint64_t i) { return v[i]; }
 
     size_t first_diff(const VectGeneric &u, size_t bound = _Size) const {
         for (size_t i = 0; i < bound; i++)
-            if (v[i] != u[i]) return i;
+            if (v[i] != u[i])
+                return i;
         return _Size;
     }
 
     size_t last_diff(const VectGeneric &u, size_t bound = _Size) const {
         while (bound != 0) {
             --bound;
-            if (u[bound] != v[bound]) return bound;
+            if (u[bound] != v[bound])
+                return bound;
         }
         return _Size;
     }
@@ -73,8 +76,12 @@ struct VectGeneric {
     iter begin() { return v.begin(); }
     iter end() { return v.end(); }
 
-    bool operator==(const VectGeneric &u) const { return first_diff(u) == _Size; }
-    bool operator!=(const VectGeneric &u) const { return first_diff(u) != _Size; }
+    bool operator==(const VectGeneric &u) const {
+        return first_diff(u) == _Size;
+    }
+    bool operator!=(const VectGeneric &u) const {
+        return first_diff(u) != _Size;
+    }
 
     bool operator<(const VectGeneric &u) const {
         uint64_t diff = first_diff(u);
@@ -97,7 +104,8 @@ struct VectGeneric {
 
     bool is_sorted() const {
         for (uint64_t i = 1; i < _Size; i++)
-            if (v[i-1] < v[i]) return false;
+            if (v[i - 1] < v[i])
+                return false;
         return true;
     }
 
@@ -146,27 +154,30 @@ struct VectGeneric {
 
     uint64_t horiz_sum() {
         Expo res = 0;
-        for (uint64_t i = 0; i < _Size; i++) res += v[i];
+        for (uint64_t i = 0; i < _Size; i++)
+            res += v[i];
         return res;
     }
 
     VectGeneric partial_sums() const {
         auto res = *this;
-        for (uint64_t i = 1; i < _Size; i++) res[i] += res[i-1];
+        for (uint64_t i = 1; i < _Size; i++)
+            res[i] += res[i - 1];
         return res;
     }
 
     void partial_sums_inplace() {
-        for (uint64_t i = 1; i < _Size; i++) v[i] += v[i-1];
+        for (uint64_t i = 1; i < _Size; i++)
+            v[i] += v[i - 1];
     }
 
     VectGeneric eval() {
-        VectGeneric res {};
+        VectGeneric res{};
         for (size_t i = 0; i < _Size; i++)
-            if (v[i] < _Size) res[v[i]]++;
+            if (v[i] < _Size)
+                res[v[i]]++;
         return res;
     }
-
 };
 
 static_assert(std::is_trivial<VectGeneric<12>>(),

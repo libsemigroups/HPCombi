@@ -16,9 +16,9 @@
 #ifndef HPCOMBI_VECT16_HPP_INCLUDED
 #define HPCOMBI_VECT16_HPP_INCLUDED
 
-#include <type_traits>
 #include "epu.hpp"
 #include "perm16.hpp"  // for is_permutation
+#include <type_traits>
 
 namespace HPCombi {
 
@@ -31,11 +31,14 @@ struct alignas(16) Vect16 {
     Vect16() = default;
     HPCOMBI_CONSTEXPR_CONSTRUCTOR Vect16(epu8 x) : v(x) {}
     Vect16(std::initializer_list<uint8_t> il, uint8_t def = 0)
-        : v(Epu8(il, def)) {};
+        : v(Epu8(il, def)){};
     HPCOMBI_CONSTEXPR_CONSTRUCTOR operator epu8() const { return v; }
 
     Vect16 &operator=(const Vect16 &) = default;
-    Vect16 &operator=(const epu8 &vv) { v = vv; return *this; }
+    Vect16 &operator=(const epu8 &vv) {
+        v = vv;
+        return *this;
+    }
 
     array &as_array() { return HPCombi::as_array(v); }
     const array &as_array() const { return HPCombi::as_array(v); }
@@ -55,9 +58,7 @@ struct alignas(16) Vect16 {
     iter begin() { return as_array().begin(); }
     iter end() { return as_array().end(); }
 
-    bool operator==(const Vect16 &b) const {
-        return HPCombi::equal(v, b.v);
-    };
+    bool operator==(const Vect16 &b) const { return HPCombi::equal(v, b.v); };
     bool operator!=(const Vect16 &b) const {
         return HPCombi::not_equal(v, b.v);
     };
@@ -74,11 +75,12 @@ struct alignas(16) Vect16 {
     inline Vect16 eval16() const { return HPCombi::eval16(v); };
 
     bool is_permutation() const { return HPCombi::is_permutation(v); }
-    bool is_permutation(size_t k) const { return HPCombi::is_permutation(v, k); }
+    bool is_permutation(size_t k) const {
+        return HPCombi::is_permutation(v, k);
+    }
 };
 
-static_assert(std::is_trivial<Vect16>(),
-              "Vect16 is not a trivial class !");
+static_assert(std::is_trivial<Vect16>(), "Vect16 is not a trivial class !");
 
 }  // namespace HPCombi
 

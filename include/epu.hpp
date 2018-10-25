@@ -20,8 +20,8 @@
 #include <cassert>
 #include <cstdint>
 #include <functional>  // less<>, equal_to<>
-#include <ostream>
 #include <iomanip>
+#include <ostream>
 #include <x86intrin.h>
 
 #ifdef HPCOMBI_HAVE_CONFIG
@@ -47,7 +47,7 @@
 namespace HPCombi {
 
 /// Unsigned 8 bits int constant.
-inline constexpr uint8_t operator "" _u8(unsigned long long arg) noexcept {
+inline constexpr uint8_t operator"" _u8(unsigned long long arg) noexcept {
     return static_cast<uint8_t>(arg);
 }
 
@@ -55,8 +55,6 @@ inline constexpr uint8_t operator "" _u8(unsigned long long arg) noexcept {
 using epu8 = uint8_t __attribute__((vector_size(16)));
 /// SIMD vector of 32 unsigned bytes
 using xpu8 = uint8_t __attribute__((vector_size(32)));
-
-
 
 namespace {  // Implementation detail code
 
@@ -70,13 +68,17 @@ template <typename T> struct ConstFun {
 /// Factory object for various SIMD constants in particular constexpr
 template <class TPU> struct TPUBuild {
 
-    using type_elem = typename std::remove_reference<decltype((TPU{})[0])>::type;
+    using type_elem =
+        typename std::remove_reference<decltype((TPU{})[0])>::type;
     static constexpr size_t size_elem = sizeof(type_elem);
-    static constexpr size_t size = sizeof(TPU)/size_elem;
+    static constexpr size_t size = sizeof(TPU) / size_elem;
     using array = std::array<type_elem, size>;
 
-    template <class Fun, std::size_t... Is> static HPCOMBI_CONSTEXPR
-    TPU make_helper(Fun f, std::index_sequence<Is...>) { return TPU{f(Is)...}; }
+    template <class Fun, std::size_t... Is>
+    static HPCOMBI_CONSTEXPR TPU make_helper(Fun f,
+                                             std::index_sequence<Is...>) {
+        return TPU{f(Is)...};
+    }
 
     inline TPU operator()(const std::initializer_list<type_elem> il,
                           type_elem def) const {
@@ -87,8 +89,7 @@ template <class TPU> struct TPUBuild {
         return reinterpret_cast<const TPU &>(res);
     }
 
-    template <class Fun>
-    inline HPCOMBI_CONSTEXPR TPU operator()(Fun f) const {
+    template <class Fun> inline HPCOMBI_CONSTEXPR TPU operator()(Fun f) const {
         return make_helper(f, std::make_index_sequence<size>{});
     }
 
@@ -103,7 +104,6 @@ template <class TPU> struct TPUBuild {
     inline HPCOMBI_CONSTEXPR TPU operator()(size_t c) const {
         return operator()(uint8_t(c));
     }
-
 };
 
 // The following functions should be constexpr lambdas writen directly in
@@ -128,8 +128,6 @@ uint8_t complement_fun(uint8_t i) { return 15 - i; }
 
 }  // Anonymous namespace
 
-
-
 /// Factory object for various SIMD constants in particular constexpr
 TPUBuild<epu8> Epu8;
 
@@ -145,7 +143,6 @@ HPCOMBI_CONSTEXPR epu8 right_cycle = Epu8(right_cycle_fun);
 HPCOMBI_CONSTEXPR epu8 left_dup = Epu8(left_dup_fun);
 /// Right shift #HPCombi::epu8, duplicating the leftmost entry
 HPCOMBI_CONSTEXPR epu8 right_dup = Epu8(right_dup_fun);
-
 
 /** Cast a #HPCombi::epu8 to a c++ \c std::array
  *
@@ -173,16 +170,16 @@ inline epu8 from_array(TPUBuild<epu8>::array a) {
  *
  *  This is usually faster for algorithm using a lot of indexed acces.
  */
-inline VectGeneric<16>& as_VectGeneric(epu8 &v) {
-    return reinterpret_cast<VectGeneric<16>&>(as_array(v));
+inline VectGeneric<16> &as_VectGeneric(epu8 &v) {
+    return reinterpret_cast<VectGeneric<16> &>(as_array(v));
 }
 
 /** Cast a #HPCombi::epu8 to a c++ #HPCombi::VectGeneric
  *
  *  This is usually faster for algorithm using a lot of indexed acces.
  */
-inline const VectGeneric<16>& as_VectGeneric(const epu8 &v) {
-    return reinterpret_cast<const VectGeneric<16>&>(as_array(v));
+inline const VectGeneric<16> &as_VectGeneric(const epu8 &v) {
+    return reinterpret_cast<const VectGeneric<16> &>(as_array(v));
 }
 
 /** Test whether all the entries of a #HPCombi::epu8 are zero */
@@ -197,14 +194,13 @@ inline epu8 permuted(epu8 a, epu8 b) { return _mm_shuffle_epi8(a, b); }
 /** Left shifted of a #HPCombi::epu8 inserting a 0
  * @warning we use the convention that the 0 entry is on the left !
  */
-inline epu8 shifted_right(epu8 a) { return _mm_bslli_si128(a,1); }
+inline epu8 shifted_right(epu8 a) { return _mm_bslli_si128(a, 1); }
 /** Right shifted of a #HPCombi::epu8 inserting a 0
  * @warning we use the convention that the 0 entry is on the left !
  */
-inline epu8 shifted_left(epu8 a) { return _mm_bsrli_si128(a,1); }
+inline epu8 shifted_left(epu8 a) { return _mm_bsrli_si128(a, 1); }
 /** Reverting a #HPCombi::epu8 */
 inline epu8 reverted(epu8 a) { return permuted(a, epu8rev); }
-
 
 /** Vector min between two #HPCombi::epu8 0 */
 inline epu8 min(epu8 a, epu8 b) { return _mm_min_epu8(a, b); }
@@ -242,7 +238,8 @@ const uint64_t prime = 0x9e3779b97f4a7bb9;
 /** A random #HPCombi::epu8
  * @details
  * @param bnd : the upper bound for the value of the entries
- * @returns a random #HPCombi::epu8 with value in the interval @f$[0, 1, 2, ..., bnd-1]@f$.
+ * @returns a random #HPCombi::epu8 with value in the interval @f$[0, 1, 2, ...,
+ * bnd-1]@f$.
  */
 inline epu8 random_epu8(uint16_t bnd);
 
@@ -252,8 +249,7 @@ inline epu8 random_epu8(uint16_t bnd);
  * @param repl: the value replacing the duplicate entries (default to 0)
  * @return a where repeated occurences of entries are replaced by \c repl
  */
-inline epu8 remove_dups(epu8 a, uint8_t repl=0);
-
+inline epu8 remove_dups(epu8 a, uint8_t repl = 0);
 
 /** @class common_horiz_sum
  * @brief Horizontal sum of a  #HPCombi::epu8
@@ -290,7 +286,6 @@ inline uint8_t horiz_sum3(epu8);
 /** @copydoc common_horiz_sum */
 inline uint8_t horiz_sum(epu8 v) { return horiz_sum3(v); }
 
-
 /** @class common_partial_sums
  * @brief Horizontal partial sum of a #HPCombi::epu8
  * @details
@@ -319,7 +314,6 @@ inline epu8 partial_sums_round(epu8);
 inline epu8 partial_sums_round(epu8);
 /** @copydoc common_partial_sums */
 inline epu8 partial_sums(epu8 v) { return partial_sums_round(v); }
-
 
 /** @class common_eval16
  * @brief Evaluation of a #HPCombi::epu8
@@ -357,14 +351,13 @@ inline epu8 eval16_popcount(epu8 v);
 /** @copydoc common_eval16 */
 inline epu8 eval16(epu8 v) { return eval16_cycle(v); };
 
-
 /** @class common_first_diff
  * @brief The first difference between two #HPCombi::epu8
  * @details
  * @param a, b : two #HPCombi::epu8
  * @param bound : a \c size_t
- * @returns the smallest index @f$i<bound@f$ such that \c a[i] and \c b[i] differ,
- * 16 if there is no differences before bound.
+ * @returns the smallest index @f$i<bound@f$ such that \c a[i] and \c b[i]
+ * differ, 16 if there is no differences before bound.
  * @par Example:
  * @code
  * epu8 a { 5, 5, 2, 5, 1, 6,12, 4, 0, 3, 2,11,12,13,14,15};
@@ -389,21 +382,20 @@ inline uint64_t first_diff_cmpstr(epu8 a, epu8 b, size_t bound = 16);
 /** @copydoc common_first_diff
  *  @par Algorithm:
  *  Using vector comparison and mask
-*/
+ */
 inline uint64_t first_diff_mask(epu8 a, epu8 b, size_t bound = 16);
 /** @copydoc common_first_diff */
 inline uint64_t first_diff(epu8 a, epu8 b, size_t bound = 16) {
     return first_diff_mask(a, b, bound);
 }
 
-
 /** @class common_last_diff
  * @brief The last difference between two #HPCombi::epu8
  * @details
  * @param a, b : two #HPCombi::epu8
  * @param bound : a \c size_t
- * @returns the largest index @f$i<bound@f$ such that \c a[i] and \c b[i] differ,
- * 16 if there is no differences before bound.
+ * @returns the largest index @f$i<bound@f$ such that \c a[i] and \c b[i]
+ * differ, 16 if there is no differences before bound.
  * @par Example:
  * @code
  * epu8 a { 5, 5, 2, 5, 1, 6,12, 4, 0, 3, 2,11,12,13,14,15};
@@ -428,13 +420,12 @@ inline uint64_t last_diff_cmpstr(epu8 a, epu8 b, size_t bound = 16);
 /** @copydoc common_last_diff
  *  @par Algorithm:
  *  Using vector comparison and mask
-*/
+ */
 inline uint64_t last_diff_mask(epu8 a, epu8 b, size_t bound = 16);
 /** @copydoc common_last_diff */
 inline uint64_t last_diff(epu8 a, epu8 b, size_t bound = 16) {
     return last_diff_mask(a, b, bound);
 }
-
 
 /** Lexicographic comparison between two #HPCombi::epu8 */
 inline bool less(epu8 a, epu8 b);
@@ -464,7 +455,6 @@ inline uint64_t first_zero(epu8 v, int bnd) {
     return search_index<FIRST_ZERO>(v,bnd);
 }
 */
-
 
 /** Test for partial transformation
  * @details

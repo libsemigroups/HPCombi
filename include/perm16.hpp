@@ -17,11 +17,11 @@
 #define HPCOMBI_PERM16_HPP_INCLUDED
 
 #include <array>
-#include <vector>
 #include <cassert>
 #include <cstdint>
 #include <functional>  // less<>
 #include <ostream>
+#include <vector>
 #include <x86intrin.h>
 
 #include "epu.hpp"
@@ -29,13 +29,10 @@
 
 namespace HPCombi {
 
-
 // Forward declaration
 struct Perm16;
 struct PTransf16;
 struct Transf16;
-
-
 
 /** Partial transformation of @f$\{0\dots 15\}@f$
  *
@@ -54,7 +51,10 @@ struct alignas(16) PTransf16 : public Vect16 {
     PTransf16(std::initializer_list<uint8_t> il);
 
     PTransf16 &operator=(const PTransf16 &) = default;
-    PTransf16 &operator=(const epu8 &vv) { v = vv; return *this; }
+    PTransf16 &operator=(const epu8 &vv) {
+        v = vv;
+        return *this;
+    }
 
     bool operator==(const PTransf16 &x) const { return equal(v, x.v); }
     bool operator!=(const PTransf16 &x) const { return not_equal(v, x.v); }
@@ -75,7 +75,6 @@ struct alignas(16) PTransf16 : public Vect16 {
     uint32_t rank_ref() const;
     uint32_t rank() const;
 };
-
 
 /** Full transformation of @f$\{0\dots 15\}@f$
  *
@@ -123,7 +122,8 @@ struct PPerm16 : public PTransf16 {
     inline PPerm16 inverse_ref() const;
     /** @copydoc common_inverse
      *  @par Algorithm:
-     *  @f$O(\log n)@f$ algorithm using some kind of vectorized dichotomic search.
+     *  @f$O(\log n)@f$ algorithm using some kind of vectorized dichotomic
+     * search.
      */
     inline PPerm16 inverse_find() const;
     /** @copydoc common_inverse
@@ -132,7 +132,6 @@ struct PPerm16 : public PTransf16 {
      * Raise \e *this to power @f$\text{LCM}(1, 2, ..., n) - 1@f$ so complexity
      * is in @f$O(log (\text{LCM}(1, 2, ..., n) - 1)) = O(n)@f$
      */
-
 };
 
 /** Permutations of @f$\{0\dots 15\}@f$
@@ -141,7 +140,7 @@ struct PPerm16 : public PTransf16 {
 struct Perm16 : public Transf16 /* public PPerm : diamond problem */ {
 
     Perm16() = default;
-    HPCOMBI_CONSTEXPR_CONSTRUCTOR Perm16(const Perm16&) = default;
+    HPCOMBI_CONSTEXPR_CONSTRUCTOR Perm16(const Perm16 &) = default;
     HPCOMBI_CONSTEXPR_CONSTRUCTOR Perm16(const vect v) : Transf16(v) {}
     HPCOMBI_CONSTEXPR_CONSTRUCTOR Perm16(const epu8 x) : Transf16(x) {}
     Perm16 &operator=(const Perm16 &) = default;
@@ -152,128 +151,128 @@ struct Perm16 : public Transf16 /* public PPerm : diamond problem */ {
         return HPCombi::permuted(v, p.v);
     }
 
-  /** @class common_inverse
-   * @brief The inverse permutation
-   * @details
-   * @returns the inverse of \c *this
-   * @par Example:
-   * @code
-   * Perm16 x = {0,3,2,4,1,5,6,7,8,9,10,11,12,13,14,15};
-   * x.inverse()
-   * @endcode
-   * Returns
-   * @verbatim {0,4,2,1,3,5,6,7,8,9,10,11,12,13,14,15} @endverbatim
-   */
-  /** @copydoc common_inverse
-   *  @par Algorithm:
-   *  Reference @f$O(n)@f$ algorithm using loop and indexed access
-   */
-  inline Perm16 inverse_ref() const;
-  /** @copydoc common_inverse
-   *  @par Algorithm:
-   *  @f$O(n)@f$ algorithm using reference cast to arrays
-   */
-  inline Perm16 inverse_arr() const;
-  /** @copydoc common_inverse
-   *  @par Algorithm:
-   *  Insert the identity in the least significant bits and sort using a
-   *  sorting network. The number of round of the optimal sorting network is
-   *  as far as I know open, therefore, the complexity is unknown.
-   */
-  inline Perm16 inverse_sort() const;
-  /** @copydoc common_inverse
-   *  @par Algorithm:
-   *  @f$O(\log n)@f$ algorithm using some kind of vectorized dichotomic search.
-   */
-  inline Perm16 inverse_find() const;
-  /** @copydoc common_inverse
-   *  @par Algorithm:
-   *
-   * Raise \e *this to power @f$\text{LCM}(1, 2, ..., n) - 1@f$ so complexity
-   * is in @f$O(log (\text{LCM}(1, 2, ..., n) - 1)) = O(n)@f$
-   */
-  inline Perm16 inverse_pow() const;
-  /** @copydoc common_inverse
-   *  @par Algorithm:
-   *  Compute power from @f$n/2@f$ to @f$n@f$, when @f$\sigma^k(i)=i@f$ then
-   *  @f$\sigma^{-1}(i)=\sigma^{k-1}(i)@f$. Complexity @f$O(n)@f$
-   */
-  inline Perm16 inverse_cycl() const;
-  /** @copydoc common_inverse
-   *
-   *  Frontend method: currently aliased to #inverse_cycl */
-  inline Perm16 inverse() const { return inverse_cycl(); }
+    /** @class common_inverse
+     * @brief The inverse permutation
+     * @details
+     * @returns the inverse of \c *this
+     * @par Example:
+     * @code
+     * Perm16 x = {0,3,2,4,1,5,6,7,8,9,10,11,12,13,14,15};
+     * x.inverse()
+     * @endcode
+     * Returns
+     * @verbatim {0,4,2,1,3,5,6,7,8,9,10,11,12,13,14,15} @endverbatim
+     */
+    /** @copydoc common_inverse
+     *  @par Algorithm:
+     *  Reference @f$O(n)@f$ algorithm using loop and indexed access
+     */
+    inline Perm16 inverse_ref() const;
+    /** @copydoc common_inverse
+     *  @par Algorithm:
+     *  @f$O(n)@f$ algorithm using reference cast to arrays
+     */
+    inline Perm16 inverse_arr() const;
+    /** @copydoc common_inverse
+     *  @par Algorithm:
+     *  Insert the identity in the least significant bits and sort using a
+     *  sorting network. The number of round of the optimal sorting network is
+     *  as far as I know open, therefore, the complexity is unknown.
+     */
+    inline Perm16 inverse_sort() const;
+    /** @copydoc common_inverse
+     *  @par Algorithm:
+     *  @f$O(\log n)@f$ algorithm using some kind of vectorized dichotomic
+     * search.
+     */
+    inline Perm16 inverse_find() const;
+    /** @copydoc common_inverse
+     *  @par Algorithm:
+     *
+     * Raise \e *this to power @f$\text{LCM}(1, 2, ..., n) - 1@f$ so complexity
+     * is in @f$O(log (\text{LCM}(1, 2, ..., n) - 1)) = O(n)@f$
+     */
+    inline Perm16 inverse_pow() const;
+    /** @copydoc common_inverse
+     *  @par Algorithm:
+     *  Compute power from @f$n/2@f$ to @f$n@f$, when @f$\sigma^k(i)=i@f$ then
+     *  @f$\sigma^{-1}(i)=\sigma^{k-1}(i)@f$. Complexity @f$O(n)@f$
+     */
+    inline Perm16 inverse_cycl() const;
+    /** @copydoc common_inverse
+     *
+     *  Frontend method: currently aliased to #inverse_cycl */
+    inline Perm16 inverse() const { return inverse_cycl(); }
 
-  // It's not possible to have a static constexpr member of same type as class
-  // being defined (see https://stackoverflow.com/questions/11928089/)
-  // therefore we chose to have functions.
-  static HPCOMBI_CONSTEXPR
-  Perm16 one() { return epu8id; }
+    // It's not possible to have a static constexpr member of same type as class
+    // being defined (see https://stackoverflow.com/questions/11928089/)
+    // therefore we chose to have functions.
+    static HPCOMBI_CONSTEXPR Perm16 one() { return epu8id; }
 
-  inline static Perm16 elementary_transposition(uint64_t i);
-  inline static Perm16 random();
-  inline static Perm16 unrankSJT(int n, int r);
+    inline static Perm16 elementary_transposition(uint64_t i);
+    inline static Perm16 random();
+    inline static Perm16 unrankSJT(int n, int r);
 
-  /** @class common_lehmer
-   * @brief The Lehmer code of a permutation
-   * @details
-   * @returns the Lehmer code of \c *this
-   * @par Example:
-   * @code
-   * Perm16 x = {0,3,2,4,1,5,6,7,8,9,10,11,12,13,14,15};
-   * x.lehmer()
-   * @endcode
-   * Returns
-   * @verbatim {0,2,1,1,0,0,0,0,0,0,0,0,0,0,0,0} @endverbatim
-   */
-  /** @copydoc common_lehmer
-   *  @par Algorithm:
-   *  Reference @f$O(n^2)@f$ algorithm using loop and indexed access
-   */
-  inline epu8 lehmer_ref() const;
-  /** @copydoc common_lehmer
-   *  @par Algorithm:
-   *  Reference @f$O(n^2)@f$ algorithm using array, loop and indexed access
-   */
-  inline epu8 lehmer_arr() const;
-  /** @copydoc common_lehmer
-   *  @par Algorithm:
-   *  Reference @f$O(n)@f$ algorithm using vector comparison
-   */
-  inline epu8 lehmer() const;
-  inline uint8_t length_ref() const;
-  inline uint8_t length_arr() const;
-  inline uint8_t length() const;
+    /** @class common_lehmer
+     * @brief The Lehmer code of a permutation
+     * @details
+     * @returns the Lehmer code of \c *this
+     * @par Example:
+     * @code
+     * Perm16 x = {0,3,2,4,1,5,6,7,8,9,10,11,12,13,14,15};
+     * x.lehmer()
+     * @endcode
+     * Returns
+     * @verbatim {0,2,1,1,0,0,0,0,0,0,0,0,0,0,0,0} @endverbatim
+     */
+    /** @copydoc common_lehmer
+     *  @par Algorithm:
+     *  Reference @f$O(n^2)@f$ algorithm using loop and indexed access
+     */
+    inline epu8 lehmer_ref() const;
+    /** @copydoc common_lehmer
+     *  @par Algorithm:
+     *  Reference @f$O(n^2)@f$ algorithm using array, loop and indexed access
+     */
+    inline epu8 lehmer_arr() const;
+    /** @copydoc common_lehmer
+     *  @par Algorithm:
+     *  Reference @f$O(n)@f$ algorithm using vector comparison
+     */
+    inline epu8 lehmer() const;
+    inline uint8_t length_ref() const;
+    inline uint8_t length_arr() const;
+    inline uint8_t length() const;
 
-  inline uint8_t nb_descents_ref() const;
-  inline uint8_t nb_descents() const;
+    inline uint8_t nb_descents_ref() const;
+    inline uint8_t nb_descents() const;
 
-  inline uint8_t nb_cycles_ref() const;
-  inline epu8 cycles_mask_unroll() const;
-  inline uint8_t nb_cycles_unroll() const;
-  inline uint8_t nb_cycles() const { return nb_cycles_unroll(); }
+    inline uint8_t nb_cycles_ref() const;
+    inline epu8 cycles_mask_unroll() const;
+    inline uint8_t nb_cycles_unroll() const;
+    inline uint8_t nb_cycles() const { return nb_cycles_unroll(); }
 
-  /** @class common_left_weak_leq
-   * @brief Compare two permutations for the left weak order
-   * @par Example:
-   * @code
-   * Perm16 x{2,0,3,1}, y{3,0,2,1};
-   * x.left_weak_leq(y)
-   * @endcode
-   * Returns @verbatim true @endverbatim
-   */
-  /** @copydoc common_left_weak_leq
-   *  @par Algorithm:
-   *  Reference @f$O(n^2)@f$ testing inclusion of inversions one by one
-   */
-  inline bool left_weak_leq_ref(Perm16 other) const;
-  /** @copydoc common_left_weak_leq
-   *  @par Algorithm:
-   *  Reference @f$O(n)@f$ with vectorized test of inclusion
-   */
-  inline bool left_weak_leq(Perm16 other) const;
+    /** @class common_left_weak_leq
+     * @brief Compare two permutations for the left weak order
+     * @par Example:
+     * @code
+     * Perm16 x{2,0,3,1}, y{3,0,2,1};
+     * x.left_weak_leq(y)
+     * @endcode
+     * Returns @verbatim true @endverbatim
+     */
+    /** @copydoc common_left_weak_leq
+     *  @par Algorithm:
+     *  Reference @f$O(n^2)@f$ testing inclusion of inversions one by one
+     */
+    inline bool left_weak_leq_ref(Perm16 other) const;
+    /** @copydoc common_left_weak_leq
+     *  @par Algorithm:
+     *  Reference @f$O(n)@f$ with vectorized test of inclusion
+     */
+    inline bool left_weak_leq(Perm16 other) const;
 
-  inline static const std::array<Perm16, 3> inverting_rounds();
+    inline static const std::array<Perm16, 3> inverting_rounds();
 };
 
 /*****************************************************************************/

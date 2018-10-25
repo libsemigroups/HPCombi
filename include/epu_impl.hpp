@@ -16,8 +16,8 @@
 // This is the implementation par of epu.hpp this should be seen as
 // implementation details and should not be included directly.
 
-#include <iostream>
 #include <initializer_list>
+#include <iostream>
 #include <random>
 
 #include "vect_generic.hpp"
@@ -44,8 +44,9 @@ namespace HPCombi {
 /*****************************************************************************/
 
 inline uint64_t first_diff_ref(epu8 a, epu8 b, size_t bound) {
-    for (size_t i=0; i<bound; i++)
-        if (a[i] != b[i]) return i;
+    for (size_t i = 0; i < bound; i++)
+        if (a[i] != b[i])
+            return i;
     return 16;
 }
 inline uint64_t first_diff_cmpstr(epu8 a, epu8 b, size_t bound) {
@@ -53,14 +54,14 @@ inline uint64_t first_diff_cmpstr(epu8 a, epu8 b, size_t bound) {
 }
 inline uint64_t first_diff_mask(epu8 a, epu8 b, size_t bound) {
     uint64_t res = _mm_movemask_epi8((a != b) & (epu8id < Epu8(bound)));
-    return  res == 0 ? 16 : _bit_scan_forward(res);
+    return res == 0 ? 16 : _bit_scan_forward(res);
 }
-
 
 inline uint64_t last_diff_ref(epu8 a, epu8 b, size_t bound) {
     while (bound != 0) {
         --bound;
-        if (a[bound] != b[bound]) return bound;
+        if (a[bound] != b[bound])
+            return bound;
     }
     return 16;
 }
@@ -69,7 +70,7 @@ inline uint64_t last_diff_cmpstr(epu8 a, epu8 b, size_t bound) {
 }
 inline uint64_t last_diff_mask(epu8 a, epu8 b, size_t bound) {
     auto res = _mm_movemask_epi8((a != b) & (epu8id < Epu8(bound)));
-    return  res == 0 ? 16 : _bit_scan_reverse(res);
+    return res == 0 ? 16 : _bit_scan_reverse(res);
 }
 
 inline bool less(epu8 a, epu8 b) {
@@ -91,7 +92,7 @@ inline epu8 network_sort(epu8 res, std::array<epu8, sz> rounds) {
         epu8 mask = Increassing ? round < epu8id : epu8id < round;
         epu8 b = permuted(res, round);
         // res = mask ? min(res,b) : max(res,b); is not accepted by clang
-        res = _mm_blendv_epi8(min(res,b), max(res,b), mask);
+        res = _mm_blendv_epi8(min(res, b), max(res, b), mask);
     }
     return res;
 }
@@ -103,7 +104,7 @@ inline epu8 network_sort(epu8 res, std::array<epu8, sz> rounds) {
  * [AoCP3]: "D. Knuth, The art of computer programming vol. 3"
  */
 constexpr std::array<epu8, 9> sorting_rounds
-// clang-format off
+    // clang-format off
     //     0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15
 {{
     epu8 { 1,  0,  3,  2,  5,  4,  7,  6,  9,  8, 11, 10, 13, 12, 15, 14},
@@ -122,10 +123,12 @@ constexpr std::array<epu8, 9> sorting_rounds
  * @details [Batcher odd-Even mergesort] sorting network
  * used by the #sorted function
  *
- * [Batcher odd-Even mergesort]: https://en.wikipedia.org/wiki/Batcher_odd%E2%80%93even_mergesort "Batcher odd–even mergesort"
+ * [Batcher odd-Even mergesort]:
+ * https://en.wikipedia.org/wiki/Batcher_odd%E2%80%93even_mergesort "Batcher
+ * odd–even mergesort"
  */
 constexpr std::array<epu8, 6> sorting_rounds8
-// clang-format off
+    // clang-format off
     //     0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15
 {{
     epu8 { 1,  0,  3,  2,  5,  4,  7,  6,  9,  8, 11, 10, 13, 12, 15, 14},
@@ -140,19 +143,12 @@ constexpr std::array<epu8, 6> sorting_rounds8
 inline bool is_sorted(epu8 a) {
     return _mm_movemask_epi8(shifted_right(a) > a) == 0;
 }
-inline epu8 sorted(epu8 a) {
-    return network_sort<true>(a, sorting_rounds);
-}
-inline epu8 sorted8(epu8 a) {
-    return network_sort<true>(a, sorting_rounds8);
-};
-inline epu8 revsorted(epu8 a) {
-    return network_sort<false>(a, sorting_rounds);
-}
+inline epu8 sorted(epu8 a) { return network_sort<true>(a, sorting_rounds); }
+inline epu8 sorted8(epu8 a) { return network_sort<true>(a, sorting_rounds8); };
+inline epu8 revsorted(epu8 a) { return network_sort<false>(a, sorting_rounds); }
 inline epu8 revsorted8(epu8 a) {
     return network_sort<false>(a, sorting_rounds8);
 };
-
 
 inline epu8 random_epu8(uint16_t bnd) {
     epu8 res;
@@ -171,7 +167,6 @@ inline epu8 remove_dups(epu8 v, uint8_t repl) {
     return _mm_blendv_epi8(Epu8(repl), v, v != shifted_right(v));
 }
 
-
 #if defined(FF)
 #error FF is defined !
 #endif /* FF */
@@ -180,7 +175,7 @@ inline epu8 remove_dups(epu8 v, uint8_t repl) {
 /// Permutation Round for partial and horizontal sums
 constexpr std::array<epu8, 4> summing_rounds
     //      0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15
-// clang-format off
+    // clang-format off
 {{
     epu8 { FF,  0, FF,  2, FF,  4, FF,  6, FF,  8, FF, 10, FF, 12, FF, 14},
     epu8 { FF, FF,  1,  1, FF, FF,  5,  5, FF, FF,  9,  9, FF, FF, 13, 13},
@@ -191,18 +186,14 @@ constexpr std::array<epu8, 4> summing_rounds
 
 #undef FF
 
-
 inline uint8_t horiz_sum_ref(epu8 v) {
     uint8_t res = 0;
-    for (size_t i = 0; i < 16; i++) res += v[i];
+    for (size_t i = 0; i < 16; i++)
+        res += v[i];
     return res;
 }
-inline uint8_t horiz_sum_gen(epu8 v) {
-    return as_VectGeneric(v).horiz_sum();
-}
-inline uint8_t horiz_sum4(epu8 v) {
-    return partial_sums_round(v)[15];
-}
+inline uint8_t horiz_sum_gen(epu8 v) { return as_VectGeneric(v).horiz_sum(); }
+inline uint8_t horiz_sum4(epu8 v) { return partial_sums_round(v)[15]; }
 inline uint8_t horiz_sum3(epu8 v) {
     auto sr = summing_rounds;
     v += permuted(v, sr[0]);
@@ -211,9 +202,8 @@ inline uint8_t horiz_sum3(epu8 v) {
     return v[7] + v[15];
 }
 
-
-inline epu8 partial_sums_ref(epu8 v)  {
-    epu8 res {};
+inline epu8 partial_sums_ref(epu8 v) {
+    epu8 res{};
     res[0] = v[0];
     for (size_t i = 1; i < 16; i++)
         res[i] = res[i - 1] + v[i];
@@ -229,19 +219,19 @@ inline epu8 partial_sums_round(epu8 v) {
     return v;
 }
 
-
 inline epu8 eval16_ref(epu8 v) {
-    epu8 res {};
+    epu8 res{};
     for (size_t i = 0; i < 16; i++)
         if (v[i] < 16)
             res[v[i]]++;
     return res;
 }
 inline epu8 eval16_arr(epu8 v8) {
-    TPUBuild<epu8>::array res {};
+    TPUBuild<epu8>::array res{};
     auto v = as_array(v8);
     for (size_t i = 0; i < 16; i++)
-        if (v[i] < 16) res[v[i]]++;
+        if (v[i] < 16)
+            res[v[i]]++;
     return from_array(res);
 }
 inline epu8 eval16_gen(epu8 v) {
@@ -256,26 +246,23 @@ inline epu8 eval16_cycle(epu8 v) {
     return res;
 }
 inline epu8 eval16_popcount(epu8 v) {
-    epu8 res {};
+    epu8 res{};
     for (size_t i = 0; i < 16; i++) {
         res[i] = _mm_popcnt_u32(_mm_movemask_epi8(v == Epu8(uint8_t(i))));
     }
     return res;
 }
 
-
 inline bool is_partial_transformation(epu8 v, const size_t k) {
     uint64_t diff = last_diff(v, epu8id, 16);
-    return
-        (_mm_movemask_epi8(v+Epu8(1) <= Epu8(0x10)) == 0xffff) &&
-        (diff == 16 || diff < k);
+    return (_mm_movemask_epi8(v + Epu8(1) <= Epu8(0x10)) == 0xffff) &&
+           (diff == 16 || diff < k);
 }
 
 inline bool is_transformation(epu8 v, const size_t k) {
     uint64_t diff = last_diff(v, epu8id, 16);
-    return
-        (_mm_movemask_epi8(v < Epu8(0x10)) == 0xffff) &&
-        (diff == 16 || diff < k);
+    return (_mm_movemask_epi8(v < Epu8(0x10)) == 0xffff) &&
+           (diff == 16 || diff < k);
 }
 
 inline bool is_permutation(epu8 v, const size_t k) {
@@ -283,10 +270,9 @@ inline bool is_permutation(epu8 v, const size_t k) {
     // (forall x in v, x in Perm16::one())  and
     // (forall x in Perm16::one(), x in v)  and
     // (v = Perm16::one()   or  last diff index < 16)
-    return
-        _mm_cmpestri(epu8id, 16, v, 16, FIRST_NON_ZERO) == 16 &&
-        _mm_cmpestri(v, 16, epu8id, 16, FIRST_NON_ZERO) == 16 &&
-        (diff == 16 || diff < k);
+    return _mm_cmpestri(epu8id, 16, v, 16, FIRST_NON_ZERO) == 16 &&
+           _mm_cmpestri(v, 16, epu8id, 16, FIRST_NON_ZERO) == 16 &&
+           (diff == 16 || diff < k);
 }
 
 }  // namespace HPCombi
@@ -329,11 +315,10 @@ template <> struct hash<HPCombi::epu8> {
     }
 };
 
-
 template <> struct less<HPCombi::epu8> {
-  // WARNING: due to endianess this is not lexicographic comparison,
-  //          but we don't care when using in std::set.
-  // 10% faster than calling the lexicographic comparison operator !
+    // WARNING: due to endianess this is not lexicographic comparison,
+    //          but we don't care when using in std::set.
+    // 10% faster than calling the lexicographic comparison operator !
     inline size_t operator()(const HPCombi::epu8 &v1,
                              const HPCombi::epu8 &v2) const {
         __m128 v1v = __m128(v1), v2v = __m128(v2);
@@ -342,4 +327,3 @@ template <> struct less<HPCombi::epu8> {
 };
 
 }  // namespace std
-

@@ -55,7 +55,7 @@ template <typename T> struct Monoid;
  */
 template <typename T, typename M = power_helper::Monoid<T>>
 const T square(const T x) {
-  return M::prod(x, x);
+    return M::prod(x, x);
 }
 
 /** A generic compile time exponentiation function
@@ -76,11 +76,12 @@ const T square(const T x) {
  */
 template <unsigned exp, typename T, typename M = power_helper::Monoid<T>>
 const T pow(const T x) {
-  return (exp == 0)
-             ? M::one()
-             : (exp % 2 == 0)
-                   ? square<T, M>(pow<unsigned(exp / 2), T, M>(x))
-                   : M::prod(x, square<T, M>(pow<unsigned(exp / 2), T, M>(x)));
+    return (exp == 0)
+               ? M::one()
+               : (exp % 2 == 0)
+                     ? square<T, M>(pow<unsigned(exp / 2), T, M>(x))
+                     : M::prod(x,
+                               square<T, M>(pow<unsigned(exp / 2), T, M>(x)));
 }
 
 namespace power_helper {
@@ -98,15 +99,15 @@ namespace power_helper {
  */
 template <typename T> struct Monoid {
 
-  /// The one of type T
-  static const T one() { return 1; }
+    /// The one of type T
+    static const T one() { return 1; }
 
-  /** the product of two elements of type T
-   *  @param a the first element to be multiplied
-   *  @param b the second element to be multiplied
-   *  @return the product a * b
-   */
-  static const T prod(T a, T b) { return a * b; }
+    /** the product of two elements of type T
+     *  @param a the first element to be multiplied
+     *  @param b the second element to be multiplied
+     *  @return the product a * b
+     */
+    static const T prod(T a, T b) { return a * b; }
 };
 
 }  // namespace power_helper
