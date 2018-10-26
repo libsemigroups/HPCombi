@@ -232,14 +232,23 @@ inline epu8 revsorted(epu8 a);
  */
 inline epu8 revsorted8(epu8 a);
 
+
+/** Find if a vector is a permutation of one other
+ * @details
+ * @param a, b: two #HPCombi::epu8
+ * @returns a #HPCombi::epu8 \c res such that \c permuted(a, res) is equal
+ *     to \c b if such a permutation exists. If not the result is undefined.
+ */
+inline epu8 permutation_of(epu8 a, epu8 b);
+
 /** A prime number good for hashing */
 const uint64_t prime = 0x9e3779b97f4a7bb9;
 
 /** A random #HPCombi::epu8
  * @details
  * @param bnd : the upper bound for the value of the entries
- * @returns a random #HPCombi::epu8 with value in the interval @f$[0, 1, 2, ...,
- * bnd-1]@f$.
+ * @returns a random #HPCombi::epu8 with value in the interval
+ *    @f$[0, 1, 2, ..., bnd-1]@f$.
  */
 inline epu8 random_epu8(uint16_t bnd);
 

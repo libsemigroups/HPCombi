@@ -44,7 +44,7 @@ struct Fix {
             P112(Epu8({1, 1}, 2)),
             Pa(epu8{1, 2, 3, 4, 0, 5, 6, 7, 8, 9,10,11,12,13,14,15}),
             Pb(epu8{1, 2, 3, 6, 0, 5, 4, 7, 8, 9,10,11,12,15,14,13}),
-            RT(epu8{ 3, 1, 0,14,15,13, 5,10, 2,11, 6,12, 7, 4, 8, 9}),
+            RP(epu8{ 3, 1, 0,14,15,13, 5,10, 2,11, 6,12, 7, 4, 8, 9}),
             Pa1(Epu8({4, 2, 5, 1, 2, 7, 7, 3, 4, 2}, 1)),
             Pa2(Epu8({4, 2, 5, 1, 2, 9, 7, 3, 4, 2}, 1)),
             P51(Epu8({5,1}, 6)),
@@ -53,7 +53,7 @@ struct Fix {
             P5(Epu8({}, 5)),
             Pc(Epu8({23, 5, 21, 5, 43, 36}, 7)),
             // Elements should be sorted in alphabetic order here
-            v({zero, P01, epu8id, P10, P11, P1, P112, Pa, Pb, RT,
+            v({zero, P01, epu8id, P10, P11, P1, P112, Pa, Pb, RP,
                Pa1, Pa2, P51, Pv, Pw, P5, epu8rev, Pc}),
             av({ 5, 5, 2, 5, 1, 6,12, 4, 0, 3, 2,11,12,13,14,15})
         {
@@ -61,7 +61,7 @@ struct Fix {
         }
     ~Fix() { BOOST_TEST_MESSAGE("teardown fixture"); }
 
-    const epu8 zero, P01, P10, P11, P1, P112, Pa, Pb, RT,
+    const epu8 zero, P01, P10, P11, P1, P112, Pa, Pb, RP,
         Pa1, Pa2, P51, Pv, Pw, P5, Pc;
     const std::vector<epu8> v;
     const std::array<uint8_t, 16> av;
@@ -325,6 +325,21 @@ BOOST_FIXTURE_TEST_CASE(EPU8_revsorted, Fix) {
         BOOST_TEST(is_sorted(reverted(revsorted(x))));
     } while (std::next_permutation(refx.begin(), refx.begin()+9));
 }
+
+BOOST_FIXTURE_TEST_CASE(EPU8_permutation_of, Fix) {
+    EPU8_EQUAL(permutation_of(epu8id, epu8id), epu8id);
+    EPU8_EQUAL(permutation_of(Pa, Pa), epu8id);
+    EPU8_EQUAL(permutation_of(epu8rev, epu8id), epu8rev);
+    EPU8_EQUAL(permutation_of(epu8id, epu8rev), epu8rev);
+    EPU8_EQUAL(permutation_of(epu8rev, epu8rev), epu8id);
+    EPU8_EQUAL(permutation_of(epu8id, RP), RP);
+    EPU8_EQUAL(permutation_of(Pv, Pv),
+//                     0, 1, 2, 3, 4, 5, 6, 7, 8, 9,10,11,12,13,14,15
+//               epu8{ 5, 5, 2, 5, 1, 6,12, 4, 0, 3, 2,11,12,13,14,15}
+               (epu8 { 0, 0, 2, 0, 4, 5, 6, 7, 8, 9, 2,11, 6,13,14,15}));
+    EPU8_EQUAL(permutation_of(Pw, Pw), epu8id);
+    EPU8_EQUAL(permutation_of(Pw, Pw), Pc);
+}
 //****************************************************************************//
 BOOST_AUTO_TEST_SUITE_END()
 //****************************************************************************//
@@ -492,9 +507,9 @@ BOOST_FIXTURE_TEST_CASE(IsPTransf, Fix) {
     BOOST_TEST(not is_partial_transformation(Pa, 1));
     BOOST_TEST(not is_partial_transformation(Pa, 0));
 
-    BOOST_TEST(is_partial_transformation(RT));
-    BOOST_TEST(is_partial_transformation(RT, 16));
-    BOOST_TEST(not is_partial_transformation(RT, 15));
+    BOOST_TEST(is_partial_transformation(RP));
+    BOOST_TEST(is_partial_transformation(RP, 16));
+    BOOST_TEST(not is_partial_transformation(RP, 15));
 }
 
 BOOST_FIXTURE_TEST_CASE(IsTransf, Fix) {
@@ -513,9 +528,9 @@ BOOST_FIXTURE_TEST_CASE(IsTransf, Fix) {
     BOOST_TEST(not is_transformation(Pa, 1));
     BOOST_TEST(not is_transformation(Pa, 0));
 
-    BOOST_TEST(is_transformation(RT));
-    BOOST_TEST(is_transformation(RT, 16));
-    BOOST_TEST(not is_transformation(RT, 15));
+    BOOST_TEST(is_transformation(RP));
+    BOOST_TEST(is_transformation(RP, 16));
+    BOOST_TEST(not is_transformation(RP, 15));
 }
 
 BOOST_FIXTURE_TEST_CASE(IsPerm, Fix) {
@@ -534,9 +549,9 @@ BOOST_FIXTURE_TEST_CASE(IsPerm, Fix) {
     BOOST_TEST(not is_permutation(Pa, 1));
     BOOST_TEST(not is_permutation(Pa, 0));
 
-    BOOST_TEST(is_permutation(RT));
-    BOOST_TEST(is_permutation(RT, 16));
-    BOOST_TEST(not is_permutation(RT, 15));
+    BOOST_TEST(is_permutation(RP));
+    BOOST_TEST(is_permutation(RP, 16));
+    BOOST_TEST(not is_permutation(RP, 15));
 }
 
 BOOST_AUTO_TEST_SUITE_END()

@@ -167,22 +167,49 @@ inline epu8 remove_dups(epu8 v, uint8_t repl) {
     return _mm_blendv_epi8(Epu8(repl), v, v != shifted_right(v));
 }
 
+// Gather at the front numbers with (3-i)-th bit not set.
+constexpr std::array<epu8, 3> inverting_rounds {{
+    // clang-format off
+    //     0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15
+    epu8 { 0,  1,  2,  3,  8,  9, 10, 11,  4,  5,  6,  7, 12, 13, 14, 15},
+    epu8 { 0,  1,  4,  5,  8,  9, 12, 13,  2,  3,  6,  7, 10, 11, 14, 15},
+    epu8 { 0,  2,  4,  6,  8, 10, 12, 14,  1,  3,  5,  7,  9, 11, 13, 15}
+    // clang-format on
+}};
+
+#define FIND_IN_VECT                                                           \
+    (_SIDD_UBYTE_OPS | _SIDD_CMP_EQUAL_ANY | _SIDD_UNIT_MASK |                 \
+     _SIDD_NEGATIVE_POLARITY)
+#define FIND_IN_VECT_COMPL                                                     \
+    (_SIDD_UBYTE_OPS | _SIDD_CMP_EQUAL_ANY | _SIDD_UNIT_MASK)
+
+inline epu8 permutation_of(epu8 a, epu8 b) {
+    epu8 mask = _mm_cmpestrm(a, 16, b, 16, FIND_IN_VECT);
+    epu8 res = -static_cast<epu8>(_mm_cmpestrm(a, 8, b, 16, FIND_IN_VECT));
+    for (epu8 round : inverting_rounds) {
+        a = permuted(a, round);
+        res <<= 1;
+        res -= static_cast<epu8>(_mm_cmpestrm(a, 8, b, 16, FIND_IN_VECT));
+    }
+    return res | mask;
+}
+
+
 #if defined(FF)
 #error FF is defined !
 #endif /* FF */
 #define FF 0xff
 
 /// Permutation Round for partial and horizontal sums
-constexpr std::array<epu8, 4> summing_rounds
-    //      0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15
+constexpr std::array<epu8, 4> summing_rounds {{
     // clang-format off
-{{
+    //      0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15
     epu8 { FF,  0, FF,  2, FF,  4, FF,  6, FF,  8, FF, 10, FF, 12, FF, 14},
     epu8 { FF, FF,  1,  1, FF, FF,  5,  5, FF, FF,  9,  9, FF, FF, 13, 13},
     epu8 { FF, FF, FF, FF,  3,  3,  3,  3, FF, FF, FF, FF, 11, 11, 11, 11},
     epu8 { FF, FF, FF, FF, FF, FF, FF, FF,  7,  7,  7,  7,  7,  7,  7,  7}
+    // clang-format on
 }};
-// clang-format on
 
 #undef FF
 

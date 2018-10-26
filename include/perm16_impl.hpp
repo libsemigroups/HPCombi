@@ -30,21 +30,17 @@ namespace HPCombi {
 /** Implementation part for inline functions *********************************/
 /*****************************************************************************/
 
-#define FIND_IN_PERM                                                           \
-    (_SIDD_UBYTE_OPS | _SIDD_CMP_EQUAL_ANY | _SIDD_UNIT_MASK |                 \
-     _SIDD_NEGATIVE_POLARITY)
-#define FIND_IN_PERM_COMPL                                                     \
-    (_SIDD_UBYTE_OPS | _SIDD_CMP_EQUAL_ANY | _SIDD_UNIT_MASK)
-
 inline PTransf16::PTransf16(std::initializer_list<uint8_t> il) : Vect16(epu8id) {
     assert(il.size() <= 16);
     std::copy(il.begin(), il.end(), HPCombi::as_array(v).begin());
 }
 
-inline PTransf16::PTransf16(std::vector<uint8_t> dom, std::vector<uint8_t> rng) :
+inline PTransf16::PTransf16(std::vector<uint8_t> dom,
+                            std::vector<uint8_t> rng, size_t sz /*unused */) :
     Vect16(Epu8(0xFF)) {
     assert(dom.size() == rng.size());
     assert(dom.size() <= 16);
+    assert(sz <= 16);
     for (size_t i = 0; i < dom.size(); ++i) {
         assert(dom[i] < 16);
         v[dom[i]] = rng[i];
@@ -53,7 +49,7 @@ inline PTransf16::PTransf16(std::vector<uint8_t> dom, std::vector<uint8_t> rng) 
 
 inline uint32_t PTransf16::image() const {
     return _mm_movemask_epi8(
-        _mm_cmpestrm(v, 16, one().v, 16, FIND_IN_PERM_COMPL));
+        _mm_cmpestrm(v, 16, one().v, 16, FIND_IN_VECT_COMPL));
 }
 inline uint32_t PTransf16::rank_ref() const {
     TPUBuild<epu8>::array tmp{};
@@ -95,7 +91,7 @@ inline PPerm16 PPerm16::inverse_ref() const {
 }
 
 inline PPerm16 PPerm16::inverse_find() const {
-    epu8 mask = _mm_cmpestrm(v, 16, one(), 16, FIND_IN_PERM);
+    epu8 mask = _mm_cmpestrm(v, 16, one(), 16, FIND_IN_VECT);
     return Perm16(this->v).inverse_find().v | mask;
 }
 
@@ -168,27 +164,14 @@ inline Perm16 Perm16::inverse_sort() const {
     return res;
 }
 
-// Gather at the front numbers with (3-i)-th bit not set.
-const std::array<Perm16, 3> Perm16::inverting_rounds() {
-    static std::array<Perm16, 3> res{{
-        // clang-format off
-    //     0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15
-    epu8 { 0,  1,  2,  3,  8,  9, 10, 11,  4,  5,  6,  7, 12, 13, 14, 15},
-    epu8 { 0,  1,  4,  5,  8,  9, 12, 13,  2,  3,  6,  7, 10, 11, 14, 15},
-    epu8 { 0,  2,  4,  6,  8, 10, 12, 14,  1,  3,  5,  7,  9, 11, 13, 15}
-        // clang-format on
-    }};
-    return res;
-}
-
 inline Perm16 Perm16::inverse_find() const {
     Perm16 s = *this;
     epu8 res;
-    res = -static_cast<epu8>(_mm_cmpestrm(s.v, 8, one(), 16, FIND_IN_PERM));
-    for (Perm16 round : inverting_rounds()) {
+    res = -static_cast<epu8>(_mm_cmpestrm(s.v, 8, one(), 16, FIND_IN_VECT));
+    for (Perm16 round : inverting_rounds) {
         s = s * round;
         res <<= 1;
-        res -= static_cast<epu8>(_mm_cmpestrm(s.v, 8, one(), 16, FIND_IN_PERM));
+        res -= static_cast<epu8>(_mm_cmpestrm(s.v, 8, one(), 16, FIND_IN_VECT));
     }
     return res;
 }
