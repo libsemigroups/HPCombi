@@ -304,6 +304,12 @@ template <> struct hash<HPCombi::Transf16> {
     }
 };
 
+template <> struct hash<HPCombi::PPerm16> {
+    inline size_t operator()(const HPCombi::PPerm16 &ar) const {
+        return std::hash<HPCombi::epu8>{}(ar.v);
+    }
+};
+
 template <> struct hash<HPCombi::Perm16> {
     inline size_t operator()(const HPCombi::Perm16 &ar) const {
         return uint64_t(ar);

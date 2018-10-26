@@ -137,6 +137,12 @@ BOOST_AUTO_TEST_CASE(PTransf16_rank) {
     BOOST_TEST(PTransf16({0,2,2,0xf,2,2,2,2,5,2,2,2,2,2,2,2}).rank() == 4);
 }
 
+BOOST_AUTO_TEST_CASE(PTransf16_hash) {
+    BOOST_TEST(std::hash<PTransf16>()(PTransf16::one()) != 0);
+    BOOST_TEST(std::hash<PTransf16>()(PTransf16(Epu8(1))) != 0);
+    BOOST_TEST(std::hash<PTransf16>()(PTransf16({4, 5, 0}, {9, 0, 1})) != 0);
+}
+
 BOOST_AUTO_TEST_SUITE_END()
 //****************************************************************************//
 
@@ -163,6 +169,12 @@ BOOST_FIXTURE_TEST_CASE(Transf16ConstrUInt64, Fix) {
         BOOST_TEST(static_cast<Transf16>(static_cast<uint64_t>(p)) == p);
 }
 
+BOOST_FIXTURE_TEST_CASE(Transf16_hash, Fix) {
+    BOOST_TEST(std::hash<Transf16>()(Transf16::one()) != 0);
+    BOOST_TEST(std::hash<Transf16>()(Transf16(Epu8(1))) != 0);
+    BOOST_TEST(std::hash<Transf16>()(RandT) != 0);
+}
+
 BOOST_AUTO_TEST_SUITE_END()
 //****************************************************************************//
 
@@ -186,6 +198,12 @@ BOOST_AUTO_TEST_CASE(Perm16TestEq) {
     BOOST_TEST(Perm16::one() * Perm16::one() == Perm16::one());
 }
 
+BOOST_FIXTURE_TEST_CASE(Perm16_hash, Fix) {
+    BOOST_TEST(std::hash<Perm16>()(Transf16::one()) != 0);
+    BOOST_TEST(std::hash<Perm16>()(PPa) != 0);
+    BOOST_TEST(std::hash<Perm16>()(RandPerm) != 0);
+}
+
 BOOST_AUTO_TEST_SUITE_END()
 //****************************************************************************//
 
@@ -201,6 +219,12 @@ BOOST_AUTO_TEST_CASE(PPerm16_constructor) {
     BOOST_TEST(PPerm16({4, 5, 0, 8}, {9, 0, 1, 2}) ==
                PPerm16({ 1,FF,FF,FF, 9, 0,FF,FF,2,FF,FF,FF,FF,FF,FF,FF}));
 }
+
+BOOST_AUTO_TEST_CASE(PPerm16_hash) {
+    BOOST_TEST(std::hash<PPerm16>()(PPerm16::one()) != 0);
+    BOOST_TEST(std::hash<PPerm16>()(PPerm16({4, 5, 0}, {9, 0, 1})) != 0);
+}
+
 
 //****************************************************************************//
 BOOST_FIXTURE_TEST_CASE(PPerm16_inverse_ref, Fix) {
