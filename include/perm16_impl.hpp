@@ -36,7 +36,7 @@ inline PTransf16::PTransf16(std::initializer_list<uint8_t> il) : Vect16(epu8id) 
 }
 
 inline PTransf16::PTransf16(std::vector<uint8_t> dom,
-                            std::vector<uint8_t> rng, size_t sz /*unused */) :
+                            std::vector<uint8_t> rng, size_t /*unused */) :
     Vect16(Epu8(0xFF)) {
     assert(dom.size() == rng.size());
     assert(dom.size() <= 16);
