@@ -288,7 +288,7 @@ inline std::vector<uint8_t> BMat8::rows() const {
     return rows;
 }
 
-size_t BMat8::row_space_size_ref() const {
+uint64_t BMat8::row_space_size_ref() const {
     std::array<char, 256> lookup {};
     std::vector<uint8_t> row_vec = row_space_basis().rows();
     row_vec.erase(std::remove_if(row_vec.begin(), row_vec.end(),
