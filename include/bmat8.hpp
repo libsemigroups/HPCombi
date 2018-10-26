@@ -28,8 +28,10 @@
 #include <iostream>   // for operator<<, ostringstream
 #include <random>     // for mt19937, random_device
 #include <utility>    // for hash
-#include <vector>      // for array
+#include <vector>     // for vector
 #include <array>      // for array
+
+#include "perm16.hpp"
 
 #ifndef HPCOMBI_ASSERT
 #define HPCOMBI_ASSERT(x) assert(x)
@@ -147,6 +149,7 @@ class BMat8 {
     inline BMat8 col_space_basis() const {
         return transpose().row_space_basis().transpose();
     }
+    size_t nr_rows() const;
     std::vector<uint8_t> rows() const;
 
     inline uint64_t row_space_size_ref() const;
@@ -154,6 +157,13 @@ class BMat8 {
     inline uint64_t row_space_size_incl() const;
     inline uint64_t row_space_size_incl1() const;
     inline uint64_t row_space_size() const { return row_space_size_incl(); }
+
+    //! Give the permutation whose right multiplication change \c *this
+    //! to \c other
+    //!
+    //! \c *this is suppose to be a row_space matrix (ie. sorted decreasingly)
+    inline Perm16 right_perm_action_on_basis(BMat8) const;
+    inline Perm16 right_perm_action_on_basis_ref(BMat8) const;
 
     //! Returns the identity BMat8
     //!

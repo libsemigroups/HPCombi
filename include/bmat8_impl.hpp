@@ -165,7 +165,7 @@ static constexpr epu8 rothigh
 static constexpr epu8 rotboth
     { 7, 0, 1, 2, 3, 4, 5, 6,15, 8, 9,10,11,12,13,14};
 static constexpr epu8 rot2
-    {6, 7, 0, 1, 2, 3, 4, 5,14,15, 8, 9,10,11,12,13};
+    { 6, 7, 0, 1, 2, 3, 4, 5,14,15, 8, 9,10,11,12,13};
 
 BMat8 BMat8::operator*(BMat8 const &that) const {
     epu8 x = _mm_set_epi64x(_data, _data);
@@ -312,6 +312,43 @@ uint64_t BMat8::row_space_size_ref() const {
     }
     return row_space.size() + 1;
 }
+
+size_t BMat8::nr_rows() const {
+    epu8 x = _mm_set_epi64x(_data, 0);
+    return _mm_popcnt_u64(_mm_movemask_epi8(x != epu8 {}));
+}
+
+Perm16 BMat8::right_perm_action_on_basis_ref(BMat8 bm) const {
+    // LIBSEMIGROUPS_ASSERT(basis.row_space_basis() == basis);
+    std::vector<uint8_t> rows = this->rows();
+    BMat8                product   = *this * bm;
+    std::vector<uint8_t> prod_rows = product.rows();
+
+    // LIBSEMIGROUPS_ASSERT(product.row_space_basis() == basis);
+
+    std::vector<uint8_t> perm(8);
+    for (size_t i = 0; i < nr_rows(); ++i) {
+        uint8_t row = rows[i];
+        perm[i]
+            = std::distance(prod_rows.begin(),
+                            std::find(prod_rows.begin(), prod_rows.end(), row));
+    }
+    std::iota(perm.begin() + nr_rows(), perm.end(), nr_rows());
+
+    Perm16 res = Perm16::one();
+    for (size_t i=0; i < 8; i++)
+        res[i] = perm[i];
+    return res;
+ }
+
+inline Perm16 BMat8::right_perm_action_on_basis(BMat8 other) const {
+    epu8 x = permuted(_mm_set_epi64x(_data, 0), epu8rev);
+    epu8 y = permuted(_mm_set_epi64x((*this * other)._data, 0), epu8rev);
+
+    return (y != 0) ? permutation_of(x, y) : epu8id;
+}
+
+
 
 inline std::ostream &BMat8::write(std::ostream &os) const {
     uint64_t x = _data;

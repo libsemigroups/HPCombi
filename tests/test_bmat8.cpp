@@ -333,6 +333,38 @@ TEST_AGREES(BMat8, row_space_size_ref, row_space_size_incl, BMlist);
 TEST_AGREES(BMat8, row_space_size_ref, row_space_size_incl1, BMlist);
 TEST_AGREES(BMat8, row_space_size_ref, row_space_size_bitset, BMlist);
 
+BOOST_FIXTURE_TEST_CASE(BMat8_nr_rows, Fix) {
+    BOOST_TEST(zero.nr_rows() == 0);
+    BOOST_TEST(one1.nr_rows() == 1);
+    BOOST_TEST(one2.nr_rows() == 2);
+    BOOST_TEST(bm.nr_rows() == 8);
+    BOOST_TEST(BMat8({{1, 0, 1},
+                      {1, 1, 0},
+                      {0, 0, 0}}).nr_rows() == 2);
+}
+
+BOOST_FIXTURE_TEST_CASE(BMat8_right_perm_action_on_basis_ref, Fix) {
+    BMat8 m1({{1, 1, 0},
+              {1, 0, 1},
+              {0, 0, 0}});
+    BMat8 m2({{0, 0, 0},
+              {1, 0, 1},
+              {1, 1, 0}});
+    BOOST_TEST(m1.right_perm_action_on_basis_ref(m2) == Perm16({1,0}));
+    BOOST_TEST(m1.right_perm_action_on_basis(m2) == Perm16({1,0}));
+
+    std::cout << m1 << std::endl;
+    std::cout << m1.row_space_basis() << std::endl;
+    std::cout << m1 * m2 << std::endl;
+    std::cout << std::hex << _mm_set_epi64x(m1.to_int(), 0) << std::endl;
+
+    std::cout << (m1.row_space_basis() == (m1.row_space_basis() * m2).row_space_basis())
+              << std::endl;
+
+    
+    std::cout << m1.right_perm_action_on_basis_ref(m2) << std::endl;
+    std::cout << m1.right_perm_action_on_basis(m2) << std::endl;
+}
 //****************************************************************************//
 BOOST_AUTO_TEST_SUITE_END()
 //****************************************************************************//
