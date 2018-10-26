@@ -92,7 +92,7 @@ inline PPerm16 PPerm16::inverse_ref() const {
 
 inline PPerm16 PPerm16::inverse_find() const {
     epu8 mask = _mm_cmpestrm(v, 16, one(), 16, FIND_IN_VECT);
-    return Perm16(this->v).inverse_find().v | mask;
+    return permutation_of(v, one()) | mask;
 }
 
 inline Perm16 Perm16::random() {
@@ -161,18 +161,6 @@ inline Perm16 Perm16::inverse_sort() const {
     // I call directly the shift intrinsic
     epu8 res = static_cast<epu8>(_mm_slli_epi32(v, 4)) + one().v;
     res = sorted(res) & Epu8(0x0F);
-    return res;
-}
-
-inline Perm16 Perm16::inverse_find() const {
-    Perm16 s = *this;
-    epu8 res;
-    res = -static_cast<epu8>(_mm_cmpestrm(s.v, 8, one(), 16, FIND_IN_VECT));
-    for (Perm16 round : inverting_rounds) {
-        s = s * round;
-        res <<= 1;
-        res -= static_cast<epu8>(_mm_cmpestrm(s.v, 8, one(), 16, FIND_IN_VECT));
-    }
     return res;
 }
 

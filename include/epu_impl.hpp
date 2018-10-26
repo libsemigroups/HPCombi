@@ -184,14 +184,13 @@ constexpr std::array<epu8, 3> inverting_rounds {{
     (_SIDD_UBYTE_OPS | _SIDD_CMP_EQUAL_ANY | _SIDD_UNIT_MASK)
 
 inline epu8 permutation_of(epu8 a, epu8 b) {
-    epu8 mask = _mm_cmpestrm(a, 16, b, 16, FIND_IN_VECT);
     epu8 res = -static_cast<epu8>(_mm_cmpestrm(a, 8, b, 16, FIND_IN_VECT));
     for (epu8 round : inverting_rounds) {
         a = permuted(a, round);
         res <<= 1;
         res -= static_cast<epu8>(_mm_cmpestrm(a, 8, b, 16, FIND_IN_VECT));
     }
-    return res | mask;
+    return res;
 }
 
 

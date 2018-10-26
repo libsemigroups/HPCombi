@@ -236,8 +236,9 @@ inline epu8 revsorted8(epu8 a);
 /** Find if a vector is a permutation of one other
  * @details
  * @param a, b: two #HPCombi::epu8
- * @returns a #HPCombi::epu8 \c res such that \c permuted(a, res) is equal
- *     to \c b if such a permutation exists. If not the result is undefined.
+ * @returns a #HPCombi::epu8
+ * For each @f$0 \leq i < 16@f$, \c res[i] is the position in \c a of \c b[i]
+     if \c b[i] appears exactly once in \c a, or undefined if not.
  */
 inline epu8 permutation_of(epu8 a, epu8 b);
 
@@ -518,12 +519,17 @@ inline bool is_permutation(epu8 v, const size_t k = 16);
 
 }  // namespace HPCombi
 
-/** We also specialize
+namespace std {
+
+inline std::ostream &operator<<(std::ostream &stream, HPCombi::epu8 const &a);
+
+/** We also specialize the struct
  *  - std::equal_to<epu8>
  *  - std::not_equal_to<epu8>
  *  - std::hash<epu8>
- *  - std::ostream &operator<<
+ *  - std::less<epu8>
  */
+}
 
 #include "epu_impl.hpp"
 

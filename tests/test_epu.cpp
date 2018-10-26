@@ -333,12 +333,12 @@ BOOST_FIXTURE_TEST_CASE(EPU8_permutation_of, Fix) {
     EPU8_EQUAL(permutation_of(epu8id, epu8rev), epu8rev);
     EPU8_EQUAL(permutation_of(epu8rev, epu8rev), epu8id);
     EPU8_EQUAL(permutation_of(epu8id, RP), RP);
-    EPU8_EQUAL(permutation_of(Pv, Pv),
+    const uint8_t FF = 0xff;
+    EPU8_EQUAL((permutation_of(Pv, Pv) |
 //                     0, 1, 2, 3, 4, 5, 6, 7, 8, 9,10,11,12,13,14,15
 //               epu8{ 5, 5, 2, 5, 1, 6,12, 4, 0, 3, 2,11,12,13,14,15}
-               (epu8 { 0, 0, 2, 0, 4, 5, 6, 7, 8, 9, 2,11, 6,13,14,15}));
-    EPU8_EQUAL(permutation_of(Pw, Pw), epu8id);
-    EPU8_EQUAL(permutation_of(Pw, Pw), Pc);
+                (epu8{FF,FF,FF,FF, 0, 0,FF, 0, 0, 0,FF, 0,FF, 0, 0, 0})),
+               (epu8 {FF,FF,FF,FF, 4, 5,FF, 7, 8, 9,FF,11,FF,13,14,15}));
 }
 //****************************************************************************//
 BOOST_AUTO_TEST_SUITE_END()

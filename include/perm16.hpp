@@ -189,7 +189,7 @@ struct Perm16 : public Transf16 /* public PPerm : diamond problem */ {
      *  @f$O(\log n)@f$ algorithm using some kind of vectorized dichotomic
      * search.
      */
-    inline Perm16 inverse_find() const;
+    Perm16 inverse_find() const { return permutation_of(v, one()); }
     /** @copydoc common_inverse
      *  @par Algorithm:
      *
