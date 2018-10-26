@@ -97,53 +97,18 @@ struct Fix {
 
 
 //****************************************************************************//
-BOOST_AUTO_TEST_SUITE(Transf16_test)
+BOOST_AUTO_TEST_SUITE(PTransf16_test)
 //****************************************************************************//
 
-BOOST_FIXTURE_TEST_CASE(Transf16OperatorUInt64, Fix) {
-    BOOST_TEST(static_cast<uint64_t>(Transf16::one()) == 0xf7e6d5c4b3a29180);
-    BOOST_TEST(static_cast<uint64_t>(zero) == 0x0);
-    BOOST_TEST(static_cast<uint64_t>(P10) == 0x1);
-    BOOST_TEST(static_cast<uint64_t>(P01) == 0x100);
-    BOOST_TEST(static_cast<uint64_t>(P11) == 0x101);
-    BOOST_TEST(static_cast<uint64_t>(P1) == 0x1111111111111111);
-    BOOST_TEST(static_cast<uint64_t>(RandT) == 0x9a854d7fce60b123);
+BOOST_AUTO_TEST_CASE(PTransf16_constructor) {
+    const uint8_t FF = 0xff;
+    BOOST_TEST(PTransf16({4, 5, 0}, {9, 0, 1}) ==
+               PTransf16({ 1,FF,FF,FF, 9, 0,FF,FF,FF,FF,FF,FF,FF,FF,FF,FF}));
+    BOOST_TEST(PTransf16({4, 5, 0, 8}, {9, 0, 1, 2}) ==
+               PTransf16({ 1,FF,FF,FF, 9, 0,FF,FF,2,FF,FF,FF,FF,FF,FF,FF}));
+    BOOST_TEST(PTransf16({4, 5, 0, 8}, {9, 0, 2, 2}) ==
+               PTransf16({ 2,FF,FF,FF, 9, 0,FF,FF,2,FF,FF,FF,FF,FF,FF,FF}));
 }
-
-BOOST_FIXTURE_TEST_CASE(Transf16ConstrUInt64, Fix) {
-    BOOST_TEST(static_cast<Transf16>(0x0) == zero);
-    BOOST_TEST(static_cast<Transf16>(0x1) == P10);
-    BOOST_TEST(static_cast<Transf16>(0x100) == P01);
-    for (auto p : Tlist)
-        BOOST_TEST(static_cast<Transf16>(static_cast<uint64_t>(p)) == p);
-}
-
-BOOST_AUTO_TEST_SUITE_END()
-//****************************************************************************//
-
-
-//****************************************************************************//
-BOOST_AUTO_TEST_SUITE(Perm16_test)
-//****************************************************************************//
-
-BOOST_FIXTURE_TEST_CASE(Perm16OperatorUInt64, Fix) {
-    BOOST_TEST(static_cast<uint64_t>(Perm16::one()) == 0xf7e6d5c4b3a29180);
-    BOOST_TEST(static_cast<uint64_t>(PPa) == 0xf7e6d5c0b4a39281);
-    BOOST_TEST(static_cast<uint64_t>(PPb) == 0xd7e4f5c0b6a39281);
-    BOOST_TEST(static_cast<uint64_t>(RandPerm) == 0x9a854d7fce60b123);
-
-    for (auto p : { Perm16::one(), PPa, PPb, RandPerm })
-        BOOST_TEST(static_cast<Perm16>(static_cast<uint64_t>(p)) == p);
-}
-
-BOOST_AUTO_TEST_SUITE_END()
-//****************************************************************************//
-
-
-BOOST_AUTO_TEST_CASE(Perm16TestEq) {
-    BOOST_TEST(Perm16::one() * Perm16::one() == Perm16::one());
-}
-
 
 BOOST_AUTO_TEST_CASE(PTransf16_image) {
     BOOST_TEST(PTransf16({}).image() == 0xffff);
@@ -172,6 +137,70 @@ BOOST_AUTO_TEST_CASE(PTransf16_rank) {
     BOOST_TEST(PTransf16({0,2,2,0xf,2,2,2,2,5,2,2,2,2,2,2,2}).rank() == 4);
 }
 
+BOOST_AUTO_TEST_SUITE_END()
+//****************************************************************************//
+
+
+//****************************************************************************//
+BOOST_AUTO_TEST_SUITE(Transf16_test)
+//****************************************************************************//
+
+BOOST_FIXTURE_TEST_CASE(Transf16OperatorUInt64, Fix) {
+    BOOST_TEST(static_cast<uint64_t>(Transf16::one()) == 0xf7e6d5c4b3a29180);
+    BOOST_TEST(static_cast<uint64_t>(zero) == 0x0);
+    BOOST_TEST(static_cast<uint64_t>(P10) == 0x1);
+    BOOST_TEST(static_cast<uint64_t>(P01) == 0x100);
+    BOOST_TEST(static_cast<uint64_t>(P11) == 0x101);
+    BOOST_TEST(static_cast<uint64_t>(P1) == 0x1111111111111111);
+    BOOST_TEST(static_cast<uint64_t>(RandT) == 0x9a854d7fce60b123);
+}
+
+BOOST_FIXTURE_TEST_CASE(Transf16ConstrUInt64, Fix) {
+    BOOST_TEST(static_cast<Transf16>(0x0) == zero);
+    BOOST_TEST(static_cast<Transf16>(0x1) == P10);
+    BOOST_TEST(static_cast<Transf16>(0x100) == P01);
+    for (auto p : Tlist)
+        BOOST_TEST(static_cast<Transf16>(static_cast<uint64_t>(p)) == p);
+}
+
+BOOST_AUTO_TEST_SUITE_END()
+//****************************************************************************//
+
+
+//****************************************************************************//
+BOOST_AUTO_TEST_SUITE(Perm16_constr)
+//****************************************************************************//
+
+BOOST_FIXTURE_TEST_CASE(Perm16OperatorUInt64, Fix) {
+    BOOST_TEST(static_cast<uint64_t>(Perm16::one()) == 0xf7e6d5c4b3a29180);
+    BOOST_TEST(static_cast<uint64_t>(PPa) == 0xf7e6d5c0b4a39281);
+    BOOST_TEST(static_cast<uint64_t>(PPb) == 0xd7e4f5c0b6a39281);
+    BOOST_TEST(static_cast<uint64_t>(RandPerm) == 0x9a854d7fce60b123);
+
+    for (auto p : { Perm16::one(), PPa, PPb, RandPerm })
+        BOOST_TEST(static_cast<Perm16>(static_cast<uint64_t>(p)) == p);
+}
+
+
+BOOST_AUTO_TEST_CASE(Perm16TestEq) {
+    BOOST_TEST(Perm16::one() * Perm16::one() == Perm16::one());
+}
+
+BOOST_AUTO_TEST_SUITE_END()
+//****************************************************************************//
+
+
+//****************************************************************************//
+BOOST_AUTO_TEST_SUITE(PPerm16_test)
+//****************************************************************************//
+
+BOOST_AUTO_TEST_CASE(PPerm16_constructor) {
+    const uint8_t FF = 0xff;
+    BOOST_TEST(PPerm16({4, 5, 0}, {9, 0, 1}) ==
+               PPerm16({ 1,FF,FF,FF, 9, 0,FF,FF,FF,FF,FF,FF,FF,FF,FF,FF}));
+    BOOST_TEST(PPerm16({4, 5, 0, 8}, {9, 0, 1, 2}) ==
+               PPerm16({ 1,FF,FF,FF, 9, 0,FF,FF,2,FF,FF,FF,FF,FF,FF,FF}));
+}
 
 //****************************************************************************//
 BOOST_FIXTURE_TEST_CASE(PPerm16_inverse_ref, Fix) {
@@ -187,8 +216,14 @@ BOOST_FIXTURE_TEST_CASE(PPerm16_inverse_ref, Fix) {
 }
 TEST_AGREES(PPerm16, inverse_ref, inverse_find, PPlist);
 
+BOOST_AUTO_TEST_SUITE_END()
+//****************************************************************************//
 
 
+
+//****************************************************************************//
+BOOST_AUTO_TEST_SUITE(Perm16_mathematical_methods)
+//****************************************************************************//
 
 //****************************************************************************//
 BOOST_FIXTURE_TEST_CASE(Perm16_inverse_ref, Fix) {
@@ -266,3 +301,6 @@ BOOST_FIXTURE_TEST_CASE(Perm16_left_weak_leq, Fix) {
         }
     }
 }
+
+BOOST_AUTO_TEST_SUITE_END()
+//****************************************************************************//

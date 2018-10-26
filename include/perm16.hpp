@@ -48,6 +48,7 @@ struct alignas(16) PTransf16 : public Vect16 {
     HPCOMBI_CONSTEXPR_CONSTRUCTOR PTransf16(const PTransf16 &v) = default;
     HPCOMBI_CONSTEXPR_CONSTRUCTOR PTransf16(const vect v) : Vect16(v) {}
     HPCOMBI_CONSTEXPR_CONSTRUCTOR PTransf16(const epu8 x) : Vect16(x) {}
+    PTransf16(std::vector<uint8_t> dom, std::vector<uint8_t> rng);
     PTransf16(std::initializer_list<uint8_t> il);
 
     PTransf16 &operator=(const PTransf16 &) = default;
@@ -106,6 +107,8 @@ struct PPerm16 : public PTransf16 {
     HPCOMBI_CONSTEXPR_CONSTRUCTOR PPerm16(const PPerm16 &v) = default;
     HPCOMBI_CONSTEXPR_CONSTRUCTOR PPerm16(const vect v) : PTransf16(v) {}
     HPCOMBI_CONSTEXPR_CONSTRUCTOR PPerm16(const epu8 x) : PTransf16(x) {}
+    PPerm16(std::vector<uint8_t> dom,
+            std::vector<uint8_t> rng) : PTransf16(dom, rng) {}
     PPerm16(std::initializer_list<uint8_t> il) : PTransf16(il) {}
     PPerm16 &operator=(const PPerm16 &) = default;
 

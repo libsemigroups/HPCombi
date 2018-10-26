@@ -36,11 +36,19 @@ namespace HPCombi {
 #define FIND_IN_PERM_COMPL                                                     \
     (_SIDD_UBYTE_OPS | _SIDD_CMP_EQUAL_ANY | _SIDD_UNIT_MASK)
 
-inline PTransf16::PTransf16(std::initializer_list<uint8_t> il) {
+inline PTransf16::PTransf16(std::initializer_list<uint8_t> il) : Vect16(epu8id) {
     assert(il.size() <= 16);
     std::copy(il.begin(), il.end(), HPCombi::as_array(v).begin());
-    for (size_t i = il.size(); i < 16; ++i)
-        v[i] = i;
+}
+
+inline PTransf16::PTransf16(std::vector<uint8_t> dom, std::vector<uint8_t> rng) :
+    Vect16(Epu8(0xFF)) {
+    assert(dom.size() == rng.size());
+    assert(dom.size() <= 16);
+    for (size_t i = 0; i < dom.size(); ++i) {
+        assert(dom[i] < 16);
+        v[dom[i]] = rng[i];
+    }
 }
 
 inline uint32_t PTransf16::image() const {
