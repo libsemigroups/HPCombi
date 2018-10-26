@@ -73,7 +73,9 @@ struct alignas(16) PTransf16 : public Vect16 {
     }
 
     epu8 image_mask(bool complement=false) const;
+    uint32_t image_bitset(bool complement=false) const;
     epu8 domain_mask(bool complement=false) const;
+    uint32_t domain_bitset(bool complement=false) const;
     PTransf16 right_one() const;
     PTransf16 left_one() const;
 

@@ -65,9 +65,9 @@ int main() {
   int total = 0;
 
   vector<Transf16> todo, newtodo;
-  // res[Transf16::one().image()] = make_tuple(0xFFFF, 0xFFFF, {});
-  get<0>(res[Transf16::one().image()]) = 0xFFFF;
-  get<1>(res[Transf16::one().image()]) = 0xFFFF;
+  // res[Transf16::one().image_bitset()] = make_tuple(0xFFFF, 0xFFFF, {});
+  get<0>(res[Transf16::one().image_bitset()]) = 0xFFFF;
+  get<1>(res[Transf16::one().image_bitset()]) = 0xFFFF;
   cout << "start" << endl;
 
   libsemigroups::Timer t;
@@ -77,15 +77,15 @@ int main() {
     lg++;
     for (auto v : todo) {
       total++;
-      uint32_t vim = v.image();
+      uint32_t vim = v.image_bitset();
       for (uint8_t i = 0; i < gens.size(); i++) {
         Transf16 el = gens[i] * v;
-        uint32_t im = el.image();
+        uint32_t im = el.image_bitset();
         get<2>(res[vim])[i] = im;
         if (get<0>(res[im]) == 0) {
           // cout << el.sorted() << endl;
           newtodo.push_back(el);
-          get<0>(res[im]) = gens[i].image();
+          get<0>(res[im]) = gens[i].image_bitset();
           get<1>(res[im]) = i;
         }
       }

@@ -50,6 +50,9 @@ inline PTransf16::PTransf16(std::vector<uint8_t> dom,
 inline epu8 PTransf16::domain_mask(bool complement) const {
     return complement ? v == Epu8(0xFF) : v != Epu8(0xFF);
 }
+inline uint32_t PTransf16::domain_bitset(bool complement) const {
+    return _mm_movemask_epi8(domain_mask(complement));
+}
 inline PTransf16 PTransf16::right_one() const {
     return domain_mask(true) | epu8id;
 }
@@ -57,6 +60,9 @@ inline PTransf16 PTransf16::right_one() const {
 inline epu8 PTransf16::image_mask(bool complement) const {
     return _mm_cmpestrm(v, 16, one().v, 16,
                         complement ? FIND_IN_VECT : FIND_IN_VECT_COMPL);
+}
+inline uint32_t PTransf16::image_bitset(bool complement) const {
+    return _mm_movemask_epi8(image_mask(complement));
 }
 inline PTransf16 PTransf16::left_one() const {
     return image_mask(true) | epu8id;
