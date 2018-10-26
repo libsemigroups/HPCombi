@@ -186,15 +186,12 @@ inline epu8 BMat8::row_space_basis_internal() const {
     epu8 res = remove_dups(revsorted8(_mm_set_epi64x(0, _data)));
     epu8 rescy = res;
     // We now compute the union of all the included different rows
-    epu8 andincl{};
+    epu8 orincl{};
     for (int i = 0; i < 7; i++) {
         rescy = permuted(rescy, rotlow);
-        // andincl |= (rescy | res) == res ? rescy : epu8 {};
-        andincl |= static_cast<epu8>(
-            _mm_blendv_epi8(epu8{}, rescy, (rescy | res) == res));
+        orincl |= ((rescy | res) == res) & rescy;
     }
-    // res = (res != andincl) ? res : epu8 {};
-    res = _mm_blendv_epi8(epu8{}, res, (res != andincl));
+    res = (res != orincl) & res;
     return res;
 }
 
@@ -240,7 +237,7 @@ uint64_t BMat8::row_space_size_bitset() const {
         block1 |= static_cast<epu8>(_mm_shuffle_epi8(in, m | Epu8(4)));
     }
     epu8 res0 {}, res1 {};
-    for (size_t r=0; r < 16; r++) {
+    for (size_t r = 0; r < 16; r++) {
         update_bitset(block0 | block1, res0, res1);
         block1 = _mm_shuffle_epi8(block1, right_cycle);
     }
@@ -250,19 +247,33 @@ uint64_t BMat8::row_space_size_bitset() const {
             _mm_popcnt_u64(_mm_extract_epi64(res1, 1)));
 }
 
+uint64_t BMat8::row_space_size_incl1() const {
+    epu8 in = _mm_set_epi64x(_data, _data);
+    epu8 block = epu8id;
+    uint64_t res = 0;
+    for (size_t r = 0; r < 16; r++) {
+        epu8 orincl {};
+        for (int i = 0; i < 8; i++) {
+            orincl |= ((in | block) == block) & in;
+            in = permuted(in, rotboth);
+        }
+        res += _mm_popcnt_u64(_mm_movemask_epi8(block == orincl));
+        block += Epu8(16);
+    }
+    return res;
+}
+
 uint64_t BMat8::row_space_size_incl() const {
     epu8 in = _mm_set_epi64x(_data, _data);
     epu8 block = epu8id;
     uint64_t res = 0;
-    for (size_t r=0; r < 16; r++) {
-        epu8 andincl{};
-        for (int i = 0; i < 8; i++) {
-            // andincl |= (in | block) == block ? in : epu8 {};
-            andincl |= static_cast<epu8>(
-                _mm_blendv_epi8(epu8{}, in, (in | block) == block));
+    for (size_t r = 0; r < 16; r++) {
+        epu8 orincl = ((in | block) == block) & in;
+        for (int i = 1; i < 8; i++) {
             in = permuted(in, rotboth);
+            orincl |= ((in | block) == block) & in;
         }
-        res += _mm_popcnt_u64(_mm_movemask_epi8(block == andincl));
+        res += _mm_popcnt_u64(_mm_movemask_epi8(block == orincl));
         block += Epu8(16);
     }
     return res;
