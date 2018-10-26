@@ -47,9 +47,19 @@ inline PTransf16::PTransf16(std::vector<uint8_t> dom,
     }
 }
 
-inline uint32_t PTransf16::image() const {
-    return _mm_movemask_epi8(
-        _mm_cmpestrm(v, 16, one().v, 16, FIND_IN_VECT_COMPL));
+inline epu8 PTransf16::domain_mask(bool complement) const {
+    return complement ? v == Epu8(0xFF) : v != Epu8(0xFF);
+}
+inline PTransf16 PTransf16::right_one() const {
+    return domain_mask(true) | epu8id;
+}
+
+inline epu8 PTransf16::image_mask(bool complement) const {
+    return _mm_cmpestrm(v, 16, one().v, 16,
+                        complement ? FIND_IN_VECT : FIND_IN_VECT_COMPL);
+}
+inline PTransf16 PTransf16::left_one() const {
+    return image_mask(true) | epu8id;
 }
 inline uint32_t PTransf16::rank_ref() const {
     TPUBuild<epu8>::array tmp{};
@@ -60,7 +70,8 @@ inline uint32_t PTransf16::rank_ref() const {
         res += tmp[i];
     return res;
 }
-inline uint32_t PTransf16::rank() const { return _mm_popcnt_u32(image()); }
+inline uint32_t PTransf16::rank() const {
+    return _mm_popcnt_u32(_mm_movemask_epi8(image_mask())); }
 
 static HPCOMBI_CONSTEXPR uint8_t hilo_exchng_fun(uint8_t i) {
     return i < 8 ? i + 8 : i - 8;

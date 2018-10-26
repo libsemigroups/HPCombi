@@ -30,6 +30,8 @@ using HPCombi::Transf16;
 using HPCombi::PPerm16;
 using HPCombi::Perm16;
 
+const uint8_t FF = 0xff;
+
 #define EPU8_EQUAL(p1, p2)  BOOST_CHECK_PREDICATE(equal, (p1)(p2))
 #define EPU8_NOT_EQUAL(p1, p2)  BOOST_CHECK_PREDICATE(boost::not2(equal), (p1)(p2))
 
@@ -77,9 +79,9 @@ struct Fix {
             Tlist({zero, P01, P10, P11, P1, RandT, epu8(PPa), epu8(PPb)}),
             PlistSmall(all_perms(6)), Plist(all_perms(9)),
             PPmasks({
-                    Epu8(0), Epu8(0xFF), Epu8({0}, 0xFF), Epu8({0, 0}, 0xFF),
-                    Epu8({0, 0xFF, 0}, 0xFF), Epu8({0, 0xFF, 0}, 0),
-                    Epu8({0, 0xFF, 0, 0xFF, 0, 0, 0, 0xFF, 0xFF}, 0)
+                    Epu8(0), Epu8(FF), Epu8({0}, FF), Epu8({0, 0}, FF),
+                    Epu8({0, FF, 0}, FF), Epu8({0, FF, 0}, 0),
+                    Epu8({0, FF, 0, FF, 0, 0, 0, FF, FF}, 0)
                 }),
             PPlist(all_pperms(PlistSmall, PPmasks))
         {
@@ -110,14 +112,74 @@ BOOST_AUTO_TEST_CASE(PTransf16_constructor) {
                PTransf16({ 2,FF,FF,FF, 9, 0,FF,FF,2,FF,FF,FF,FF,FF,FF,FF}));
 }
 
-BOOST_AUTO_TEST_CASE(PTransf16_image) {
-    BOOST_TEST(PTransf16({}).image() == 0xffff);
-    BOOST_TEST(PTransf16({4,4,4,4}).image() == 0xfff0);
-    BOOST_TEST(PTransf16({1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1}).image() == 0x02);
-    BOOST_TEST(PTransf16({2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2}).image() == 0x04);
-    BOOST_TEST(PTransf16({2,2,2,0xf,2,2,2,2,2,2,2,2,2,2,2,2}).image() == 0x8004);
-    BOOST_TEST(PTransf16({0,2,2,0xf,2,2,2,2,5,2,2,2,2,2,2,2}).image() == 0x8025);
+BOOST_AUTO_TEST_CASE(PTransf16_image_mask) {
+    EPU8_EQUAL(PTransf16({}).image_mask(), Epu8(FF));
+    EPU8_EQUAL(PTransf16({}).image_mask(false), Epu8(FF));
+    EPU8_EQUAL(PTransf16({}).image_mask(true), Epu8(0));
+    EPU8_EQUAL(PTransf16({4,4,4,4}).image_mask(), Epu8({0,0,0,0}, FF));
+    EPU8_EQUAL(PTransf16({4,4,4,4}).image_mask(false), Epu8({0,0,0,0}, FF));
+    EPU8_EQUAL(PTransf16({4,4,4,4}).image_mask(true), Epu8({FF,FF,FF,FF}, 0));
+    EPU8_EQUAL(PTransf16(Epu8(1)).image_mask(), Epu8({0,FF}, 0));
+    EPU8_EQUAL(PTransf16(Epu8(2)).image_mask(), Epu8({0,0,FF}, 0));
+    EPU8_EQUAL(PTransf16(Epu8({2,2,2,0xf},2)).image_mask(),
+               Epu8({0,0,FF,0,0,0,0,0,0,0,0,0,0,0,0,FF}, 0));
+    EPU8_EQUAL(PTransf16(Epu8({0,2,2,0xf,2,2,2,2,5,2}, 2)).image_mask(),
+               Epu8({FF,0,FF,0,0,FF,0,0,0,0,0,0,0,0,0,FF}, 0));
+    EPU8_EQUAL(PTransf16(Epu8({0,2,2,0xf,2,2,2,2,5,2}, 2)).image_mask(false),
+               Epu8({FF,0,FF,0,0,FF,0,0,0,0,0,0,0,0,0,FF}, 0));
+    EPU8_EQUAL(PTransf16(Epu8({0,2,2,0xf,2,2,2,2,5,2}, 2)).image_mask(true),
+               Epu8({0,FF,0,FF,FF,0,FF,FF,FF,FF,FF,FF,FF,FF,FF,0}, 0));
 }
+
+BOOST_AUTO_TEST_CASE(PTransf16_left_one) {
+    BOOST_TEST(PTransf16({}).left_one() == PTransf16::one());
+    BOOST_TEST(PTransf16({4,4,4,4}).left_one() == PTransf16({FF,FF,FF,FF}));
+    BOOST_TEST(PTransf16(Epu8(1)).left_one() == PTransf16(Epu8({FF,1}, FF)));
+    BOOST_TEST(PTransf16(Epu8(2)).left_one() == PTransf16(Epu8({FF,FF,2}, FF)));
+    BOOST_TEST(PTransf16(Epu8({2,2,2,0xf},2)).left_one() ==
+               PTransf16({FF,FF,2,FF,FF,FF,FF,FF,FF,FF,FF,FF,FF,FF,FF,15}));
+    BOOST_TEST(PTransf16(Epu8({FF,2,2,0xf},FF)).left_one() ==
+               PTransf16({FF,FF,2,FF,FF,FF,FF,FF,FF,FF,FF,FF,FF,FF,FF,15}));
+    BOOST_TEST(PTransf16(Epu8({0,2,2,0xf,2,2,2,2,5,2}, 2)).left_one() ==
+               PTransf16({0,FF,2,FF,FF,5,FF,FF,FF,FF,FF,FF,FF,FF,FF,15}));
+    BOOST_TEST(PTransf16(Epu8({0,2,FF,0xf,2,FF,2,FF,5}, FF)).left_one() ==
+               PTransf16({0,FF,2,FF,FF,5,FF,FF,FF,FF,FF,FF,FF,FF,FF,15}));
+}
+
+BOOST_AUTO_TEST_CASE(PTransf16_domain_mask) {
+    EPU8_EQUAL(PTransf16({}).domain_mask(), Epu8(FF));
+    EPU8_EQUAL(PTransf16({4,4,4,4}).domain_mask(), Epu8(FF));
+    EPU8_EQUAL(PTransf16({4,4,4,4}).domain_mask(false), Epu8(FF));
+    EPU8_EQUAL(PTransf16({4,4,4,4}).domain_mask(true), Epu8(0));
+    EPU8_EQUAL(PTransf16(Epu8(1)).domain_mask(), Epu8(FF));
+    EPU8_EQUAL(PTransf16(Epu8(2)).domain_mask(), Epu8(FF));
+    EPU8_EQUAL(PTransf16(Epu8({2,2,2,0xf}, FF)).domain_mask(),
+               Epu8({FF,FF,FF,FF}, 0));
+    EPU8_EQUAL(PTransf16(Epu8({FF,2,2,0xf},FF)).domain_mask(),
+               Epu8({0, FF, FF, FF}, 0));
+    EPU8_EQUAL(PTransf16(Epu8({0,2,FF,0xf,2,FF,2,FF,5}, FF)).domain_mask(),
+               Epu8({FF,FF,0,FF,FF,0,FF,0,FF},0));
+    EPU8_EQUAL(PTransf16(Epu8({0,2,FF,0xf,2,FF,2,FF,5}, FF)).domain_mask(false),
+               Epu8({FF,FF,0,FF,FF,0,FF,0,FF},0));
+    EPU8_EQUAL(PTransf16(Epu8({0,2,FF,0xf,2,FF,2,FF,5}, FF)).domain_mask(true),
+               Epu8({0,0,FF,0,0,FF, 0,FF,0},FF));
+}
+
+BOOST_AUTO_TEST_CASE(PTransf16_right_one) {
+    BOOST_TEST(PTransf16({}).right_one() == PTransf16::one());
+    BOOST_TEST(PTransf16({4,4,4,4}).right_one() == PTransf16::one());
+    BOOST_TEST(PTransf16(Epu8(1)).right_one() == PTransf16::one());
+    BOOST_TEST(PTransf16(Epu8(2)).right_one() == PTransf16::one());
+    BOOST_TEST(PTransf16(Epu8({2,2,2,0xf}, FF)).right_one() ==
+               PTransf16(Epu8({0,1,2,3}, FF)));
+    BOOST_TEST(PTransf16(Epu8({FF,2,2,0xf},FF)).right_one() ==
+               PTransf16({FF, 1, 2, 3,FF,FF,FF,FF,FF,FF,FF,FF,FF,FF,FF,FF}));
+    BOOST_TEST(PTransf16(Epu8({0,2,2,0xf,2,2,2,2,5,2}, 2)).right_one() ==
+               PTransf16::one());
+    BOOST_TEST(PTransf16(Epu8({0,2,FF,0xf,2,FF,2,FF,5}, FF)).right_one() ==
+               PTransf16({0,1,FF,3,4,FF, 6,FF,8,FF,FF,FF,FF,FF,FF,FF}));
+}
+
 
 BOOST_AUTO_TEST_CASE(PTransf16_rank_ref) {
     BOOST_TEST(PTransf16({}).rank_ref() == 16);
@@ -126,6 +188,10 @@ BOOST_AUTO_TEST_CASE(PTransf16_rank_ref) {
     BOOST_TEST(PTransf16({2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2}).rank_ref() == 1);
     BOOST_TEST(PTransf16({2,2,2,0xf,2,2,2,2,2,2,2,2,2,2,2,2}).rank_ref() == 2);
     BOOST_TEST(PTransf16({0,2,2,0xf,2,2,2,2,5,2,2,2,2,2,2,2}).rank_ref() == 4);
+    BOOST_TEST(PTransf16({1,1,1,FF,1,1,FF,1,1,FF,1,FF,1,1,1,1}).rank_ref() == 1);
+    BOOST_TEST(PTransf16({2,2,2,2,2,FF,2,2,2,FF,2,2,2,FF,2,2}).rank_ref() == 1);
+    BOOST_TEST(PTransf16({2,2,2,0xf,2,FF,2,2,2,2,2,2,2,2,2,2}).rank_ref() == 2);
+    BOOST_TEST(PTransf16({0,2,2,0xf,2,2,FF,2,5,2,FF,2,2,2,2,2}).rank_ref() == 4);
 }
 
 BOOST_AUTO_TEST_CASE(PTransf16_rank) {
@@ -225,6 +291,25 @@ BOOST_AUTO_TEST_CASE(PPerm16_hash) {
     BOOST_TEST(std::hash<PPerm16>()(PPerm16({4, 5, 0}, {9, 0, 1})) != 0);
 }
 
+
+BOOST_FIXTURE_TEST_CASE(PPerm16_left_one, Fix) {
+    BOOST_TEST(PPerm16({}).left_one() == PPerm16::one());
+    BOOST_TEST(PPerm16({FF,FF,FF,4}).left_one() == PPerm16({FF,FF,FF,FF}));
+    BOOST_TEST(PPerm16({FF,4,FF,FF}).left_one() == PPerm16({FF,FF,FF,FF}));
+    for (auto pp : PPlist) {
+        BOOST_TEST(pp.left_one() * pp == pp);
+    }
+}
+
+
+BOOST_FIXTURE_TEST_CASE(PPerm16_right_one, Fix) {
+    BOOST_TEST(PPerm16({}).right_one() == PPerm16::one());
+    BOOST_TEST(PPerm16({FF,FF,FF,4}).right_one() == PPerm16({FF,FF,FF}));
+    BOOST_TEST(PPerm16({FF,4,FF,FF}).right_one() == PPerm16({FF,1,FF,FF}));
+    for (auto pp : PPlist) {
+        BOOST_TEST(pp * pp.right_one() == pp);
+    }
+}
 
 //****************************************************************************//
 BOOST_FIXTURE_TEST_CASE(PPerm16_inverse_ref, Fix) {

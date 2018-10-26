@@ -72,7 +72,10 @@ struct alignas(16) PTransf16 : public Vect16 {
         return HPCombi::permuted(v, p.v) | (p.v == Epu8(0xFF));
     }
 
-    uint32_t image() const;
+    epu8 image_mask(bool complement=false) const;
+    epu8 domain_mask(bool complement=false) const;
+    PTransf16 right_one() const;
+    PTransf16 left_one() const;
 
     uint32_t rank_ref() const;
     uint32_t rank() const;
@@ -118,6 +121,9 @@ struct PPerm16 : public PTransf16 {
         return this->PTransf16::operator*(p);
         return static_cast<PTransf16>(v) * static_cast<PTransf16>(p.v);
     }
+
+    PPerm16 right_one() const { return PTransf16::right_one(); }
+    PPerm16 left_one() const { return PTransf16::left_one(); }
 
     /** @copydoc common_inverse
      *  @par Algorithm:
