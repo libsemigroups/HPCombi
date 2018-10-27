@@ -147,7 +147,7 @@ BMat8 BMat8::random(size_t const dim) {
     return bm;
 }
 
-inline BMat8 BMat8::transpose() const {
+BMat8 BMat8::transpose() const {
     uint64_t x = _data;
     uint64_t y = (x ^ (x >> 7)) & 0xAA00AA00AA00AA;
     x = x ^ y ^ (y << 7);
@@ -181,7 +181,7 @@ BMat8 BMat8::operator*(BMat8 const &that) const {
     return BMat8(_mm_extract_epi64(data, 0) | _mm_extract_epi64(data, 1));
 }
 
-inline epu8 BMat8::row_space_basis_internal() const {
+epu8 BMat8::row_space_basis_internal() const {
     epu8 res = remove_dups(revsorted8(_mm_set_epi64x(0, _data)));
     epu8 rescy = res;
     // We now compute the union of all the included different rows
@@ -225,7 +225,7 @@ inline void update_bitset(epu8 block, epu8 &set0, epu8 &set1) {
         set0 |= (bm5 == bound08) & shft;
         set1 |= (bm5 == bound18) & shft;
         block = _mm_shuffle_epi8(block, right_cycle);
-        }
+    }
 }
 
 uint64_t BMat8::row_space_size_bitset() const {
@@ -268,7 +268,7 @@ uint64_t BMat8::row_space_size_incl() const {
     uint64_t res = 0;
     for (size_t r = 0; r < 16; r++) {
         epu8 orincl = ((in | block) == block) & in;
-        for (int i = 1; i < 8; i++) {
+        for (int i = 0; i < 7; i++) {    // Only rotating
             in = permuted(in, rotboth);
             orincl |= ((in | block) == block) & in;
         }
@@ -278,7 +278,7 @@ uint64_t BMat8::row_space_size_incl() const {
     return res;
 }
 
-inline std::vector<uint8_t> BMat8::rows() const {
+std::vector<uint8_t> BMat8::rows() const {
     std::vector<uint8_t> rows;
     for (size_t i = 0; i < 8; ++i) {
         uint8_t row = static_cast<uint8_t>(_data << (8 * i) >> 56);
@@ -293,8 +293,6 @@ uint64_t BMat8::row_space_size_ref() const {
     row_vec.erase(std::remove_if(row_vec.begin(), row_vec.end(),
                                  [](uint8_t val) { return val == 0; }),
                   row_vec.end());
-//    auto last = std::remove(row_vec.begin(), row_vec.end(), 0);
-//    row_vec.erase(last, row_vec.end());
     for (uint8_t x : row_vec) {
         lookup[x] = true;
     }
@@ -340,7 +338,7 @@ Perm16 BMat8::right_perm_action_on_basis_ref(BMat8 bm) const {
     return res;
  }
 
-inline Perm16 BMat8::right_perm_action_on_basis(BMat8 other) const {
+Perm16 BMat8::right_perm_action_on_basis(BMat8 other) const {
     epu8 x = permuted(_mm_set_epi64x(_data, 0), epu8rev);
     epu8 y = permuted(_mm_set_epi64x((*this * other)._data, 0), epu8rev);
 
@@ -349,7 +347,7 @@ inline Perm16 BMat8::right_perm_action_on_basis(BMat8 other) const {
 
 
 
-inline std::ostream &BMat8::write(std::ostream &os) const {
+std::ostream &BMat8::write(std::ostream &os) const {
     uint64_t x = _data;
     uint64_t pow = 1;
     pow = pow << 63;

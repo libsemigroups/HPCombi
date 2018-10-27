@@ -143,27 +143,65 @@ class BMat8 {
     //! Returns the matrix product of \c this and \p that
     //!
     //! This method returns the standard matrix product (over the
-    //! boolean semiring) of two BMat8 objects.
+    //! boolean semiring) of two BMat8 objects. This is a fast implementation
+    //! using transposition and vector instructions.
     inline BMat8 operator*(BMat8 const &that) const;
 
+    //! Returns a canonical basis of the row space of \c this
+    //!
+    //! Any two matrix with the same row space are garanteed to have the same
+    //! row space basis. This is a fast implementation using vector
+    //! instructions to compute in parallel the union of the other rows
+    //! included in a given one.
     inline BMat8 row_space_basis() const;
+    //! Returns a canonical basis of the col space of \c this
+    //!
+    //! Any two matrix with the same column row space are garanteed to have
+    //! the same column space basis. Uses #row_space_basis and #transpose.
     inline BMat8 col_space_basis() const {
         return transpose().row_space_basis().transpose();
     }
-    size_t nr_rows() const;
-    std::vector<uint8_t> rows() const;
+    //! Returns the number of non-zero rows of \c this
+    inline size_t nr_rows() const;
+    //! Returns a \c std::vector for rows of \c this
+    inline std::vector<uint8_t> rows() const;
 
+    //! Returns the cardinality of the row space of \c this
+    //!
+    //! Reference implementation computing all products
     inline uint64_t row_space_size_ref() const;
+    //! Returns the cardinality of the row space of \c this
+    //!
+    //! It compute all the product using two 128 bits register to store
+    //! the set of elements of the row space.
     inline uint64_t row_space_size_bitset() const;
+    //! Returns the cardinality of the row space of \c this
+    //!
+    //! Uses vector computation of the product included row in each 256
+    //! possible vectors. Fastest implementation saving a few instructions
+    //! compared to #row_space_size_incl1
     inline uint64_t row_space_size_incl() const;
+    //! Returns the cardinality of the row space of \c this
+    //!
+    //! Uses vector computation of the product included row in each 256
+    //! possible vectors. More optimized in #row_space_size_incl
     inline uint64_t row_space_size_incl1() const;
+    //! Returns the cardinality of the row space of \c this
+    //!
+    //! Alias to #row_space_size_incl
     inline uint64_t row_space_size() const { return row_space_size_incl(); }
 
     //! Give the permutation whose right multiplication change \c *this
     //! to \c other
     //!
     //! \c *this is suppose to be a row_space matrix (ie. sorted decreasingly)
+    //! Fast implementation doing a vector binary search.
     inline Perm16 right_perm_action_on_basis(BMat8) const;
+    //! Give the permutation whose right multiplication change \c *this
+    //! to \c other
+    //!
+    //! \c *this is suppose to be a row_space matrix (ie. sorted decreasingly)
+    //! Reference implementation.
     inline Perm16 right_perm_action_on_basis_ref(BMat8) const;
 
     //! Returns the identity BMat8
@@ -187,9 +225,11 @@ class BMat8 {
     //! top-left \p dim x \p dim entries may be non-zero.
     inline static BMat8 random(size_t dim);
 
+    //! Swap the matrix \c this with \c that
     inline void swap(BMat8 &that) { std::swap(this->_data, that._data); }
 
-    std::ostream & write(std::ostream &os) const;
+    //! Write \c this on \c os
+    inline std::ostream & write(std::ostream &os) const;
 
 #ifdef LIBSEMIGROUPS_DENSEHASHMAP
     // FIXME do this another way
@@ -199,7 +239,7 @@ class BMat8 {
   private:
     uint64_t _data;
 
-    epu8 row_space_basis_internal() const;
+    inline epu8 row_space_basis_internal() const;
 };
 
 }  // namespace HPCombi
