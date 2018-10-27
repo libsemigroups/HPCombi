@@ -63,16 +63,16 @@ struct alignas(16) Vect16 {
         return HPCombi::not_equal(v, b.v);
     };
 
-    inline bool operator<(const Vect16 &b) const { return less(v, b.v); };
-    inline char less_partial(const Vect16 &b, int k) const {
+    bool operator<(const Vect16 &b) const { return less(v, b.v); };
+    char less_partial(const Vect16 &b, int k) const {
         return HPCombi::less_partial(v, b.v, k);
     };
-    inline Vect16 permuted(const Vect16 &b) const {
+    Vect16 permuted(const Vect16 &b) const {
         return HPCombi::permuted(v, b.v);
     }
-    inline uint8_t sum() const { return HPCombi::horiz_sum(v); }
-    inline Vect16 partial_sums() const { return HPCombi::partial_sums(v); };
-    inline Vect16 eval16() const { return HPCombi::eval16(v); };
+    uint8_t sum() const { return HPCombi::horiz_sum(v); }
+    Vect16 partial_sums() const { return HPCombi::partial_sums(v); };
+    Vect16 eval16() const { return HPCombi::eval16(v); };
 
     bool is_permutation() const { return HPCombi::is_permutation(v); }
     bool is_permutation(size_t k) const {
@@ -92,7 +92,7 @@ inline std::ostream &operator<<(std::ostream &stream,
 }
 
 template <> struct hash<HPCombi::Vect16> {
-    inline size_t operator()(const HPCombi::Vect16 &ar) const {
+    size_t operator()(const HPCombi::Vect16 &ar) const {
         return std::hash<HPCombi::epu8>{}(ar.v);
     }
 };

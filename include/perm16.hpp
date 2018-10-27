@@ -68,7 +68,7 @@ struct alignas(16) PTransf16 : public Vect16 {
     uint8_t &operator[](uint64_t i) { return as_array()[i]; }
 
     static HPCOMBI_CONSTEXPR PTransf16 one() { return epu8id; }
-    PTransf16 inline operator*(const PTransf16 &p) const {
+    PTransf16 operator*(const PTransf16 &p) const {
         return HPCombi::permuted(v, p.v) | (p.v == Epu8(0xFF));
     }
 
@@ -99,7 +99,7 @@ struct Transf16 : public PTransf16 {
     explicit operator uint64_t() const;
 
     static HPCOMBI_CONSTEXPR Transf16 one() { return epu8id; }
-    Transf16 inline operator*(const Transf16 &p) const {
+    Transf16 operator*(const Transf16 &p) const {
         return HPCombi::permuted(v, p.v);
     }
 };
@@ -119,7 +119,7 @@ struct PPerm16 : public PTransf16 {
     PPerm16 &operator=(const PPerm16 &) = default;
 
     static HPCOMBI_CONSTEXPR PPerm16 one() { return epu8id; }
-    PPerm16 inline operator*(const PPerm16 &p) const {
+    PPerm16 operator*(const PPerm16 &p) const {
         return this->PTransf16::operator*(p);
         return static_cast<PTransf16>(v) * static_cast<PTransf16>(p.v);
     }
@@ -145,13 +145,13 @@ struct PPerm16 : public PTransf16 {
      *  @par Algorithm:
      *  @f$O(n)@f$ algorithm using reference cast to arrays
      */
-    inline PPerm16 inverse_ref() const;
+    PPerm16 inverse_ref() const;
     /** @copydoc common_inverse_pperm
      *  @par Algorithm:
      *  @f$O(\log n)@f$ algorithm using some kind of vectorized dichotomic
      * search.
      */
-    inline PPerm16 inverse_find() const;
+    PPerm16 inverse_find() const;
 };
 
 /** Permutations of @f$\{0\dots 15\}@f$
@@ -167,7 +167,7 @@ struct Perm16 : public Transf16 /* public PPerm : diamond problem */ {
     Perm16(std::initializer_list<uint8_t> il) : Transf16(il) {}
     explicit Perm16(uint64_t compressed) : Transf16(compressed) {}
 
-    Perm16 inline operator*(const Perm16 &p) const {
+    Perm16 operator*(const Perm16 &p) const {
         return HPCombi::permuted(v, p.v);
     }
 
@@ -187,19 +187,19 @@ struct Perm16 : public Transf16 /* public PPerm : diamond problem */ {
      *  @par Algorithm:
      *  Reference @f$O(n)@f$ algorithm using loop and indexed access
      */
-    inline Perm16 inverse_ref() const;
+    Perm16 inverse_ref() const;
     /** @copydoc common_inverse
      *  @par Algorithm:
      *  @f$O(n)@f$ algorithm using reference cast to arrays
      */
-    inline Perm16 inverse_arr() const;
+    Perm16 inverse_arr() const;
     /** @copydoc common_inverse
      *  @par Algorithm:
      *  Insert the identity in the least significant bits and sort using a
      *  sorting network. The number of round of the optimal sorting network is
      *  open as far as I know, therefore the complexity is unknown.
      */
-    inline Perm16 inverse_sort() const;
+    Perm16 inverse_sort() const;
     /** @copydoc common_inverse
      *  @par Algorithm:
      *  @f$O(\log n)@f$ algorithm using some kind of vectorized dichotomic
@@ -212,17 +212,17 @@ struct Perm16 : public Transf16 /* public PPerm : diamond problem */ {
      * Raise \e *this to power @f$\text{LCM}(1, 2, ..., n) - 1@f$ so complexity
      * is in @f$O(log (\text{LCM}(1, 2, ..., n) - 1)) = O(n)@f$
      */
-    inline Perm16 inverse_pow() const;
+    Perm16 inverse_pow() const;
     /** @copydoc common_inverse
      *  @par Algorithm:
      *  Compute power from @f$n/2@f$ to @f$n@f$, when @f$\sigma^k(i)=i@f$ then
      *  @f$\sigma^{-1}(i)=\sigma^{k-1}(i)@f$. Complexity @f$O(n)@f$
      */
-    inline Perm16 inverse_cycl() const;
+    Perm16 inverse_cycl() const;
     /** @copydoc common_inverse
      *
      *  Frontend method: currently aliased to #inverse_cycl */
-    inline Perm16 inverse() const { return inverse_cycl(); }
+    Perm16 inverse() const { return inverse_cycl(); }
 
     // It's not possible to have a static constexpr member of same type as class
     // being defined (see https://stackoverflow.com/questions/11928089/)
@@ -230,10 +230,10 @@ struct Perm16 : public Transf16 /* public PPerm : diamond problem */ {
     static HPCOMBI_CONSTEXPR Perm16 one() { return epu8id; }
 
     /** The elementary transposition exchanging @f$i@f$ and @f$i+1@f$ */
-    inline static Perm16 elementary_transposition(uint64_t i);
+    static Perm16 elementary_transposition(uint64_t i);
     /** A random permutation of size @f$n@f$*/
-    inline static Perm16 random(uint64_t n = 16);
-    inline static Perm16 unrankSJT(int n, int r);
+    static Perm16 random(uint64_t n = 16);
+    static Perm16 unrankSJT(int n, int r);
 
     /** @class common_lehmer
      * @brief The Lehmer code of a permutation
@@ -251,17 +251,17 @@ struct Perm16 : public Transf16 /* public PPerm : diamond problem */ {
      *  @par Algorithm:
      *  Reference @f$O(n^2)@f$ algorithm using loop and indexed access
      */
-    inline epu8 lehmer_ref() const;
+    epu8 lehmer_ref() const;
     /** @copydoc common_lehmer
      *  @par Algorithm:
      *  Reference @f$O(n^2)@f$ algorithm using array, loop and indexed access
      */
-    inline epu8 lehmer_arr() const;
+    epu8 lehmer_arr() const;
     /** @copydoc common_lehmer
      *  @par Algorithm:
      *  Fast @f$O(n)@f$ algorithm using vector comparison
      */
-    inline epu8 lehmer() const;
+    epu8 lehmer() const;
     /** @class common_length
      * @brief The Coxeter length (ie: number of inversion) of a permutation
      * @details
@@ -277,18 +277,18 @@ struct Perm16 : public Transf16 /* public PPerm : diamond problem */ {
      *  @par Algorithm:
      *  Reference @f$O(n^2)@f$ algorithm using loop and indexed access
      */
-    inline uint8_t length_ref() const;
+    uint8_t length_ref() const;
     /** @copydoc common_lehmer
      *  @par Algorithm:
      *  Reference @f$O(n^2)@f$ algorithm using loop and indexed access after
      *     a cast to \c std::array
      */
-    inline uint8_t length_arr() const;
+    uint8_t length_arr() const;
     /** @copydoc common_lehmer
      *  @par Algorithm:
      *  Reference @f$O(n^2)@f$ using vector lehmer and fast horizontal sum
      */
-    inline uint8_t length() const;
+    uint8_t length() const;
 
     /** @class common_nb_descent
      * @brief The number of descent of a permutation
@@ -305,12 +305,12 @@ struct Perm16 : public Transf16 /* public PPerm : diamond problem */ {
      *  @par Algorithm:
      *  Reference @f$O(n)@f$ using a loop
      */
-    inline uint8_t nb_descents_ref() const;
+    uint8_t nb_descents_ref() const;
     /** @copydoc common_lehmer
      *  @par Algorithm:
      *  Reference @f$O(1)@f$ using vector shift and comparison
      */
-    inline uint8_t nb_descents() const;
+    uint8_t nb_descents() const;
 
     /** @class common_nb_cycles
      * @brief The number of cycles of a permutation
@@ -323,10 +323,10 @@ struct Perm16 : public Transf16 /* public PPerm : diamond problem */ {
      * @endcode
      * Returns @verbatim 10 @endverbatim
      */
-    inline uint8_t nb_cycles_ref() const;
-    inline epu8 cycles_mask_unroll() const;
-    inline uint8_t nb_cycles_unroll() const;
-    inline uint8_t nb_cycles() const { return nb_cycles_unroll(); }
+    uint8_t nb_cycles_ref() const;
+    epu8 cycles_mask_unroll() const;
+    uint8_t nb_cycles_unroll() const;
+    uint8_t nb_cycles() const { return nb_cycles_unroll(); }
 
     /** @class common_left_weak_leq
      * @brief Compare two permutations for the left weak order
@@ -341,12 +341,12 @@ struct Perm16 : public Transf16 /* public PPerm : diamond problem */ {
      *  @par Algorithm:
      *  Reference @f$O(n^2)@f$ testing inclusion of inversions one by one
      */
-    inline bool left_weak_leq_ref(Perm16 other) const;
+    bool left_weak_leq_ref(Perm16 other) const;
     /** @copydoc common_left_weak_leq
      *  @par Algorithm:
      *  Reference @f$O(n)@f$ with vectorized test of inclusion
      */
-    inline bool left_weak_leq(Perm16 other) const;
+    bool left_weak_leq(Perm16 other) const;
 };
 
 /*****************************************************************************/
@@ -365,25 +365,25 @@ static_assert(std::is_trivial<Perm16>(), "Perm16 is not a trivial class !");
 namespace std {
 
 template <> struct hash<HPCombi::PTransf16> {
-    inline size_t operator()(const HPCombi::PTransf16 &ar) const {
+    size_t operator()(const HPCombi::PTransf16 &ar) const {
         return std::hash<HPCombi::epu8>{}(ar.v);
     }
 };
 
 template <> struct hash<HPCombi::Transf16> {
-    inline size_t operator()(const HPCombi::Transf16 &ar) const {
+    size_t operator()(const HPCombi::Transf16 &ar) const {
         return uint64_t(ar);
     }
 };
 
 template <> struct hash<HPCombi::PPerm16> {
-    inline size_t operator()(const HPCombi::PPerm16 &ar) const {
+    size_t operator()(const HPCombi::PPerm16 &ar) const {
         return std::hash<HPCombi::epu8>{}(ar.v);
     }
 };
 
 template <> struct hash<HPCombi::Perm16> {
-    inline size_t operator()(const HPCombi::Perm16 &ar) const {
+    size_t operator()(const HPCombi::Perm16 &ar) const {
         return uint64_t(ar);
     }
 };

@@ -100,19 +100,19 @@ static const constexpr std::array<uint64_t, 64> BIT_MASK = {
 
 // clang-format on
 
-bool BMat8::operator()(size_t i, size_t j) const {
+inline bool BMat8::operator()(size_t i, size_t j) const {
     HPCOMBI_ASSERT(i < 8);
     HPCOMBI_ASSERT(j < 8);
     return (_data << (8 * i + j)) >> 63;
 }
 
-void BMat8::set(size_t i, size_t j, bool val) {
+inline void BMat8::set(size_t i, size_t j, bool val) {
     HPCOMBI_ASSERT(i < 8);
     HPCOMBI_ASSERT(j < 8);
     _data ^= (-val ^ _data) & BIT_MASK[8 * i + j];
 }
 
-BMat8::BMat8(std::vector<std::vector<bool>> const &mat) {
+inline BMat8::BMat8(std::vector<std::vector<bool>> const &mat) {
     // FIXME exceptions
     HPCOMBI_ASSERT(mat.size() <= 8);
     HPCOMBI_ASSERT(0 < mat.size());
@@ -135,9 +135,9 @@ static std::random_device _rd;
 static std::mt19937 _gen(_rd());
 static std::uniform_int_distribution<uint64_t> _dist(0, 0xffffffffffffffff);
 
-BMat8 BMat8::random() { return BMat8(_dist(_gen)); }
+inline BMat8 BMat8::random() { return BMat8(_dist(_gen)); }
 
-BMat8 BMat8::random(size_t const dim) {
+inline BMat8 BMat8::random(size_t const dim) {
     HPCOMBI_ASSERT(0 < dim && dim <= 8);
     BMat8 bm = BMat8::random();
     for (size_t i = dim + 1; i < 8; ++i) {
@@ -147,7 +147,7 @@ BMat8 BMat8::random(size_t const dim) {
     return bm;
 }
 
-BMat8 BMat8::transpose() const {
+inline BMat8 BMat8::transpose() const {
     uint64_t x = _data;
     uint64_t y = (x ^ (x >> 7)) & 0xAA00AA00AA00AA;
     x = x ^ y ^ (y << 7);
@@ -166,7 +166,7 @@ static constexpr epu8 rotboth
 static constexpr epu8 rot2
     { 6, 7, 0, 1, 2, 3, 4, 5,14,15, 8, 9,10,11,12,13};
 
-BMat8 BMat8::operator*(BMat8 const &that) const {
+inline BMat8 BMat8::operator*(BMat8 const &that) const {
     epu8 x = _mm_set_epi64x(_data, _data);
     BMat8 tr = that.transpose();
     epu8 y = _mm_shuffle_epi8(_mm_set_epi64x(tr._data, tr._data), rothigh);
@@ -181,7 +181,7 @@ BMat8 BMat8::operator*(BMat8 const &that) const {
     return BMat8(_mm_extract_epi64(data, 0) | _mm_extract_epi64(data, 1));
 }
 
-epu8 BMat8::row_space_basis_internal() const {
+inline epu8 BMat8::row_space_basis_internal() const {
     epu8 res = remove_dups(revsorted8(_mm_set_epi64x(0, _data)));
     epu8 rescy = res;
     // We now compute the union of all the included different rows
@@ -194,7 +194,7 @@ epu8 BMat8::row_space_basis_internal() const {
     return res;
 }
 
-BMat8 BMat8::row_space_basis() const {
+inline BMat8 BMat8::row_space_basis() const {
     return BMat8(_mm_extract_epi64(sorted8(row_space_basis_internal()), 0));
 }
 
@@ -228,7 +228,7 @@ inline void update_bitset(epu8 block, epu8 &set0, epu8 &set1) {
     }
 }
 
-uint64_t BMat8::row_space_size_bitset() const {
+inline uint64_t BMat8::row_space_size_bitset() const {
     epu8 in = _mm_set_epi64x(0, _data);
     epu8 block0 {}, block1 {};
     for (epu8 m : masks) {
@@ -246,7 +246,7 @@ uint64_t BMat8::row_space_size_bitset() const {
             _mm_popcnt_u64(_mm_extract_epi64(res1, 1)));
 }
 
-uint64_t BMat8::row_space_size_incl1() const {
+inline uint64_t BMat8::row_space_size_incl1() const {
     epu8 in = _mm_set_epi64x(_data, _data);
     epu8 block = epu8id;
     uint64_t res = 0;
@@ -262,7 +262,7 @@ uint64_t BMat8::row_space_size_incl1() const {
     return res;
 }
 
-uint64_t BMat8::row_space_size_incl() const {
+inline uint64_t BMat8::row_space_size_incl() const {
     epu8 in = _mm_set_epi64x(_data, _data);
     epu8 block = epu8id;
     uint64_t res = 0;
@@ -278,7 +278,7 @@ uint64_t BMat8::row_space_size_incl() const {
     return res;
 }
 
-std::vector<uint8_t> BMat8::rows() const {
+inline std::vector<uint8_t> BMat8::rows() const {
     std::vector<uint8_t> rows;
     for (size_t i = 0; i < 8; ++i) {
         uint8_t row = static_cast<uint8_t>(_data << (8 * i) >> 56);
@@ -287,7 +287,7 @@ std::vector<uint8_t> BMat8::rows() const {
     return rows;
 }
 
-uint64_t BMat8::row_space_size_ref() const {
+inline uint64_t BMat8::row_space_size_ref() const {
     std::array<char, 256> lookup {};
     std::vector<uint8_t> row_vec = row_space_basis().rows();
     row_vec.erase(std::remove_if(row_vec.begin(), row_vec.end(),
@@ -310,12 +310,12 @@ uint64_t BMat8::row_space_size_ref() const {
     return row_space.size() + 1;
 }
 
-size_t BMat8::nr_rows() const {
+inline size_t BMat8::nr_rows() const {
     epu8 x = _mm_set_epi64x(_data, 0);
     return _mm_popcnt_u64(_mm_movemask_epi8(x != epu8 {}));
 }
 
-Perm16 BMat8::right_perm_action_on_basis_ref(BMat8 bm) const {
+inline Perm16 BMat8::right_perm_action_on_basis_ref(BMat8 bm) const {
     // LIBSEMIGROUPS_ASSERT(basis.row_space_basis() == basis);
     std::vector<uint8_t> rows = this->rows();
     BMat8                product   = *this * bm;
@@ -338,7 +338,7 @@ Perm16 BMat8::right_perm_action_on_basis_ref(BMat8 bm) const {
     return res;
  }
 
-Perm16 BMat8::right_perm_action_on_basis(BMat8 other) const {
+inline Perm16 BMat8::right_perm_action_on_basis(BMat8 other) const {
     epu8 x = permuted(_mm_set_epi64x(_data, 0), epu8rev);
     epu8 y = permuted(_mm_set_epi64x((*this * other)._data, 0), epu8rev);
 
@@ -347,7 +347,7 @@ Perm16 BMat8::right_perm_action_on_basis(BMat8 other) const {
 
 
 
-std::ostream &BMat8::write(std::ostream &os) const {
+inline std::ostream &BMat8::write(std::ostream &os) const {
     uint64_t x = _data;
     uint64_t pow = 1;
     pow = pow << 63;

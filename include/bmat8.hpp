@@ -60,13 +60,13 @@ class BMat8 {
     //!
     //! This constructor initializes a BMat8 to have rows equal to the
     //! 8 chunks, of 8 bits each, of the binary representation of \p mat.
-    inline explicit BMat8(uint64_t mat) : _data(mat) {}
+    explicit BMat8(uint64_t mat) : _data(mat) {}
 
     //! A constructor.
     //!
     //! This constructor initializes a matrix where the rows of the matrix
     //! are the vectors in \p mat.
-    inline explicit BMat8(std::vector<std::vector<bool>> const &mat);
+    explicit BMat8(std::vector<std::vector<bool>> const &mat);
 
     //! A constructor.
     //!
@@ -118,34 +118,34 @@ class BMat8 {
     //! This method returns the entry in the (\p i, \p j)th position.
     //! Note that since all matrices are internally represented as 8 x 8, it
     //! is possible to access entries that you might not believe exist.
-    inline bool operator()(size_t i, size_t j) const;
+    bool operator()(size_t i, size_t j) const;
 
     //! Sets the (\p i, \p j)th position to \p val.
     //!
     //! This method sets the (\p i, \p j)th entry of \c this to \p val.
     //! Uses the bit twiddle for setting bits found
     //! <a href=http://graphics.stanford.edu/~seander/bithacks>here</a>.
-    inline void set(size_t i, size_t j, bool val);
+    void set(size_t i, size_t j, bool val);
 
     //! Returns the integer representation of \c this.
     //!
     //! Returns an unsigned integer obtained by interpreting an 8 x 8
     //! BMat8 as a sequence of 64 bits (reading rows left to right,
     //! from top to bottom) and then this sequence as an unsigned int.
-    inline uint64_t to_int() const { return _data; }
+    uint64_t to_int() const { return _data; }
 
     //! Returns the transpose of \c this
     //!
     //! Returns the standard matrix transpose of a BMat8.
     //! Uses the technique found in Knuth AoCP Vol. 4 Fasc. 1a, p. 15.
-    inline BMat8 transpose() const;
+    BMat8 transpose() const;
 
     //! Returns the matrix product of \c this and \p that
     //!
     //! This method returns the standard matrix product (over the
     //! boolean semiring) of two BMat8 objects. This is a fast implementation
     //! using transposition and vector instructions.
-    inline BMat8 operator*(BMat8 const &that) const;
+    BMat8 operator*(BMat8 const &that) const;
 
     //! Returns a canonical basis of the row space of \c this
     //!
@@ -153,83 +153,83 @@ class BMat8 {
     //! row space basis. This is a fast implementation using vector
     //! instructions to compute in parallel the union of the other rows
     //! included in a given one.
-    inline BMat8 row_space_basis() const;
+    BMat8 row_space_basis() const;
     //! Returns a canonical basis of the col space of \c this
     //!
     //! Any two matrix with the same column row space are garanteed to have
     //! the same column space basis. Uses #row_space_basis and #transpose.
-    inline BMat8 col_space_basis() const {
+    BMat8 col_space_basis() const {
         return transpose().row_space_basis().transpose();
     }
     //! Returns the number of non-zero rows of \c this
-    inline size_t nr_rows() const;
+    size_t nr_rows() const;
     //! Returns a \c std::vector for rows of \c this
-    inline std::vector<uint8_t> rows() const;
+    std::vector<uint8_t> rows() const;
 
     //! Returns the cardinality of the row space of \c this
     //!
     //! Reference implementation computing all products
-    inline uint64_t row_space_size_ref() const;
+    uint64_t row_space_size_ref() const;
     //! Returns the cardinality of the row space of \c this
     //!
     //! It compute all the product using two 128 bits register to store
     //! the set of elements of the row space.
-    inline uint64_t row_space_size_bitset() const;
+    uint64_t row_space_size_bitset() const;
     //! Returns the cardinality of the row space of \c this
     //!
     //! Uses vector computation of the product included row in each 256
     //! possible vectors. Fastest implementation saving a few instructions
     //! compared to #row_space_size_incl1
-    inline uint64_t row_space_size_incl() const;
+    uint64_t row_space_size_incl() const;
     //! Returns the cardinality of the row space of \c this
     //!
     //! Uses vector computation of the product included row in each 256
     //! possible vectors. More optimized in #row_space_size_incl
-    inline uint64_t row_space_size_incl1() const;
+    uint64_t row_space_size_incl1() const;
     //! Returns the cardinality of the row space of \c this
     //!
     //! Alias to #row_space_size_incl
-    inline uint64_t row_space_size() const { return row_space_size_incl(); }
+    uint64_t row_space_size() const { return row_space_size_incl(); }
 
     //! Give the permutation whose right multiplication change \c *this
     //! to \c other
     //!
     //! \c *this is suppose to be a row_space matrix (ie. sorted decreasingly)
     //! Fast implementation doing a vector binary search.
-    inline Perm16 right_perm_action_on_basis(BMat8) const;
+    Perm16 right_perm_action_on_basis(BMat8) const;
     //! Give the permutation whose right multiplication change \c *this
     //! to \c other
     //!
     //! \c *this is suppose to be a row_space matrix (ie. sorted decreasingly)
     //! Reference implementation.
-    inline Perm16 right_perm_action_on_basis_ref(BMat8) const;
+    Perm16 right_perm_action_on_basis_ref(BMat8) const;
 
     //! Returns the identity BMat8
     //!
     //! This method returns the 8 x 8 BMat8 with 1s on the main diagonal.
-    static inline BMat8 one() { return BMat8(0x8040201008040201); }
+    static BMat8 one() { return BMat8(0x8040201008040201); }
 
     //! Insertion operator
     //!
     //! This method allows BMat8 objects to be inserted into a ostream.
-    inline std::ostream &operator<<(std::ostream &os);
+    std::ostream &operator<<(std::ostream &os);
 
     //! Returns a random BMat8
     //!
     //! This method returns a BMat8 chosen at random.
-    inline static BMat8 random();
+    static BMat8 random();
 
     //! Returns a random square BMat8 up to dimension \p dim.
     //!
     //! This method returns a BMat8 chosen at random, where only the
     //! top-left \p dim x \p dim entries may be non-zero.
-    inline static BMat8 random(size_t dim);
+    static BMat8 random(size_t dim);
 
     //! Swap the matrix \c this with \c that
-    inline void swap(BMat8 &that) { std::swap(this->_data, that._data); }
+    void swap(BMat8 &that) { std::swap(this->_data, that._data); }
 
     //! Write \c this on \c os
-    inline std::ostream & write(std::ostream &os) const;
+    std::ostream & write(std::ostream &os) const;
 
 #ifdef LIBSEMIGROUPS_DENSEHASHMAP
     // FIXME do this another way
@@ -239,7 +239,7 @@ class BMat8 {
   private:
     uint64_t _data;
 
-    inline epu8 row_space_basis_internal() const;
+    epu8 row_space_basis_internal() const;
 };
 
 }  // namespace HPCombi

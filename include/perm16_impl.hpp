@@ -78,11 +78,11 @@ inline uint32_t PTransf16::rank_ref() const {
 inline uint32_t PTransf16::rank() const {
     return _mm_popcnt_u32(_mm_movemask_epi8(image_mask())); }
 
-static HPCOMBI_CONSTEXPR uint8_t hilo_exchng_fun(uint8_t i) {
+inline static HPCOMBI_CONSTEXPR uint8_t hilo_exchng_fun(uint8_t i) {
     return i < 8 ? i + 8 : i - 8;
 }
 static HPCOMBI_CONSTEXPR epu8 hilo_exchng = Epu8(hilo_exchng_fun);
-static HPCOMBI_CONSTEXPR uint8_t hilo_mask_fun(uint8_t i) {
+inline static HPCOMBI_CONSTEXPR uint8_t hilo_mask_fun(uint8_t i) {
     return i < 8 ? 0x0 : 0xFF;
 }
 static HPCOMBI_CONSTEXPR epu8 hilo_mask = Epu8(hilo_mask_fun);
@@ -119,7 +119,7 @@ inline Perm16 Perm16::random(uint64_t n) {
 }
 
 // From Ruskey : Combinatorial Generation page 138
-Perm16 Perm16::unrankSJT(int n, int r) {
+inline Perm16 Perm16::unrankSJT(int n, int r) {
     int j;
     std::array<int, 16> dir;
     epu8 res{};
