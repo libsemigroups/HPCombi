@@ -344,26 +344,36 @@ BOOST_FIXTURE_TEST_CASE(BMat8_nr_rows, Fix) {
 }
 
 BOOST_FIXTURE_TEST_CASE(BMat8_right_perm_action_on_basis_ref, Fix) {
-    BMat8 m1({{1, 1, 0},
-              {1, 0, 1},
-              {0, 0, 0}});
-    BMat8 m2({{0, 0, 0},
-              {1, 0, 1},
-              {1, 1, 0}});
+    BMat8 m1({{1, 1, 0}, {1, 0, 1}, {0, 0, 0}});
+    BMat8 m2({{0, 0, 0}, {1, 0, 1}, {1, 1, 0}});
     BOOST_TEST(m1.right_perm_action_on_basis_ref(m2) == Perm16({1,0}));
     BOOST_TEST(m1.right_perm_action_on_basis(m2) == Perm16({1,0}));
 
-    std::cout << m1 << std::endl;
-    std::cout << m1.row_space_basis() << std::endl;
-    std::cout << m1 * m2 << std::endl;
-    std::cout << std::hex << _mm_set_epi64x(m1.to_int(), 0) << std::endl;
+    m1 = BMat8({{1, 1, 0, 1}, {1, 0, 1, 0}, {0, 0, 0, 1}, {0, 0, 0, 0}});
+    m2 = BMat8({{1, 0, 0, 0}, {0, 1, 0, 1}, {1, 0, 1, 0}, {0, 0, 0, 1}});
+    BOOST_TEST(m1.right_perm_action_on_basis_ref(m2) == Perm16::one());
+    BOOST_TEST(m1.right_perm_action_on_basis(m2) == Perm16::one());
 
-    std::cout << (m1.row_space_basis() == (m1.row_space_basis() * m2).row_space_basis())
-              << std::endl;
+    m1 = BMat8({{1, 1, 0, 1}, {1, 0, 1, 0}, {0, 0, 0, 1}, {0, 0, 0, 0}});
+    m2 = BMat8({{0, 0, 0, 0}, {1, 1, 0, 1}, {1, 0, 1, 0}, {0, 0, 0, 1}});
+    BOOST_TEST(m1.right_perm_action_on_basis_ref(m2) == Perm16::one());
+    BOOST_TEST(m1.right_perm_action_on_basis(m2) == Perm16::one());
 
-    
-    std::cout << m1.right_perm_action_on_basis_ref(m2) << std::endl;
-    std::cout << m1.right_perm_action_on_basis(m2) << std::endl;
+    m1 = BMat8({{0,1,0,0}, {0,0,1,0}, {1,0,0,1}, {0,0,0,0}});
+    m2 = BMat8({{1,0,0,1}, {0,0,1,0}, {0,1,0,0}, {0,0,0,1}});
+    BOOST_TEST(m1.right_perm_action_on_basis_ref(m2) == Perm16({1,0}));
+    BOOST_TEST(m1.right_perm_action_on_basis(m2) == Perm16({1,0}));
+
+    m1 = BMat8({{0,0,0,1}, {1,0,0,0}, {0,0,1,0}, {0,1,0,0}});
+    m2 = BMat8({{0,1,0,0}, {0,0,1,0}, {1,0,0,0}, {0,0,0,1}});
+    BOOST_TEST(m1.right_perm_action_on_basis_ref(m2) == Perm16({0,2,3,1}));
+    BOOST_TEST(m1.right_perm_action_on_basis(m2) == Perm16({0,2,3,1}));
+
+
+    m1 = BMat8({{0,0,0,1}, {0,0,1,0}, {0,1,0,0}, {1,0,0,0}});
+    m2 = BMat8({{0,1,0,0}, {0,0,0,1}, {1,0,0,0}, {0,0,1,0}});
+    BOOST_TEST(m1.right_perm_action_on_basis_ref(m2) == Perm16({2,0,3,1}));
+    BOOST_TEST(m1.right_perm_action_on_basis(m2) == Perm16({2,0,3,1}));
 }
 //****************************************************************************//
 BOOST_AUTO_TEST_SUITE_END()

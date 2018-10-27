@@ -344,7 +344,7 @@ inline Perm16 BMat8::right_perm_action_on_basis(BMat8 other) const {
     epu8 x = permuted(_mm_set_epi64x(_data, 0), epu8rev);
     epu8 y = permuted(_mm_set_epi64x((*this * other)._data, 0), epu8rev);
 
-    return (y != 0) ? permutation_of(x, y) : epu8id;
+    return (x != 0) ? permutation_of(y, x) : epu8id;
 }
 
 
