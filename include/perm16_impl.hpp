@@ -40,7 +40,6 @@ inline PTransf16::PTransf16(std::vector<uint8_t> dom,
     Vect16(Epu8(0xFF)) {
     assert(dom.size() == rng.size());
     assert(dom.size() <= 16);
-    assert(sz <= 16);
     for (size_t i = 0; i < dom.size(); ++i) {
         assert(dom[i] < 16);
         v[dom[i]] = rng[i];
@@ -50,13 +49,19 @@ inline PTransf16::PTransf16(std::vector<uint8_t> dom,
 inline epu8 PTransf16::domain_mask(bool complement) const {
     return complement ? v == Epu8(0xFF) : v != Epu8(0xFF);
 }
+inline uint32_t PTransf16::domain_bitset(bool complement) const {
+    return _mm_movemask_epi8(domain_mask(complement));
+}
 inline PTransf16 PTransf16::right_one() const {
     return domain_mask(true) | epu8id;
 }
 
 inline epu8 PTransf16::image_mask(bool complement) const {
-    return _mm_cmpestrm(v, 16, one().v, 16,
-                        complement ? FIND_IN_VECT : FIND_IN_VECT_COMPL);
+    return complement ? _mm_cmpestrm(v, 16, one().v, 16, FIND_IN_VECT)
+                      : _mm_cmpestrm(v, 16, one().v, 16, FIND_IN_VECT_COMPL);
+}
+inline uint32_t PTransf16::image_bitset(bool complement) const {
+    return _mm_movemask_epi8(image_mask(complement));
 }
 inline PTransf16 PTransf16::left_one() const {
     return image_mask(true) | epu8id;
@@ -106,10 +111,10 @@ inline PPerm16 PPerm16::inverse_find() const {
     return permutation_of(v, one()) | mask;
 }
 
-inline Perm16 Perm16::random() {
+inline Perm16 Perm16::random(uint64_t n) {
     Perm16 res = one();
     auto ar = res.as_array();
-    std::random_shuffle(ar.begin(), ar.end());
+    std::random_shuffle(ar.begin(), ar.begin() + n);
     return res;
 }
 

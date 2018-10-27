@@ -65,12 +65,16 @@ int main() {
 
   cout << v1 << endl;
   cout << v2 << endl;
-  cout << v3 << endl;
 
-  int b = _mm_movemask_epi8(v3);
-  cout << "Application du masque : on obtient un nombre dont les 1 binaires "
-          "représentent les positions non nulles : "
-       << hex << unsigned(b) << endl;
-  cout << "On compte les 1 avec une opération du processeur" << endl;
-  cout << _mm_popcnt_u32(b) << endl;
+#define FIND_IN_VECT_MASK (_SIDD_UBYTE_OPS | _SIDD_CMP_EQUAL_ANY | _SIDD_UNIT_MASK)
+#define FIND_IN_VECT (_SIDD_UBYTE_OPS | _SIDD_CMP_EQUAL_ANY)
+
+  cout << _mm_cmpestrm(v1, 16, v2, 16, FIND_IN_VECT_MASK) << endl;
+  cout << hex << _mm_movemask_epi8(_mm_cmpestrm(v1, 16, v2, 16, FIND_IN_VECT_MASK)) << endl;
+  cout << _mm_cmpestrm(v1, 16, v2, 16, FIND_IN_VECT) << endl;
+  cout << "=====" << endl;
+
+  cout << _mm_cmpistrm(v1, v2, FIND_IN_VECT_MASK) << endl;
+  cout << hex << _mm_movemask_epi8(_mm_cmpistrm(v1, v2, FIND_IN_VECT_MASK)) << endl;
+  cout << _mm_cmpistrm(v1, v2, FIND_IN_VECT) << endl;
 }
