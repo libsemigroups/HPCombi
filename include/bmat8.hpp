@@ -31,6 +31,8 @@
 #include <vector>      // for array
 #include <array>      // for array
 
+#include "epu.hpp"
+
 #ifndef HPCOMBI_ASSERT
 #define HPCOMBI_ASSERT(x) assert(x)
 #endif
