@@ -40,7 +40,6 @@ inline PTransf16::PTransf16(std::vector<uint8_t> dom,
     Vect16(Epu8(0xFF)) {
     assert(dom.size() == rng.size());
     assert(dom.size() <= 16);
-    assert(sz <= 16);
     for (size_t i = 0; i < dom.size(); ++i) {
         assert(dom[i] < 16);
         v[dom[i]] = rng[i];
@@ -58,8 +57,8 @@ inline PTransf16 PTransf16::right_one() const {
 }
 
 inline epu8 PTransf16::image_mask(bool complement) const {
-    return _mm_cmpestrm(v, 16, one().v, 16,
-                        complement ? FIND_IN_VECT : FIND_IN_VECT_COMPL);
+    return complement ? _mm_cmpestrm(v, 16, one().v, 16, FIND_IN_VECT)
+                      : _mm_cmpestrm(v, 16, one().v, 16, FIND_IN_VECT_COMPL);
 }
 inline uint32_t PTransf16::image_bitset(bool complement) const {
     return _mm_movemask_epi8(image_mask(complement));
