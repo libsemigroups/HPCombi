@@ -31,7 +31,15 @@
  * supporte les commandees vectorielles du processeur
  **/
 using epu8 = uint8_t __attribute__((vector_size(16)));
+using xpu8 = uint8_t __attribute__((vector_size(32)));
 using perm32 = std::array<epu8, 2>;
+
+// xpu8 &to_xpu8(perm32 &p) { return reinterpret_cast<xpu8 &>(p); }
+// perm32 &from_xpu8(xpu8 &p) { return reinterpret_cast<perm32 &>(p); }
+xpu8 to_xpu8(perm32 p) { return reinterpret_cast<xpu8 &>(p); }
+perm32 from_xpu8(xpu8 p) { return reinterpret_cast<perm32 &>(p); }
+__m256d to_m256d(perm32 p) { return reinterpret_cast<__m256d &>(p); }
+perm32 from_m256d(__m256d p) { return reinterpret_cast<perm32 &>(p); }
 
 inline uint8_t &set(perm32 &p, uint64_t i) { return *(&p[0][0] + i); }
 inline uint8_t get(perm32 p, uint64_t i) { return *(&p[0][0] + i); }
@@ -135,6 +143,10 @@ int main() {
   cout << v2 << endl;
   cout << permute(v1, v2) << endl;
   cout << permute_ref(v1, v2) << endl;
+
+  cout << from_xpu8(to_xpu8(v1) & to_xpu8(v2)) << endl;
+//  cout << from_xpu8(_mm256_and_pd((__m256d) to_xpu8(v1), (__m256d) to_xpu8(v2))) << endl;
+  cout << from_m256d(_mm256_and_pd((__m256d) to_m256d(v1), (__m256d) to_m256d(v2))) << endl;
 
   cout << "Sampling : ";
   cout.flush();
