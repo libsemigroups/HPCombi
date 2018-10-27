@@ -11,7 +11,8 @@ Florent Hivert <florent.hivert@lri.fr>
 
 ## Contributors
 
-- James Mitchell : discussions + test cases + Travis CI
+- James Mitchell : discussions + test cases + Travis CI + BMat8 reference code
+- Finn Smith : discussions + BMat8 reference code
 - Viviane Pons : algorithms discussions
 
 ## Acknowledgments
