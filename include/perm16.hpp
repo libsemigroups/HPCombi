@@ -127,23 +127,31 @@ struct PPerm16 : public PTransf16 {
     PPerm16 right_one() const { return PTransf16::right_one(); }
     PPerm16 left_one() const { return PTransf16::left_one(); }
 
-    /** @copydoc common_inverse
+    /** @class common_inverse_pperm
+     * @brief The inverse of a partial permutation
+     * @details
+     * @returns the inverse of \c *this. The inverse of @f$p@f$ is the unique
+     * partial permutation @f$i@f$ such that @f$ p * i * p = p@f$ and
+     * @f$ i * p * i = i@f$
+     * @par Example:
+     * @code
+     * Perm16 x = {0,3,2,4,0xFF,5,6,0xFF,8,9,11,0xFF,12,0xFF,0xFF,0xFF};
+     * x.inverse()
+     * @endcode
+     * Returns
+     * @verbatim {0,0xFF,2,1,3,5,6,0xFF,8,9,0xFF,10,12,0xFF,0xFF,0xFF} @endverbatim
+     */
+    /** @copydoc common_inverse_pperm
      *  @par Algorithm:
      *  @f$O(n)@f$ algorithm using reference cast to arrays
      */
     inline PPerm16 inverse_ref() const;
-    /** @copydoc common_inverse
+    /** @copydoc common_inverse_pperm
      *  @par Algorithm:
      *  @f$O(\log n)@f$ algorithm using some kind of vectorized dichotomic
      * search.
      */
     inline PPerm16 inverse_find() const;
-    /** @copydoc common_inverse
-     *  @par Algorithm:
-     *
-     * Raise \e *this to power @f$\text{LCM}(1, 2, ..., n) - 1@f$ so complexity
-     * is in @f$O(log (\text{LCM}(1, 2, ..., n) - 1)) = O(n)@f$
-     */
 };
 
 /** Permutations of @f$\{0\dots 15\}@f$
@@ -189,7 +197,7 @@ struct Perm16 : public Transf16 /* public PPerm : diamond problem */ {
      *  @par Algorithm:
      *  Insert the identity in the least significant bits and sort using a
      *  sorting network. The number of round of the optimal sorting network is
-     *  as far as I know open, therefore, the complexity is unknown.
+     *  open as far as I know, therefore the complexity is unknown.
      */
     inline Perm16 inverse_sort() const;
     /** @copydoc common_inverse
@@ -221,8 +229,10 @@ struct Perm16 : public Transf16 /* public PPerm : diamond problem */ {
     // therefore we chose to have functions.
     static HPCOMBI_CONSTEXPR Perm16 one() { return epu8id; }
 
+    /** The elementary transposition exchanging @f$i@f$ and @f$i+1@f$ */
     inline static Perm16 elementary_transposition(uint64_t i);
-    inline static Perm16 random();
+    /** A random permutation of size @f$n@f$*/
+    inline static Perm16 random(uint64_t n = 16);
     inline static Perm16 unrankSJT(int n, int r);
 
     /** @class common_lehmer
@@ -249,16 +259,70 @@ struct Perm16 : public Transf16 /* public PPerm : diamond problem */ {
     inline epu8 lehmer_arr() const;
     /** @copydoc common_lehmer
      *  @par Algorithm:
-     *  Reference @f$O(n)@f$ algorithm using vector comparison
+     *  Fast @f$O(n)@f$ algorithm using vector comparison
      */
     inline epu8 lehmer() const;
+    /** @class common_length
+     * @brief The Coxeter length (ie: number of inversion) of a permutation
+     * @details
+     * @returns the number of inversions of \c *this
+     * @par Example:
+     * @code
+     * Perm16 x = {0,3,2,4,1,5,6,7,8,9,10,11,12,13,14,15};
+     * x.length()
+     * @endcode
+     * Returns @verbatim 4 @endverbatim
+     */
+    /** @copydoc common_lehmer
+     *  @par Algorithm:
+     *  Reference @f$O(n^2)@f$ algorithm using loop and indexed access
+     */
     inline uint8_t length_ref() const;
+    /** @copydoc common_lehmer
+     *  @par Algorithm:
+     *  Reference @f$O(n^2)@f$ algorithm using loop and indexed access after
+     *     a cast to \c std::array
+     */
     inline uint8_t length_arr() const;
+    /** @copydoc common_lehmer
+     *  @par Algorithm:
+     *  Reference @f$O(n^2)@f$ using vector lehmer and fast horizontal sum
+     */
     inline uint8_t length() const;
 
+    /** @class common_nb_descent
+     * @brief The number of descent of a permutation
+     * @details
+     * @returns the number of inversions of \c *this
+     * @par Example:
+     * @code
+     * Perm16 x {0,3,2,4,1,5,6,7,8,9,10,11,12,13,14,15};
+     * x.length()
+     * @endcode
+     * Returns @verbatim 2 @endverbatim
+     */
+    /** @copydoc common_lehmer
+     *  @par Algorithm:
+     *  Reference @f$O(n)@f$ using a loop
+     */
     inline uint8_t nb_descents_ref() const;
+    /** @copydoc common_lehmer
+     *  @par Algorithm:
+     *  Reference @f$O(1)@f$ using vector shift and comparison
+     */
     inline uint8_t nb_descents() const;
 
+    /** @class common_nb_cycles
+     * @brief The number of cycles of a permutation
+     * @details
+     * @returns the number of cycles of \c *this
+     * @par Example:
+     * @code
+     * Perm16 x {1,2,3,6,0,5,4,7,8,9,10,11,12,15,14,13}
+     * x.nb_cycles()
+     * @endcode
+     * Returns @verbatim 10 @endverbatim
+     */
     inline uint8_t nb_cycles_ref() const;
     inline epu8 cycles_mask_unroll() const;
     inline uint8_t nb_cycles_unroll() const;

@@ -112,10 +112,10 @@ inline PPerm16 PPerm16::inverse_find() const {
     return permutation_of(v, one()) | mask;
 }
 
-inline Perm16 Perm16::random() {
+inline Perm16 Perm16::random(uint64_t n) {
     Perm16 res = one();
     auto ar = res.as_array();
-    std::random_shuffle(ar.begin(), ar.end());
+    std::random_shuffle(ar.begin(), ar.begin() + n);
     return res;
 }
 
