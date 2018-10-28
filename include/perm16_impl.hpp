@@ -291,7 +291,7 @@ inline uint8_t Perm16::nb_cycles_ref() const {
     return c;
 }
 
-inline epu8 Perm16::cycles_mask_unroll() const {
+inline epu8 Perm16::cycles_partition() const {
     epu8 x0, x1 = one();
     Perm16 p = *this;
     x0 = _mm_min_epi8(x1, HPCombi::permuted(x1, p));
@@ -305,7 +305,7 @@ inline epu8 Perm16::cycles_mask_unroll() const {
 }
 
 inline uint8_t Perm16::nb_cycles_unroll() const {
-    epu8 res = (epu8id == cycles_mask_unroll());
+    epu8 res = (epu8id == cycles_partition());
     return _mm_popcnt_u32(_mm_movemask_epi8(res));
 }
 

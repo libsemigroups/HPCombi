@@ -67,15 +67,22 @@ struct alignas(16) PTransf16 : public Vect16 {
     const uint8_t &operator[](uint64_t i) const { return as_array()[i]; }
     uint8_t &operator[](uint64_t i) { return as_array()[i]; }
 
+    //! The identity partial transformation.
     static HPCOMBI_CONSTEXPR PTransf16 one() { return epu8id; }
+    //! The product of two partial transformations.
     PTransf16 operator*(const PTransf16 &p) const {
         return HPCombi::permuted(v, p.v) | (p.v == Epu8(0xFF));
     }
 
+    /** @copydoc common_inverse_pperm
+     *  @par Algorithm:
+     *  @f$O(n)@f$ algorithm using reference cast to arrays
+     */
     epu8 image_mask(bool complement=false) const;
     uint32_t image_bitset(bool complement=false) const;
     epu8 domain_mask(bool complement=false) const;
     uint32_t domain_bitset(bool complement=false) const;
+
     PTransf16 right_one() const;
     PTransf16 left_one() const;
 
@@ -98,7 +105,9 @@ struct Transf16 : public PTransf16 {
 
     explicit operator uint64_t() const;
 
+    //! The identity transformation.
     static HPCOMBI_CONSTEXPR Transf16 one() { return epu8id; }
+    //! The product of two transformations.
     Transf16 operator*(const Transf16 &p) const {
         return HPCombi::permuted(v, p.v);
     }
@@ -118,14 +127,12 @@ struct PPerm16 : public PTransf16 {
     PPerm16(std::initializer_list<uint8_t> il) : PTransf16(il) {}
     PPerm16 &operator=(const PPerm16 &) = default;
 
+    //! The identity partial permutations.
     static HPCOMBI_CONSTEXPR PPerm16 one() { return epu8id; }
+    //! The product of two partial perrmutations.
     PPerm16 operator*(const PPerm16 &p) const {
         return this->PTransf16::operator*(p);
-        return static_cast<PTransf16>(v) * static_cast<PTransf16>(p.v);
     }
-
-    PPerm16 right_one() const { return PTransf16::right_one(); }
-    PPerm16 left_one() const { return PTransf16::left_one(); }
 
     /** @class common_inverse_pperm
      * @brief The inverse of a partial permutation
@@ -152,6 +159,9 @@ struct PPerm16 : public PTransf16 {
      * search.
      */
     PPerm16 inverse_find() const;
+
+    PPerm16 right_one() const { return PTransf16::right_one(); }
+    PPerm16 left_one() const { return PTransf16::left_one(); }
 };
 
 /** Permutations of @f$\{0\dots 15\}@f$
@@ -167,6 +177,12 @@ struct Perm16 : public Transf16 /* public PPerm : diamond problem */ {
     Perm16(std::initializer_list<uint8_t> il) : Transf16(il) {}
     explicit Perm16(uint64_t compressed) : Transf16(compressed) {}
 
+    // It's not possible to have a static constexpr member of same type as class
+    // being defined (see https://stackoverflow.com/questions/11928089/)
+    // therefore we chose to have functions.
+    //! The identity partial permutation.
+    static HPCOMBI_CONSTEXPR Perm16 one() { return epu8id; }
+    //! The product of two permutations
     Perm16 operator*(const Perm16 &p) const {
         return HPCombi::permuted(v, p.v);
     }
@@ -224,15 +240,13 @@ struct Perm16 : public Transf16 /* public PPerm : diamond problem */ {
      *  Frontend method: currently aliased to #inverse_cycl */
     Perm16 inverse() const { return inverse_cycl(); }
 
-    // It's not possible to have a static constexpr member of same type as class
-    // being defined (see https://stackoverflow.com/questions/11928089/)
-    // therefore we chose to have functions.
-    static HPCOMBI_CONSTEXPR Perm16 one() { return epu8id; }
-
     /** The elementary transposition exchanging @f$i@f$ and @f$i+1@f$ */
     static Perm16 elementary_transposition(uint64_t i);
     /** A random permutation of size @f$n@f$*/
     static Perm16 random(uint64_t n = 16);
+    /** The \c r -th permutation of size \c n for the
+     *  Steinhaus–Johnson–Trotter order.
+     */
     static Perm16 unrankSJT(int n, int r);
 
     /** @class common_lehmer
@@ -312,6 +326,22 @@ struct Perm16 : public Transf16 /* public PPerm : diamond problem */ {
      */
     uint8_t nb_descents() const;
 
+    /** The set partition of the cycles of a permutation
+     * @details
+     * @returns the a vector @f$v@f$ where @$fv[i]@$f contains the smallest
+     *     element in the cycle of $i$ in \c *this
+     * @par Example:
+     * @code
+     * Perm16 x {1,2,3,6,0,5,4,7,8,9,10,11,12,15,14,13}
+     * x.cycles_partition()
+     * @endcode
+     * Returns
+     @verbatim
+     [ 0, 0, 0, 0, 0, 5, 0, 7, 8, 9,10,11,12,13,14,13]
+     @endverbatim
+     */
+    epu8 cycles_partition() const;
+
     /** @class common_nb_cycles
      * @brief The number of cycles of a permutation
      * @details
@@ -323,9 +353,19 @@ struct Perm16 : public Transf16 /* public PPerm : diamond problem */ {
      * @endcode
      * Returns @verbatim 10 @endverbatim
      */
+    /** @copydoc common_nb_cycles
+     *  @par Algorithm:
+     *  Reference @f$O(n)@f$ using a boolean vector
+     */
     uint8_t nb_cycles_ref() const;
-    epu8 cycles_mask_unroll() const;
+    /** @copydoc common_nb_cycles
+     *  @par Algorithm:
+     *  Reference @f$O(\log(n))@f$ using #cycles_partition
+     */
     uint8_t nb_cycles_unroll() const;
+    /** @copydoc common_nb_cycles
+     *  @par Algorithm: aliased to #nb_cycles_unroll
+     */
     uint8_t nb_cycles() const { return nb_cycles_unroll(); }
 
     /** @class common_left_weak_leq
@@ -365,24 +405,28 @@ static_assert(std::is_trivial<Perm16>(), "Perm16 is not a trivial class !");
 namespace std {
 
 template <> struct hash<HPCombi::PTransf16> {
+    //! A hash operator for #HPCombi::PTransf16
     size_t operator()(const HPCombi::PTransf16 &ar) const {
         return std::hash<HPCombi::epu8>{}(ar.v);
     }
 };
 
 template <> struct hash<HPCombi::Transf16> {
+    //! A hash operator for #HPCombi::Transf16
     size_t operator()(const HPCombi::Transf16 &ar) const {
         return uint64_t(ar);
     }
 };
 
 template <> struct hash<HPCombi::PPerm16> {
+    //! A hash operator for #HPCombi::PPerm16
     size_t operator()(const HPCombi::PPerm16 &ar) const {
         return std::hash<HPCombi::epu8>{}(ar.v);
     }
 };
 
 template <> struct hash<HPCombi::Perm16> {
+    //! A hash operator for #HPCombi::Perm16
     size_t operator()(const HPCombi::Perm16 &ar) const {
         return uint64_t(ar);
     }
