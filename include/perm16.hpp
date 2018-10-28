@@ -387,6 +387,29 @@ struct Perm16 : public Transf16 /* public PPerm : diamond problem */ {
      *  Reference @f$O(n)@f$ with vectorized test of inclusion
      */
     bool left_weak_leq(Perm16 other) const;
+
+    /** Returns the smallest fix point of \c *this */
+    uint8_t smallest_fix_point() const {
+        uint32_t res = _mm_movemask_epi8(v == epu8id);
+        return res == 0 ? 0xFF : _bit_scan_forward(res);
+    }
+    /** Returns the smallest non fix point of \c *this */
+    uint8_t smallest_moved_point() const {
+        uint32_t res = _mm_movemask_epi8(v != epu8id);
+        return res == 0 ? 0xFF : _bit_scan_forward(res);
+    }
+
+    /** Returns the largest fix point of \c *this */
+    uint8_t largest_fix_point() const {
+        uint32_t res = _mm_movemask_epi8(v == epu8id);
+        return res == 0 ? 0xFF : _bit_scan_reverse(res);
+    }
+    /** Returns the largest non fix point of \c *this */
+    uint8_t largest_moved_point() const {
+        uint32_t res = _mm_movemask_epi8(v != epu8id);
+        return res == 0 ? 0xFF : _bit_scan_reverse(res);
+    }
+
 };
 
 /*****************************************************************************/
