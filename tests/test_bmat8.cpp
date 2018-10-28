@@ -99,8 +99,21 @@ BOOST_FIXTURE_TEST_CASE(BMat8_transpose, Fix) {
     BOOST_TEST(zero.transpose() == zero);
     BOOST_TEST(bm2.transpose() == bm2t);
     BOOST_TEST(bm3.transpose() == bm3t);
+
+    for (auto m : BMlist)
+        BOOST_TEST(m.transpose().transpose() == m);
 }
 
+BOOST_FIXTURE_TEST_CASE(BMat8_transpose2, Fix) {
+    for (auto a : BMlist) {
+        for (auto b : BMlist) {
+            BMat8 at = a, bt = b;
+            BMat8::transpose2(at, bt);
+            BOOST_TEST(at == a.transpose());
+            BOOST_TEST(bt == b.transpose());
+        }
+    }
+}
 //****************************************************************************//
 BOOST_FIXTURE_TEST_CASE(BMat8_mult, Fix) {
 
@@ -119,7 +132,7 @@ BOOST_FIXTURE_TEST_CASE(BMat8_mult, Fix) {
     for (auto b1 : BMlist)
         for (auto b2 : BMlist)
             for (auto b3 : BMlist)
-                BOOST_TEST(b1 * (b2 * b3) == b1 * (b2 * b3));
+                BOOST_TEST((b1 * b2) * b3 == b1 * (b2 * b3));
 
 }
 

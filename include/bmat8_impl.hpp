@@ -158,6 +158,20 @@ inline BMat8 BMat8::transpose() const {
     return BMat8(x);
 }
 
+using epu64 = uint64_t __attribute__ ((__vector_size__ (16), __may_alias__));
+
+inline void BMat8::transpose2(BMat8 &a, BMat8 &b) {
+    epu64 x = _mm_set_epi64x(a._data, b._data);
+    epu64 y = (x ^ (x >> 7)) & (epu64 {0xAA00AA00AA00AA, 0xAA00AA00AA00AA});
+    x = x ^ y ^ (y << 7);
+    y = (x ^ (x >> 14)) & (epu64 {0xCCCC0000CCCC, 0xCCCC0000CCCC});
+    x = x ^ y ^ (y << 14);
+    y = (x ^ (x >> 28)) & (epu64 {0xF0F0F0F0, 0xF0F0F0F0});
+    x = x ^ y ^ (y << 28);
+    a._data = _mm_extract_epi64(x, 1);
+    b._data = _mm_extract_epi64(x, 0);
+}
+
 static constexpr epu8 rotlow{ 7, 0, 1, 2, 3, 4, 5, 6};
 static constexpr epu8 rothigh
     { 0, 1, 2, 3, 4, 5, 6, 7,15, 8, 9,10,11,12,13,14};
@@ -166,10 +180,9 @@ static constexpr epu8 rotboth
 static constexpr epu8 rot2
     { 6, 7, 0, 1, 2, 3, 4, 5,14,15, 8, 9,10,11,12,13};
 
-inline BMat8 BMat8::operator*(BMat8 const &that) const {
+inline BMat8 BMat8::mult_transpose(BMat8 const &that) const {
     epu8 x = _mm_set_epi64x(_data, _data);
-    BMat8 tr = that.transpose();
-    epu8 y = _mm_shuffle_epi8(_mm_set_epi64x(tr._data, tr._data), rothigh);
+    epu8 y = _mm_shuffle_epi8(_mm_set_epi64x(that._data, that._data), rothigh);
     epu8 data{};
     epu8 diag = {0x01, 0x02, 0x04, 0x08, 0x10, 0x20, 0x40, 0x80,
                 0x80, 0x01, 0x02, 0x04, 0x08, 0x10, 0x20, 0x40};

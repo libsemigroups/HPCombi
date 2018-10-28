@@ -42,7 +42,16 @@ std::vector<BMat8> make_sample(size_t n) {
     return res;
 }
 
+std::vector<std::pair<BMat8, BMat8>> make_pair_sample(size_t n) {
+    std::vector<std::pair<BMat8, BMat8>> res {};
+    for (size_t i=0; i < n; i++) {
+        res.push_back(make_pair(BMat8::random(),BMat8::random()));
+    }
+    return res;
+}
+
 std::vector<BMat8> sample = make_sample(1000);
+std::vector<std::pair<BMat8, BMat8>> pair_sample = make_pair_sample(1000);
 // std::vector<BMat8> sample = {BMat8::one()};
 // std::vector<BMat8> sample = {BMat8(0)};
 
@@ -73,8 +82,23 @@ int Bench_row_space_size() {
     return 0;
 }
 
+int Bench_transpose2() {
+    myBench("transpose",
+            [](std::pair<BMat8, BMat8> p) {
+                return make_pair(p.first.transpose(),
+                                 p.second.transpose());
+            }, pair_sample);
+    myBench("transpose2",
+            [](std::pair<BMat8, BMat8> p) {
+                BMat8::transpose2(p.first, p.second);
+                return p;
+            }, pair_sample);
+    return 0;
+}
+
 auto dummy = {
-    Bench_row_space_size()
+    Bench_row_space_size(),
+    Bench_transpose2()
 };
 
 BENCHMARK_MAIN();

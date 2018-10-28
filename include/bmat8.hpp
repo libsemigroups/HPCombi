@@ -140,12 +140,27 @@ class BMat8 {
     //! Uses the technique found in Knuth AoCP Vol. 4 Fasc. 1a, p. 15.
     BMat8 transpose() const;
 
+    //! Transpose two matrices at once.
+    //!
+    //! Compute in parallel the standard matrix transpose of two BMat8.
+    //! Uses the technique found in Knuth AoCP Vol. 4 Fasc. 1a, p. 15.
+    static void transpose2(BMat8 &, BMat8 &);
+
+    //! Returns the matrix product of \c this and the transpose of \p that
+    //!
+    //! This method returns the standard matrix product (over the
+    //! boolean semiring) of two BMat8 objects. This is faster than tranposing
+    //! that and calling the product of \c this with it. Implementation uses
+    //! vector instructions.
+    BMat8 mult_transpose(BMat8 const &that) const;
     //! Returns the matrix product of \c this and \p that
     //!
     //! This method returns the standard matrix product (over the
     //! boolean semiring) of two BMat8 objects. This is a fast implementation
     //! using transposition and vector instructions.
-    BMat8 operator*(BMat8 const &that) const;
+    BMat8 operator*(BMat8 const &that) const {
+        return mult_transpose(that.transpose());
+    }
 
     //! Returns a canonical basis of the row space of \c this
     //!
