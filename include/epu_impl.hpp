@@ -162,8 +162,8 @@ inline epu8 random_epu8(uint16_t bnd) {
 }
 
 inline epu8 remove_dups(epu8 v, uint8_t repl) {
-    // Ternary operator is not supported by clang.
-    // return (v != permuted(Perm16::right_shift_ff()).v) ? v : cst_epu8_0x00;
+    // Vector ternary operator is not supported by clang.
+    // return (v != shifted_right(v) ? v : Epu8(repl);
     return _mm_blendv_epi8(Epu8(repl), v, v != shifted_right(v));
 }
 

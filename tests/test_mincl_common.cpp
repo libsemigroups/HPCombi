@@ -30,5 +30,6 @@ int PPCAT(foo, CONST_TO_BE_CHANGED)() {
     HPCombi::BMat8 resb = HPCombi::BMat8::one();
     resb = resb * resb;
     HPCombi::BMat8 rndb = HPCombi::BMat8::random();
+    rndb = rndb * rndb;
     return CONST_TO_BE_CHANGED;
 }

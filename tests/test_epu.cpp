@@ -55,7 +55,7 @@ struct Fix {
             // Elements should be sorted in alphabetic order here
             v({zero, P01, epu8id, P10, P11, P1, P112, Pa, Pb, RP,
                Pa1, Pa2, P51, Pv, Pw, P5, epu8rev, Pc}),
-            av({ 5, 5, 2, 5, 1, 6,12, 4, 0, 3, 2,11,12,13,14,15})
+            av({{ 5, 5, 2, 5, 1, 6,12, 4, 0, 3, 2,11,12,13,14,15}})
         {
             BOOST_TEST_MESSAGE("setup fixture");
         }
@@ -121,9 +121,9 @@ BOOST_FIXTURE_TEST_CASE(EPU8_last_diff_ref, Fix) {
     BOOST_TEST(last_diff_ref(Pa1, Pa2, 6) == 5);
     BOOST_TEST(last_diff_ref(Pa1, Pa2, 7) == 5);
     BOOST_TEST(last_diff_ref(Pa1, Pa2) == 5);
-    const std::array<uint8_t, 17> res {
-        16,16,16,16, 3, 3, 3, 3, 3, 3,9,10,11,11,11,11,11
-    };
+    const std::array<uint8_t, 17> res {{
+            16,16,16,16, 3, 3, 3, 3, 3, 3,9,10,11,11,11,11,11
+        }};
     for (int i=0; i<=16; i++)
         BOOST_TEST(last_diff_ref(Pv, Pw, i) == res[i]);
 }

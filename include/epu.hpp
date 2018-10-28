@@ -53,8 +53,15 @@ inline constexpr uint8_t operator"" _u8(unsigned long long arg) noexcept {
 
 /// SIMD vector of 16 unsigned bytes
 using epu8 = uint8_t __attribute__((vector_size(16)));
+
+static_assert(alignof(epu8) == 16,
+              "epu8 type is not properly aligned by the compiler !");
+
 /// SIMD vector of 32 unsigned bytes
 using xpu8 = uint8_t __attribute__((vector_size(32)));
+
+static_assert(alignof(xpu8) == 32,
+              "xpu8 type is not properly aligned by the compiler !");
 
 namespace {  // Implementation detail code
 

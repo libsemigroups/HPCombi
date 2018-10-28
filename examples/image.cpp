@@ -53,7 +53,7 @@ const Transf16 a5 {4, 3, 7, 7, 4, 5, 0, 4};
 const Transf16 a6 {5, 6, 3, 0, 3, 0, 5, 1};
 const Transf16 a7 {6, 0, 1, 1, 1, 6, 3, 4};
 const Transf16 a8 {7, 7, 4, 0, 6, 4, 1, 7};
-const array<Transf16, 8> gens{a1,a2,a3,a4,a5,a6,a7,a8};
+const array<Transf16, 8> gens{{a1,a2,a3,a4,a5,a6,a7,a8}};
 //const vector<Transf16> gens{{a1, a2}};
 
 // std::array<std::pair<uint16_t, uint16_t>, 65536> res {};

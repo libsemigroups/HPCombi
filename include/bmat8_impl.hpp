@@ -24,15 +24,15 @@ namespace HPCombi {
 static_assert(std::is_trivial<BMat8>(), "BMat8 is not a trivial class!");
 
 // clang-format off
-static const constexpr std::array<uint64_t, 8> ROW_MASK = {
+static const constexpr std::array<uint64_t, 8> ROW_MASK = {{
     0xff00000000000000, 0xff000000000000, 0xff0000000000, 0xff00000000,
-    0xff000000,         0xff0000,         0xff00,         0xff};
+    0xff000000,         0xff0000,         0xff00,         0xff}};
 
-static const constexpr std::array<uint64_t, 8> COL_MASK = {
+static const constexpr std::array<uint64_t, 8> COL_MASK = {{
     0x8080808080808080, 0x4040404040404040, 0x2020202020202020, 0x1010101010101010,
-    0x808080808080808,  0x404040404040404,  0x202020202020202,  0x101010101010101};
+    0x808080808080808,  0x404040404040404,  0x202020202020202,  0x101010101010101}};
 
-static const constexpr std::array<uint64_t, 64> BIT_MASK = {
+static const constexpr std::array<uint64_t, 64> BIT_MASK = {{
                                         0x8000000000000000,
                                         0x4000000000000000,
                                         0x2000000000000000,
@@ -96,7 +96,7 @@ static const constexpr std::array<uint64_t, 64> BIT_MASK = {
                                         0x8,
                                         0x4,
                                         0x2,
-                                        0x1};
+                                        0x1}};
 
 // clang-format on
 
@@ -354,8 +354,9 @@ inline Perm16 BMat8::right_perm_action_on_basis_ref(BMat8 bm) const {
 inline Perm16 BMat8::right_perm_action_on_basis(BMat8 other) const {
     epu8 x = permuted(_mm_set_epi64x(_data, 0), epu8rev);
     epu8 y = permuted(_mm_set_epi64x((*this * other)._data, 0), epu8rev);
-
-    return (x != 0) ? permutation_of(y, x) : epu8id;
+    // Vector ternary operator is not supported by clang.
+    // return (x != (epu8 {})) ? permutation_of(y, x) : epu8id;
+    return _mm_blendv_epi8(epu8id, permutation_of(y, x), x != epu8 {});
 }
 
 
