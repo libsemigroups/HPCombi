@@ -35,4 +35,4 @@
 *.pyc
 
 TAGS
-build
+build*
