@@ -53,19 +53,7 @@ struct alignas(16) PTransf16 : public Vect16 {
     PTransf16(std::initializer_list<uint8_t> il);
 
     PTransf16 &operator=(const PTransf16 &) = default;
-    PTransf16 &operator=(const epu8 &vv) {
-        v = vv;
-        return *this;
-    }
-
-    bool operator==(const PTransf16 &x) const { return equal(v, x.v); }
-    bool operator!=(const PTransf16 &x) const { return not_equal(v, x.v); }
-
-    array &as_array() { return HPCombi::as_array(v); }
-    const array &as_array() const { return HPCombi::as_array(v); }
-
-    const uint8_t &operator[](uint64_t i) const { return as_array()[i]; }
-    uint8_t &operator[](uint64_t i) { return as_array()[i]; }
+    PTransf16 &operator=(const epu8 &vv) { v = vv; return *this; }
 
     //! The identity partial transformation.
     static HPCOMBI_CONSTEXPR PTransf16 one() { return epu8id; }
@@ -100,9 +88,11 @@ struct Transf16 : public PTransf16 {
     HPCOMBI_CONSTEXPR_CONSTRUCTOR Transf16(const vect v) : PTransf16(v) {}
     HPCOMBI_CONSTEXPR_CONSTRUCTOR Transf16(const epu8 x) : PTransf16(x) {}
     Transf16(std::initializer_list<uint8_t> il) : PTransf16(il) {}
-    explicit Transf16(uint64_t compressed);
     Transf16 &operator=(const Transf16 &) = default;
 
+    //! Construct a transformation from its 64 bits compressed.
+    explicit Transf16(uint64_t compressed);
+    //! The 64 bit compressed form of a transformation.
     explicit operator uint64_t() const;
 
     //! The identity transformation.
@@ -175,6 +165,8 @@ struct Perm16 : public Transf16 /* public PPerm : diamond problem */ {
     HPCOMBI_CONSTEXPR_CONSTRUCTOR Perm16(const epu8 x) : Transf16(x) {}
     Perm16 &operator=(const Perm16 &) = default;
     Perm16(std::initializer_list<uint8_t> il) : Transf16(il) {}
+
+    //! Construct a permutations from its 64 bits compressed.
     explicit Perm16(uint64_t compressed) : Transf16(compressed) {}
 
     // It's not possible to have a static constexpr member of same type as class
@@ -389,26 +381,13 @@ struct Perm16 : public Transf16 /* public PPerm : diamond problem */ {
     bool left_weak_leq(Perm16 other) const;
 
     /** Returns the smallest fix point of \c *this */
-    uint8_t smallest_fix_point() const {
-        uint32_t res = _mm_movemask_epi8(v == epu8id);
-        return res == 0 ? 0xFF : _bit_scan_forward(res);
-    }
+    uint8_t smallest_fix_point() const;
     /** Returns the smallest non fix point of \c *this */
-    uint8_t smallest_moved_point() const {
-        uint32_t res = _mm_movemask_epi8(v != epu8id);
-        return res == 0 ? 0xFF : _bit_scan_forward(res);
-    }
-
+    uint8_t smallest_moved_point() const;
     /** Returns the largest fix point of \c *this */
-    uint8_t largest_fix_point() const {
-        uint32_t res = _mm_movemask_epi8(v == epu8id);
-        return res == 0 ? 0xFF : _bit_scan_reverse(res);
-    }
+    uint8_t largest_fix_point() const;
     /** Returns the largest non fix point of \c *this */
-    uint8_t largest_moved_point() const {
-        uint32_t res = _mm_movemask_epi8(v != epu8id);
-        return res == 0 ? 0xFF : _bit_scan_reverse(res);
-    }
+    uint8_t largest_moved_point() const;
 
 };
 

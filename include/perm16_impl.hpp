@@ -76,7 +76,8 @@ inline uint32_t PTransf16::rank_ref() const {
     return res;
 }
 inline uint32_t PTransf16::rank() const {
-    return _mm_popcnt_u32(_mm_movemask_epi8(image_mask())); }
+    return _mm_popcnt_u32(image_bitset());
+}
 
 inline static HPCOMBI_CONSTEXPR uint8_t hilo_exchng_fun(uint8_t i) {
     return i < 8 ? i + 8 : i - 8;
@@ -178,6 +179,27 @@ inline Perm16 Perm16::inverse_sort() const {
     epu8 res = static_cast<epu8>(_mm_slli_epi32(v, 4)) + one().v;
     res = sorted(res) & Epu8(0x0F);
     return res;
+}
+
+inline uint8_t Perm16::smallest_fix_point() const {
+    uint32_t res = _mm_movemask_epi8(v == one().v);
+    return res == 0 ? 0xFF : _bit_scan_forward(res);
+}
+/** Returns the smallest non fix point of \c *this */
+inline uint8_t Perm16::smallest_moved_point() const {
+    uint32_t res = _mm_movemask_epi8(v != one().v);
+    return res == 0 ? 0xFF : _bit_scan_forward(res);
+}
+
+/** Returns the largest fix point of \c *this */
+inline uint8_t Perm16::largest_fix_point() const {
+    uint32_t res = _mm_movemask_epi8(v == one().v);
+    return res == 0 ? 0xFF : _bit_scan_reverse(res);
+}
+/** Returns the largest non fix point of \c *this */
+inline uint8_t Perm16::largest_moved_point() const {
+    uint32_t res = _mm_movemask_epi8(v != one().v);
+    return res == 0 ? 0xFF : _bit_scan_reverse(res);
 }
 
 // We declare PERM16 as a correct Monoid

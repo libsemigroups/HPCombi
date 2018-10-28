@@ -35,10 +35,7 @@ struct alignas(16) Vect16 {
     HPCOMBI_CONSTEXPR_CONSTRUCTOR operator epu8() const { return v; }
 
     Vect16 &operator=(const Vect16 &) = default;
-    Vect16 &operator=(const epu8 &vv) {
-        v = vv;
-        return *this;
-    }
+    Vect16 &operator=(const epu8 &vv) { v = vv; return *this; }
 
     array &as_array() { return HPCombi::as_array(v); }
     const array &as_array() const { return HPCombi::as_array(v); }

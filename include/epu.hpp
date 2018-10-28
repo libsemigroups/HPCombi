@@ -507,6 +507,24 @@ inline bool is_partial_transformation(epu8 v, const size_t k = 16);
  */
 inline bool is_transformation(epu8 v, const size_t k = 16);
 
+/** Test for partial permutations
+ * @details
+ * @returns whether \c *this is a partial permutation.
+ * @param v the vector to test
+ * @param k the size of \c *this (default 16)
+ *
+ * Points where the function is undefined are mapped to \c 0xff.
+ * If \c *this is a partial permutation of @f$0\dots n-1@f$ for @f$n<16@f$,
+ * it should be completed to a partial permutation of @f$0\dots 15@f$
+ * by adding fixed points. That is the values @f$i\geq n@f$ should be
+ * mapped to themself.
+ * @par Example:
+ * The permutation
+ * @f$\begin{matrix}0 1 2 3 4 5\\ 2 0 5 . . 4 \end{matrix}@f$
+ * is encoded by the array {2,0,5,0xFF,0xFF,4,6,7,8,9,10,11,12,13,14,15}
+ */
+inline bool is_partial_permutation(epu8 v, const size_t k = 16);
+
 /** Test for permutations
  * @details
  * @returns whether \c *this is a permutation.
@@ -514,7 +532,7 @@ inline bool is_transformation(epu8 v, const size_t k = 16);
  * @param k the size of \c *this (default 16)
  *
  * If \c *this is a permutation of @f$0\dots n-1@f$ for @f$n<16@f$,
- * it should be completed to a permutaition of @f$0\dots 15@f$
+ * it should be completed to a permutation of @f$0\dots 15@f$
  * by adding fixed points. That is the values @f$i\geq n@f$ should be
  * mapped to themself.
  * @par Example:

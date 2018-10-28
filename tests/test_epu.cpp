@@ -510,6 +510,8 @@ BOOST_FIXTURE_TEST_CASE(IsPTransf, Fix) {
     BOOST_TEST(is_partial_transformation(RP));
     BOOST_TEST(is_partial_transformation(RP, 16));
     BOOST_TEST(not is_partial_transformation(RP, 15));
+    BOOST_TEST(is_partial_transformation(Epu8({1,2,1,0xFF,0,5,0xFF,2}, 0)));
+    BOOST_TEST(not is_partial_transformation(Epu8({1,2,1,0xFF,0,16,0xFF,2}, 0)));
 }
 
 BOOST_FIXTURE_TEST_CASE(IsTransf, Fix) {
@@ -531,6 +533,35 @@ BOOST_FIXTURE_TEST_CASE(IsTransf, Fix) {
     BOOST_TEST(is_transformation(RP));
     BOOST_TEST(is_transformation(RP, 16));
     BOOST_TEST(not is_transformation(RP, 15));
+}
+
+BOOST_FIXTURE_TEST_CASE(IsPPerm, Fix) {
+    BOOST_TEST(not is_partial_permutation(zero));
+    BOOST_TEST(not is_partial_permutation(P01));
+    BOOST_TEST(not is_partial_permutation(P10));
+    BOOST_TEST(not is_partial_permutation(Epu8({16}, 0)));
+    BOOST_TEST(is_partial_permutation(Epu8({}, 0xff)));
+    BOOST_TEST(not is_partial_permutation(Epu8({2, 0xff, 3}, 0)));
+    BOOST_TEST(is_partial_permutation(Epu8({2, 0xff, 3}, 0xff)));
+
+    BOOST_TEST(not is_partial_permutation(zero, 15));
+    BOOST_TEST(is_partial_permutation(Pa));
+    BOOST_TEST(is_partial_permutation(Pa, 6));
+    BOOST_TEST(is_partial_permutation(Pa, 5));
+    BOOST_TEST(not is_partial_permutation(Pa, 4));
+    BOOST_TEST(not is_partial_permutation(Pa, 1));
+    BOOST_TEST(not is_partial_permutation(Pa, 0));
+
+    BOOST_TEST(is_partial_permutation(RP));
+    BOOST_TEST(is_partial_permutation(RP, 16));
+    BOOST_TEST(not is_partial_permutation(RP, 15));
+
+    BOOST_TEST(is_partial_permutation(
+                   epu8 {1,2,0xFF,0xFF,0,5,0xFF,3,8,9,10,11,12,13,14,15}));
+    BOOST_TEST(not is_partial_permutation(
+                   epu8 {1,2,1,0xFF,0,5,0xFF,2,8,9,10,11,12,13,14,15}));
+    BOOST_TEST(not is_partial_permutation(Epu8({1,2,1,0xFF,0,5,0xFF,2}, 0)));
+    BOOST_TEST(not is_partial_permutation(Epu8({1,2,1,0xFF,0,16,0xFF,2}, 0)));
 }
 
 BOOST_FIXTURE_TEST_CASE(IsPerm, Fix) {
