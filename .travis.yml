@@ -9,6 +9,7 @@ matrix:
       addons:
         apt:
           packages:
+            - texlive
             - doxygen
           sources:
             - ubuntu-toolchain-r-test
