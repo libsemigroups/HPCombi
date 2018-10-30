@@ -224,11 +224,6 @@ class BMat8 {
     //! This method returns the 8 x 8 BMat8 with 1s on the main diagonal.
     static BMat8 one() { return BMat8(0x8040201008040201); }
 
-    //! Insertion operator
-    //!
-    //! This method allows BMat8 objects to be inserted into a ostream.
-    std::ostream &operator<<(std::ostream &os);
-
     //! Returns a random BMat8
     //!
     //! This method returns a BMat8 chosen at random.
@@ -263,7 +258,7 @@ class BMat8 {
 
 namespace std {
 template <> struct hash<HPCombi::BMat8> {
-    size_t operator()(HPCombi::BMat8 const &bm) const {
+    inline size_t operator()(HPCombi::BMat8 const &bm) const {
         return hash<uint64_t>()(bm.to_int());
     }
 };
