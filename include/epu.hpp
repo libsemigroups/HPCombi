@@ -191,6 +191,9 @@ inline const VectGeneric<16> &as_VectGeneric(const epu8 &v) {
 
 /** Test whether all the entries of a #HPCombi::epu8 are zero */
 inline bool is_all_zero(epu8 a) { return _mm_testz_si128(a, a); }
+/** Test whether all the entries of a #HPCombi::epu8 are one */
+inline bool is_all_one(epu8 a) { return _mm_testc_si128(a, Epu8(0xFF)); }
+
 /** Equality of #HPCombi::epu8 */
 inline bool equal(epu8 a, epu8 b) { return is_all_zero(_mm_xor_si128(a, b)); }
 /** Non equality of #HPCombi::epu8 */

@@ -55,6 +55,11 @@ struct alignas(16) PTransf16 : public Vect16 {
     PTransf16 &operator=(const PTransf16 &) = default;
     PTransf16 &operator=(const epu8 &vv) { v = vv; return *this; }
 
+    //! Return whether \c *this is a well constructed object
+    bool validate(size_t k = 16) const {
+        return HPCombi::is_partial_transformation(v, k);
+    }
+
     //! The identity partial transformation.
     static HPCOMBI_CONSTEXPR PTransf16 one() { return epu8id; }
     //! The product of two partial transformations.
@@ -90,10 +95,10 @@ struct Transf16 : public PTransf16 {
     Transf16(std::initializer_list<uint8_t> il) : PTransf16(il) {}
     Transf16 &operator=(const Transf16 &) = default;
 
-    //! Construct a transformation from its 64 bits compressed.
-    explicit Transf16(uint64_t compressed);
-    //! The 64 bit compressed form of a transformation.
-    explicit operator uint64_t() const;
+    //! Return whether \c *this is a well constructed object
+    bool validate(size_t k = 16) const {
+        return HPCombi::is_transformation(v, k);
+    }
 
     //! The identity transformation.
     static HPCOMBI_CONSTEXPR Transf16 one() { return epu8id; }
@@ -101,6 +106,11 @@ struct Transf16 : public PTransf16 {
     Transf16 operator*(const Transf16 &p) const {
         return HPCombi::permuted(v, p.v);
     }
+
+    //! Construct a transformation from its 64 bits compressed.
+    explicit Transf16(uint64_t compressed);
+    //! The 64 bit compressed form of a transformation.
+    explicit operator uint64_t() const;
 };
 
 /** Partial permutationof @f$\{0\dots 15\}@f$
@@ -116,6 +126,11 @@ struct PPerm16 : public PTransf16 {
             size_t = 0 /* unused */) : PTransf16(dom, rng) {}
     PPerm16(std::initializer_list<uint8_t> il) : PTransf16(il) {}
     PPerm16 &operator=(const PPerm16 &) = default;
+
+    //! Return whether \c *this is a well constructed object
+    bool validate(size_t k = 16) const {
+        return HPCombi::is_partial_permutation(v, k);
+    }
 
     //! The identity partial permutations.
     static HPCOMBI_CONSTEXPR PPerm16 one() { return epu8id; }
@@ -166,8 +181,10 @@ struct Perm16 : public Transf16 /* public PPerm : diamond problem */ {
     Perm16 &operator=(const Perm16 &) = default;
     Perm16(std::initializer_list<uint8_t> il) : Transf16(il) {}
 
-    //! Construct a permutations from its 64 bits compressed.
-    explicit Perm16(uint64_t compressed) : Transf16(compressed) {}
+    //! Return whether \c *this is a well constructed object
+    bool validate(size_t k = 16) const {
+        return HPCombi::is_permutation(v, k);
+    }
 
     // It's not possible to have a static constexpr member of same type as class
     // being defined (see https://stackoverflow.com/questions/11928089/)
@@ -178,6 +195,9 @@ struct Perm16 : public Transf16 /* public PPerm : diamond problem */ {
     Perm16 operator*(const Perm16 &p) const {
         return HPCombi::permuted(v, p.v);
     }
+
+    //! Construct a permutations from its 64 bits compressed.
+    explicit Perm16(uint64_t compressed) : Transf16(compressed) {}
 
     /** @class common_inverse
      * @brief The inverse permutation

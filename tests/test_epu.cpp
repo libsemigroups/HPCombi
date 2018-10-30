@@ -153,6 +153,14 @@ BOOST_FIXTURE_TEST_CASE(EPU8_is_all_zero, Fix) {
         BOOST_TEST(not is_all_zero(v[i]));
     }
 }
+
+BOOST_FIXTURE_TEST_CASE(EPU8_is_all_one, Fix) {
+    for (size_t i = 0; i < v.size(); i++) {
+        BOOST_TEST(not is_all_one(v[i]));
+    }
+    BOOST_TEST(is_all_one(Epu8(0xFF)));
+}
+
 BOOST_FIXTURE_TEST_CASE(EPU8_equal, Fix) {
     for (size_t i = 0; i < v.size(); i++) {
         epu8 a = v[i];
