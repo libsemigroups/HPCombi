@@ -3,16 +3,14 @@ dist: trusty
 sudo: required
 compiler:
   - gcc
-addons:
-  apt:
-    packages:
-      - texlive-font-utils
-      - doxygen
 matrix:
   include:
     - env: TEST_SUITE=standard
       addons:
         apt:
+          packages:
+            - texlive-font-utils
+            - doxygen
           sources:
             - ubuntu-toolchain-r-test
     - env: TEST_SUITE=standard MATRIX_EVAL="CC=gcc-5 && CXX=g++-5"
@@ -23,6 +21,28 @@ matrix:
           packages:
             - gcc-5
             - g++-5
+            - texlive-font-utils
+            - doxygen
+    - env: TEST_SUITE=standard MATRIX_EVAL="CC=gcc-6 && CXX=g++-6"
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - gcc-6
+            - g++-6
+            - texlive-font-utils
+            - doxygen
+    - env: TEST_SUITE=standard MATRIX_EVAL="CC=gcc-7 && CXX=g++-7"
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - gcc-6
+            - g++-6
+            - texlive-font-utils
+            - doxygen
     - compiler: clang
       env: TEST_SUITE=standard MATRIX_EVAL="CC=clang-5.0 && CXX=clang++-5.0"
       addons:
@@ -32,6 +52,19 @@ matrix:
             - ubuntu-toolchain-r-test
           packages:
             - clang-5.0
+            - texlive-font-utils
+            - doxygen
+    - compiler: clang
+      env: TEST_SUITE=standard MATRIX_EVAL="CC=clang-6.0 && CXX=clang++-6.0"
+      addons:
+        apt:
+          sources:
+            - llvm-toolchain-trusty-6.0
+            - ubuntu-toolchain-r-test
+          packages:
+            - clang-6.0
+            - texlive-font-utils
+            - doxygen
     # - env: TEST_SUITE=libsemigroups
     #   addons:
     #     apt:
