@@ -8,14 +8,17 @@ matrix:
     - env: TEST_SUITE=standard
       addons:
         apt:
+          packages:
+            - doxygen
           sources:
-          - ubuntu-toolchain-r-test
+            - ubuntu-toolchain-r-test
     - env: TEST_SUITE=standard MATRIX_EVAL="CC=gcc-5 && CXX=g++-5"
       addons:
         apt:
           sources:
             - ubuntu-toolchain-r-test
           packages:
+            - doxygen
             - gcc-5
             - g++-5
     - compiler: clang
@@ -26,6 +29,7 @@ matrix:
             - llvm-toolchain-trusty-5.0
             - ubuntu-toolchain-r-test
           packages:
+            - doxygen
             - clang-5.0
     # - env: TEST_SUITE=libsemigroups
     #   addons:
@@ -33,6 +37,7 @@ matrix:
     #       sources:
     #       - ubuntu-toolchain-r-test
     #       packages:
+    #         - doxygen
     #         - gcc-5
     #         - g++-5
 before_install:
