@@ -50,6 +50,19 @@ struct alignas(16) Vect16 {
         return HPCombi::last_diff(v, u.v, bound);
     }
 
+    size_t first_zero(size_t bound = Size()) const {
+        return HPCombi::first_zero(v, bound);
+    }
+    size_t last_zero(size_t bound = Size()) const {
+        return HPCombi::last_zero(v, bound);
+    };
+    size_t first_non_zero(size_t bound = Size()) const {
+        return HPCombi::first_non_zero(v, bound);
+    }
+    size_t last_non_zero(size_t bound = Size()) const {
+        return HPCombi::last_non_zero(v, bound);
+    }
+
     // Auto is only valid here in C++14
     using iter = typename array::iterator;
     iter begin() { return as_array().begin(); }
@@ -75,6 +88,8 @@ struct alignas(16) Vect16 {
     bool is_permutation(size_t k) const {
         return HPCombi::is_permutation(v, k);
     }
+
+
 };
 
 static_assert(std::is_trivial<Vect16>(), "Vect16 is not a trivial class !");

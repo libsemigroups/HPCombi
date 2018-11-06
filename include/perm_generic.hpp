@@ -29,26 +29,28 @@ struct PermGeneric : public VectGeneric<_Size, Expo> {
 
     using vect = VectGeneric<_Size, Expo>;
 
+    static constexpr size_t size() { return _Size; }
+
     PermGeneric() = default;
-    PermGeneric(const vect v) : vect(v){};
-    PermGeneric(std::initializer_list<Expo> il) {
-        assert(il.size() <= _Size);
-        std::copy(il.begin(), il.end(), this->v.begin());
-        for (uint64_t i = il.size(); i < _Size; i++)
-            this->v[i] = i;
-    }
+    PermGeneric(const vect v) : vect(v) {};
+    PermGeneric(std::initializer_list<Expo> il);
 
     PermGeneric operator*(const PermGeneric &p) const {
         return this->permuted(p);
     }
     static PermGeneric one() { return PermGeneric({}); }
-    static PermGeneric elementary_transposition(uint64_t i) {
-        assert(i < _Size);
-        PermGeneric res{{}};
-        res[i] = i + 1;
-        res[i + 1] = i;
-        return res;
-    }
+    static PermGeneric elementary_transposition(uint64_t i);
+
+    PermGeneric inverse() const ;
+    static PermGeneric random();
+
+    vect lehmer() const;
+    uint64_t length() const;
+    uint64_t nb_descents() const;
+    uint64_t nb_cycles() const;
+
+    bool left_weak_leq(PermGeneric other) const;
+
 };
 
 /*****************************************************************************/
@@ -61,5 +63,7 @@ static_assert(std::is_trivial<PermGeneric<12>>(),
               "PermGeneric is not trivial !");
 
 }  //  namespace HPCombi
+
+#include "perm_generic_impl.hpp"
 
 #endif  // HPCOMBI_PERM_GENERIC_HPP
