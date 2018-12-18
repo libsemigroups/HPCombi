@@ -37,6 +37,12 @@ using namespace HPCombi;
         for (type p : vct)  EPU8_EQUAL(p.fun(), p.ref());    \
     }
 
+#define TEST_AGREES2(type, ref, fun, vct)                    \
+    BOOST_FIXTURE_TEST_CASE(type##_agrees_##fun, Fix) {      \
+        for (type p1 : vct) for (type p2 : vct)              \
+            BOOST_TEST(p1.fun(p2) == p1.ref(p2));            \
+    }
+
 struct Fix {
     Fix() : zero(0), one1(1), one2(0x201),
             ones(0xffffffffffffffff),
@@ -346,6 +352,31 @@ TEST_AGREES(BMat8, row_space_size_ref, row_space_size_incl, BMlist);
 TEST_AGREES(BMat8, row_space_size_ref, row_space_size_incl1, BMlist);
 TEST_AGREES(BMat8, row_space_size_ref, row_space_size_bitset, BMlist);
 
+//****************************************************************************//
+BOOST_FIXTURE_TEST_CASE(BMat8_row_space_included, Fix) {
+    BOOST_TEST(zero.row_space_included(one1));
+    BOOST_TEST(not one1.row_space_included(zero));
+
+    BMat8 m1({{1, 1, 0}, {1, 0, 1}, {0, 0, 0}});
+    BMat8 m2({{0, 0, 0}, {1, 0, 1}, {1, 1, 0}});
+    BOOST_TEST(m1.row_space_included(m2));
+    BOOST_TEST(m2.row_space_included(m1));
+
+    BMat8 m3({{0, 0, 1}, {1, 0, 1}, {1, 1, 0}});
+    BOOST_TEST(m1.row_space_included(m3));
+    BOOST_TEST(m2.row_space_included(m3));
+    BOOST_TEST(not m3.row_space_included(m1));
+    BOOST_TEST(not m3.row_space_included(m1));
+
+    BOOST_TEST(m1.row_space_included(BMat8::one()));
+    BOOST_TEST(m2.row_space_included(BMat8::one()));
+    BOOST_TEST(m3.row_space_included(BMat8::one()));
+
+}
+TEST_AGREES2(BMat8, row_space_included, row_space_included_ref, BMlist);
+TEST_AGREES2(BMat8, row_space_included, row_space_included_bitset, BMlist);
+
+//****************************************************************************//
 BOOST_FIXTURE_TEST_CASE(BMat8_nr_rows, Fix) {
     BOOST_TEST(zero.nr_rows() == 0);
     BOOST_TEST(one1.nr_rows() == 1);
@@ -356,6 +387,7 @@ BOOST_FIXTURE_TEST_CASE(BMat8_nr_rows, Fix) {
                       {0, 0, 0}}).nr_rows() == 2);
 }
 
+//****************************************************************************//
 BOOST_FIXTURE_TEST_CASE(BMat8_right_perm_action_on_basis_ref, Fix) {
     BMat8 m1({{1, 1, 0}, {1, 0, 1}, {0, 0, 0}});
     BMat8 m2({{0, 0, 0}, {1, 0, 1}, {1, 1, 0}});

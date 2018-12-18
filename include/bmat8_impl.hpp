@@ -241,18 +241,23 @@ inline void update_bitset(epu8 block, epu8 &set0, epu8 &set1) {
     }
 }
 
-inline uint64_t BMat8::row_space_size_bitset() const {
+inline void BMat8::row_space_bitset(epu8 &res0, epu8 &res1) const {
     epu8 in = _mm_set_epi64x(0, _data);
     epu8 block0 {}, block1 {};
     for (epu8 m : masks) {
         block0 |= static_cast<epu8>(_mm_shuffle_epi8(in, m));
         block1 |= static_cast<epu8>(_mm_shuffle_epi8(in, m | Epu8(4)));
     }
-    epu8 res0 {}, res1 {};
+    res0 = epu8 {}; res1 = epu8 {};
     for (size_t r = 0; r < 16; r++) {
         update_bitset(block0 | block1, res0, res1);
         block1 = _mm_shuffle_epi8(block1, right_cycle);
     }
+}
+
+inline uint64_t BMat8::row_space_size_bitset() const {
+    epu8 res0 {}, res1 {};
+    row_space_bitset(res0, res1);
     return (_mm_popcnt_u64(_mm_extract_epi64(res0, 0)) +
             _mm_popcnt_u64(_mm_extract_epi64(res1, 0)) +
             _mm_popcnt_u64(_mm_extract_epi64(res0, 1)) +
@@ -291,6 +296,56 @@ inline uint64_t BMat8::row_space_size_incl() const {
     return res;
 }
 
+inline bool BMat8::row_space_included_bitset(BMat8 other) const {
+    epu8 this0, this1, other0, other1;
+    this->row_space_bitset(this0, this1);
+    other.row_space_bitset(other0, other1);
+    return equal(this0 | other0, other0) && equal(this1 | other1, other1);
+}
+
+inline bool BMat8::row_space_included(BMat8 other) const {
+    epu8 in = _mm_set_epi64x(0, other._data);
+    epu8 block = _mm_set_epi64x(0, _data);
+    epu8 orincl = ((in | block) == block) & in;
+    for (int i = 0; i < 7; i++) {    // Only rotating
+        in = permuted(in, rotlow);
+        orincl |= ((in | block) == block) & in;
+    }
+    return equal(block, orincl);
+}
+
+inline std::bitset<256> BMat8::row_space_bitset_ref() const {
+    std::bitset<256>     lookup;
+    std::vector<uint8_t> row_vec = row_space_basis().rows();
+    auto                 last = std::remove(row_vec.begin(), row_vec.end(), 0);
+    row_vec.erase(last, row_vec.end());
+    for (uint8_t x : row_vec) {
+        lookup.set(x);
+    }
+    lookup.set(0);
+    std::vector<uint8_t> row_space(row_vec.begin(), row_vec.end());
+    for (size_t i = 0; i < row_space.size(); ++i) {
+        for (uint8_t row : row_vec) {
+            uint8_t x = row_space[i] | row;
+            if (!lookup[x]) {
+                row_space.push_back(x);
+                lookup.set(x);
+            }
+        }
+    }
+    return lookup;
+}
+
+inline bool BMat8::row_space_included_ref(BMat8 other) const {
+    std::bitset<256> thisspace = row_space_bitset_ref();
+    std::bitset<256> otherspace = other.row_space_bitset_ref();
+    return (thisspace | otherspace) == otherspace;
+}
+
+inline uint64_t BMat8::row_space_size_ref() const {
+    return row_space_bitset_ref().count();
+}
+
 inline std::vector<uint8_t> BMat8::rows() const {
     std::vector<uint8_t> rows;
     for (size_t i = 0; i < 8; ++i) {
@@ -298,29 +353,6 @@ inline std::vector<uint8_t> BMat8::rows() const {
         rows.push_back(row);
     }
     return rows;
-}
-
-inline uint64_t BMat8::row_space_size_ref() const {
-    std::array<char, 256> lookup {};
-    std::vector<uint8_t> row_vec = row_space_basis().rows();
-    row_vec.erase(std::remove_if(row_vec.begin(), row_vec.end(),
-                                 [](uint8_t val) { return val == 0; }),
-                  row_vec.end());
-    for (uint8_t x : row_vec) {
-        lookup[x] = true;
-    }
-    std::vector<uint8_t> row_space(row_vec.begin(), row_vec.end());
-    row_space.reserve(256);
-    for (size_t i = 0; i < row_space.size(); ++i) {
-        for (uint8_t row : row_vec) {
-            uint8_t x = row_space[i] | row;
-            if (!lookup[x]) {
-                row_space.push_back(x);
-                lookup[x] = true;
-            }
-        }
-    }
-    return row_space.size() + 1;
 }
 
 inline size_t BMat8::nr_rows() const {

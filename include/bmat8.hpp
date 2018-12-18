@@ -29,6 +29,7 @@
 #include <random>     // for mt19937, random_device
 #include <utility>    // for hash
 #include <vector>     // for vector
+#include <bitset>
 
 #include "epu.hpp"
 
@@ -185,14 +186,23 @@ class BMat8 {
     //!
     //! Reference implementation computing all products
     uint64_t row_space_size_ref() const;
+
+    //! Returns the the row space of \c
+    //!
+    //! The result is stored in a c++ bitset
+    std::bitset<256> row_space_bitset_ref() const;
+    //! Returns the the row space of \c this as 256 bits.
+    //!
+    //! The result is stored in two 128 bits registers.
+    void row_space_bitset(epu8 &res1, epu8 &res2) const;
     //! Returns the cardinality of the row space of \c this
     //!
-    //! It compute all the product using two 128 bits register to store
+    //! It compute all the product using two 128 bits registers to store
     //! the set of elements of the row space.
     uint64_t row_space_size_bitset() const;
     //! Returns the cardinality of the row space of \c this
     //!
-    //! Uses vector computation of the product included row in each 256
+    //! Uses vector computation of the product of included rows in each 256
     //! possible vectors. Fastest implementation saving a few instructions
     //! compared to #row_space_size_incl1
     uint64_t row_space_size_incl() const;
@@ -205,6 +215,19 @@ class BMat8 {
     //!
     //! Alias to #row_space_size_incl
     uint64_t row_space_size() const { return row_space_size_incl(); }
+
+    //! Returns whether the row space of \c this is included in other's
+    //!
+    //! Uses a 256 bitset internally
+    bool row_space_included_ref(BMat8 other) const;
+    //! Returns whether the row space of \c this is included in other's
+    //!
+    //! Uses a 256 bitset internally
+    bool row_space_included_bitset(BMat8 other) const;
+    //! Returns whether the row space of \c this is included in other's
+    //!
+    //! Uses vector computation of the product of included rows
+    bool row_space_included(BMat8 other) const;
 
     //! Give the permutation whose right multiplication change \c *this
     //! to \c other
