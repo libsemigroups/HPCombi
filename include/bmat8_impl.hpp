@@ -314,8 +314,8 @@ inline bool BMat8::row_space_included(BMat8 other) const {
     return equal(block, orincl);
 }
 
-std::pair<bool, bool> BMat8::row_space_included2(BMat8 a0, BMat8 b0,
-                                                 BMat8 a1, BMat8 b1) {
+inline std::pair<bool, bool> BMat8::row_space_included2(BMat8 a0, BMat8 b0,
+                                                        BMat8 a1, BMat8 b1) {
     epu8 in = _mm_set_epi64x(b1._data, b0._data);
     epu8 block = _mm_set_epi64x(a1._data, a0._data);
     epu8 orincl = ((in | block) == block) & in;
