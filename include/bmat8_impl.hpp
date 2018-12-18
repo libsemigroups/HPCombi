@@ -324,8 +324,8 @@ inline std::pair<bool, bool> BMat8::row_space_included2(BMat8 a0, BMat8 b0,
         orincl |= ((in | block) == block) & in;
     }
     epu8 res = (block == orincl);
-    return std::make_pair(_mm_extract_epi64(res, 0) + 1,
-                          _mm_extract_epi64(res, 1) + 1);
+    return std::make_pair(_mm_extract_epi64(res, 0) == -1,
+                          _mm_extract_epi64(res, 1) == -1);
 }
 
 inline std::bitset<256> BMat8::row_space_bitset_ref() const {
