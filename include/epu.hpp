@@ -456,25 +456,22 @@ inline bool less(epu8 a, epu8 b);
  */
 inline char less_partial(epu8 a, epu8 b, int k);
 
-/*
-template <char IDX_MODE>
-inline uint64_t search_index(epu8 v, int bound) {
-    return unsigned(_mm_cmpestri(epu8{}, 1, v, bound, IDX_MODE));
-}
-
-inline uint64_t last_non_zero(epu8 v, int bnd) {
-    return search_index<LAST_NON_ZERO>(v, bnd);
-}
-inline uint64_t first_non_zero(epu8 v, int bnd) {
-    return search_index<FIRST_NON_ZERO>(v, bnd);
-}
-inline uint64_t last_zero(epu8 v, int bnd) {
-    return search_index<LAST_ZERO>(v, bnd);
-}
-inline uint64_t first_zero(epu8 v, int bnd) {
-    return search_index<FIRST_ZERO>(v,bnd);
-}
-*/
+/** return the index of the first zero entry or 16 if there are none
+ *  Only index smaller than bound are taken into account.
+ */
+inline uint64_t first_zero(epu8 v, int bnd);
+/** return the index of the last zero entry or 16 if there are none
+ *  Only index smaller than bound are taken into account.
+ */
+inline uint64_t last_zero(epu8 v, int bnd);
+/** return the index of the first non zero entry or 16 if there are none
+ *  Only index smaller than bound are taken into account.
+ */
+inline uint64_t first_non_zero(epu8 v, int bnd);
+/** return the index of the last non zero entry or 16 if there are none
+ *  Only index smaller than bound are taken into account.
+ */
+inline uint64_t last_non_zero(epu8 v, int bnd);
 
 /** Test for partial transformation
  * @details

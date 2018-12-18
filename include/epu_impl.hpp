@@ -43,6 +43,16 @@ namespace HPCombi {
 /** Implementation part for inline functions *********************************/
 /*****************************************************************************/
 
+// Msk is supposed to be a boolean mask (i.e. each entry is either 0 or 255)
+inline uint64_t first_mask(epu8 msk, size_t bound) {
+    uint64_t res = _mm_movemask_epi8(msk & (epu8id < Epu8(bound)));
+    return res == 0 ? 16 : _bit_scan_forward(res);
+}
+inline uint64_t last_mask(epu8 msk, size_t bound) {
+    auto res = _mm_movemask_epi8(msk & (epu8id < Epu8(bound)));
+    return res == 0 ? 16 : _bit_scan_reverse(res);
+}
+
 inline uint64_t first_diff_ref(epu8 a, epu8 b, size_t bound) {
     for (size_t i = 0; i < bound; i++)
         if (a[i] != b[i])
@@ -53,8 +63,7 @@ inline uint64_t first_diff_cmpstr(epu8 a, epu8 b, size_t bound) {
     return unsigned(_mm_cmpestri(a, bound, b, bound, FIRST_DIFF));
 }
 inline uint64_t first_diff_mask(epu8 a, epu8 b, size_t bound) {
-    uint64_t res = _mm_movemask_epi8((a != b) & (epu8id < Epu8(bound)));
-    return res == 0 ? 16 : _bit_scan_forward(res);
+    return first_mask(a != b, bound);
 }
 
 inline uint64_t last_diff_ref(epu8 a, epu8 b, size_t bound) {
@@ -69,8 +78,7 @@ inline uint64_t last_diff_cmpstr(epu8 a, epu8 b, size_t bound) {
     return unsigned(_mm_cmpestri(a, bound, b, bound, LAST_DIFF));
 }
 inline uint64_t last_diff_mask(epu8 a, epu8 b, size_t bound) {
-    auto res = _mm_movemask_epi8((a != b) & (epu8id < Epu8(bound)));
-    return res == 0 ? 16 : _bit_scan_reverse(res);
+    return last_mask(a != b, bound);
 }
 
 inline bool less(epu8 a, epu8 b) {
@@ -82,6 +90,20 @@ inline char less_partial(epu8 a, epu8 b, int k) {
     return (diff == 16)
                ? 0
                : static_cast<char>(a[diff]) - static_cast<char>(b[diff]);
+}
+
+
+inline uint64_t first_zero(epu8 v, int bnd) {
+    return first_mask(v == epu8 {}, bnd);
+}
+inline uint64_t last_zero(epu8 v, int bnd) {
+    return last_mask(v == epu8 {}, bnd);
+}
+inline uint64_t first_non_zero(epu8 v, int bnd) {
+    return first_mask(v != epu8 {}, bnd);
+}
+inline uint64_t last_non_zero(epu8 v, int bnd) {
+    return last_mask(v != epu8 {}, bnd);
 }
 
 /// Apply a sorting network

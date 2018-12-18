@@ -72,9 +72,11 @@ template <size_t _Size, typename Expo = uint8_t> struct VectGeneric {
         return _Size;
     }
 
-    using iter = typename array::iterator;
-    iter begin() { return v.begin(); }
-    iter end() { return v.end(); }
+    using value_type = Expo;
+    using iterator = typename array::iterator;
+    using const_iterator = typename array::const_iterator;
+    iterator begin() { return v.begin(); }
+    iterator end() { return v.end(); }
 
     bool operator==(const VectGeneric &u) const {
         return first_diff(u) == _Size;
@@ -127,13 +129,13 @@ template <size_t _Size, typename Expo = uint8_t> struct VectGeneric {
                 return i;
         return _Size;
     }
-    uint64_t last_non_zero(size_t bound = 16) const {
+    uint64_t last_non_zero(size_t bound = _Size) const {
         for (int64_t i = bound - 1; i >= 0; i--)
             if (v[i] != 0)
                 return i;
         return _Size;
     }
-    uint64_t last_zero(size_t bound = 16) const {
+    uint64_t last_zero(size_t bound = _Size) const {
         for (int64_t i = bound - 1; i >= 0; i--)
             if (v[i] == 0)
                 return i;
@@ -187,11 +189,11 @@ static_assert(std::is_trivial<VectGeneric<12>>(),
 
 namespace std {
 
-template <size_t Size, typename Expo>
+template <size_t _Size, typename Expo>
 std::ostream &operator<<(std::ostream &stream,
-                         const HPCombi::VectGeneric<Size, Expo> &v) {
+                         const HPCombi::VectGeneric<_Size, Expo> &v) {
     stream << "[" << std::setw(2) << unsigned(v[0]);
-    for (unsigned i = 1; i < Size; ++i)
+    for (unsigned i = 1; i < _Size; ++i)
         stream << "," << std::setw(2) << unsigned(v[i]);
     stream << "]";
     return stream;
@@ -201,7 +203,7 @@ template <size_t _Size, typename Expo>
 struct hash<HPCombi::VectGeneric<_Size, Expo>> {
     size_t operator()(const HPCombi::VectGeneric<_Size, Expo> &ar) const {
         size_t h = 0;
-        for (size_t i = 0; i < HPCombi::VectGeneric<_Size, Expo>::_Size; i++)
+        for (size_t i = 0; i < _Size; i++)
             h = hash<Expo>()(ar[i]) + (h << 6) + (h << 16) - h;
         return h;
     }
@@ -209,4 +211,4 @@ struct hash<HPCombi::VectGeneric<_Size, Expo>> {
 
 }  // namespace std
 
-#endif  // HPCOMBI_VECR_GENERIC_HPP
+#endif  // HPCOMBI_VECT_GENERIC_HPP

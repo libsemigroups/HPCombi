@@ -39,7 +39,7 @@ struct Transf16;
  */
 struct alignas(16) PTransf16 : public Vect16 {
 
-    static constexpr size_t Size() { return 16; };
+    static constexpr size_t size() { return 16; };
 
     using vect = HPCombi::Vect16;
     using array = TPUBuild<epu8>::array;
