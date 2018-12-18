@@ -187,7 +187,7 @@ class BMat8 {
     //! Reference implementation computing all products
     uint64_t row_space_size_ref() const;
 
-    //! Returns the the row space of \c
+    //! Returns the the row space of \c this
     //!
     //! The result is stored in a c++ bitset
     std::bitset<256> row_space_bitset_ref() const;
