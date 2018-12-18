@@ -376,6 +376,27 @@ BOOST_FIXTURE_TEST_CASE(BMat8_row_space_included, Fix) {
 TEST_AGREES2(BMat8, row_space_included, row_space_included_ref, BMlist);
 TEST_AGREES2(BMat8, row_space_included, row_space_included_bitset, BMlist);
 
+BOOST_FIXTURE_TEST_CASE(BMat8_row_space_included2, Fix) {
+    BMat8 a0 = BMat8::one(); BMat8 b0 = BMat8(0);
+    BMat8 a1 = BMat8(0); BMat8 b1 = BMat8::one();
+
+    auto res = BMat8::row_space_included2(a0, b0, a1, b1);
+    BOOST_TEST(res.first == a0.row_space_included(b0));
+    BOOST_TEST(res.second == a1.row_space_included(b1));
+
+    for (auto a0 : BMlist) {
+        for (auto b0 : BMlist) {
+            for (auto a1 : BMlist) {
+                for (auto b1 : BMlist) {
+                    auto res = BMat8::row_space_included2(a0, b0, a1, b1);
+                    BOOST_TEST(res.first == a0.row_space_included(b0));
+                    BOOST_TEST(res.second == a1.row_space_included(b1));
+                }
+            }
+        }
+    }
+}
+
 //****************************************************************************//
 BOOST_FIXTURE_TEST_CASE(BMat8_nr_rows, Fix) {
     BOOST_TEST(zero.nr_rows() == 0);

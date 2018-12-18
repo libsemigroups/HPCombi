@@ -229,6 +229,12 @@ class BMat8 {
     //! Uses vector computation of the product of included rows
     bool row_space_included(BMat8 other) const;
 
+    //! Returns inclusion of row spaces
+    //!
+    //! Compute at once if a1 is included in b1 and a2 is included in b2
+    static std::pair<bool, bool> row_space_included2(BMat8 a1, BMat8 b1,
+                                                     BMat8 a2, BMat8 b2);
+
     //! Give the permutation whose right multiplication change \c *this
     //! to \c other
     //!

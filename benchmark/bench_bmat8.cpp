@@ -112,10 +112,26 @@ int Bench_row_space_included() {
     return 0;
 }
 
+int Bench_row_space_included2() {
+    myBench("row_space_incl2_rotate",
+            [](std::pair<BMat8, BMat8> p) {
+                return p.first.row_space_included(p.second)
+                    == p.second.row_space_included(p.first);
+            }, pair_sample);
+    myBench("row_space_incl_2",
+            [](std::pair<BMat8, BMat8> p) {
+                auto res = BMat8::row_space_included2(
+                    p.first, p.second, p.second, p.first);
+                return res.first == res.second;
+            }, pair_sample);
+    return 0;
+}
+
 auto dummy = {
     Bench_row_space_size(),
     Bench_transpose2(),
     Bench_row_space_included(),
+    Bench_row_space_included2()
 };
 
 BENCHMARK_MAIN();
