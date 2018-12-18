@@ -40,3 +40,7 @@ By default, cmake compile in debug mode (no optimisation, assert are on). To
 compile in release mode:
 
     cmake -DCMAKE_BUILD_TYPE=Release ..
+
+As a consequence for benchmark you write 
+
+    cmake -DBUILD_TESTING=1 -DCMAKE_BUILD_TYPE=Release ..
