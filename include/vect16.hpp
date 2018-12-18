@@ -50,10 +50,12 @@ struct alignas(16) Vect16 {
         return HPCombi::last_diff(v, u.v, bound);
     }
 
-    // Auto is only valid here in C++14
-    using iter = typename array::iterator;
-    iter begin() { return as_array().begin(); }
-    iter end() { return as_array().end(); }
+    using value_type = uint8_t;
+    using iterator = typename array::iterator;
+    using const_iterator = typename array::const_iterator;
+
+    iterator begin() { return as_array().begin(); }
+    iterator end() { return as_array().end(); }
 
     bool operator==(const Vect16 &b) const { return HPCombi::equal(v, b.v); };
     bool operator!=(const Vect16 &b) const {
