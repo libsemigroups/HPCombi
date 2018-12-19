@@ -374,6 +374,18 @@ inline size_t BMat8::nr_rows() const {
     return _mm_popcnt_u64(_mm_movemask_epi8(x != epu8 {}));
 }
 
+constexpr Perm16 rev8 (epu8 {7,6,5,4,3,2,1,0,8,9,10,11,12,13,14,15});
+inline BMat8 BMat8::permuted_rows(Perm16 p) const {
+    epu8 x = _mm_set_epi64x(0, _data);
+    x = permuted(x, rev8);
+    x = permuted(x, p);
+    x = permuted(x, rev8);
+    return BMat8(_mm_extract_epi64(x, 0));
+}
+inline BMat8 BMat8::permuted_cols(Perm16 p) const {
+    return transpose().permuted_rows(p).transpose();
+}
+
 inline Perm16 BMat8::right_perm_action_on_basis_ref(BMat8 bm) const {
     // LIBSEMIGROUPS_ASSERT(basis.row_space_basis() == basis);
     std::vector<uint8_t> rows = this->rows();

@@ -397,6 +397,23 @@ BOOST_FIXTURE_TEST_CASE(BMat8_row_space_included2, Fix) {
     }
 }
 
+
+//****************************************************************************//
+BOOST_FIXTURE_TEST_CASE(BMat8_permuted, Fix) {
+    BOOST_TEST(bm2.permuted_rows(Perm16({1,0})) ==
+               BMat8({{0,1},{1,1}}));
+    BOOST_TEST(bm2.permuted_rows(Perm16({2,1,0})) ==
+               BMat8({{0,0,0},{0,1,0},{1,1,0}}));
+    BOOST_TEST(bm.permuted_rows(Perm16({5,3,1,4,2,0})) ==
+               BMat8({{1, 1, 0, 0, 0, 0, 0, 1},
+                      {1, 1, 0, 1, 1, 1, 1, 1},
+                      {1, 1, 1, 1, 1, 1, 0, 1},
+                      {0, 0, 1, 0, 0, 1, 1, 1},
+                      {0, 1, 1, 1, 0, 1, 0, 1},
+                      {0, 0, 0, 1, 0, 0, 1, 1},
+                      {0, 1, 0, 0, 0, 0, 1, 1},
+                      {0, 1, 1, 1, 1, 0, 1, 0}}));
+}
 //****************************************************************************//
 BOOST_FIXTURE_TEST_CASE(BMat8_nr_rows, Fix) {
     BOOST_TEST(zero.nr_rows() == 0);

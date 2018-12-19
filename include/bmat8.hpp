@@ -235,6 +235,17 @@ class BMat8 {
     static std::pair<bool, bool> row_space_included2(BMat8 a1, BMat8 b1,
                                                      BMat8 a2, BMat8 b2);
 
+    //! Returns the matrix whose rows have been permuted according to \c p
+    //!
+    //! @param p : a permutation fixing the entries 8..15
+    //! Note: no verification is performed on p
+    BMat8 permuted_rows(Perm16 p) const;
+    //! Returns the matrix whose columns have been permuted according to \c p
+    //!
+    //! @param p : a permutation fixing the entries 8..15
+    //! Note: no verification is performed on p
+    BMat8 permuted_cols(Perm16 p) const;
+
     //! Give the permutation whose right multiplication change \c *this
     //! to \c other
     //!
