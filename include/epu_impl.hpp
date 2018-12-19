@@ -301,6 +301,12 @@ inline epu8 eval16_popcount(epu8 v) {
     return res;
 }
 
+
+inline epu8 popcount16(epu8 v){
+    return permuted(popcount4, (v & 0x0f)) + permuted(popcount4, v >> 4);
+}
+
+
 inline bool is_partial_transformation(epu8 v, const size_t k) {
     uint64_t diff = last_diff(v, epu8id, 16);
     // (forall x in v, x + 1 <= 16)  and

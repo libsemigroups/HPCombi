@@ -132,6 +132,12 @@ uint8_t right_dup_fun(uint8_t i) { return i == 0 ? 0 : i - 1; }
 /// The complement of i to 15
 HPCOMBI_CONSTEXPR
 uint8_t complement_fun(uint8_t i) { return 15 - i; }
+HPCOMBI_CONSTEXPR uint8_t popcount4_fun(uint8_t i) {
+    return ((i & 1) != 0 ? 1 : 0)
+        +  ((i & 2) != 0 ? 1 : 0)
+        +  ((i & 4) != 0 ? 1 : 0)
+        +  ((i & 8) != 0 ? 1 : 0);
+}
 
 }  // Anonymous namespace
 
@@ -150,6 +156,8 @@ HPCOMBI_CONSTEXPR epu8 right_cycle = Epu8(right_cycle_fun);
 HPCOMBI_CONSTEXPR epu8 left_dup = Epu8(left_dup_fun);
 /// Right shift #HPCombi::epu8, duplicating the leftmost entry
 HPCOMBI_CONSTEXPR epu8 right_dup = Epu8(right_dup_fun);
+/// Popcount #HPCombi::epu8: the ith entry contains the number of bits set in i
+HPCOMBI_CONSTEXPR epu8 popcount4 = Epu8(popcount4_fun);
 
 /** Cast a #HPCombi::epu8 to a c++ \c std::array
  *
@@ -472,6 +480,10 @@ inline uint64_t first_non_zero(epu8 v, int bnd);
  *  Only index smaller than bound are taken into account.
  */
 inline uint64_t last_non_zero(epu8 v, int bnd);
+
+/** a vector popcount function
+ */
+inline epu8 popcount16(epu8 v);
 
 /** Test for partial transformation
  * @details
