@@ -225,13 +225,11 @@ constexpr std::array<epu8, 4> masks {{
     }};
 #undef FF
 
-// shift to multiply by 8
-static const epu8 bound08 = _mm_slli_epi32(epu8id, 3);
+static const epu8 bound08 = _mm_slli_epi32(epu8id, 3); // shift for *8
 static const epu8 bound18 = bound08 + Epu8(0x80);
 static const epu8 shiftres {1, 2, 4, 8, 0x10, 0x20, 0x40, 0x80};
 
 inline void update_bitset(epu8 block, epu8 &set0, epu8 &set1) {
-    // std::cout << mask3 << std::endl;
     for (size_t slice8 = 0; slice8 < 16; slice8++) {
         epu8 bm5 = Epu8(0xf8) & block; /* 11111000 */
         epu8 shft = _mm_shuffle_epi8(shiftres, block - bm5);
@@ -312,6 +310,16 @@ inline bool BMat8::row_space_included(BMat8 other) const {
         orincl |= ((in | block) == block) & in;
     }
     return equal(block, orincl);
+}
+
+inline epu8 row_space_mask(epu8 block) const {
+    epu8 in = _mm_set_epi64x(_data, _data);
+    epu8 orincl = ((in | block) == block) & in;
+    for (int i = 0; i < 7; i++) {    // Only rotating
+        in = permuted(in, rotboth);
+        orincl |= ((in | block) == block) & in;
+    }
+    return block == orincl;
 }
 
 inline std::pair<bool, bool> BMat8::row_space_included2(BMat8 a0, BMat8 b0,

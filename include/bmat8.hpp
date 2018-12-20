@@ -224,6 +224,12 @@ class BMat8 {
     //!
     //! Uses a 256 bitset internally
     bool row_space_included_bitset(BMat8 other) const;
+
+    //! Returns a mask for which vectors of a 16 rows \c epu8 are in
+    //! the row space of \c this
+    //!
+    //! Uses vector computation of the product of included rows
+    epu8 row_space_mask(epu8 vects) const;
     //! Returns whether the row space of \c this is included in other's
     //!
     //! Uses vector computation of the product of included rows
