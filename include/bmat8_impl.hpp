@@ -312,7 +312,7 @@ inline bool BMat8::row_space_included(BMat8 other) const {
     return equal(block, orincl);
 }
 
-inline epu8 row_space_mask(epu8 block) const {
+inline epu8 BMat8::row_space_mask(epu8 block) const {
     epu8 in = _mm_set_epi64x(_data, _data);
     epu8 orincl = ((in | block) == block) & in;
     for (int i = 0; i < 7; i++) {    // Only rotating
