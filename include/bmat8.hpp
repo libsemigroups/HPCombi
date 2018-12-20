@@ -239,12 +239,23 @@ class BMat8 {
     //!
     //! @param p : a permutation fixing the entries 8..15
     //! Note: no verification is performed on p
-    BMat8 permuted_rows(Perm16 p) const;
+    BMat8 row_permuted(Perm16 p) const;
     //! Returns the matrix whose columns have been permuted according to \c p
     //!
     //! @param p : a permutation fixing the entries 8..15
     //! Note: no verification is performed on p
-    BMat8 permuted_cols(Perm16 p) const;
+    BMat8 col_permuted(Perm16 p) const;
+
+    //! Returns the matrix associated to the permutation \c p by rows
+    //!
+    //! @param p : a permutation fixing the entries 8..15
+    //! Note: no verification is performed on p
+    static BMat8 row_permutation_matrix(Perm16 p);
+    //! Returns the matrix associated to the permutation \c p by columns
+    //!
+    //! @param p : a permutation fixing the entries 8..15
+    //! Note: no verification is performed on p
+    static BMat8 col_permutation_matrix(Perm16 p);
 
     //! Give the permutation whose right multiplication change \c *this
     //! to \c other
