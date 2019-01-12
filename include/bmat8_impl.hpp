@@ -18,8 +18,6 @@
 // This file contains an implementation of fast boolean matrices up to
 // dimension 8 x 8.
 
-#include <array>
-
 namespace HPCombi {
 static_assert(std::is_trivial<BMat8>(), "BMat8 is not a trivial class!");
 
@@ -158,6 +156,28 @@ inline BMat8 BMat8::transpose() const {
     return BMat8(x);
 }
 
+
+inline BMat8 BMat8::transpose_mask() const {
+    epu8 x = _mm_set_epi64x(_data, _data << 1);
+    uint64_t res = _mm_movemask_epi8(x);
+    x = x << Epu8(2);
+    res = res << 16 | _mm_movemask_epi8(x);
+    x = x << Epu8(2);
+    res = res << 16 | _mm_movemask_epi8(x);
+    x = x << Epu8(2);
+    res = res << 16 | _mm_movemask_epi8(x);
+    return BMat8(res);
+}
+
+inline BMat8 BMat8::transpose_maskd() const {
+    uint64_t res = _mm_movemask_epi8(_mm_set_epi64x(_data, _data << 1));
+    res = res << 16 | _mm_movemask_epi8(_mm_set_epi64x(_data << 2, _data << 3));
+    res = res << 16 | _mm_movemask_epi8(_mm_set_epi64x(_data << 4, _data << 5));
+    res = res << 16 | _mm_movemask_epi8(_mm_set_epi64x(_data << 6, _data << 7));
+    return BMat8(res);
+}
+
+
 using epu64 = uint64_t __attribute__ ((__vector_size__ (16), __may_alias__));
 
 inline void BMat8::transpose2(BMat8 &a, BMat8 &b) {
@@ -172,7 +192,7 @@ inline void BMat8::transpose2(BMat8 &a, BMat8 &b) {
     b._data = _mm_extract_epi64(x, 0);
 }
 
-static constexpr epu8 rotlow{ 7, 0, 1, 2, 3, 4, 5, 6};
+static constexpr epu8 rotlow { 7, 0, 1, 2, 3, 4, 5, 6};
 static constexpr epu8 rothigh
     { 0, 1, 2, 3, 4, 5, 6, 7,15, 8, 9,10,11,12,13,14};
 static constexpr epu8 rotboth
@@ -183,9 +203,9 @@ static constexpr epu8 rot2
 inline BMat8 BMat8::mult_transpose(BMat8 const &that) const {
     epu8 x = _mm_set_epi64x(_data, _data);
     epu8 y = _mm_shuffle_epi8(_mm_set_epi64x(that._data, that._data), rothigh);
-    epu8 data{};
-    epu8 diag = {0x01, 0x02, 0x04, 0x08, 0x10, 0x20, 0x40, 0x80,
-                0x80, 0x01, 0x02, 0x04, 0x08, 0x10, 0x20, 0x40};
+    epu8 data {};
+    epu8 diag {0x01, 0x02, 0x04, 0x08, 0x10, 0x20, 0x40, 0x80,
+               0x80, 0x01, 0x02, 0x04, 0x08, 0x10, 0x20, 0x40};
     for (int i = 0; i < 4; ++i) {
         data |= ((x & y) != epu8{}) & diag;
         y = _mm_shuffle_epi8(y, rot2);
@@ -198,7 +218,7 @@ inline epu8 BMat8::row_space_basis_internal() const {
     epu8 res = remove_dups(revsorted8(_mm_set_epi64x(0, _data)));
     epu8 rescy = res;
     // We now compute the union of all the included different rows
-    epu8 orincl{};
+    epu8 orincl {};
     for (int i = 0; i < 7; i++) {
         rescy = permuted(rescy, rotlow);
         orincl |= ((rescy | res) == res) & rescy;
@@ -401,12 +421,12 @@ inline BMat8 BMat8::col_permutation_matrix(Perm16 p) {
 }
 
 inline Perm16 BMat8::right_perm_action_on_basis_ref(BMat8 bm) const {
-    // LIBSEMIGROUPS_ASSERT(basis.row_space_basis() == basis);
+    // LIBSEMIGROUPS_ASSERT(bm.row_space_basis() == bm);
     std::vector<uint8_t> rows = this->rows();
     BMat8                product   = *this * bm;
     std::vector<uint8_t> prod_rows = product.rows();
 
-    // LIBSEMIGROUPS_ASSERT(product.row_space_basis() == basis);
+    // LIBSEMIGROUPS_ASSERT(product.row_space_basis() == bm);
 
     std::vector<uint8_t> perm(8);
     for (size_t i = 0; i < nr_rows(); ++i) {

@@ -109,6 +109,9 @@ BOOST_FIXTURE_TEST_CASE(BMat8_transpose, Fix) {
     for (auto m : BMlist)
         BOOST_TEST(m.transpose().transpose() == m);
 }
+TEST_AGREES(BMat8, transpose, transpose_mask, BMlist);
+TEST_AGREES(BMat8, transpose, transpose_maskd, BMlist);
+
 
 BOOST_FIXTURE_TEST_CASE(BMat8_transpose2, Fix) {
     for (auto a : BMlist) {

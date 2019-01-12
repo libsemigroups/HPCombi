@@ -182,8 +182,6 @@ int Bench_hsum() {
     MYBENCH("hsum_sum3_lmbd", HPCombi::horiz_sum3, sample.perms);
     return 0;
 }
-
-
 //##################################################################################
 int Bench_psum() {
     myBench("psum_ref1_nolmbd", HPCombi::partial_sums_ref, sample.perms);
@@ -199,6 +197,75 @@ int Bench_psum() {
     MYBENCH("psum_rnd_lmbd", HPCombi::partial_sums_round, sample.perms);
     return 0;
 }
+
+
+//##################################################################################
+int Bench_hmax() {
+    myBench("hmax_ref1_nolmbd", HPCombi::horiz_max_ref, sample.perms);
+    myBench("hmax_ref2_nolmbd", HPCombi::horiz_max_ref, sample.perms);
+    myBench("hmax_ref3_nolmbd", HPCombi::horiz_max_ref, sample.perms);
+
+    myBench("hmax_ref_nolmbd", HPCombi::horiz_max_ref, sample.perms);
+//    myBench("hmax_gen_nolmbd", HPCombi::horiz_max_gen, sample.perms);
+    myBench("hmax_max4_nolmbd", HPCombi::horiz_max4, sample.perms);
+    myBench("hmax_max3_nolmbd", HPCombi::horiz_max3, sample.perms);
+
+    MYBENCH("hmax_ref_lmbd", HPCombi::horiz_max_ref, sample.perms);
+//    MYBENCH("hmax_gen_lmbd", HPCombi::horiz_max_gen, sample.perms);
+    MYBENCH("hmax_max4_lmbd", HPCombi::horiz_max4, sample.perms);
+    MYBENCH("hmax_max3_lmbd", HPCombi::horiz_max3, sample.perms);
+    return 0;
+}
+//##################################################################################
+int Bench_pmax() {
+    myBench("pmax_ref1_nolmbd", HPCombi::partial_max_ref, sample.perms);
+    myBench("pmax_ref2_nolmbd", HPCombi::partial_max_ref, sample.perms);
+    myBench("pmax_ref3_nolmbd", HPCombi::partial_max_ref, sample.perms);
+
+    myBench("pmax_ref_nolmbd", HPCombi::partial_max_ref, sample.perms);
+//    myBench("pmax_gen_nolmbd", HPCombi::partial_max_gen, sample.perms);
+    myBench("pmax_rnd_nolmbd", HPCombi::partial_max_round, sample.perms);
+
+    MYBENCH("pmax_ref_lmbd", HPCombi::partial_max_ref, sample.perms);
+//    MYBENCH("pmax_gen_lmbd", HPCombi::partial_max_gen, sample.perms);
+    MYBENCH("pmax_rnd_lmbd", HPCombi::partial_max_round, sample.perms);
+    return 0;
+}
+
+
+//##################################################################################
+int Bench_hmin() {
+    myBench("hmin_ref1_nolmbd", HPCombi::horiz_min_ref, sample.perms);
+    myBench("hmin_ref2_nolmbd", HPCombi::horiz_min_ref, sample.perms);
+    myBench("hmin_ref3_nolmbd", HPCombi::horiz_min_ref, sample.perms);
+
+    myBench("hmin_ref_nolmbd", HPCombi::horiz_min_ref, sample.perms);
+//    myBench("hmin_gen_nolmbd", HPCombi::horiz_min_gen, sample.perms);
+    myBench("hmin_min4_nolmbd", HPCombi::horiz_min4, sample.perms);
+    myBench("hmin_min3_nolmbd", HPCombi::horiz_min3, sample.perms);
+
+    MYBENCH("hmin_ref_lmbd", HPCombi::horiz_min_ref, sample.perms);
+//    MYBENCH("hmin_gen_lmbd", HPCombi::horiz_min_gen, sample.perms);
+    MYBENCH("hmin_min4_lmbd", HPCombi::horiz_min4, sample.perms);
+    MYBENCH("hmin_min3_lmbd", HPCombi::horiz_min3, sample.perms);
+    return 0;
+}
+//##################################################################################
+int Bench_pmin() {
+    myBench("pmin_ref1_nolmbd", HPCombi::partial_min_ref, sample.perms);
+    myBench("pmin_ref2_nolmbd", HPCombi::partial_min_ref, sample.perms);
+    myBench("pmin_ref3_nolmbd", HPCombi::partial_min_ref, sample.perms);
+
+    myBench("pmin_ref_nolmbd", HPCombi::partial_min_ref, sample.perms);
+//    myBench("pmin_gen_nolmbd", HPCombi::partial_min_gen, sample.perms);
+    myBench("pmin_rnd_nolmbd", HPCombi::partial_min_round, sample.perms);
+
+    MYBENCH("pmin_ref_lmbd", HPCombi::partial_min_ref, sample.perms);
+//    MYBENCH("pmin_gen_lmbd", HPCombi::partial_min_gen, sample.perms);
+    MYBENCH("pmin_rnd_lmbd", HPCombi::partial_min_round, sample.perms);
+    return 0;
+}
+
 
 //##################################################################################
 int Bench_eval() {
@@ -240,6 +307,10 @@ auto dummy = {
     Bench_sort(),
     Bench_hsum(),
     Bench_psum(),
+    Bench_hmax(),
+    Bench_pmax(),
+    Bench_hmin(),
+    Bench_pmin(),
     Bench_eval(),
     Bench_first_diff(),
     Bench_last_diff()

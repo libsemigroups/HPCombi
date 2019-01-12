@@ -82,11 +82,29 @@ int Bench_row_space_size() {
     return 0;
 }
 
+//##################################################################################
+int Bench_transpose() {
+    myBenchMeth("transpose_knuth", transpose, sample);
+    myBenchMeth("transpose_mask", transpose_mask, sample);
+    myBenchMeth("transpose_maskd", transpose_maskd, sample);
+    return 0;
+}
+
 int Bench_transpose2() {
-    myBench("transpose",
+    myBench("transpose2_knuth",
             [](std::pair<BMat8, BMat8> p) {
                 return make_pair(p.first.transpose(),
                                  p.second.transpose());
+            }, pair_sample);
+    myBench("transpose2_mask",
+            [](std::pair<BMat8, BMat8> p) {
+                return make_pair(p.first.transpose_mask(),
+                                 p.second.transpose_mask());
+            }, pair_sample);
+    myBench("transpose2_maskd",
+            [](std::pair<BMat8, BMat8> p) {
+                return make_pair(p.first.transpose_maskd(),
+                                 p.second.transpose_maskd());
             }, pair_sample);
     myBench("transpose2",
             [](std::pair<BMat8, BMat8> p) {
@@ -118,7 +136,7 @@ int Bench_row_space_included2() {
                 return p.first.row_space_included(p.second)
                     == p.second.row_space_included(p.first);
             }, pair_sample);
-    myBench("row_space_incl_2",
+    myBench("row_space_incl2",
             [](std::pair<BMat8, BMat8> p) {
                 auto res = BMat8::row_space_included2(
                     p.first, p.second, p.second, p.first);
@@ -129,6 +147,7 @@ int Bench_row_space_included2() {
 
 auto dummy = {
     Bench_row_space_size(),
+    Bench_transpose(),
     Bench_transpose2(),
     Bench_row_space_included(),
     Bench_row_space_included2()

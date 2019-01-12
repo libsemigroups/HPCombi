@@ -328,13 +328,13 @@ inline uint8_t horiz_sum(epu8 v) { return horiz_sum3(v); }
  *  @par Algorithm:
  *  Reference @f$O(n)@f$ algorithm using loop and indexed access
  */
-inline epu8 partial_sums_gen(epu8);
+inline epu8 partial_sums_ref(epu8);
 /** @copydoc common_partial_sums
  *  @par Algorithm:
  *  Reference @f$O(n)@f$ algorithm using loop and indexed access
  *  through #HPCombi::VectGeneric
  */
-inline epu8 partial_sums_round(epu8);
+inline epu8 partial_sums_gen(epu8);
 /** @copydoc common_partial_sums
  *  @par Algorithm:
  *  4-stages paralell algorithm
@@ -342,6 +342,135 @@ inline epu8 partial_sums_round(epu8);
 inline epu8 partial_sums_round(epu8);
 /** @copydoc common_partial_sums */
 inline epu8 partial_sums(epu8 v) { return partial_sums_round(v); }
+
+
+/** @class common_horiz_max
+ * @brief Horizontal sum of a  #HPCombi::epu8
+ * @details
+ * @returns the horizontal sum of the input
+ * @par Example:
+ * @code
+ * horiz_max(epu8 { 5, 5, 2, 5, 1, 6,12, 4, 0, 3, 2, 0,12, 0, 0, 0});
+ * @endcode
+ * Returns `12`
+ */
+/** @copydoc common_horiz_max
+ *  @par Algorithm:
+ *  Reference @f$O(n)@f$ algorithm using loop and indexed access
+ */
+inline uint8_t horiz_max_ref(epu8);
+/** @copydoc common_horiz_max
+ *  @par Algorithm:
+ *  Reference @f$O(n)@f$ algorithm using loop and indexed access
+ *  through #HPCombi::VectGeneric
+ */
+// inline uint8_t horiz_max_gen(epu8);
+/** @copydoc common_horiz_max
+ *  @par Algorithm:
+ *  4-stages paralell algorithm
+ */
+inline uint8_t horiz_max4(epu8);
+/** @copydoc common_horiz_max
+ *  @par Algorithm:
+ *  3-stages paralell algorithm + indexed access
+ */
+inline uint8_t horiz_max3(epu8);
+/** @copydoc common_horiz_max */
+inline uint8_t horiz_max(epu8 v) { return horiz_max4(v); }
+
+/** @class common_partial_max
+ * @brief Horizontal partial sum of a #HPCombi::epu8
+ * @details
+ * @returns the partials max of the input
+ * @par Example:
+ * @code
+ * partial_max(epu8 { 5, 5, 2, 5, 1, 6,12, 4, 0, 3, 2,11,12,13,14,15});
+ * @endcode
+ * Returns `{ 5, 5, 5, 5, 5, 6,12,12,12,12,12,12,12,13,14,15}`
+ */
+/** @copydoc common_partial_max
+ *  @par Algorithm:
+ *  Reference @f$O(n)@f$ algorithm using loop and indexed access
+ */
+inline epu8 partial_max_ref(epu8);
+/** @copydoc common_partial_max
+ *  @par Algorithm:
+ *  Reference @f$O(n)@f$ algorithm using loop and indexed access
+ *  through #HPCombi::VectGeneric
+ */
+//inline epu8 partial_max_gen(epu8);
+/** @copydoc common_partial_max
+ *  @par Algorithm:
+ *  4-stages paralell algorithm
+ */
+inline epu8 partial_max_round(epu8);
+/** @copydoc common_partial_max */
+inline epu8 partial_max(epu8 v) { return partial_max_round(v); }
+
+
+/** @class common_horiz_min
+ * @brief Horizontal sum of a  #HPCombi::epu8
+ * @details
+ * @returns the horizontal sum of the input
+ * @par Example:
+ * @code
+ * horiz_min(epu8 { 5, 5, 2, 5, 1, 6,12, 4, 1, 3, 2, 2,12, 3, 4, 4});
+ * @endcode
+ * Returns `1`
+ */
+/** @copydoc common_horiz_min
+ *  @par Algorithm:
+ *  Reference @f$O(n)@f$ algorithm using loop and indexed access
+ */
+inline uint8_t horiz_min_ref(epu8);
+/** @copydoc common_horiz_min
+ *  @par Algorithm:
+ *  Reference @f$O(n)@f$ algorithm using loop and indexed access
+ *  through #HPCombi::VectGeneric
+ */
+// inline uint8_t horiz_min_gen(epu8);
+/** @copydoc common_horiz_min
+ *  @par Algorithm:
+ *  4-stages paralell algorithm
+ */
+inline uint8_t horiz_min4(epu8);
+/** @copydoc common_horiz_min
+ *  @par Algorithm:
+ *  3-stages paralell algorithm + indexed access
+ */
+inline uint8_t horiz_min3(epu8);
+/** @copydoc common_horiz_min */
+inline uint8_t horiz_min(epu8 v) { return horiz_min4(v); }
+
+/** @class common_partial_min
+ * @brief Horizontal partial sum of a #HPCombi::epu8
+ * @details
+ * @returns the partials min of the input
+ * @par Example:
+ * @code
+ * partial_min(epu8 { 5, 5, 2, 5, 1, 6,12, 4, 0, 3, 2,11,12,13,14,15});
+ * @endcode
+ * Returns `{ 5, 5, 2, 2, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0}`
+ */
+/** @copydoc common_partial_min
+ *  @par Algorithm:
+ *  Reference @f$O(n)@f$ algorithm using loop and indexed access
+ */
+inline epu8 partial_min_ref(epu8);
+/** @copydoc common_partial_min
+ *  @par Algorithm:
+ *  Reference @f$O(n)@f$ algorithm using loop and indexed access
+ *  through #HPCombi::VectGeneric
+ */
+//inline epu8 partial_min_gen(epu8);
+/** @copydoc common_partial_min
+ *  @par Algorithm:
+ *  4-stages paralell algorithm
+ */
+inline epu8 partial_min_round(epu8);
+/** @copydoc common_partial_min */
+inline epu8 partial_min(epu8 v) { return partial_min_round(v); }
+
 
 /** @class common_eval16
  * @brief Evaluation of a #HPCombi::epu8

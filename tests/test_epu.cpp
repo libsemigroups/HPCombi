@@ -410,7 +410,6 @@ TEST_AGREES(horiz_sum_ref, horiz_sum)
 BOOST_AUTO_TEST_SUITE_END()
 //****************************************************************************//
 
-
 //****************************************************************************//
 BOOST_AUTO_TEST_SUITE(EPU8_partial_sums)
 //****************************************************************************//
@@ -446,7 +445,131 @@ BOOST_FIXTURE_TEST_CASE(EPU8_partial_sum_round, Fix) {
     for (auto x : v) EPU8_EQUAL(partial_sums_round(x), partial_sums_ref(x));
 }
 BOOST_FIXTURE_TEST_CASE(EPU8_partial_sum, Fix) {
-    for (auto x : v) EPU8_EQUAL(partial_sums_round(x), partial_sums_ref(x));
+    for (auto x : v) EPU8_EQUAL(partial_sums(x), partial_sums_ref(x));
+}
+//****************************************************************************//
+BOOST_AUTO_TEST_SUITE_END()
+//****************************************************************************//
+
+
+//****************************************************************************//
+BOOST_AUTO_TEST_SUITE(EPU8_horiz_max)
+//****************************************************************************//
+BOOST_FIXTURE_TEST_CASE(EPU8_horiz_max_ref, Fix) {
+    BOOST_TEST(horiz_max_ref(zero) == 0);
+    BOOST_TEST(horiz_max_ref(P01) == 1);
+    BOOST_TEST(horiz_max_ref(epu8id) == 15);
+    BOOST_TEST(horiz_max_ref(P10) == 1);
+    BOOST_TEST(horiz_max_ref(P11) == 1);
+    BOOST_TEST(horiz_max_ref(P1) == 1);
+    BOOST_TEST(horiz_max_ref(P112) == 2);
+    BOOST_TEST(horiz_max_ref(Pa1) == 7);
+    BOOST_TEST(horiz_max_ref(Pa2) == 9);
+    BOOST_TEST(horiz_max_ref(P51) == 6);
+    BOOST_TEST(horiz_max_ref(Pv) == 15);
+    BOOST_TEST(horiz_max_ref(P5) == 5);
+    BOOST_TEST(horiz_max_ref(epu8rev) == 15);
+    BOOST_TEST(horiz_max_ref(Pc) == 43);
+}
+//TEST_AGREES(horiz_max_ref, horiz_max_gen)
+TEST_AGREES(horiz_max_ref, horiz_max4)
+TEST_AGREES(horiz_max_ref, horiz_max3)
+TEST_AGREES(horiz_max_ref, horiz_max)
+//****************************************************************************//
+BOOST_AUTO_TEST_SUITE_END()
+//****************************************************************************//
+
+//****************************************************************************//
+BOOST_AUTO_TEST_SUITE(EPU8_partial_max)
+//****************************************************************************//
+BOOST_FIXTURE_TEST_CASE(EPU8_partial_max_ref, Fix) {
+    EPU8_EQUAL(partial_max_ref(zero), zero);
+    EPU8_EQUAL(partial_max_ref(P01), Epu8({0}, 1));
+    EPU8_EQUAL(partial_max_ref(epu8id), epu8id);
+    EPU8_EQUAL(partial_max_ref(P10), P1);
+    EPU8_EQUAL(partial_max_ref(P11), P1);
+    EPU8_EQUAL(partial_max_ref(P1), P1);
+    EPU8_EQUAL(partial_max_ref(P112), P112);
+    EPU8_EQUAL(partial_max_ref(Pa1), (Epu8({4, 4, 5, 5, 5}, 7)));
+    EPU8_EQUAL(partial_max_ref(Pa2), (Epu8({4, 4, 5, 5, 5}, 9)));
+    EPU8_EQUAL(partial_max_ref(P51), (Epu8({5, 5}, 6)));
+    EPU8_EQUAL(partial_max_ref(Pv),
+               (epu8{ 5, 5, 5, 5, 5, 6,12,12,12,12,12,12,12,13,14,15}));
+    EPU8_EQUAL(partial_max_ref(P5), P5);
+    EPU8_EQUAL(partial_max_ref(epu8rev), Epu8({}, 15));
+    EPU8_EQUAL(partial_max_ref(Pc), (Epu8({23,23,23,23}, 43)));
+
+}
+// BOOST_FIXTURE_TEST_CASE(EPU8_partial_sum_gen, Fix) {
+//     for (auto x : v) EPU8_EQUAL(partial_max_gen(x), partial_max_ref(x));
+// }
+BOOST_FIXTURE_TEST_CASE(EPU8_partial_max_round, Fix) {
+    for (auto x : v) EPU8_EQUAL(partial_max_round(x), partial_max_ref(x));
+}
+BOOST_FIXTURE_TEST_CASE(EPU8_partial_max, Fix) {
+    for (auto x : v) EPU8_EQUAL(partial_max(x), partial_max_ref(x));
+}
+//****************************************************************************//
+BOOST_AUTO_TEST_SUITE_END()
+//****************************************************************************//
+
+
+//****************************************************************************//
+BOOST_AUTO_TEST_SUITE(EPU8_horiz_min)
+//****************************************************************************//
+BOOST_FIXTURE_TEST_CASE(EPU8_horiz_min_ref, Fix) {
+    BOOST_TEST(horiz_min_ref(zero) == 0);
+    BOOST_TEST(horiz_min_ref(P01) == 0);
+    BOOST_TEST(horiz_min_ref(epu8id) == 0);
+    BOOST_TEST(horiz_min_ref(P10) == 0);
+    BOOST_TEST(horiz_min_ref(P11) == 0);
+    BOOST_TEST(horiz_min_ref(P1) == 1);
+    BOOST_TEST(horiz_min_ref(P112) == 1);
+    BOOST_TEST(horiz_min_ref(Pa1) == 1);
+    BOOST_TEST(horiz_min_ref(Pa2) == 1);
+    BOOST_TEST(horiz_min_ref(P51) == 1);
+    BOOST_TEST(horiz_min_ref(Pv) == 0);
+    BOOST_TEST(horiz_min_ref(P5) == 5);
+    BOOST_TEST(horiz_min_ref(epu8rev) == 0);
+    BOOST_TEST(horiz_min_ref(Pc) == 5);
+}
+//TEST_AGREES(horiz_min_ref, horiz_min_gen)
+TEST_AGREES(horiz_min_ref, horiz_min4)
+TEST_AGREES(horiz_min_ref, horiz_min3)
+TEST_AGREES(horiz_min_ref, horiz_min)
+//****************************************************************************//
+BOOST_AUTO_TEST_SUITE_END()
+//****************************************************************************//
+
+//****************************************************************************//
+BOOST_AUTO_TEST_SUITE(EPU8_partial_min)
+//****************************************************************************//
+BOOST_FIXTURE_TEST_CASE(EPU8_partial_min_ref, Fix) {
+    EPU8_EQUAL(partial_min_ref(zero), zero);
+    EPU8_EQUAL(partial_min_ref(P01), zero);
+    EPU8_EQUAL(partial_min_ref(epu8id), zero);
+    EPU8_EQUAL(partial_min_ref(P10), P10);
+    EPU8_EQUAL(partial_min_ref(P11), P11);
+    EPU8_EQUAL(partial_min_ref(P1), P1);
+    EPU8_EQUAL(partial_min_ref(P112), P1);
+    EPU8_EQUAL(partial_min_ref(Pa1), (Epu8({4, 2, 2}, 1)));
+    EPU8_EQUAL(partial_min_ref(Pa2), (Epu8({4, 2, 2}, 1)));
+    EPU8_EQUAL(partial_min_ref(P51), (Epu8({5}, 1)));
+    EPU8_EQUAL(partial_min_ref(Pv),
+               (Epu8({ 5, 5, 2, 2, 1, 1, 1, 1,}, 0)));
+    EPU8_EQUAL(partial_min_ref(P5), P5);
+    EPU8_EQUAL(partial_min_ref(epu8rev), epu8rev);
+    EPU8_EQUAL(partial_min_ref(Pc), (Epu8({23}, 5)));
+
+}
+// BOOST_FIXTURE_TEST_CASE(EPU8_partial_sum_gen, Fix) {
+//     for (auto x : v) EPU8_EQUAL(partial_min_gen(x), partial_min_ref(x));
+// }
+BOOST_FIXTURE_TEST_CASE(EPU8_partial_min_round, Fix) {
+    for (auto x : v) EPU8_EQUAL(partial_min_round(x), partial_min_ref(x));
+}
+BOOST_FIXTURE_TEST_CASE(EPU8_partial_min, Fix) {
+    for (auto x : v) EPU8_EQUAL(partial_min(x), partial_min_ref(x));
 }
 //****************************************************************************//
 BOOST_AUTO_TEST_SUITE_END()

@@ -22,6 +22,7 @@
 
 #include <algorithm>  // for uniform_int_distribution, swap
 #include <array>      // for array
+#include <bitset>     // for bitset
 #include <climits>    // for CHAR_BIT
 #include <cstddef>    // for size_t
 #include <cstdint>    // for uint64_t
@@ -29,7 +30,6 @@
 #include <random>     // for mt19937, random_device
 #include <utility>    // for hash
 #include <vector>     // for vector
-#include <bitset>
 
 #include "epu.hpp"
 
@@ -140,6 +140,18 @@ class BMat8 {
     //! Returns the standard matrix transpose of a BMat8.
     //! Uses the technique found in Knuth AoCP Vol. 4 Fasc. 1a, p. 15.
     BMat8 transpose() const;
+
+    //! Returns the transpose of \c this
+    //!
+    //! Returns the standard matrix transpose of a BMat8.
+    //! Uses \c movemask instruction.
+    BMat8 transpose_mask() const;
+
+    //! Returns the transpose of \c this
+    //!
+    //! Returns the standard matrix transpose of a BMat8.
+    //! Uses \c movemask instruction.
+    BMat8 transpose_maskd() const;
 
     //! Transpose two matrices at once.
     //!
