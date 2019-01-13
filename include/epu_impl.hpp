@@ -119,6 +119,21 @@ inline epu8 network_sort(epu8 res, std::array<epu8, sz> rounds) {
     return res;
 }
 
+/// Apply a sorting network in place and return the permutation
+template <bool Increassing = true, size_t sz>
+inline epu8 network_sort_perm(epu8 &v, std::array<epu8, sz> rounds) {
+    epu8 res = epu8id;
+    for (auto round : rounds) {
+        // This conditional should be optimized out by the compiler
+        epu8 mask = Increassing ? round < epu8id : epu8id < round;
+        epu8 b = permuted(v, round);
+        epu8 cmp = _mm_blendv_epi8(b < v, v < b, mask);
+        v = _mm_blendv_epi8(v, b, cmp);
+        res = _mm_blendv_epi8(res, permuted(res, round), cmp);
+    }
+    return res;
+}
+
 /** A 16-way sorting network
  * @details Sorting network from Knuth [AoCP3] Fig. 51 p 229.
  * used by the #sorted function
@@ -165,12 +180,26 @@ constexpr std::array<epu8, 6> sorting_rounds8
 inline bool is_sorted(epu8 a) {
     return _mm_movemask_epi8(shifted_right(a) > a) == 0;
 }
-inline epu8 sorted(epu8 a) { return network_sort<true>(a, sorting_rounds); }
-inline epu8 sorted8(epu8 a) { return network_sort<true>(a, sorting_rounds8); };
-inline epu8 revsorted(epu8 a) { return network_sort<false>(a, sorting_rounds); }
+inline epu8 sorted(epu8 a) {
+    return network_sort<true>(a, sorting_rounds);
+}
+inline epu8 sorted8(epu8 a) {
+    return network_sort<true>(a, sorting_rounds8);
+}
+inline epu8 revsorted(epu8 a) {
+    return network_sort<false>(a, sorting_rounds);
+}
 inline epu8 revsorted8(epu8 a) {
     return network_sort<false>(a, sorting_rounds8);
-};
+}
+
+inline epu8 sort_perm(epu8 &a) {
+    return network_sort_perm<true>(a, sorting_rounds);
+}
+inline epu8 sort8_perm(epu8 &a) {
+    return network_sort_perm<true>(a, sorting_rounds8);
+}
+
 
 inline epu8 random_epu8(uint16_t bnd) {
     epu8 res;

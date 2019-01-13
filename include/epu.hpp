@@ -235,7 +235,7 @@ inline bool is_sorted(epu8 a);
 inline epu8 sorted(epu8 a);
 /** Return a #HPCombi::epu8 with the two half sorted
  * @details
- * @par Algorithm: Uses a 6stages sorting network #sorting_rounds8
+ * @par Algorithm: Uses a 6 stages sorting network #sorting_rounds8
  */
 inline epu8 sorted8(epu8 a);
 /** Return a reverse sorted #HPCombi::epu8
@@ -246,9 +246,20 @@ inline epu8 sorted8(epu8 a);
 inline epu8 revsorted(epu8 a);
 /** Return a #HPCombi::epu8 with the two half reverse sorted
  * @details
- * @par Algorithm: Uses a 6stages sorting network #sorting_rounds8
+ * @par Algorithm: Uses a 6 stages sorting network #sorting_rounds8
  */
 inline epu8 revsorted8(epu8 a);
+
+/** Sort \c this and return the sorting permutation
+ * @details
+ * @par Algorithm: Uses a 9 stages sorting network #sorting_rounds8
+ */
+inline epu8 sort_perm(epu8 & a);
+/** Sort \c this and return the sorting permutation
+ * @details
+ * @par Algorithm: Uses a 9 stages sorting network #sorting_rounds8
+ */
+inline epu8 sort8_perm(epu8 & a);
 
 
 /** Find if a vector is a permutation of one other

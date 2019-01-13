@@ -334,6 +334,42 @@ BOOST_FIXTURE_TEST_CASE(EPU8_revsorted, Fix) {
     } while (std::next_permutation(refx.begin(), refx.begin()+9));
 }
 
+BOOST_FIXTURE_TEST_CASE(EPU8_sort_perm, Fix) {
+    epu8 ve         { 2, 1, 3, 2, 4, 1, 1, 4, 2, 0, 1, 2, 1, 3, 4, 0};
+    EPU8_EQUAL(sort_perm(ve),
+               (epu8{ 9,15, 1, 5, 6,10,12, 3, 0, 8,11, 2,13, 7, 4,14}));
+    EPU8_EQUAL(ve,
+               (epu8{ 0, 0, 1, 1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 4, 4, 4}));
+
+    for (auto x : v) {
+        epu8 xsort = x;
+        epu8 psort = sort_perm(xsort);
+        BOOST_TEST(is_sorted(xsort));
+        BOOST_TEST(is_permutation(psort));
+        EPU8_EQUAL(permuted(x, psort), xsort);
+    }
+
+}
+
+BOOST_FIXTURE_TEST_CASE(EPU8_sort8_perm, Fix) {
+    epu8 ve         { 2, 1, 3, 2, 4, 1, 1, 4, 2, 0, 1, 2, 1, 3, 4, 0};
+    EPU8_EQUAL(sort8_perm(ve),
+               (epu8{ 1, 6, 5, 0, 3, 2, 4, 7, 9,15,10,12, 8,11,13,14}));
+    EPU8_EQUAL(ve,
+               (epu8{ 1, 1, 1, 2, 2, 3, 4, 4, 0, 0, 1, 1, 2, 2, 3, 4}));
+
+    for (auto x : v) {
+        epu8 xsort = x;
+        epu8 psort = sort_perm(xsort);
+        BOOST_TEST(is_sorted(xsort || Epu8({0,0,0,0,0,0,0,0}, 0xFF)));
+        BOOST_TEST(is_sorted(xsort && Epu8({0,0,0,0,0,0,0,0}, 0xFF)));
+        BOOST_TEST(is_permutation(psort));
+        EPU8_EQUAL(permuted(x, psort), xsort);
+    }
+
+}
+
+
 BOOST_FIXTURE_TEST_CASE(EPU8_permutation_of, Fix) {
     EPU8_EQUAL(permutation_of(epu8id, epu8id), epu8id);
     EPU8_EQUAL(permutation_of(Pa, Pa), epu8id);
