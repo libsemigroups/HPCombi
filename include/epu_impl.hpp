@@ -284,7 +284,7 @@ inline uint8_t horiz_max_ref(epu8 v) {
         res = std::max(res, v[i]);
     return res;
 }
-// inline uint8_t horiz_max_gen(epu8 v) { return as_VectGeneric(v).horiz_max(); }
+inline uint8_t horiz_max_gen(epu8 v) { return as_VectGeneric(v).horiz_max(); }
 inline uint8_t horiz_max4(epu8 v) { return partial_max_round(v)[15]; }
 inline uint8_t horiz_max3(epu8 v) {
     auto sr = summing_rounds;
@@ -301,10 +301,10 @@ inline epu8 partial_max_ref(epu8 v) {
         res[i] = std::max(res[i - 1], v[i]);
     return res;
 }
-// inline epu8 partial_max_gen(epu8 v) {
-//     as_VectGeneric(v).partial_max_inplace();
-//     return v;
-// }
+inline epu8 partial_max_gen(epu8 v) {
+    as_VectGeneric(v).partial_max_inplace();
+    return v;
+}
 inline epu8 partial_max_round(epu8 v) {
     for (epu8 round : summing_rounds)
         v = max(v, permuted(v, round));
@@ -318,7 +318,7 @@ inline uint8_t horiz_min_ref(epu8 v) {
         res = std::min(res, v[i]);
     return res;
 }
-// inline uint8_t horiz_min_gen(epu8 v) { return as_VectGeneric(v).horiz_min(); }
+inline uint8_t horiz_min_gen(epu8 v) { return as_VectGeneric(v).horiz_min(); }
 inline uint8_t horiz_min4(epu8 v) { return partial_min_round(v)[15]; }
 inline uint8_t horiz_min3(epu8 v) {
     auto sr = mining_rounds;
@@ -335,10 +335,10 @@ inline epu8 partial_min_ref(epu8 v) {
         res[i] = std::min(res[i - 1], v[i]) ;
     return res;
 }
-// inline epu8 partial_min_gen(epu8 v) {
-//     as_VectGeneric(v).partial_min_inplace();
-//     return v;
-// }
+inline epu8 partial_min_gen(epu8 v) {
+    as_VectGeneric(v).partial_min_inplace();
+    return v;
+}
 inline epu8 partial_min_round(epu8 v) {
     for (epu8 round : mining_rounds)
         v = min(v, permuted(v, round));

@@ -364,7 +364,7 @@ inline uint8_t horiz_max_ref(epu8);
  *  Reference @f$O(n)@f$ algorithm using loop and indexed access
  *  through #HPCombi::VectGeneric
  */
-// inline uint8_t horiz_max_gen(epu8);
+inline uint8_t horiz_max_gen(epu8);
 /** @copydoc common_horiz_max
  *  @par Algorithm:
  *  4-stages paralell algorithm
@@ -398,7 +398,7 @@ inline epu8 partial_max_ref(epu8);
  *  Reference @f$O(n)@f$ algorithm using loop and indexed access
  *  through #HPCombi::VectGeneric
  */
-//inline epu8 partial_max_gen(epu8);
+inline epu8 partial_max_gen(epu8);
 /** @copydoc common_partial_max
  *  @par Algorithm:
  *  4-stages paralell algorithm
@@ -428,7 +428,7 @@ inline uint8_t horiz_min_ref(epu8);
  *  Reference @f$O(n)@f$ algorithm using loop and indexed access
  *  through #HPCombi::VectGeneric
  */
-// inline uint8_t horiz_min_gen(epu8);
+inline uint8_t horiz_min_gen(epu8);
 /** @copydoc common_horiz_min
  *  @par Algorithm:
  *  4-stages paralell algorithm
@@ -462,7 +462,7 @@ inline epu8 partial_min_ref(epu8);
  *  Reference @f$O(n)@f$ algorithm using loop and indexed access
  *  through #HPCombi::VectGeneric
  */
-//inline epu8 partial_min_gen(epu8);
+inline epu8 partial_min_gen(epu8);
 /** @copydoc common_partial_min
  *  @par Algorithm:
  *  4-stages paralell algorithm

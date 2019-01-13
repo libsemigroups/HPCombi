@@ -77,6 +77,8 @@ template <size_t _Size, typename Expo = uint8_t> struct VectGeneric {
     using const_iterator = typename array::const_iterator;
     iterator begin() { return v.begin(); }
     iterator end() { return v.end(); }
+    const_iterator begin() const { return v.begin(); }
+    const_iterator end() const { return v.end(); }
 
     bool operator==(const VectGeneric &u) const {
         return first_diff(u) == _Size;
@@ -154,7 +156,7 @@ template <size_t _Size, typename Expo = uint8_t> struct VectGeneric {
         return true;
     }
 
-    uint64_t horiz_sum() {
+    uint64_t horiz_sum() const {
         Expo res = 0;
         for (uint64_t i = 0; i < _Size; i++)
             res += v[i];
@@ -173,7 +175,31 @@ template <size_t _Size, typename Expo = uint8_t> struct VectGeneric {
             v[i] += v[i - 1];
     }
 
-    VectGeneric eval() {
+    Expo horiz_max() const {
+        Expo res = v[0];
+        for (uint64_t i = 1; i < _Size; i++)
+            res = std::max(res, v[i]);
+        return res;
+    }
+
+    void partial_max_inplace() {
+        for (uint64_t i = 1; i < _Size; i++)
+            v[i] = std::max(v[i], v[i - 1]);
+    }
+
+    Expo horiz_min() const {
+        Expo res = v[0];
+        for (uint64_t i = 1; i < _Size; i++)
+            res = std::min(res, v[i]);
+        return res;
+    }
+
+    void partial_min_inplace() {
+        for (uint64_t i = 1; i < _Size; i++)
+            v[i] = std::min(v[i], v[i - 1]);
+    }
+
+    VectGeneric eval() const {
         VectGeneric res{};
         for (size_t i = 0; i < _Size; i++)
             if (v[i] < _Size)
