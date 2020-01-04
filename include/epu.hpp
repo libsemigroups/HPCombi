@@ -44,6 +44,7 @@
 #define HPCOMBI_CONSTEXPR_CONSTRUCTOR
 #endif
 
+
 namespace HPCombi {
 
 /// Unsigned 8 bits int constant.
@@ -63,12 +64,14 @@ using xpu8 = uint8_t __attribute__((vector_size(32)));
 static_assert(alignof(xpu8) == 32,
               "xpu8 type is not properly aligned by the compiler !");
 
+
 namespace {  // Implementation detail code
 
 /// A handmade C++11 constexpr lambda
 template <typename T> struct ConstFun {
     HPCOMBI_CONSTEXPR_CONSTRUCTOR ConstFun(T cc) : cst(cc) {}
     HPCOMBI_CONSTEXPR T operator()(T) const { return cst; }
+    /// constant value for constexpr lambda
     T cst;
 };
 
@@ -140,6 +143,7 @@ HPCOMBI_CONSTEXPR uint8_t popcount4_fun(uint8_t i) {
 }
 
 }  // Anonymous namespace
+
 
 /// Factory object for various SIMD constants in particular constexpr
 TPUBuild<epu8> Epu8;
