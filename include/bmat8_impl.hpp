@@ -138,7 +138,7 @@ inline BMat8 BMat8::random() { return BMat8(_dist(_gen)); }
 inline BMat8 BMat8::random(size_t const dim) {
     HPCOMBI_ASSERT(0 < dim && dim <= 8);
     BMat8 bm = BMat8::random();
-    for (size_t i = dim + 1; i < 8; ++i) {
+    for (size_t i = dim; i < 8; ++i) {
         bm._data &= ~ROW_MASK[i];
         bm._data &= ~COL_MASK[i];
     }
