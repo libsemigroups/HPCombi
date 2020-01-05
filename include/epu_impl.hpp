@@ -411,7 +411,7 @@ inline epu8 eval16_popcount(epu8 v) {
 
 
 inline epu8 popcount16(epu8 v){
-    return permuted(popcount4, (v & 0x0f)) + permuted(popcount4, v >> 4);
+    return permuted(popcount4, (v & Epu8(0x0f))) + permuted(popcount4, v >> 4);
 }
 
 
@@ -435,7 +435,7 @@ inline bool is_partial_permutation(epu8 v, const size_t k) {
     // (forall x < 15, multiplicity x v <= 1
     // (v = Perm16::one()   or  last diff index < 16)
     return (_mm_movemask_epi8(v + Epu8(1) <= Epu8(0x10)) == 0xffff)
-        && (_mm_movemask_epi8(eval16(v) <= 1) == 0xffff)
+        && (_mm_movemask_epi8(eval16(v) <= Epu8(1)) == 0xffff)
         && (diff == 16 || diff < k);
 }
 
