@@ -23,4 +23,22 @@
 // GCC-4.8 constexpr function argument bug
 #cmakedefine HPCOMBI_CONSTEXPR_FUN_ARGS
 
+
+// Various Intel sse/avx intrisics
+#cmakedefine HPCOMBI_HAVE__mm_blendv_epi8
+#cmakedefine HPCOMBI_HAVE__mm_cmpeq_epi8
+#cmakedefine HPCOMBI_HAVE__mm_cmpestri
+#cmakedefine HPCOMBI_HAVE__mm_cmpestrm
+#cmakedefine HPCOMBI_HAVE__mm_cmplt_epi8
+#cmakedefine HPCOMBI_HAVE__mm_extract_epi64
+#cmakedefine HPCOMBI_HAVE__mm_max_epi8
+#cmakedefine HPCOMBI_HAVE__mm_max_epu8
+#cmakedefine HPCOMBI_HAVE__mm_min_epi8
+#cmakedefine HPCOMBI_HAVE__mm_min_epu8
+#cmakedefine HPCOMBI_HAVE__mm_movemask_epi8
+#cmakedefine HPCOMBI_HAVE__mm_popcnt_u32
+#cmakedefine HPCOMBI_HAVE__mm_set_epi64x
+#cmakedefine HPCOMBI_HAVE__mm_shuffle_epi8
+#cmakedefine HPCOMBI_HAVE__mm_slli_epi32
+
 #endif  // HPCOMBI_CONFIG_HPP

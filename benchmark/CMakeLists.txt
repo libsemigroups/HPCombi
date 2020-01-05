@@ -48,8 +48,19 @@ string(REPLACE "\n" ";" hpcombi_intrinsics "${hpcombi_intrinsics}")
 foreach (intrin ${hpcombi_intrinsics})
   string(REPLACE "|" ";" intrin "${intrin}")
   list(GET intrin 0 intrin_name)
-  check_cxx_symbol_exists("${intrin_name}" "x86intrin.h"
-    "HPCOMBI_HAVE_${intrin_name}")
+  list(GET intrin 1 intrin_params)
+  set(CMAKE_REQUIRED_FLAGS "-mavx")
+  check_cxx_source_compiles("
+    #include<x86intrin.h>
+    int main() {
+      auto res = ${intrin_name}(${intrin_params});
+      return 0;
+    }
+  "
+  "HPCOMBI_HAVE_${intrin_name}"
+  )
+  # check_cxx_symbol_exists("${intrin_name}" "x86intrin.h"
+  #   "HPCOMBI_HAVE_${intrin_name}")
 endforeach()
 
 
