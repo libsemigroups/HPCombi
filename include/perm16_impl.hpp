@@ -21,7 +21,7 @@
 #ifdef HAVE_EXPERIMENTAL_NUMERIC_LCM
 #include <experimental/numeric>  // lcm until c++17
 #else
-#include "gcdlcm.hpp"  // lcm until c++17
+#include "fallback/gcdlcm.hpp"  // lcm until c++17
 #endif                 // HAVE_EXPERIMENTAL_NUMERIC_LCM
 
 namespace HPCombi {

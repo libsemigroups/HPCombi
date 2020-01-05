@@ -55,7 +55,6 @@ endforeach()
 
 include_directories(
   ${CMAKE_SOURCE_DIR}/include
-  ${CMAKE_SOURCE_DIR}/include/fallback
   ${PROJECT_BINARY_DIR})
 
 set(benchmark_src bench_epu8.cpp bench_perm16.cpp bench_bmat8.cpp sort.cpp inverse.cpp)

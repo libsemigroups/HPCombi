@@ -29,7 +29,7 @@
 #endif
 
 #if __cplusplus <= 201103L
-#include "seq.hpp"
+#include "fallback/seq.hpp"
 #endif
 
 #include "vect_generic.hpp"
