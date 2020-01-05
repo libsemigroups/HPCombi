@@ -361,8 +361,8 @@ BOOST_FIXTURE_TEST_CASE(EPU8_sort8_perm, Fix) {
     for (auto x : v) {
         epu8 xsort = x;
         epu8 psort = sort_perm(xsort);
-        BOOST_TEST(is_sorted(xsort || Epu8({0,0,0,0,0,0,0,0}, 0xFF)));
-        BOOST_TEST(is_sorted(xsort && Epu8({0,0,0,0,0,0,0,0}, 0xFF)));
+        BOOST_TEST(is_sorted(xsort | Epu8({0,0,0,0,0,0,0,0}, 0xFF)));
+        BOOST_TEST(is_sorted(xsort & Epu8({0,0,0,0,0,0,0,0}, 0xFF)));
         BOOST_TEST(is_permutation(psort));
         EPU8_EQUAL(permuted(x, psort), xsort);
     }
