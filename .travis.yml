@@ -43,6 +43,27 @@ matrix:
             - g++-7
             - texlive-font-utils
             - doxygen
+    - env: TEST_SUITE=standard MATRIX_EVAL="CC=gcc-8 && CXX=g++-8"
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - gcc-8
+            - g++-8
+            - texlive-font-utils
+            - doxygen
+    - compiler: clang
+      env: TEST_SUITE=standard MATRIX_EVAL="CC=clang-4.0 && CXX=clang++-4.0"
+      addons:
+        apt:
+          sources:
+            - llvm-toolchain-trusty-4.0
+            - ubuntu-toolchain-r-test
+          packages:
+            - clang-4.0
+            - texlive-font-utils
+            - doxygen
     - compiler: clang
       env: TEST_SUITE=standard MATRIX_EVAL="CC=clang-5.0 && CXX=clang++-5.0"
       addons:
