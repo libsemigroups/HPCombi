@@ -288,6 +288,7 @@ struct Perm16 : public Transf16 /* public PPerm : diamond problem */ {
      *  Fast @f$O(n)@f$ algorithm using vector comparison
      */
     epu8 lehmer() const;
+
     /** @class common_length
      * @brief The Coxeter length (ie: number of inversion) of a permutation
      * @details
@@ -299,20 +300,20 @@ struct Perm16 : public Transf16 /* public PPerm : diamond problem */ {
      * @endcode
      * Returns @verbatim 4 @endverbatim
      */
-    /** @copydoc common_lehmer
+    /** @copydoc common_length
      *  @par Algorithm:
      *  Reference @f$O(n^2)@f$ algorithm using loop and indexed access
      */
     uint8_t length_ref() const;
-    /** @copydoc common_lehmer
+    /** @copydoc common_length
      *  @par Algorithm:
      *  Reference @f$O(n^2)@f$ algorithm using loop and indexed access after
      *     a cast to \c std::array
      */
     uint8_t length_arr() const;
-    /** @copydoc common_lehmer
+    /** @copydoc common_length
      *  @par Algorithm:
-     *  Reference @f$O(n^2)@f$ using vector lehmer and fast horizontal sum
+     *  @f$O(n)@f$ using vector lehmer and fast horizontal sum
      */
     uint8_t length() const;
 
@@ -327,12 +328,12 @@ struct Perm16 : public Transf16 /* public PPerm : diamond problem */ {
      * @endcode
      * Returns @verbatim 2 @endverbatim
      */
-    /** @copydoc common_lehmer
+    /** @copydoc common_nb_descent
      *  @par Algorithm:
      *  Reference @f$O(n)@f$ using a loop
      */
     uint8_t nb_descents_ref() const;
-    /** @copydoc common_lehmer
+    /** @copydoc common_nb_descent
      *  @par Algorithm:
      *  Reference @f$O(1)@f$ using vector shift and comparison
      */
@@ -397,6 +398,11 @@ struct Perm16 : public Transf16 /* public PPerm : diamond problem */ {
     /** @copydoc common_left_weak_leq
      *  @par Algorithm:
      *  Reference @f$O(n)@f$ with vectorized test of inclusion
+     */
+    bool left_weak_leq_length(Perm16 other) const;
+    /** @copydoc common_left_weak_leq
+     *  @par Algorithm:
+     *  @f$O(n)@f$ algorithm using length
      */
     bool left_weak_leq(Perm16 other) const;
 

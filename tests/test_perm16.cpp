@@ -435,6 +435,7 @@ BOOST_FIXTURE_TEST_CASE(Perm16_left_weak_leq, Fix) {
     for (auto u : PlistSmall) {
         for (auto v : PlistSmall) {
             BOOST_TEST(u.left_weak_leq(v) == u.left_weak_leq_ref(v));
+            BOOST_TEST(u.left_weak_leq_length(v) == u.left_weak_leq_ref(v));
         }
     }
 }

@@ -45,7 +45,7 @@ template<typename TF, typename Sample>
 void myBench(const string &name, TF pfunc, Sample &sample) {
     string fullname = name + "_" + CXX_VER + "_proc-" + PROCID;
     benchmark::RegisterBenchmark(fullname.c_str(),
-       [pfunc, sample](benchmark::State& st) {
+        [pfunc, sample](benchmark::State& st) {
             for (auto _ : st) {
                 for (auto elem : sample) {
                     benchmark::DoNotOptimize(pfunc(elem));
@@ -60,7 +60,7 @@ void myBench(const string &name, TF pfunc, Sample &sample) {
         return p; }, smp)
 #define myBenchMeth(descr, methname, smp) \
     myBench(descr, [](Perm16 p) { \
-        for (int i = 0; i < 10; i++) benchmark::DoNotOptimize(p.methname()); \
+        for (int i = 0; i < 100; i++) benchmark::DoNotOptimize(p.methname()); \
         return p.methname(); }, smp)
 
 #define myBenchMeth2(descr, methname, smp) \
@@ -118,6 +118,7 @@ int Bench_left_weak_leq() {
     myBenchMeth2("leqweak_ref1", left_weak_leq_ref, sample.perms);
     myBenchMeth2("leqweak_ref2", left_weak_leq_ref, sample.perms);
     myBenchMeth2("leqweak_ref3", left_weak_leq_ref, sample.perms);
+    myBenchMeth2("leqweak_length", left_weak_leq_length, sample.perms);
     myBenchMeth2("leqweak_opt", left_weak_leq, sample.perms);
     return 0;
 }

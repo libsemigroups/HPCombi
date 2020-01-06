@@ -359,4 +359,9 @@ inline bool Perm16::left_weak_leq(Perm16 other) const {
     return true;
 }
 
+inline bool Perm16::left_weak_leq_length(Perm16 other) const {
+    Perm16 prod = *this * other.inverse();
+    return other.length() == length() + prod.length();
+}
+
 }  // namespace HPCombi
