@@ -201,6 +201,11 @@ inline uint8_t Perm16::largest_moved_point() const {
     uint32_t res = _mm_movemask_epi8(v != one().v);
     return res == 0 ? 0xFF : _bit_scan_reverse(res);
 }
+/** Returns the number of fix points of \c *this */
+inline uint8_t Perm16::nb_fix_points() const {
+    uint32_t res = _mm_movemask_epi8(v == one().v);
+    return _mm_popcnt_u32(res);
+}
 
 // We declare PERM16 as a correct Monoid
 namespace power_helper {

@@ -334,13 +334,13 @@ BOOST_AUTO_TEST_SUITE_END()
 BOOST_AUTO_TEST_SUITE(Perm16_mathematical_methods)
 //****************************************************************************//
 
-BOOST_FIXTURE_TEST_CASE(EPU8_smallest_fix_point, Fix) {
+BOOST_FIXTURE_TEST_CASE(Perm16_smallest_fix_point, Fix) {
     BOOST_TEST(Perm16::one().smallest_fix_point() == 0);
     BOOST_TEST(PPa.smallest_fix_point() == 5);
     BOOST_TEST(PPb.smallest_fix_point() == 5);
     BOOST_TEST(RandPerm.smallest_fix_point() == 1);
 }
-BOOST_FIXTURE_TEST_CASE(EPU8_smallest_moved_point, Fix) {
+BOOST_FIXTURE_TEST_CASE(Perm16_smallest_moved_point, Fix) {
     BOOST_TEST(Perm16::one().smallest_moved_point() == 0xFF);
     BOOST_TEST(PPa.smallest_moved_point() == 0);
     BOOST_TEST(PPb.smallest_moved_point() == 0);
@@ -348,18 +348,18 @@ BOOST_FIXTURE_TEST_CASE(EPU8_smallest_moved_point, Fix) {
     BOOST_TEST(Perm16({0,1,3,2}).smallest_moved_point() == 2);
 }
 
-BOOST_FIXTURE_TEST_CASE(EPU8_largest_fix_point, Fix) {
+BOOST_FIXTURE_TEST_CASE(Perm16_largest_fix_point, Fix) {
     BOOST_TEST(Perm16::one().largest_fix_point() == 15);
     BOOST_TEST(PPa.largest_fix_point() == 15);
     BOOST_TEST(PPb.largest_fix_point() == 14);
     BOOST_TEST(RandPerm.largest_fix_point() == 1);
 }
-BOOST_FIXTURE_TEST_CASE(EPU8_largest_moved_point, Fix) {
-    BOOST_TEST(Perm16::one().largest_moved_point() == 0xFF);
-    BOOST_TEST(PPa.largest_moved_point() == 4);
-    BOOST_TEST(PPb.largest_moved_point() == 15);
-    BOOST_TEST(RandPerm.largest_moved_point() == 15);
-    BOOST_TEST(Perm16({0,1,3,2}).largest_moved_point() == 3);
+BOOST_FIXTURE_TEST_CASE(Perm16_nb_fix_points, Fix) {
+    BOOST_TEST(Perm16::one().nb_fix_points() == 16);
+    BOOST_TEST(PPa.nb_fix_points() == 11);
+    BOOST_TEST(PPb.nb_fix_points() == 8);
+    BOOST_TEST(RandPerm.nb_fix_points() == 1);
+    BOOST_TEST(Perm16({0,1,3,2}).nb_fix_points() == 14);
 }
 
 //****************************************************************************//

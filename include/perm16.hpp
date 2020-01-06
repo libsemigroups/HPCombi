@@ -408,6 +408,8 @@ struct Perm16 : public Transf16 /* public PPerm : diamond problem */ {
     uint8_t largest_fix_point() const;
     /** Returns the largest non fix point of \c *this */
     uint8_t largest_moved_point() const;
+    /** Returns the number of fix points of \c *this */
+    uint8_t nb_fix_points() const;
 
 };
 
