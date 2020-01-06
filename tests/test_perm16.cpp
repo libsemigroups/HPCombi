@@ -209,6 +209,54 @@ BOOST_AUTO_TEST_CASE(PTransf16_hash) {
     BOOST_TEST(std::hash<PTransf16>()(PTransf16({4, 5, 0}, {9, 0, 1})) != 0);
 }
 
+BOOST_AUTO_TEST_CASE(PTransf16_fix_points_mask) {
+    EPU8_EQUAL(PTransf16({}).fix_points_mask(), Epu8(FF));
+    EPU8_EQUAL(PTransf16({}).fix_points_mask(false), Epu8(FF));
+    EPU8_EQUAL(PTransf16({}).fix_points_mask(true), Epu8(0));
+    EPU8_EQUAL(PTransf16({4,4,4,4}).fix_points_mask(), Epu8({0,0,0,0}, FF));
+    EPU8_EQUAL(PTransf16({4,4,4,4}).fix_points_mask(false), Epu8({0,0,0,0}, FF));
+    EPU8_EQUAL(PTransf16({4,4,4,4}).fix_points_mask(true), Epu8({FF,FF,FF,FF}, 0));
+    EPU8_EQUAL(PTransf16(Epu8(1)).fix_points_mask(), Epu8({0,FF}, 0));
+    EPU8_EQUAL(PTransf16(Epu8(2)).fix_points_mask(), Epu8({0,0,FF}, 0));
+    EPU8_EQUAL(PTransf16(Epu8({2,2,2,0xf},7)).fix_points_mask(),
+               Epu8({0,0,FF,0,0,0,0,FF,0,0,0,0,0,0,0,0}, 0));
+    EPU8_EQUAL(PTransf16(Epu8({0,2,2,0xf,2,2,2,14,5,2}, 2)).fix_points_mask(),
+               Epu8({FF,0,FF,0,0,0,0,0,0,0,0,0,0,0,0,0}, 0));
+    EPU8_EQUAL(PTransf16(Epu8({0,2,2,0xf,2,2,2,2,8,2}, 14)).fix_points_mask(false),
+               Epu8({FF,0,FF,0,0,0,0,0,FF,0,0,0,0,0,FF,0}, 0));
+    EPU8_EQUAL(PTransf16(Epu8({0,2,2,0xf,2,2,2,2,5,2}, 2)).fix_points_mask(true),
+               Epu8({0,FF,0},FF));
+}
+BOOST_AUTO_TEST_CASE(PTransf16_fix_points_bitset) {
+    BOOST_TEST(PTransf16({}).fix_points_bitset() == 0xFFFF);
+    BOOST_TEST(PTransf16({}).fix_points_bitset(false) == 0xFFFF);
+    BOOST_TEST(PTransf16({}).fix_points_bitset(true) == 0);
+    BOOST_TEST(PTransf16({4,4,4,4}).fix_points_bitset() == 0xFFF0);
+    BOOST_TEST(PTransf16({4,4,4,4}).fix_points_bitset(false) == 0xFFF0);
+    BOOST_TEST(PTransf16({4,4,4,4}).fix_points_bitset(true) == 0x000F);
+    BOOST_TEST(PTransf16(Epu8(1)).fix_points_bitset() == 0x0002);
+    BOOST_TEST(PTransf16(Epu8(2)).fix_points_bitset()  == 0x0004);
+    BOOST_TEST(PTransf16(Epu8({2,2,2,0xf},7)).fix_points_bitset() == 0x0084);
+    BOOST_TEST(PTransf16(Epu8({0,2,2,0xf,2,2,2,14,5,2}, 2)).fix_points_bitset()
+               == 0x5);
+    BOOST_TEST(PTransf16(Epu8({0,2,2,0xf,2,2,2,2,8,2}, 14)).fix_points_bitset(false)
+               == 0x4105);
+    BOOST_TEST(PTransf16(Epu8({0,2,2,0xf,2,2,2,2,5,2}, 2)).fix_points_bitset(true)
+               == 0xFFFA);
+}
+BOOST_AUTO_TEST_CASE(PTransf16_nb_fix_points) {
+    BOOST_TEST(PTransf16({}).nb_fix_points() == 16);
+    BOOST_TEST(PTransf16({4,4,4,4}).nb_fix_points() == 12);
+    BOOST_TEST(PTransf16(Epu8(1)).nb_fix_points() == 1);
+    BOOST_TEST(PTransf16(Epu8(2)).nb_fix_points()  == 1);
+    BOOST_TEST(PTransf16(Epu8({2,2,2,0xf},7)).nb_fix_points() == 2);
+    BOOST_TEST(PTransf16(Epu8({0,2,2,0xf,2,2,2,14,5,2}, 2)).nb_fix_points()
+               == 2);
+    BOOST_TEST(PTransf16(Epu8({0,2,2,0xf,2,2,2,2,8,2}, 14)).nb_fix_points()
+               == 4);
+
+}
+
 BOOST_AUTO_TEST_SUITE_END()
 //****************************************************************************//
 
@@ -334,6 +382,27 @@ BOOST_AUTO_TEST_SUITE_END()
 BOOST_AUTO_TEST_SUITE(Perm16_mathematical_methods)
 //****************************************************************************//
 
+BOOST_FIXTURE_TEST_CASE(Perm16_fix_points_mask, Fix) {
+    EPU8_EQUAL(PTransf16::one().fix_points_mask(), Epu8(FF));
+    EPU8_EQUAL(Perm16::one().fix_points_mask(), Epu8(FF));
+    EPU8_EQUAL(PPa.fix_points_mask(), Epu8({0, 0, 0, 0, 0}, FF));
+    EPU8_EQUAL(PPb.fix_points_mask(),
+               (epu8{ 0, 0, 0, 0, 0,FF, 0,FF,FF,FF,FF,FF,FF, 0,FF, 0}));
+    EPU8_EQUAL(RandPerm.fix_points_mask(), Epu8({0,FF}, 0));
+
+    EPU8_EQUAL(Perm16::one().fix_points_mask(false), Epu8(FF));
+    EPU8_EQUAL(PPa.fix_points_mask(false), Epu8({0, 0, 0, 0, 0}, FF));
+    EPU8_EQUAL(PPb.fix_points_mask(false),
+               (epu8{ 0, 0, 0, 0, 0,FF, 0,FF,FF,FF,FF,FF,FF, 0,FF, 0}));
+    EPU8_EQUAL(RandPerm.fix_points_mask(false), Epu8({0,FF}, 0));
+
+    EPU8_EQUAL(Perm16::one().fix_points_mask(true), Epu8(0));
+    EPU8_EQUAL(PPa.fix_points_mask(true), Epu8({FF,FF,FF,FF,FF}, 0));
+    EPU8_EQUAL(PPb.fix_points_mask(true),
+               (epu8{FF,FF,FF,FF,FF, 0,FF, 0, 0, 0, 0, 0, 0,FF, 0,FF}));
+    EPU8_EQUAL(RandPerm.fix_points_mask(true), Epu8({FF, 0}, FF));
+}
+
 BOOST_FIXTURE_TEST_CASE(Perm16_smallest_fix_point, Fix) {
     BOOST_TEST(Perm16::one().smallest_fix_point() == 0);
     BOOST_TEST(PPa.smallest_fix_point() == 5);
@@ -341,7 +410,7 @@ BOOST_FIXTURE_TEST_CASE(Perm16_smallest_fix_point, Fix) {
     BOOST_TEST(RandPerm.smallest_fix_point() == 1);
 }
 BOOST_FIXTURE_TEST_CASE(Perm16_smallest_moved_point, Fix) {
-    BOOST_TEST(Perm16::one().smallest_moved_point() == 0xFF);
+    BOOST_TEST(Perm16::one().smallest_moved_point() == FF);
     BOOST_TEST(PPa.smallest_moved_point() == 0);
     BOOST_TEST(PPb.smallest_moved_point() == 0);
     BOOST_TEST(RandPerm.smallest_moved_point() == 0);

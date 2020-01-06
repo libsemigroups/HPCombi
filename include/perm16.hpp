@@ -67,20 +67,39 @@ struct alignas(16) PTransf16 : public Vect16 {
         return HPCombi::permuted(v, p.v) | (p.v == Epu8(0xFF));
     }
 
-    /** @copydoc common_inverse_pperm
-     *  @par Algorithm:
-     *  @f$O(n)@f$ algorithm using reference cast to arrays
-     */
+    /** Returns a mask for the image of \c *this */
     epu8 image_mask(bool complement=false) const;
+    /** Returns a bit mask for the image of \c *this */
     uint32_t image_bitset(bool complement=false) const;
+    /** Returns a mask for the domain of \c *this */
     epu8 domain_mask(bool complement=false) const;
+    /** Returns a bit mask for the domain of \c *this */
     uint32_t domain_bitset(bool complement=false) const;
 
+    /** Returns the partial right identity for \c *this */
     PTransf16 right_one() const;
+    /** Returns the partial left identity for \c *this */
     PTransf16 left_one() const;
 
+    /** Returns the size of the image of \c *this */
     uint32_t rank_ref() const;
+    /** Returns the size of the image of \c *this */
     uint32_t rank() const;
+
+    /** Returns a mask for the fix point of \c *this */
+    epu8 fix_points_mask(bool complement=false) const;
+    /** Returns a bit mask for the fix point of \c *this */
+    uint32_t fix_points_bitset(bool complement=false) const;
+    /** Returns the smallest fix point of \c *this */
+    uint8_t smallest_fix_point() const;
+    /** Returns the smallest non fix point of \c *this */
+    uint8_t smallest_moved_point() const;
+    /** Returns the largest fix point of \c *this */
+    uint8_t largest_fix_point() const;
+    /** Returns the largest non fix point of \c *this */
+    uint8_t largest_moved_point() const;
+    /** Returns the number of fix points of \c *this */
+    uint8_t nb_fix_points() const;
 };
 
 /** Full transformation of @f$\{0\dots 15\}@f$
@@ -405,17 +424,6 @@ struct Perm16 : public Transf16 /* public PPerm : diamond problem */ {
      *  @f$O(n)@f$ algorithm using length
      */
     bool left_weak_leq(Perm16 other) const;
-
-    /** Returns the smallest fix point of \c *this */
-    uint8_t smallest_fix_point() const;
-    /** Returns the smallest non fix point of \c *this */
-    uint8_t smallest_moved_point() const;
-    /** Returns the largest fix point of \c *this */
-    uint8_t largest_fix_point() const;
-    /** Returns the largest non fix point of \c *this */
-    uint8_t largest_moved_point() const;
-    /** Returns the number of fix points of \c *this */
-    uint8_t nb_fix_points() const;
 
 };
 
