@@ -44,8 +44,8 @@ message(STATUS "*** Compiler id is ${CMAKE_CXX_COMPILER_ID}")
 if ( CMAKE_CXX_COMPILER_ID STREQUAL "GNU" OR CMAKE_CXX_COMPILER_ID STREQUAL "Clang" )
   # Workaround of CMAKE bug https://stackoverflow.com/questions/47213356/
   set(CMAKE_REQUIRED_FLAGS ${CMAKE_REQUIRED_FLAGS} -std=c++11)
-  add_compile_options( -std=c++11 -Wall -g -pg)
-endif ( )
+  add_compile_options(-std=c++11 -Wall -g -pg)
+endif()
 
 
 ##################################
@@ -53,6 +53,7 @@ endif ( )
 include(CheckCXXSymbolExists)
 include(CheckIncludeFileCXX)
 include(CheckCXXSourceCompiles)
+include(CheckCXXCompilerFlag)
 
 ## Check for static lcm
 check_include_file_cxx("experimental/numeric" HPCOMBI_HAVE_EXPERIMENTAL_NUMERIC)
@@ -77,10 +78,14 @@ check_cxx_source_compiles(
   "
   HPCOMBI_CONSTEXPR_FUN_ARGS)
 
+check_cxx_compiler_flag('-mavx' HPCOMBI_HAVE_FLAG_AVX)
+#check_cxx_compiler_flag('-mavx2' HPCOMBI_HAVE_FLAG_AVX2)
+#check_cxx_compiler_flag('-mavx512bw' HPCOMBI_HAVE_FLAG_AVX512BW)
+
 ## Check for Intel intrisics
 check_include_file_cxx("x86intrin.h" HPCOMBI_HAVE_X86INTRIN)
-if (NOT ${HPCOMBI_HAVE_X86INTRIN})
-  message(FATAL_ERROR "No SSE or AVX compiler intrinsics")
+if (NOT ${HPCOMBI_HAVE_FLAG_AVX} OR NOT ${HPCOMBI_HAVE_X86INTRIN})
+  message(FATAL_ERROR "No AVX compiler intrinsics")
 endif()
 file(READ ${CMAKE_SOURCE_DIR}/list_intrin.txt hpcombi_intrinsics)
 string(REPLACE ";" "|" hpcombi_intrinsics "${hpcombi_intrinsics}")
