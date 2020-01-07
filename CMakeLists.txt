@@ -47,9 +47,66 @@ if ( CMAKE_CXX_COMPILER_ID STREQUAL "GNU" OR CMAKE_CXX_COMPILER_ID STREQUAL "Cla
   add_compile_options( -std=c++11 -Wall -g -pg)
 endif ( )
 
+
+##################################
+# Checks for compiler capabilities
+include(CheckCXXSymbolExists)
+include(CheckIncludeFileCXX)
+include(CheckCXXSourceCompiles)
+
+## Check for static lcm
+check_include_file_cxx("experimental/numeric" HPCOMBI_HAVE_EXPERIMENTAL_NUMERIC)
+if (HPCOMBI_HAVE_EXPERIMENTAL_NUMERIC)
+  check_cxx_source_compiles(
+        "
+        #include <experimental/numeric>
+        static_assert(std::experimental::lcm(4, 6) == 12, \"Buggy lcm\");
+        int main() { }
+        "
+        HPCOMBI_HAVE_EXPERIMENTAL_NUMERIC_LCM)
+endif (HPCOMBI_HAVE_EXPERIMENTAL_NUMERIC)
+
+## Check for buggy constexpr support G++ 5.0
+check_cxx_source_compiles(
+  "
+  using T = int;
+  constexpr int exec(T f()) { return f(); }
+  constexpr int foo() { return 1; }
+  static_assert(exec(foo) == 1, \"Failed exec\");
+  int main() {}
+  "
+  HPCOMBI_CONSTEXPR_FUN_ARGS)
+
+## Check for Intel intrisics
+check_include_file_cxx("x86intrin.h" HPCOMBI_HAVE_X86INTRIN)
+if (NOT ${HPCOMBI_HAVE_X86INTRIN})
+  message(FATAL_ERROR "No SSE or AVX compiler intrinsics")
+endif()
+file(READ ${CMAKE_SOURCE_DIR}/list_intrin.txt hpcombi_intrinsics)
+string(REPLACE ";" "|" hpcombi_intrinsics "${hpcombi_intrinsics}")
+string(REPLACE "\n" ";" hpcombi_intrinsics "${hpcombi_intrinsics}")
+foreach (intrin ${hpcombi_intrinsics})
+  string(REPLACE "|" ";" intrin "${intrin}")
+  list(GET intrin 0 intrin_name)
+  list(GET intrin 1 intrin_params)
+  set(CMAKE_REQUIRED_FLAGS "-mavx")
+  check_cxx_source_compiles("
+    #include<x86intrin.h>
+    int main() {
+      ${intrin_name}(${intrin_params});
+      return 0;
+    }
+  "
+  "HPCOMBI_HAVE_${intrin_name}"
+  )
+  if (NOT "${HPCOMBI_HAVE_${intrin_name}}")
+    message(FATAL_ERROR "Intrinsic ${intrin_name} not supported by compiler")
+  endif()
+endforeach()
+
+
 ###################
 # Project Structure
-# add_subdirectory(src)
 add_subdirectory(examples)
 add_subdirectory(benchmark)
 add_subdirectory(doc)

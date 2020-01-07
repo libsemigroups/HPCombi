@@ -25,26 +25,19 @@ include_directories(
   ${PROJECT_BINARY_DIR})
 
 add_definitions (-DBOOST_TEST_DYN_LINK)
+add_compile_options(-mavx -mtune=native -funroll-loops -flax-vector-conversions)
 
-add_executable (test_epu test_epu.cpp)
-target_link_libraries(test_epu ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY} )
-target_compile_options(test_epu PUBLIC -mavx -mtune=native -funroll-loops -flax-vector-conversions)
+set(test_src
+  test_epu.cpp test_perm16.cpp test_perm_all.cpp test_bmat8.cpp)
+foreach(f ${test_src})
+  get_filename_component(testName ${f} NAME_WE)
+  add_executable (${testName} ${f})
+  target_link_libraries(${testName} ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY} )
+endforeach(f)
 
-add_executable (test_perm16 test_perm16.cpp)
-target_link_libraries(test_perm16 ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY} )
-target_compile_options(test_perm16 PUBLIC -mavx -mtune=native -funroll-loops -flax-vector-conversions)
-
-add_executable (test_perm_all test_perm_all.cpp)
-target_link_libraries(test_perm_all ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY} )
-target_compile_options(test_perm_all PUBLIC -mavx -mtune=native -funroll-loops -flax-vector-conversions)
-
-add_executable (test_bmat8 test_bmat8.cpp)
-target_link_libraries(test_bmat8 ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY} )
-target_compile_options(test_bmat8 PUBLIC -mavx -mtune=native -funroll-loops -flax-vector-conversions)
-
+# Test for multiple inclusions
 add_executable (test_mincl test_mincl.cpp test_mincl0.cpp test_mincl1.cpp)
 target_link_libraries(test_mincl ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY} )
-target_compile_options(test_mincl PUBLIC -mavx -mtune=native -funroll-loops -flax-vector-conversions)
 
 add_test (TestEPU test_epu)
 add_test (TestPerm16 test_perm16)
