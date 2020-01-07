@@ -1,4 +1,9 @@
+# List of intrisics used in HPCombi
+# Format: <name>;<list of parameters>
+# line starting with # are comments
 _mm_blendv_epi8;__m128i(),__m128i(),__m128i()
+_mm_bslli_si128;__m128i(),1
+_mm_bsrli_si128;__m128i(),1
 _mm_cmpeq_epi8;__m128i(),__m128i()
 _mm_cmpestri;__m128i(),1,__m128i(),1,1
 _mm_cmpestrm;__m128i(),1,__m128i(),1,1
@@ -13,3 +18,6 @@ _mm_popcnt_u32;1
 _mm_set_epi64x;1,1
 _mm_shuffle_epi8;__m128i(),__m128i()
 _mm_slli_epi32;__m128i(),1
+_mm_testc_si128;__m128i(),__m128i()
+_mm_testz_si128;__m128i(),__m128i()
+_mm_xor_si128;__m128i(),__m128i()
