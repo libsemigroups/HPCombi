@@ -104,6 +104,10 @@ BOOST_AUTO_TEST_SUITE(PTransf16_test)
 
 BOOST_AUTO_TEST_CASE(PTransf16_constructor) {
     const uint8_t FF = 0xff;
+    BOOST_TEST(PTransf16({}) == PTransf16::one());
+    BOOST_TEST(PTransf16({0,1,2,3})  == PTransf16::one());
+    BOOST_TEST(PTransf16({1,0}) == PTransf16({1,0,2}));
+    BOOST_TEST(PTransf16({2}) == PTransf16({2,1,2}));
     BOOST_TEST(PTransf16({4, 5, 0}, {9, 0, 1}) ==
                PTransf16({ 1,FF,FF,FF, 9, 0,FF,FF,FF,FF,FF,FF,FF,FF,FF,FF}));
     BOOST_TEST(PTransf16({4, 5, 0, 8}, {9, 0, 1, 2}) ==
@@ -111,6 +115,14 @@ BOOST_AUTO_TEST_CASE(PTransf16_constructor) {
     BOOST_TEST(PTransf16({4, 5, 0, 8}, {9, 0, 2, 2}) ==
                PTransf16({ 2,FF,FF,FF, 9, 0,FF,FF,2,FF,FF,FF,FF,FF,FF,FF}));
 }
+
+
+BOOST_AUTO_TEST_CASE(PTransf16_hash) {
+    BOOST_TEST(std::hash<PTransf16>()(PTransf16::one()) != 0);
+    BOOST_TEST(std::hash<PTransf16>()(PTransf16(Epu8(1))) != 0);
+    BOOST_TEST(std::hash<PTransf16>()(PTransf16({4, 5, 0}, {9, 0, 1})) != 0);
+}
+
 
 BOOST_AUTO_TEST_CASE(PTransf16_image_mask) {
     EPU8_EQUAL(PTransf16({}).image_mask(), Epu8(FF));
@@ -201,12 +213,6 @@ BOOST_AUTO_TEST_CASE(PTransf16_rank) {
     BOOST_TEST(PTransf16({2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2}).rank() == 1);
     BOOST_TEST(PTransf16({2,2,2,0xf,2,2,2,2,2,2,2,2,2,2,2,2}).rank() == 2);
     BOOST_TEST(PTransf16({0,2,2,0xf,2,2,2,2,5,2,2,2,2,2,2,2}).rank() == 4);
-}
-
-BOOST_AUTO_TEST_CASE(PTransf16_hash) {
-    BOOST_TEST(std::hash<PTransf16>()(PTransf16::one()) != 0);
-    BOOST_TEST(std::hash<PTransf16>()(PTransf16(Epu8(1))) != 0);
-    BOOST_TEST(std::hash<PTransf16>()(PTransf16({4, 5, 0}, {9, 0, 1})) != 0);
 }
 
 BOOST_AUTO_TEST_CASE(PTransf16_fix_points_mask) {
