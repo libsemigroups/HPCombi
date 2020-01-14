@@ -79,13 +79,14 @@ check_cxx_source_compiles(
   HPCOMBI_CONSTEXPR_FUN_ARGS)
 
 check_cxx_compiler_flag('-mavx' HPCOMBI_HAVE_FLAG_AVX)
+#check_cxx_compiler_flag('-march=native' HPCOMBI_HAVE_FLAG_NATIVE)
 #check_cxx_compiler_flag('-mavx2' HPCOMBI_HAVE_FLAG_AVX2)
 #check_cxx_compiler_flag('-mavx512bw' HPCOMBI_HAVE_FLAG_AVX512BW)
 
 ## Check for Intel intrisics
 check_include_file_cxx("x86intrin.h" HPCOMBI_HAVE_X86INTRIN)
 if (NOT ${HPCOMBI_HAVE_FLAG_AVX} OR NOT ${HPCOMBI_HAVE_X86INTRIN})
-  message(FATAL_ERROR "No AVX compiler intrinsics")
+  message(FATAL_ERROR "No SSE/AVX compiler intrinsics")
 endif()
 file(READ ${CMAKE_SOURCE_DIR}/list_intrin.txt hpcombi_intrinsics)
 string(REPLACE ";" "|" hpcombi_intrinsics "${hpcombi_intrinsics}")
@@ -112,6 +113,7 @@ foreach (intrin ${hpcombi_intrinsics})
   endif()
 endforeach()
 
+add_compile_options(-mavx -mtune=native -funroll-loops -flax-vector-conversions)
 
 ###################
 # Project Structure

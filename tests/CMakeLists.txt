@@ -25,7 +25,6 @@ include_directories(
   ${PROJECT_BINARY_DIR})
 
 add_definitions (-DBOOST_TEST_DYN_LINK)
-add_compile_options(-mavx -mtune=native -funroll-loops -flax-vector-conversions)
 
 set(test_src
   test_epu.cpp test_perm16.cpp test_perm_all.cpp test_bmat8.cpp)

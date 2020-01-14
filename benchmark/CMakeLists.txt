@@ -24,7 +24,6 @@ set(benchmark_src
 foreach(f ${benchmark_src})
   get_filename_component(benchName ${f} NAME_WE)
   add_executable (${benchName} ${f})
-  target_compile_options(${benchName} PUBLIC -mavx -mtune=native -funroll-loops -flax-vector-conversions)
   target_link_libraries(${benchName} benchmark pthread)
   # install(PROGRAMS ${CMAKE_CURRENT_BINARY_DIR}/${benchName}
   #   DESTINATION bin

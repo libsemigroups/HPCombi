@@ -30,7 +30,6 @@ set(usage_examples RD.cpp Renner.cpp stringmonoid.cpp Trans.cpp CF.cpp image.cpp
 foreach(f ${usage_examples})
   get_filename_component(exampleName ${f} NAME_WE)
   add_executable (${exampleName} ${f})
-  target_compile_options(${exampleName} PUBLIC -mavx -mtune=native -funroll-loops -flax-vector-conversions)
   # install(PROGRAMS ${CMAKE_CURRENT_BINARY_DIR}/${exampleName}
   #   DESTINATION bin
   #   RENAME ${CMAKE_PROJECT_NAME}-${exampleName})
