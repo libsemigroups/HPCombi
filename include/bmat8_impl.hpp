@@ -389,6 +389,10 @@ inline uint64_t BMat8::row_space_size_ref() const {
 }
 
 inline std::vector<uint8_t> BMat8::rows() const {
+  return row_vector();
+}
+
+inline std::vector<uint8_t> BMat8::row_vector() const {
     std::vector<uint8_t> rows;
     for (size_t i = 0; i < 8; ++i) {
         uint8_t row = static_cast<uint8_t>(_data << (8 * i) >> 56);
@@ -396,6 +400,15 @@ inline std::vector<uint8_t> BMat8::rows() const {
     }
     return rows;
 }
+
+inline std::array<uint8_t, 8> BMat8::row_array() const {
+  std::array<uint8_t, 8> rows;
+      rows.fill(0);
+      for (size_t i = 0; i < 8; ++i) {
+        rows[i] = static_cast<uint8_t>(_data << (8 * i) >> 56);
+      }
+      return rows;
+    }
 
 inline size_t BMat8::nr_rows() const {
     epu8 x = _mm_set_epi64x(_data, 0);

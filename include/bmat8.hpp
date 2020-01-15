@@ -194,6 +194,14 @@ class BMat8 {
     //! Returns a \c std::vector for rows of \c this
     std::vector<uint8_t> rows() const;
 
+    //! Returns a \c std::vector for rows of \c this
+    //! This is the same as BMat8::rows, which is retained for backwards
+    //! compatibility.
+    std::vector<uint8_t> row_vector() const;
+
+    //! Returns a \c std::array for rows of \c this
+    std::array<uint8_t, 8> row_array() const;
+
     //! Returns the cardinality of the row space of \c this
     //!
     //! Reference implementation computing all products
