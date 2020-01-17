@@ -111,14 +111,12 @@ inline void BMat8::set(size_t i, size_t j, bool val) {
 }
 
 inline BMat8::BMat8(std::vector<std::vector<bool>> const &mat) {
-    // FIXME exceptions
-    HPCOMBI_ASSERT(mat.size() <= 8);
-    HPCOMBI_ASSERT(0 < mat.size());
+    if (mat.size() > 8) HPCOMBI_EXCEPTION("Matrix too large");
     _data = 0;
     uint64_t pow = 1;
     pow = pow << 63;
     for (auto row : mat) {
-        HPCOMBI_ASSERT(row.size() == mat.size());
+        if (row.size() != mat.size()) HPCOMBI_EXCEPTION("Wrong size of row");
         for (auto entry : row) {
             if (entry) {
                 _data ^= pow;

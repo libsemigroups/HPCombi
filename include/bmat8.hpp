@@ -32,8 +32,8 @@
 #include <vector>     // for vector
 
 #include "epu.hpp"
-
 #include "perm16.hpp"
+#include "hpcombi_exc.hpp"
 
 #ifndef HPCOMBI_ASSERT
 #define HPCOMBI_ASSERT(x) assert(x)
