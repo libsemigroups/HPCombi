@@ -19,12 +19,13 @@ git --version
 # rm -rf googletest
 
 echo "installing benchmark from sources"
-git clone https://github.com/google/benchmark.git googlebenchmark
-cd googlebenchmark
+curl -L -O https://github.com/google/benchmark/archive/v1.5.0.tar.gz
+tar xvf v1.5.0.tar.gz
+cd benchmark-1.5.0
 mkdir build
 cd build
 cmake .. -DCMAKE_BUILD_TYPE=RELEASE -DBENCHMARK_DOWNLOAD_DEPENDENCIES=ON
 make
 sudo make install
 cd ../../
-rm -rf googlebenchmark
+rm -rf benchmark-1.5.0
