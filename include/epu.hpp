@@ -52,15 +52,18 @@ inline constexpr uint8_t operator"" _u8(unsigned long long arg) noexcept {
     return static_cast<uint8_t>(arg);
 }
 
+/// SIMD vector of 8 unsigned bytes
+using pu8 = uint8_t __attribute__((vector_size(8), __aligned__(8)));
 /// SIMD vector of 16 unsigned bytes
-using epu8 = uint8_t __attribute__((vector_size(16)));
+using epu8 = uint8_t __attribute__((vector_size(16), __aligned__(16)));
+/// SIMD vector of 32 unsigned bytes
+using xpu8 = uint8_t __attribute__((vector_size(32), __aligned__(32)));
 
+
+static_assert(alignof(pu8) == 8,
+              "epu8 type is not properly aligned by the compiler !");
 static_assert(alignof(epu8) == 16,
               "epu8 type is not properly aligned by the compiler !");
-
-/// SIMD vector of 32 unsigned bytes
-using xpu8 = uint8_t __attribute__((vector_size(32)));
-
 static_assert(alignof(xpu8) == 32,
               "xpu8 type is not properly aligned by the compiler !");
 
@@ -147,6 +150,7 @@ HPCOMBI_CONSTEXPR uint8_t popcount4_fun(uint8_t i) {
 
 /// Factory object for various SIMD constants in particular constexpr
 TPUBuild<epu8> Epu8;
+TPUBuild<pu8> Pu8;
 
 /// The indentity #HPCombi::epu8
 HPCOMBI_CONSTEXPR epu8 epu8id = Epu8(id_fun);
@@ -162,6 +166,11 @@ HPCOMBI_CONSTEXPR epu8 left_dup = Epu8(left_dup_fun);
 HPCOMBI_CONSTEXPR epu8 right_dup = Epu8(right_dup_fun);
 /// Popcount #HPCombi::epu8: the ith entry contains the number of bits set in i
 HPCOMBI_CONSTEXPR epu8 popcount4 = Epu8(popcount4_fun);
+
+/// The indentity #HPCombi::epu8
+HPCOMBI_CONSTEXPR pu8 pu8id = Pu8(id_fun);
+/// The reverted identity #HPCombi::epu8
+HPCOMBI_CONSTEXPR pu8 pu8rev = Pu8(complement_fun);
 
 /** Cast a #HPCombi::epu8 to a c++ \c std::array
  *
@@ -185,6 +194,31 @@ inline epu8 from_array(TPUBuild<epu8>::array a) {
     return reinterpret_cast<const epu8 &>(a);
 }
 
+
+/** Cast a #HPCombi::pu8 to a c++ \c std::array
+ *
+ *  This is usually faster for algorithm using a lot of indexed acces.
+ */
+inline TPUBuild<pu8>::array &as_array(pu8 &v) {
+    return reinterpret_cast<typename TPUBuild<pu8>::array &>(v);
+}
+/** Cast a constant #HPCombi::pu8 to a C++ \c std::array
+ *
+ *  This is usually faster for algorithm using a lot of indexed acces.
+ */
+inline const TPUBuild<pu8>::array &as_array(const pu8 &v) {
+    return reinterpret_cast<const typename TPUBuild<pu8>::array &>(v);
+}
+/** Cast a C++ \c std::array to a #HPCombi::pu8 */
+// Passing the argument by reference triggers a segfault in gcc
+// Since vector types doesn't belongs to the standard, I didn't manage
+// to know if I'm using undefined behavior here.
+inline pu8 from_array(TPUBuild<pu8>::array a) {
+    return reinterpret_cast<const pu8 &>(a);
+}
+
+
+
 /** Cast a #HPCombi::epu8 to a c++ #HPCombi::VectGeneric
  *
  *  This is usually faster for algorithm using a lot of indexed acces.
@@ -201,11 +235,39 @@ inline const VectGeneric<16> &as_VectGeneric(const epu8 &v) {
     return reinterpret_cast<const VectGeneric<16> &>(as_array(v));
 }
 
+
+/** Cast a #HPCombi::pu8 to a c++ #HPCombi::VectGeneric
+ *
+ *  This is usually faster for algorithm using a lot of indexed acces.
+ */
+inline VectGeneric<8> &as_VectGeneric(pu8 &v) {
+    return reinterpret_cast<VectGeneric<8> &>(as_array(v));
+}
+
+/** Cast a #HPCombi::pu8 to a c++ #HPCombi::VectGeneric
+ *
+ *  This is usually faster for algorithm using a lot of indexed acces.
+ */
+inline const VectGeneric<8> &as_VectGeneric(const pu8 &v) {
+    return reinterpret_cast<const VectGeneric<8> &>(as_array(v));
+}
+
+
+/** Test whether all the entries of a #HPCombi::epu8 are zero */
+inline bool is_all_zero(pu8 a) { return _m_to_int64(a) == 0; }
+/** Test whether all the entries of a #HPCombi::epu8 are one */
+inline bool is_all_one(pu8 a) { return _m_to_int64(a) == 0xFF; }
+
 /** Test whether all the entries of a #HPCombi::epu8 are zero */
 inline bool is_all_zero(epu8 a) { return _mm_testz_si128(a, a); }
 /** Test whether all the entries of a #HPCombi::epu8 are one */
 inline bool is_all_one(epu8 a) { return _mm_testc_si128(a, Epu8(0xFF)); }
 
+
+/** Equality of #HPCombi::epu8 */
+inline bool equal(pu8 a, pu8 b) { return is_all_zero(_mm_xor_si64(a, b)); }
+/** Non equality of #HPCombi::epu8 */
+inline bool not_equal(pu8 a, pu8 b) { return not equal(a, b); }
 /** Equality of #HPCombi::epu8 */
 inline bool equal(epu8 a, epu8 b) { return is_all_zero(_mm_xor_si128(a, b)); }
 /** Non equality of #HPCombi::epu8 */
