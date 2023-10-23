@@ -22,7 +22,6 @@
 #include <functional>  // less<>, equal_to<>
 #include <iomanip>
 #include <ostream>
-#include <x86intrin.h>
 
 #ifdef HPCOMBI_HAVE_CONFIG
 #include "HPCombi-config.h"
@@ -33,6 +32,11 @@
 #endif
 
 #include "vect_generic.hpp"
+
+
+#include "simde/x86/sse4.1.h"
+#include "simde/x86/sse4.2.h"
+
 
 #ifdef HPCOMBI_CONSTEXPR_FUN_ARGS
 #define HPCOMBI_CONSTEXPR constexpr
@@ -202,32 +206,32 @@ inline const VectGeneric<16> &as_VectGeneric(const epu8 &v) {
 }
 
 /** Test whether all the entries of a #HPCombi::epu8 are zero */
-inline bool is_all_zero(epu8 a) { return _mm_testz_si128(a, a); }
+inline bool is_all_zero(epu8 a) { return simde_mm_testz_si128(a, a); }
 /** Test whether all the entries of a #HPCombi::epu8 are one */
-inline bool is_all_one(epu8 a) { return _mm_testc_si128(a, Epu8(0xFF)); }
+inline bool is_all_one(epu8 a) { return simde_mm_testc_si128(a, Epu8(0xFF)); }
 
 /** Equality of #HPCombi::epu8 */
-inline bool equal(epu8 a, epu8 b) { return is_all_zero(_mm_xor_si128(a, b)); }
+inline bool equal(epu8 a, epu8 b) { return is_all_zero(simde_mm_xor_si128(a, b)); }
 /** Non equality of #HPCombi::epu8 */
 inline bool not_equal(epu8 a, epu8 b) { return not equal(a, b); }
 
 /** Permuting a #HPCombi::epu8 */
-inline epu8 permuted(epu8 a, epu8 b) { return _mm_shuffle_epi8(a, b); }
+inline epu8 permuted(epu8 a, epu8 b) { return simde_mm_shuffle_epi8(a, b); }
 /** Left shifted of a #HPCombi::epu8 inserting a 0
  * @warning we use the convention that the 0 entry is on the left !
  */
-inline epu8 shifted_right(epu8 a) { return _mm_bslli_si128(a, 1); }
+inline epu8 shifted_right(epu8 a) { return simde_mm_bslli_si128(a, 1); }
 /** Right shifted of a #HPCombi::epu8 inserting a 0
  * @warning we use the convention that the 0 entry is on the left !
  */
-inline epu8 shifted_left(epu8 a) { return _mm_bsrli_si128(a, 1); }
+inline epu8 shifted_left(epu8 a) { return simde_mm_bsrli_si128(a, 1); }
 /** Reverting a #HPCombi::epu8 */
 inline epu8 reverted(epu8 a) { return permuted(a, epu8rev); }
 
 /** Vector min between two #HPCombi::epu8 0 */
-inline epu8 min(epu8 a, epu8 b) { return _mm_min_epu8(a, b); }
+inline epu8 min(epu8 a, epu8 b) { return simde_mm_min_epu8(a, b); }
 /** Vector max between two #HPCombi::epu8 0 */
-inline epu8 max(epu8 a, epu8 b) { return _mm_max_epu8(a, b); }
+inline epu8 max(epu8 a, epu8 b) { return simde_mm_max_epu8(a, b); }
 
 /** Testing if a #HPCombi::epu8 is sorted */
 inline bool is_sorted(epu8 a);
@@ -546,11 +550,13 @@ inline epu8 eval16(epu8 v) { return eval16_cycle(v); };
  *  Reference @f$O(n)@f$ algorithm using loop and indexed access
  */
 inline uint64_t first_diff_ref(epu8 a, epu8 b, size_t bound = 16);
+#ifdef SIMDE_X86_SSE4_2_NATIVE
 /** @copydoc common_first_diff
  *  @par Algorithm:
  *  Using \c cmpestri instruction
  */
 inline uint64_t first_diff_cmpstr(epu8 a, epu8 b, size_t bound = 16);
+#endif
 /** @copydoc common_first_diff
  *  @par Algorithm:
  *  Using vector comparison and mask
@@ -584,11 +590,13 @@ inline uint64_t first_diff(epu8 a, epu8 b, size_t bound = 16) {
  *  Reference @f$O(n)@f$ algorithm using loop and indexed access
  */
 inline uint64_t last_diff_ref(epu8 a, epu8 b, size_t bound = 16);
+#ifdef SIMDE_X86_SSE4_2_NATIVE
 /** @copydoc common_last_diff
  *  @par Algorithm:
  *  Using \c cmpestri instruction
  */
 inline uint64_t last_diff_cmpstr(epu8 a, epu8 b, size_t bound = 16);
+#endif
 /** @copydoc common_last_diff
  *  @par Algorithm:
  *  Using vector comparison and mask

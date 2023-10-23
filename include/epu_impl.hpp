@@ -24,18 +24,18 @@
 
 // Comparison mode for _mm_cmpestri
 #define FIRST_DIFF                                                             \
-    (_SIDD_UBYTE_OPS | _SIDD_CMP_EQUAL_EACH | _SIDD_NEGATIVE_POLARITY)
+    (SIMDE_SIDD_UBYTE_OPS | SIMDE_SIDD_CMP_EQUAL_EACH | SIMDE_SIDD_NEGATIVE_POLARITY)
 #define LAST_DIFF                                                              \
-    (_SIDD_UBYTE_OPS | _SIDD_CMP_EQUAL_EACH | _SIDD_NEGATIVE_POLARITY |        \
-     _SIDD_MOST_SIGNIFICANT)
-#define FIRST_ZERO (_SIDD_UBYTE_OPS | _SIDD_CMP_EQUAL_ANY)
+    (SIMDE_SIDD_UBYTE_OPS | SIMDE_SIDD_CMP_EQUAL_EACH | SIMDE_SIDD_NEGATIVE_POLARITY |        \
+     SIMDE_SIDD_MOST_SIGNIFICANT)
+#define FIRST_ZERO (SIMDE_SIDD_UBYTE_OPS | SIMDE_SIDD_CMP_EQUAL_ANY)
 #define LAST_ZERO                                                              \
-    (_SIDD_UBYTE_OPS | _SIDD_CMP_EQUAL_ANY | _SIDD_MOST_SIGNIFICANT)
+    (SIMDE_SIDD_UBYTE_OPS | SIMDE_SIDD_CMP_EQUAL_ANY | SIMDE_SIDD_MOST_SIGNIFICANT)
 #define FIRST_NON_ZERO                                                         \
-    (_SIDD_UBYTE_OPS | _SIDD_CMP_EQUAL_ANY | _SIDD_MASKED_NEGATIVE_POLARITY)
+    (SIMDE_SIDD_UBYTE_OPS | SIMDE_SIDD_CMP_EQUAL_ANY | SIMDE_SIDD_MASKED_NEGATIVE_POLARITY)
 #define LAST_NON_ZERO                                                          \
-    (_SIDD_UBYTE_OPS | _SIDD_CMP_EQUAL_ANY | _SIDD_MASKED_NEGATIVE_POLARITY |  \
-     _SIDD_MOST_SIGNIFICANT)
+    (SIMDE_SIDD_UBYTE_OPS | SIMDE_SIDD_CMP_EQUAL_ANY | SIMDE_SIDD_MASKED_NEGATIVE_POLARITY |  \
+     SIMDE_SIDD_MOST_SIGNIFICANT)
 
 namespace HPCombi {
 
@@ -45,11 +45,11 @@ namespace HPCombi {
 
 // Msk is supposed to be a boolean mask (i.e. each entry is either 0 or 255)
 inline uint64_t first_mask(epu8 msk, size_t bound) {
-    uint64_t res = _mm_movemask_epi8(msk & (epu8id < Epu8(bound)));
+    uint64_t res = simde_mm_movemask_epi8(msk & (epu8id < Epu8(bound)));
     return res == 0 ? 16 : _bit_scan_forward(res);
 }
 inline uint64_t last_mask(epu8 msk, size_t bound) {
-    auto res = _mm_movemask_epi8(msk & (epu8id < Epu8(bound)));
+    auto res = simde_mm_movemask_epi8(msk & (epu8id < Epu8(bound)));
     return res == 0 ? 16 : _bit_scan_reverse(res);
 }
 
@@ -59,9 +59,11 @@ inline uint64_t first_diff_ref(epu8 a, epu8 b, size_t bound) {
             return i;
     return 16;
 }
+#ifdef SIMDE_X86_SSE4_2_NATIVE
 inline uint64_t first_diff_cmpstr(epu8 a, epu8 b, size_t bound) {
     return unsigned(_mm_cmpestri(a, bound, b, bound, FIRST_DIFF));
 }
+#endif
 inline uint64_t first_diff_mask(epu8 a, epu8 b, size_t bound) {
     return first_mask(a != b, bound);
 }
@@ -74,9 +76,11 @@ inline uint64_t last_diff_ref(epu8 a, epu8 b, size_t bound) {
     }
     return 16;
 }
+#ifdef SIMDE_X86_SSE4_2_NATIVE
 inline uint64_t last_diff_cmpstr(epu8 a, epu8 b, size_t bound) {
     return unsigned(_mm_cmpestri(a, bound, b, bound, LAST_DIFF));
 }
+#endif
 inline uint64_t last_diff_mask(epu8 a, epu8 b, size_t bound) {
     return last_mask(a != b, bound);
 }
@@ -114,7 +118,7 @@ inline epu8 network_sort(epu8 res, std::array<epu8, sz> rounds) {
         epu8 mask = Increassing ? round < epu8id : epu8id < round;
         epu8 b = permuted(res, round);
         // res = mask ? min(res,b) : max(res,b); is not accepted by clang
-        res = _mm_blendv_epi8(min(res, b), max(res, b), mask);
+        res = simde_mm_blendv_epi8(min(res, b), max(res, b), mask);
     }
     return res;
 }
@@ -127,9 +131,9 @@ inline epu8 network_sort_perm(epu8 &v, std::array<epu8, sz> rounds) {
         // This conditional should be optimized out by the compiler
         epu8 mask = Increassing ? round < epu8id : epu8id < round;
         epu8 b = permuted(v, round);
-        epu8 cmp = _mm_blendv_epi8(b < v, v < b, mask);
-        v = _mm_blendv_epi8(v, b, cmp);
-        res = _mm_blendv_epi8(res, permuted(res, round), cmp);
+        epu8 cmp = simde_mm_blendv_epi8(b < v, v < b, mask);
+        v = simde_mm_blendv_epi8(v, b, cmp);
+        res = simde_mm_blendv_epi8(res, permuted(res, round), cmp);
     }
     return res;
 }
@@ -178,7 +182,7 @@ constexpr std::array<epu8, 6> sorting_rounds8
 // clang-format on
 
 inline bool is_sorted(epu8 a) {
-    return _mm_movemask_epi8(shifted_right(a) > a) == 0;
+    return simde_mm_movemask_epi8(shifted_right(a) > a) == 0;
 }
 inline epu8 sorted(epu8 a) {
     return network_sort<true>(a, sorting_rounds);
@@ -215,7 +219,7 @@ inline epu8 random_epu8(uint16_t bnd) {
 inline epu8 remove_dups(epu8 v, uint8_t repl) {
     // Vector ternary operator is not supported by clang.
     // return (v != shifted_right(v) ? v : Epu8(repl);
-    return _mm_blendv_epi8(Epu8(repl), v, v != shifted_right(v));
+    return simde_mm_blendv_epi8(Epu8(repl), v, v != shifted_right(v));
 }
 
 // Gather at the front numbers with (3-i)-th bit not set.
@@ -229,12 +233,13 @@ constexpr std::array<epu8, 3> inverting_rounds {{
 }};
 
 #define FIND_IN_VECT                                                           \
-    (_SIDD_UBYTE_OPS | _SIDD_CMP_EQUAL_ANY | _SIDD_UNIT_MASK |                 \
-     _SIDD_NEGATIVE_POLARITY)
+    (SIMDE_SIDD_UBYTE_OPS | SIMDE_SIDD_CMP_EQUAL_ANY | SIMDE_SIDD_UNIT_MASK |                 \
+     SIMDE_SIDD_NEGATIVE_POLARITY)
 #define FIND_IN_VECT_COMPL                                                     \
-    (_SIDD_UBYTE_OPS | _SIDD_CMP_EQUAL_ANY | _SIDD_UNIT_MASK)
+    (SIMDE_SIDD_UBYTE_OPS | SIMDE_SIDD_CMP_EQUAL_ANY | SIMDE_SIDD_UNIT_MASK)
 
 inline epu8 permutation_of(epu8 a, epu8 b) {
+#ifdef SIMDE_X86_SSE4_2_NATIVE
     epu8 res = -static_cast<epu8>(_mm_cmpestrm(a, 8, b, 16, FIND_IN_VECT));
     for (epu8 round : inverting_rounds) {
         a = permuted(a, round);
@@ -242,6 +247,8 @@ inline epu8 permutation_of(epu8 a, epu8 b) {
         res -= static_cast<epu8>(_mm_cmpestrm(a, 8, b, 16, FIND_IN_VECT));
     }
     return res;
+#else
+#endif
 }
 
 
@@ -404,7 +411,7 @@ inline epu8 eval16_cycle(epu8 v) {
 inline epu8 eval16_popcount(epu8 v) {
     epu8 res{};
     for (size_t i = 0; i < 16; i++) {
-        res[i] = __builtin_popcountl(_mm_movemask_epi8(v == Epu8(uint8_t(i))));
+        res[i] = __builtin_popcountl(simde_mm_movemask_epi8(v == Epu8(uint8_t(i))));
     }
     return res;
 }
@@ -419,13 +426,13 @@ inline bool is_partial_transformation(epu8 v, const size_t k) {
     uint64_t diff = last_diff(v, epu8id, 16);
     // (forall x in v, x + 1 <= 16)  and
     // (v = Perm16::one()   or  last diff index < 16)
-    return (_mm_movemask_epi8(v + Epu8(1) <= Epu8(0x10)) == 0xffff)
+    return (simde_mm_movemask_epi8(v + Epu8(1) <= Epu8(0x10)) == 0xffff)
         && (diff == 16 || diff < k);
 }
 
 inline bool is_transformation(epu8 v, const size_t k) {
     uint64_t diff = last_diff(v, epu8id, 16);
-    return (_mm_movemask_epi8(v < Epu8(0x10)) == 0xffff)
+    return (simde_mm_movemask_epi8(v < Epu8(0x10)) == 0xffff)
         && (diff == 16 || diff < k);
 }
 
@@ -434,8 +441,8 @@ inline bool is_partial_permutation(epu8 v, const size_t k) {
     // (forall x in v, x <= 15)  and
     // (forall x < 15, multiplicity x v <= 1
     // (v = Perm16::one()   or  last diff index < 16)
-    return (_mm_movemask_epi8(v + Epu8(1) <= Epu8(0x10)) == 0xffff)
-        && (_mm_movemask_epi8(eval16(v) <= Epu8(1)) == 0xffff)
+    return (simde_mm_movemask_epi8(v + Epu8(1) <= Epu8(0x10)) == 0xffff)
+        && (simde_mm_movemask_epi8(eval16(v) <= Epu8(1)) == 0xffff)
         && (diff == 16 || diff < k);
 }
 
@@ -444,9 +451,12 @@ inline bool is_permutation(epu8 v, const size_t k) {
     // (forall x in v, x in Perm16::one())  and
     // (forall x in Perm16::one(), x in v)  and
     // (v = Perm16::one()   or  last diff index < 16)
+#ifdef SIMDE_X86_SSE4_2_NATIVE
     return _mm_cmpestri(epu8id, 16, v, 16, FIRST_NON_ZERO) == 16
         && _mm_cmpestri(v, 16, epu8id, 16, FIRST_NON_ZERO) == 16
         && (diff == 16 || diff < k);
+#else
+#endif
 }
 
 }  // namespace HPCombi
@@ -475,13 +485,13 @@ template <> struct not_equal_to<HPCombi::epu8> {
 
 template <> struct hash<HPCombi::epu8> {
     inline size_t operator()(HPCombi::epu8 a) const {
-        unsigned __int128 v0 = _mm_extract_epi64(a, 0);
-        unsigned __int128 v1 = _mm_extract_epi64(a, 1);
+        unsigned __int128 v0 = simde_mm_extract_epi64(a, 0);
+        unsigned __int128 v1 = simde_mm_extract_epi64(a, 1);
         return ((v1 * HPCombi::prime + v0) * HPCombi::prime) >> 64;
 
         /* The following is extremely slow on Renner benchmark
-           uint64_t v0 = _mm_extract_epi64(ar.v, 0);
-           uint64_t v1 = _mm_extract_epi64(ar.v, 1);
+           uint64_t v0 = simde_mm_extract_epi64(ar.v, 0);
+           uint64_t v1 = simde_mm_extract_epi64(ar.v, 1);
            size_t seed = v0 + 0x9e3779b9;
            seed ^= v1 + 0x9e3779b9 + (seed<<6) + (seed>>2);
            return seed;

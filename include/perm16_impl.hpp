@@ -50,18 +50,21 @@ inline epu8 PTransf16::domain_mask(bool complement) const {
     return complement ? v == Epu8(0xFF) : v != Epu8(0xFF);
 }
 inline uint32_t PTransf16::domain_bitset(bool complement) const {
-    return _mm_movemask_epi8(domain_mask(complement));
+    return simde_mm_movemask_epi8(domain_mask(complement));
 }
 inline PTransf16 PTransf16::right_one() const {
     return domain_mask(true) | epu8id;
 }
 
 inline epu8 PTransf16::image_mask(bool complement) const {
+#ifdef SIMDE_X86_SSE4_2_NATIVE
     return complement ? _mm_cmpestrm(v, 16, one().v, 16, FIND_IN_VECT)
                       : _mm_cmpestrm(v, 16, one().v, 16, FIND_IN_VECT_COMPL);
+#else
+#endif
 }
 inline uint32_t PTransf16::image_bitset(bool complement) const {
-    return _mm_movemask_epi8(image_mask(complement));
+    return simde_mm_movemask_epi8(image_mask(complement));
 }
 inline PTransf16 PTransf16::left_one() const {
     return image_mask(true) | epu8id;
@@ -83,7 +86,7 @@ inline epu8 PTransf16::fix_points_mask(bool complement) const {
     return complement ? v != one().v : v == one().v;
 }
 inline uint32_t PTransf16::fix_points_bitset(bool complement) const {
-    return _mm_movemask_epi8(fix_points_mask(complement));
+    return simde_mm_movemask_epi8(fix_points_mask(complement));
 }
 
 inline uint8_t PTransf16::smallest_fix_point() const {
@@ -120,14 +123,14 @@ inline static HPCOMBI_CONSTEXPR uint8_t hilo_mask_fun(uint8_t i) {
 static HPCOMBI_CONSTEXPR epu8 hilo_mask = Epu8(hilo_mask_fun);
 
 inline Transf16::Transf16(uint64_t compressed) {
-    epu8 res = _mm_set_epi64x(compressed, compressed);
-    v = _mm_blendv_epi8(res & Epu8(0x0F), res >> 4, hilo_mask);
+    epu8 res = simde_mm_set_epi64x(compressed, compressed);
+    v = simde_mm_blendv_epi8(res & Epu8(0x0F), res >> 4, hilo_mask);
 }
 
 inline Transf16::operator uint64_t() const {
-    epu8 res = static_cast<epu8>(_mm_slli_epi32(v, 4));
+    epu8 res = static_cast<epu8>(simde_mm_slli_epi32(v, 4));
     res = HPCombi::permuted(res, hilo_exchng) + v;
-    return _mm_extract_epi64(res, 0);
+    return simde_mm_extract_epi64(res, 0);
 }
 
 inline PPerm16 PPerm16::inverse_ref() const {
@@ -139,8 +142,11 @@ inline PPerm16 PPerm16::inverse_ref() const {
 }
 
 inline PPerm16 PPerm16::inverse_find() const {
+#ifdef SIMDE_X86_SSE4_2_NATIVE
     epu8 mask = _mm_cmpestrm(v, 16, one(), 16, FIND_IN_VECT);
     return permutation_of(v, one()) | mask;
+#else
+#endif
 }
 
 inline Perm16 Perm16::random(uint64_t n) {
@@ -207,7 +213,7 @@ inline Perm16 Perm16::inverse_sort() const {
     // G++-7 compile this shift by 3 additions.
     // epu8 res = (v << 4) + one().v;
     // I call directly the shift intrinsic
-    epu8 res = static_cast<epu8>(_mm_slli_epi32(v, 4)) + one().v;
+    epu8 res = static_cast<epu8>(simde_mm_slli_epi32(v, 4)) + one().v;
     res = sorted(res) & Epu8(0x0F);
     return res;
 }
@@ -230,7 +236,7 @@ inline Perm16 Perm16::inverse_cycl() const {
     for (int i = 9; i <= 16; i++) {
         Perm16 oldpow = newpow;
         newpow = oldpow * *this;
-        res.v = _mm_blendv_epi8(res, oldpow, newpow.v == one().v);
+        res.v = simde_mm_blendv_epi8(res, oldpow, newpow.v == one().v);
     }
     return res;
 }
@@ -307,7 +313,7 @@ inline uint8_t Perm16::nb_descents_ref() const {
     return res;
 }
 inline uint8_t Perm16::nb_descents() const {
-    return __builtin_popcountl(_mm_movemask_epi8(v < shifted_right(v)));
+    return __builtin_popcountl(simde_mm_movemask_epi8(v < shifted_right(v)));
 }
 
 inline uint8_t Perm16::nb_cycles_ref() const {
@@ -326,19 +332,19 @@ inline uint8_t Perm16::nb_cycles_ref() const {
 inline epu8 Perm16::cycles_partition() const {
     epu8 x0, x1 = one();
     Perm16 p = *this;
-    x0 = _mm_min_epi8(x1, HPCombi::permuted(x1, p));
+    x0 = simde_mm_min_epi8(x1, HPCombi::permuted(x1, p));
     p = p * p;
-    x1 = _mm_min_epi8(x0, HPCombi::permuted(x0, p));
+    x1 = simde_mm_min_epi8(x0, HPCombi::permuted(x0, p));
     p = p * p;
-    x0 = _mm_min_epi8(x1, HPCombi::permuted(x1, p));
+    x0 = simde_mm_min_epi8(x1, HPCombi::permuted(x1, p));
     p = p * p;
-    x1 = _mm_min_epi8(x0, HPCombi::permuted(x0, p));
+    x1 = simde_mm_min_epi8(x0, HPCombi::permuted(x0, p));
     return x1;
 }
 
 inline uint8_t Perm16::nb_cycles_unroll() const {
     epu8 res = (epu8id == cycles_partition());
-    return __builtin_popcountl(_mm_movemask_epi8(res));
+    return __builtin_popcountl(simde_mm_movemask_epi8(res));
 }
 
 inline bool Perm16::left_weak_leq_ref(Perm16 other) const {
@@ -356,8 +362,8 @@ inline bool Perm16::left_weak_leq(Perm16 other) const {
     for (size_t i = 0; i < 15; i++) {
         srot = shifted_right(srot);
         orot = shifted_right(orot);
-        uint64_t sinv = _mm_movemask_epi8(v < srot);
-        uint64_t oinv = _mm_movemask_epi8(other.v < orot);
+        uint64_t sinv = simde_mm_movemask_epi8(v < srot);
+        uint64_t oinv = simde_mm_movemask_epi8(other.v < orot);
         if ((sinv & oinv) != sinv)
             return false;
     }
