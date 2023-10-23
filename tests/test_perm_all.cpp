@@ -63,6 +63,9 @@ struct Fixture : public IsPermFunctions<typename _PermType::vect> {
     static bool not_less(const VectType a, const VectType b) {
         return not(a < b);
     };
+
+    // some tests assume that the size is at least 6
+    static_assert(VectType::Size() >= 6, "Minimum size for tests");
 };
 
 //____________________________________________________________________________//
@@ -97,7 +100,10 @@ BOOST_FIXTURE_TEST_CASE_TEMPLATE(equal_test, F, Fixtures, F) {
 BOOST_FIXTURE_TEST_CASE_TEMPLATE(operator_bracket_const_test, F, Fixtures, F) {
     BOOST_TEST(F::czero[0] == 0u);
     BOOST_TEST(F::czero[1] == 0u);
-    BOOST_TEST(F::czero[15] == 0u);
+    if (F::czero.Size() > 12)
+      BOOST_TEST(F::czero[12] == 0u);
+    if (F::czero.Size() > 15)
+      BOOST_TEST(F::czero[15] == 0u);
     BOOST_TEST(F::cV01[0] == 0u);
     BOOST_TEST(F::cV01[1] == 1u);
     BOOST_TEST(F::cV01[2] == 0u);
@@ -106,7 +112,10 @@ BOOST_FIXTURE_TEST_CASE_TEMPLATE(operator_bracket_const_test, F, Fixtures, F) {
 BOOST_FIXTURE_TEST_CASE_TEMPLATE(operator_bracket_test, F, Fixtures, F) {
     BOOST_TEST(F::zero[0] == 0u);
     BOOST_TEST(F::zero[1] == 0u);
-    BOOST_TEST(F::zero[15] == 0u);
+    if (F::czero.Size() > 12)
+      BOOST_TEST(F::zero[12] == 0u);
+    if (F::czero.Size() > 15)
+      BOOST_TEST(F::zero[15] == 0u);
     BOOST_TEST(F::V01[0] == 0u);
     BOOST_TEST(F::V01[1] == 1u);
     BOOST_TEST(F::V01[2] == 0u);
@@ -115,7 +124,10 @@ BOOST_FIXTURE_TEST_CASE_TEMPLATE(operator_bracket_test, F, Fixtures, F) {
     F::zero[0] = 3;
     BOOST_TEST(F::zero[0] == 3u);
     BOOST_TEST(F::zero[1] == 0u);
-    BOOST_TEST(F::zero[15] == 0u);
+    if (F::czero.Size() > 12)
+      BOOST_TEST(F::zero[12] == 0u);
+    if (F::czero.Size() > 15)
+      BOOST_TEST(F::zero[15] == 0u);
     F::PPa[2] = 0;
     BOOST_TEST(F::PPa[1] == 2u);
     BOOST_TEST(F::PPa[2] == 0u);

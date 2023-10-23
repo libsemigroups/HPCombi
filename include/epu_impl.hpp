@@ -475,8 +475,8 @@ template <> struct not_equal_to<HPCombi::epu8> {
 
 template <> struct hash<HPCombi::epu8> {
     inline size_t operator()(HPCombi::epu8 a) const {
-        __int128 v0 = _mm_extract_epi64(a, 0);
-        __int128 v1 = _mm_extract_epi64(a, 1);
+        unsigned __int128 v0 = _mm_extract_epi64(a, 0);
+        unsigned __int128 v1 = _mm_extract_epi64(a, 1);
         return ((v1 * HPCombi::prime + v0) * HPCombi::prime) >> 64;
 
         /* The following is extremely slow on Renner benchmark

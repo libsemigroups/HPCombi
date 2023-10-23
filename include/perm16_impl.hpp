@@ -68,12 +68,12 @@ inline PTransf16 PTransf16::left_one() const {
 }
 inline uint32_t PTransf16::rank_ref() const {
     TPUBuild<epu8>::array tmp{};
-    for (size_t i = 0; i < 16; i++)
-        tmp[v[i]] = 1;
-    uint32_t res = 0;
-    for (size_t i = 0; i < 16; i++)
-        res += tmp[i];
-    return res;
+    static_assert(TPUBuild<epu8>::size == 16, "Wrong size of EPU8 array");
+    for (size_t i = 0; i < 16; i++) {
+        if (v[i] != 0xFF)
+            tmp[v[i]] = 1;
+    }
+    return std::accumulate(tmp.begin(), tmp.end(), uint8_t(0));
 }
 inline uint32_t PTransf16::rank() const {
     return _mm_popcnt_u32(image_bitset());
