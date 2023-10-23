@@ -276,10 +276,10 @@ inline void BMat8::row_space_bitset(epu8 &res0, epu8 &res1) const {
 inline uint64_t BMat8::row_space_size_bitset() const {
     epu8 res0 {}, res1 {};
     row_space_bitset(res0, res1);
-    return (_mm_popcnt_u64(_mm_extract_epi64(res0, 0)) +
-            _mm_popcnt_u64(_mm_extract_epi64(res1, 0)) +
-            _mm_popcnt_u64(_mm_extract_epi64(res0, 1)) +
-            _mm_popcnt_u64(_mm_extract_epi64(res1, 1)));
+    return (__builtin_popcountll(_mm_extract_epi64(res0, 0)) +
+            __builtin_popcountll(_mm_extract_epi64(res1, 0)) +
+            __builtin_popcountll(_mm_extract_epi64(res0, 1)) +
+            __builtin_popcountll(_mm_extract_epi64(res1, 1)));
 }
 
 inline uint64_t BMat8::row_space_size_incl1() const {
@@ -292,7 +292,7 @@ inline uint64_t BMat8::row_space_size_incl1() const {
             orincl |= ((in | block) == block) & in;
             in = permuted(in, rotboth);
         }
-        res += _mm_popcnt_u64(_mm_movemask_epi8(block == orincl));
+        res += __builtin_popcountll(_mm_movemask_epi8(block == orincl));
         block += Epu8(16);
     }
     return res;
@@ -308,7 +308,7 @@ inline uint64_t BMat8::row_space_size_incl() const {
             in = permuted(in, rotboth);
             orincl |= ((in | block) == block) & in;
         }
-        res += _mm_popcnt_u64(_mm_movemask_epi8(block == orincl));
+        res += __builtin_popcountll(_mm_movemask_epi8(block == orincl));
         block += Epu8(16);
     }
     return res;
@@ -399,7 +399,7 @@ inline std::vector<uint8_t> BMat8::rows() const {
 
 inline size_t BMat8::nr_rows() const {
     epu8 x = _mm_set_epi64x(_data, 0);
-    return _mm_popcnt_u64(_mm_movemask_epi8(x != epu8 {}));
+    return __builtin_popcountll(_mm_movemask_epi8(x != epu8 {}));
 }
 
 static HPCOMBI_CONSTEXPR epu8

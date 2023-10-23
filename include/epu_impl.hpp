@@ -404,7 +404,7 @@ inline epu8 eval16_cycle(epu8 v) {
 inline epu8 eval16_popcount(epu8 v) {
     epu8 res{};
     for (size_t i = 0; i < 16; i++) {
-        res[i] = _mm_popcnt_u32(_mm_movemask_epi8(v == Epu8(uint8_t(i))));
+        res[i] = __builtin_popcountl(_mm_movemask_epi8(v == Epu8(uint8_t(i))));
     }
     return res;
 }

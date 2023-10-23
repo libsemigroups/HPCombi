@@ -76,7 +76,7 @@ inline uint32_t PTransf16::rank_ref() const {
     return std::accumulate(tmp.begin(), tmp.end(), uint8_t(0));
 }
 inline uint32_t PTransf16::rank() const {
-    return _mm_popcnt_u32(image_bitset());
+    return __builtin_popcountl(image_bitset());
 }
 
 inline epu8 PTransf16::fix_points_mask(bool complement) const {
@@ -107,7 +107,7 @@ inline uint8_t PTransf16::largest_moved_point() const {
 }
 /** Returns the number of fix points of \c *this */
 inline uint8_t PTransf16::nb_fix_points() const {
-    return _mm_popcnt_u32(fix_points_bitset());
+    return __builtin_popcountl(fix_points_bitset());
 }
 
 inline static HPCOMBI_CONSTEXPR uint8_t hilo_exchng_fun(uint8_t i) {
@@ -307,7 +307,7 @@ inline uint8_t Perm16::nb_descents_ref() const {
     return res;
 }
 inline uint8_t Perm16::nb_descents() const {
-    return _mm_popcnt_u32(_mm_movemask_epi8(v < shifted_right(v)));
+    return __builtin_popcountl(_mm_movemask_epi8(v < shifted_right(v)));
 }
 
 inline uint8_t Perm16::nb_cycles_ref() const {
@@ -338,7 +338,7 @@ inline epu8 Perm16::cycles_partition() const {
 
 inline uint8_t Perm16::nb_cycles_unroll() const {
     epu8 res = (epu8id == cycles_partition());
-    return _mm_popcnt_u32(_mm_movemask_epi8(res));
+    return __builtin_popcountl(_mm_movemask_epi8(res));
 }
 
 inline bool Perm16::left_weak_leq_ref(Perm16 other) const {
