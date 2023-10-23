@@ -26,17 +26,19 @@ include_directories(
 
 add_definitions (-DBOOST_TEST_DYN_LINK)
 
+SET(CMAKE_LINKER_FLAGS "${CMAKE_LINKER_FLAGS} -fno-omit-frame-pointer -fsanitize=address")
+
 set(test_src
   test_epu.cpp test_perm16.cpp test_perm_all.cpp test_bmat8.cpp)
 foreach(f ${test_src})
   get_filename_component(testName ${f} NAME_WE)
   add_executable (${testName} ${f})
-  target_link_libraries(${testName} ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY} )
+  target_link_libraries(${testName} asan ubsan ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY})
 endforeach(f)
 
 # Test for multiple inclusions
 add_executable (test_mincl test_mincl.cpp test_mincl0.cpp test_mincl1.cpp)
-target_link_libraries(test_mincl ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY} )
+target_link_libraries(test_mincl asan ubsan ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY})
 
 add_test (TestEPU test_epu)
 add_test (TestPerm16 test_perm16)

@@ -113,7 +113,7 @@ foreach (intrin ${hpcombi_intrinsics})
   endif()
 endforeach()
 
-add_compile_options(-mavx -mtune=native -funroll-loops -flax-vector-conversions)
+add_compile_options(-mavx -mtune=native -funroll-loops -flax-vector-conversions -fsanitize=undefined -fsanitize=address)
 
 ###################
 # Project Structure
