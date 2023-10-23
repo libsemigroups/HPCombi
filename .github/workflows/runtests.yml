@@ -1,0 +1,40 @@
+name: CI
+on: [pull_request, push, workflow_dispatch]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+   tests:
+      name: "ubuntu-latest | g++"
+      timeout-minutes: 60
+      runs-on: ubuntu-latest
+      env:
+         CXX: "ccache g++"
+         CXXFLAGS: "-fdiagnostics-color"
+         CMAKE_CXX_COMPILER: "ccache g++"
+      steps:
+         - name: "Checkout HPCombi repo . . ."
+           uses: actions/checkout@v3
+         - name: "Setup ccache . . ."
+           uses: Chocobo1/setup-ccache-action@v1
+           with:
+             update_packager_index: false
+             override_cache_key: ${{ runner.os }}-${{ github.ref }}
+             override_cache_key_fallback: ${{ runner.os }}
+         - name: "Install dependencies . . ."
+           run: |
+                sudo apt-get --yes update
+                sudo apt-get install --yes ccache
+                sudo apt-get install --yes libbenchmark-dev
+                sudo apt-get install --yes libgtest-dev
+                sudo apt-get install --yes libboost-all-dev
+         - name: "Build + run HPCombi tests . . ."
+           run: |
+              mkdir build
+              cd build
+              cmake -DBUILD_TESTING=1 -DCMAKE_BUILD_TYPE=Release ..
+              make
+              make test
+
