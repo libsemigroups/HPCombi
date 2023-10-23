@@ -22,8 +22,8 @@
 #include <iostream>
 #include <vector>
 
-#include "perm16.hpp"
-#include "testtools.hpp"
+#include "../include/perm16.hpp"
+#include "../include/testtools.hpp"
 
 using namespace std;
 using namespace std::chrono;

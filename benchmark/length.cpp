@@ -23,8 +23,8 @@
 #include <vector>
 #include <x86intrin.h>
 
-#include "perm16.hpp"
-#include "testtools.hpp"
+#include "../include/perm16.hpp"
+#include "../include/testtools.hpp"
 
 using namespace std;
 using namespace std::chrono;
@@ -59,6 +59,8 @@ void timeit(const vector<Perm16> &v, int nloop = 1) {
 
   cout << "Reference: ";
   ref = timef<&Perm16::length_ref>(v, 0., nloop);
+  cout << "ARR: ";
+  ref = timef<&Perm16::length_arr>(v, ref, nloop);
   cout << "Fast     : ";
   ref = timef<&Perm16::length>(v, ref, nloop);
 }
@@ -74,7 +76,7 @@ int main() {
   cout << p << endl << endl;
   cout << int(p.length()) << endl;
   cout << int(p.length_ref()) << endl;
-  auto vv = rand_perms(10000);
+  auto vv = (std::vector<Perm16>)rand_perms(1000000);
   timeit(vv, 100);
   cout << endl;
   return EXIT_SUCCESS;

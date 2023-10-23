@@ -23,7 +23,7 @@
 #include <vector>
 #include <x86intrin.h>
 
-#include "epu.hpp"
+#include "../include/epu.hpp"
 
 using namespace std;
 using namespace std::chrono;

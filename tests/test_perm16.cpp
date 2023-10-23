@@ -515,5 +515,17 @@ BOOST_FIXTURE_TEST_CASE(Perm16_left_weak_leq, Fix) {
     }
 }
 
+//****************************************************************************//
+BOOST_FIXTURE_TEST_CASE(Perm16_inversions, Fix) {
+  auto invs = Perm16({0,3,5,4,2,1}).inversions();
+  EPU8_EQUAL(invs[0], (epu8 {0x00, 0x30, 0x38, 0x30, 0x20}));
+  EPU8_EQUAL(invs[1], (epu8 {}));
+  invs = PPb.inversions();
+  EPU8_EQUAL(invs[0], (epu8 {0x10, 0x10, 0x10, 0x70, 0x00, 0x40}));
+  EPU8_EQUAL(invs[1], (epu8 {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+                             0x00, 0x00, 0x00, 0x00, 0x00, 0xc0, 0x80, 0x00}));
+}
+
+
 BOOST_AUTO_TEST_SUITE_END()
 //****************************************************************************//

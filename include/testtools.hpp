@@ -35,11 +35,19 @@ inline epu8 rand_perm() {
     return res;
 }
 
-inline std::vector<epu8> rand_perms(int sz) {
+inline std::vector<epu8> rand_perms_as_epu(int sz) {
     std::vector<epu8> res(sz);
     std::srand(std::time(0));
     for (int i = 0; i < sz; i++)
         res[i] = rand_perm();
+    return res;
+}
+
+inline std::vector<Perm16> rand_perms(int sz) {
+    std::vector<Perm16> res(sz);
+    std::srand(std::time(0));
+    for (int i = 0; i < sz; i++)
+         res[i] = Perm16(rand_perm());
     return res;
 }
 

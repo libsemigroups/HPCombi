@@ -278,6 +278,28 @@ inline epu8 Perm16::lehmer() const {
     return res;
 }
 
+
+inline std::array<epu8, 2> Perm16::inversions() const {
+    epu8 diagLo {
+      0x01, 0x02, 0x04, 0x08, 0x10, 0x20, 0x40, 0x80,
+      0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
+    epu8 diagHi {
+      0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+      0x01, 0x02, 0x04, 0x08, 0x10, 0x20, 0x40, 0x80};
+
+    epu8 vsh = v, resLo {}, resHi {};
+    for (int i = 0; i < 16; i++) {
+        vsh = shifted_left(vsh);
+        diagLo = shifted_left(diagLo);
+        diagHi = shifted_left(diagHi);
+        epu8 comp = (v >= vsh);
+        resLo |= comp & diagLo;
+        resHi |= comp & diagHi;
+    }
+    return {resLo, resHi};
+}
+
+
 inline uint8_t Perm16::length_ref() const {
     uint8_t res = 0;
     for (size_t i = 0; i < 16; i++)

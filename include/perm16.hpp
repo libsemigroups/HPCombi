@@ -336,6 +336,29 @@ struct Perm16 : public Transf16 /* public PPerm : diamond problem */ {
      */
     uint8_t length() const;
 
+    /** @class common_inversions
+     * @brief The inversion of a permutation
+     * @details
+     * @returns the inversions of \c *this
+     * @par Example:
+     * @code
+     * Perm16 x = {0,3,2,4,1,5,6,7,8,9,10,11,12,13,14,15};
+     * x.lehmer()
+     * @endcode
+     * Returns
+     * @verbatim {0,2,1,1,0,0,0,0,0,0,0,0,0,0,0,0} @endverbatim
+     */
+  std::array<epu8, 2> inversions_ref() const;
+    /** @copydoc common_inversions
+     *  @par Algorithm:
+     *  Reference @f$O(n^2)@f$ algorithm using array, loop and indexed access
+     */
+  std::array<epu8, 2> inversions() const;
+    /** @copydoc common_inversions
+     *  @par Algorithm:
+     *  Reference @f$O(n^2)@f$ algorithm using array, loop and indexed access
+     */
+
     /** @class common_nb_descent
      * @brief The number of descent of a permutation
      * @details
