@@ -65,10 +65,6 @@ static_assert(alignof(epu8) == 16,
 /// SIMD vector of 32 unsigned bytes
 using xpu8 = uint8_t __attribute__((vector_size(32)));
 
-static_assert(alignof(xpu8) == 32,
-              "xpu8 type is not properly aligned by the compiler !");
-
-
 namespace {  // Implementation detail code
 
 /// A handmade C++11 constexpr lambda

@@ -46,11 +46,11 @@ namespace HPCombi {
 // Msk is supposed to be a boolean mask (i.e. each entry is either 0 or 255)
 inline uint64_t first_mask(epu8 msk, size_t bound) {
     uint64_t res = simde_mm_movemask_epi8(msk & (epu8id < Epu8(bound)));
-    return res == 0 ? 16 : _bit_scan_forward(res);
+    return res == 0 ? 16 : (__builtin_ffsll(res) - 1);
 }
 inline uint64_t last_mask(epu8 msk, size_t bound) {
     auto res = simde_mm_movemask_epi8(msk & (epu8id < Epu8(bound)));
-    return res == 0 ? 16 : _bit_scan_reverse(res);
+    return res == 0 ? 16 : (63 - __builtin_clzll(res));
 }
 
 inline uint64_t first_diff_ref(epu8 a, epu8 b, size_t bound) {
@@ -452,10 +452,11 @@ inline bool is_permutation(epu8 v, const size_t k) {
     // (forall x in Perm16::one(), x in v)  and
     // (v = Perm16::one()   or  last diff index < 16)
 #ifdef SIMDE_X86_SSE4_2_NATIVE
-    return _mm_cmpestri(epu8id, 16, v, 16, FIRST_NON_ZERO) == 16
-        && _mm_cmpestri(v, 16, epu8id, 16, FIRST_NON_ZERO) == 16
-        && (diff == 16 || diff < k);
+    return _mm_cmpestri(epu8id, 16, v, 16, FIRST_NON_ZERO) == 16 &&
+           _mm_cmpestri(v, 16, epu8id, 16, FIRST_NON_ZERO) == 16 &&
+           (diff == 16 || diff < k);
 #else
+    return equal(sorted(v), epu8id) && (diff == 16 || diff < k);
 #endif
 }
 
@@ -505,7 +506,7 @@ template <> struct less<HPCombi::epu8> {
     // 10% faster than calling the lexicographic comparison operator !
     inline size_t operator()(const HPCombi::epu8 &v1,
                              const HPCombi::epu8 &v2) const {
-        __m128 v1v = __m128(v1), v2v = __m128(v2);
+        simde__m128 v1v = simde__m128(v1), v2v = simde__m128(v2);
         return v1v[0] == v2v[0] ? v1v[1] < v2v[1] : v1v[0] < v2v[0];
     }
 };

@@ -22,10 +22,12 @@
 #include <functional>  // less<>
 #include <ostream>
 #include <vector>
-#include <x86intrin.h>
 
 #include "epu.hpp"
 #include "vect16.hpp"
+
+#include "simde/x86/sse4.1.h"
+#include "simde/x86/sse4.2.h"
 
 namespace HPCombi {
 

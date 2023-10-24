@@ -84,34 +84,34 @@ check_cxx_compiler_flag('-mavx' HPCOMBI_HAVE_FLAG_AVX)
 #check_cxx_compiler_flag('-mavx512bw' HPCOMBI_HAVE_FLAG_AVX512BW)
 
 ## Check for Intel intrisics
-check_include_file_cxx("x86intrin.h" HPCOMBI_HAVE_X86INTRIN)
-if (NOT ${HPCOMBI_HAVE_FLAG_AVX} OR NOT ${HPCOMBI_HAVE_X86INTRIN})
-  message(FATAL_ERROR "No SSE/AVX compiler intrinsics")
-endif()
-file(READ ${CMAKE_SOURCE_DIR}/list_intrin.txt hpcombi_intrinsics)
-string(REPLACE ";" "|" hpcombi_intrinsics "${hpcombi_intrinsics}")
-string(REPLACE "\n" ";" hpcombi_intrinsics "${hpcombi_intrinsics}")
-foreach (intrin ${hpcombi_intrinsics})
-  if ("${intrin}" MATCHES "^#" ) # Comment
-    continue()
-  endif()
-  string(REPLACE "|" ";" intrin "${intrin}")
-  list(GET intrin 0 intrin_name)
-  list(GET intrin 1 intrin_params)
-  set(CMAKE_REQUIRED_FLAGS "-mavx")
-  check_cxx_source_compiles("
-    #include<x86intrin.h>
-    int main() {
-      ${intrin_name}(${intrin_params});
-      return 0;
-    }
-  "
-  "HPCOMBI_HAVE_${intrin_name}"
-  )
-  if (NOT "${HPCOMBI_HAVE_${intrin_name}}")
-    message(FATAL_ERROR "Intrinsic ${intrin_name} not supported by compiler")
-  endif()
-endforeach()
+# check_include_file_cxx("x86intrin.h" HPCOMBI_HAVE_X86INTRIN)
+# if (NOT ${HPCOMBI_HAVE_FLAG_AVX} OR NOT ${HPCOMBI_HAVE_X86INTRIN})
+#   message(FATAL_ERROR "No SSE/AVX compiler intrinsics")
+# endif()
+# file(READ ${CMAKE_SOURCE_DIR}/list_intrin.txt hpcombi_intrinsics)
+# string(REPLACE ";" "|" hpcombi_intrinsics "${hpcombi_intrinsics}")
+# string(REPLACE "\n" ";" hpcombi_intrinsics "${hpcombi_intrinsics}")
+# foreach (intrin ${hpcombi_intrinsics})
+#   if ("${intrin}" MATCHES "^#" ) # Comment
+#     continue()
+#   endif()
+#   string(REPLACE "|" ";" intrin "${intrin}")
+#   list(GET intrin 0 intrin_name)
+#   list(GET intrin 1 intrin_params)
+#   set(CMAKE_REQUIRED_FLAGS "-mavx")
+#   check_cxx_source_compiles("
+#     #include<x86intrin.h>
+#     int main() {
+#       ${intrin_name}(${intrin_params});
+#       return 0;
+#     }
+#   "
+#   "HPCOMBI_HAVE_${intrin_name}"
+#   )
+#   if (NOT "${HPCOMBI_HAVE_${intrin_name}}")
+#     message(FATAL_ERROR "Intrinsic ${intrin_name} not supported by compiler")
+#   endif()
+# endforeach()
 
 add_compile_options(-mavx -mtune=native -funroll-loops -flax-vector-conversions)
 
