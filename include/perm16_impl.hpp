@@ -151,9 +151,13 @@ inline PPerm16 PPerm16::inverse_find() const {
 }
 
 inline Perm16 Perm16::random(uint64_t n) {
+    static std::random_device rd;
+    static std::mt19937 g(rd());
+
     Perm16 res = one();
     auto ar = res.as_array();
-    std::random_shuffle(ar.begin(), ar.begin() + n);
+
+    std::shuffle(ar.begin(), ar.begin() + n, g);
     return res;
 }
 

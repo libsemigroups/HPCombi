@@ -42,10 +42,12 @@ PermGeneric<_Size, Expo>::inverse() const {
 }
 
 template <size_t _Size, typename Expo>
-PermGeneric<_Size, Expo>
-PermGeneric<_Size, Expo>::random() {
+PermGeneric<_Size, Expo> PermGeneric<_Size, Expo>::random() {
+    static std::random_device rd;
+    static std::mt19937 g(rd());
+
     PermGeneric res{{}};
-    std::random_shuffle(res.v.begin(), res.v.end());
+    std::shuffle(res.v.begin(), res.v.end(), g);
     return res;
 }
 

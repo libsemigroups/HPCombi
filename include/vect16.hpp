@@ -16,9 +16,10 @@
 #ifndef HPCOMBI_VECT16_HPP_INCLUDED
 #define HPCOMBI_VECT16_HPP_INCLUDED
 
+#include <type_traits>
+
 #include "epu.hpp"
 #include "perm16.hpp"  // for is_permutation
-#include <type_traits>
 
 namespace HPCombi {
 

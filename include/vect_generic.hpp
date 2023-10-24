@@ -21,6 +21,7 @@
 #include <cassert>
 #include <cstdint>
 #include <ostream>
+#include <random>
 #include <type_traits>
 
 namespace HPCombi {
@@ -114,8 +115,11 @@ template <size_t _Size, typename Expo = uint8_t> struct VectGeneric {
     }
 
     static VectGeneric random() {
+        static std::random_device rd;
+        static std::mt19937 g(rd());
+
         VectGeneric<_Size, Expo> res = VectGeneric<_Size, Expo>(0, 0);
-        std::random_shuffle(res.begin(), res.end());
+        std::shuffle(res.begin(), res.end(), g);
         return res;
     }
 
