@@ -35,16 +35,16 @@ message(STATUS "**** Build type = ${CMAKE_BUILD_TYPE}")
 ################################
 # General compiler configuration
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_CXX_STANDARD 11)
-set(CMAKE_CXX_EXTENSIONS OFF) # -std=c++11 instead of -std=gnu++11
+set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_EXTENSIONS OFF) # -std=c++14 instead of -std=gnu++14
 
 add_definitions(-DHPCOMBI_HAVE_CONFIG)
 
 message(STATUS "*** Compiler id is ${CMAKE_CXX_COMPILER_ID}")
 if ( CMAKE_CXX_COMPILER_ID STREQUAL "GNU" OR CMAKE_CXX_COMPILER_ID STREQUAL "Clang" )
   # Workaround of CMAKE bug https://stackoverflow.com/questions/47213356/
-  set(CMAKE_REQUIRED_FLAGS ${CMAKE_REQUIRED_FLAGS} -std=c++11)
-  add_compile_options(-std=c++11 -Wall -g -pg)
+  set(CMAKE_REQUIRED_FLAGS ${CMAKE_REQUIRED_FLAGS} -std=c++14)
+  add_compile_options(-std=c++14 -Wall -g -pg)
 endif()
 
 
