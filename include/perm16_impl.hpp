@@ -218,7 +218,9 @@ inline Perm16 Perm16::inverse_sort() const {
     // G++-7 compile this shift by 3 additions.
     // epu8 res = (v << 4) + one().v;
     // I call directly the shift intrinsic
-    epu8 res = static_cast<epu8>(simde_mm_slli_epi32(v, 4)) + one().v;
+    epu8 res = static_cast<epu8>(
+                   simde_mm_slli_epi32(static_cast<simde__m128i>(v), 4)) +
+               one().v;
     res = sorted(res) & Epu8(0x0F);
     return res;
 }

@@ -253,7 +253,7 @@ constexpr std::array<epu8, 4> masks {{
 static const epu8 shiftres {1, 2, 4, 8, 0x10, 0x20, 0x40, 0x80};
 
 inline void update_bitset(epu8 block, epu8 &set0, epu8 &set1) {
-    static const epu8 bound08 = simde_mm_slli_epi32(epu8id, 3); // shift for *8
+    static const epu8 bound08 = simde_mm_slli_epi32(static_cast<simde__m128i>(epu8id), 3); // shift for *8
 static const epu8 bound18 = bound08 + Epu8(0x80);
     for (size_t slice8 = 0; slice8 < 16; slice8++) {
         epu8 bm5 = Epu8(0xf8) & block; /* 11111000 */
