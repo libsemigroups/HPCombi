@@ -28,12 +28,11 @@ jobs:
                 sudo apt-get --yes update
                 sudo apt-get install --yes ccache
                 sudo apt-get install --yes libbenchmark-dev
-                sudo apt-get install --yes catch2
          - name: "Build + run HPCombi tests . . ."
            run: |
               mkdir build
               cd build
               cmake -DBUILD_TESTING=1 -DCMAKE_BUILD_TYPE=Release ..
+              cd tests
               make
-              make test
-
+              ./test_all
