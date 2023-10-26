@@ -75,8 +75,8 @@ check_cxx_source_compiles(
   "
   HPCOMBI_CONSTEXPR_FUN_ARGS)
 
-# check_cxx_compiler_flag('-mavx' HPCOMBI_HAVE_FLAG_AVX)
-#check_cxx_compiler_flag('-march=native' HPCOMBI_HAVE_FLAG_NATIVE)
+check_cxx_compiler_flag('-march=native' HPCOMBI_HAVE_FLAG_ARCH_NATIVE)
+check_cxx_compiler_flag('-mtune=native' HPCOMBI_HAVE_FLAG_TUNE_NATIVE)
 #check_cxx_compiler_flag('-mavx2' HPCOMBI_HAVE_FLAG_AVX2)
 #check_cxx_compiler_flag('-mavx512bw' HPCOMBI_HAVE_FLAG_AVX512BW)
 
@@ -110,7 +110,14 @@ check_cxx_source_compiles(
 #   endif()
 # endforeach()
 
-add_compile_options(-mtune=native -funroll-loops -flax-vector-conversions)
+add_compile_options(-funroll-loops -flax-vector-conversions)
+if (HPCOMBI_HAVE_FLAG_ARCH_NATIVE)
+    add_compile_options(-march=native)
+endif()
+if (HPCOMBI_HAVE_FLAG_TUNE_NATIVE)
+    add_compile_options(-mtune=native)
+endif()
+
 
 ###################
 # Project Structure
