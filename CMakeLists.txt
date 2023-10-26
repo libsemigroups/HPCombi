@@ -13,7 +13,7 @@
 #                  http://www.gnu.org/licenses/                               #
 #****************************************************************************#
 
-cmake_minimum_required(VERSION 2.8)
+cmake_minimum_required(VERSION 3.5)
 
 #####################
 # Project description
@@ -78,7 +78,7 @@ check_cxx_source_compiles(
   "
   HPCOMBI_CONSTEXPR_FUN_ARGS)
 
-check_cxx_compiler_flag('-mavx' HPCOMBI_HAVE_FLAG_AVX)
+# check_cxx_compiler_flag('-mavx' HPCOMBI_HAVE_FLAG_AVX)
 #check_cxx_compiler_flag('-march=native' HPCOMBI_HAVE_FLAG_NATIVE)
 #check_cxx_compiler_flag('-mavx2' HPCOMBI_HAVE_FLAG_AVX2)
 #check_cxx_compiler_flag('-mavx512bw' HPCOMBI_HAVE_FLAG_AVX512BW)
@@ -113,7 +113,7 @@ check_cxx_compiler_flag('-mavx' HPCOMBI_HAVE_FLAG_AVX)
 #   endif()
 # endforeach()
 
-add_compile_options(-mavx -mtune=native -funroll-loops -flax-vector-conversions)
+add_compile_options(-mtune=native -funroll-loops -flax-vector-conversions)
 
 ###################
 # Project Structure
