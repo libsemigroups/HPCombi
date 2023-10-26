@@ -21,6 +21,7 @@
 #include "test_main.hpp"
 #include <catch2/catch_test_macros.hpp>
 
+// TODO uncomment
 // #define TEST_AGREES(ref, fun) \
 //     BOOST_FIXTURE_TEST_CASE(Epu8::agrees_##fun, Fix) { \
 //         for (auto x : v) \

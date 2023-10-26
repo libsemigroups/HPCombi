@@ -13,7 +13,8 @@
 #                  http://www.gnu.org/licenses/                               #
 #****************************************************************************#
 
-cmake_minimum_required(VERSION 2.8)
+# Require at least 3.8 so that we can set cmake_policy CMP0067 below
+cmake_minimum_required(VERSION 3.8)
 
 #####################
 # Project description
@@ -41,12 +42,8 @@ set(CMAKE_CXX_EXTENSIONS OFF) # -std=c++14 instead of -std=gnu++14
 add_definitions(-DHPCOMBI_HAVE_CONFIG)
 
 message(STATUS "*** Compiler id is ${CMAKE_CXX_COMPILER_ID}")
-if ( CMAKE_CXX_COMPILER_ID STREQUAL "GNU" OR CMAKE_CXX_COMPILER_ID STREQUAL "Clang" )
-  # Workaround of CMAKE bug https://stackoverflow.com/questions/47213356/
-  set(CMAKE_REQUIRED_FLAGS ${CMAKE_REQUIRED_FLAGS} -std=c++14)
-  add_compile_options(-std=c++14 -Wall -g -pg)
-endif()
-
+# See https://stackoverflow.com/questions/47213356/ for discussion
+cmake_policy(SET CMP0067 NEW)
 
 ##################################
 # Checks for compiler capabilities
@@ -78,7 +75,7 @@ check_cxx_source_compiles(
   "
   HPCOMBI_CONSTEXPR_FUN_ARGS)
 
-check_cxx_compiler_flag('-mavx' HPCOMBI_HAVE_FLAG_AVX)
+# check_cxx_compiler_flag('-mavx' HPCOMBI_HAVE_FLAG_AVX)
 #check_cxx_compiler_flag('-march=native' HPCOMBI_HAVE_FLAG_NATIVE)
 #check_cxx_compiler_flag('-mavx2' HPCOMBI_HAVE_FLAG_AVX2)
 #check_cxx_compiler_flag('-mavx512bw' HPCOMBI_HAVE_FLAG_AVX512BW)
@@ -113,7 +110,7 @@ check_cxx_compiler_flag('-mavx' HPCOMBI_HAVE_FLAG_AVX)
 #   endif()
 # endforeach()
 
-add_compile_options(-mavx -mtune=native -funroll-loops -flax-vector-conversions)
+add_compile_options(-mtune=native -funroll-loops -flax-vector-conversions)
 
 ###################
 # Project Structure
