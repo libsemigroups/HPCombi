@@ -47,17 +47,14 @@ template <class Perm_> struct Fixture1 {
     const std::vector<PermType> Plist;
     const std::vector<VectType> Vlist;
 
-    static bool less(const VectType a, const VectType b) { return a < b; };
-    static bool not_less(const VectType a, const VectType b) {
-        return not(a < b);
-    };
-
     // some tests assume that the size is at least 6
     static_assert(VectType::Size() >= 6, "Minimum size for tests");
 };
 
 }  // namespace
 
+// Better than std::tuple because we can see the actual types in the output
+// with a macro but not with the tuple.
 #define PermTypes                                                              \
     Perm16, PermGeneric<12>, PermGeneric<16>, PermGeneric<32>,                 \
         PermGeneric<42>, PermGeneric<49>, (PermGeneric<350, uint32_t>)
@@ -132,12 +129,11 @@ TEMPLATE_TEST_CASE_METHOD(Fixture1, "operator<", "[AllPerm][004]", PermTypes) {
     for (unsigned i = 0; i < Fixture1<TestType>::Plist.size(); i++) {
         for (unsigned j = 0; j < Fixture1<TestType>::Plist.size(); j++) {
             if (i < j) {
-                REQUIRE(Fixture1<TestType>::less(Fixture1<TestType>::Plist[i],
-                                                 Fixture1<TestType>::Plist[j]));
+                REQUIRE(Fixture1<TestType>::Plist[i] <
+                        Fixture1<TestType>::Plist[j]);
             } else {
-                REQUIRE(
-                    Fixture1<TestType>::not_less(Fixture1<TestType>::Plist[i],
-                                                 Fixture1<TestType>::Plist[j]));
+                REQUIRE(!(Fixture1<TestType>::Plist[i] <
+                          Fixture1<TestType>::Plist[j]));
             }
         }
     }

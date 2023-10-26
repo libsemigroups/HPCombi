@@ -82,7 +82,6 @@ struct BMat8Fixture {
 TEST_CASE_METHOD(BMat8Fixture, "BMat8::one", "[BMat8][000]") {
     REQUIRE(BMat8::one(0) == zero);
     REQUIRE(BMat8::one(2) == BMat8({{1, 0, 0, 0, 0, 0, 0, 0},
-
                                     {0, 1, 0, 0, 0, 0, 0, 0},
                                     {0, 0, 0, 0, 0, 0, 0, 0},
                                     {0, 0, 0, 0, 0, 0, 0, 0},
