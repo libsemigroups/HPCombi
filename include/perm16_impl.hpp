@@ -129,7 +129,8 @@ inline Transf16::Transf16(uint64_t compressed) {
 }
 
 inline Transf16::operator uint64_t() const {
-    epu8 res = static_cast<epu8>(simde_mm_slli_epi32(v, 4));
+    epu8 res =
+        static_cast<epu8>(simde_mm_slli_epi32(static_cast<simde__m128i>(v), 4));
     res = HPCombi::permuted(res, hilo_exchng) + v;
     return simde_mm_extract_epi64(res, 0);
 }
