@@ -338,21 +338,33 @@ TEST_CASE_METHOD(Fix, "Epu8::sort8_perm", "[Epu8][021]") {
     }
 }
 
-// TODO uncomment
-// TEST_CASE_METHOD(Fix, "Epu8::permutation_of", "[Epu8][022]") {
-//     REQUIRE(equal(permutation_of(epu8id, epu8id), epu8id));
-//     REQUIRE(equal(permutation_of(Pa, Pa), epu8id));
-//     REQUIRE(equal(permutation_of(epu8rev, epu8id), epu8rev));
-//     REQUIRE(equal(permutation_of(epu8id, epu8rev), epu8rev));
-//     REQUIRE(equal(permutation_of(epu8rev, epu8rev), epu8id));
-//     REQUIRE(equal(permutation_of(epu8id, RP), RP));
-//     const uint8_t FF = 0xff;
-//     REQUIRE(equal(
-//         (permutation_of(Pv, Pv) |
-//          epu8{FF, FF, FF, FF, 0, 0, FF, 0, 0, 0, FF, 0, FF, 0, 0, 0})),
-//         epu8{FF, FF, FF, FF, 4, 5, FF, 7, 8, 9, FF, 11, FF, 13, 14, 15});
-// }
-//
+TEST_CASE_METHOD(Fix, "Epu8::permutation_of", "[Epu8][022]") {
+    REQUIRE(equal(permutation_of(epu8id, epu8id), epu8id));
+    REQUIRE(equal(permutation_of(Pa, Pa), epu8id));
+    REQUIRE(equal(permutation_of(epu8rev, epu8id), epu8rev));
+    REQUIRE(equal(permutation_of(epu8id, epu8rev), epu8rev));
+    REQUIRE(equal(permutation_of(epu8rev, epu8rev), epu8id));
+    REQUIRE(equal(permutation_of(epu8id, RP), RP));
+    const uint8_t FF = 0xff;
+    REQUIRE(equal(
+        (permutation_of(Pv, Pv) |
+         epu8{FF, FF, FF, FF, 0, 0, FF, 0, 0, 0, FF, 0, FF, 0, 0, 0}),
+        epu8{FF, FF, FF, FF, 4, 5, FF, 7, 8, 9, FF, 11, FF, 13, 14, 15}));
+}
+TEST_CASE_METHOD(Fix, "Epu8::permutation_of_ref", "[Epu8][022]") {
+    REQUIRE(equal(permutation_of_ref(epu8id, epu8id), epu8id));
+    REQUIRE(equal(permutation_of_ref(Pa, Pa), epu8id));
+    REQUIRE(equal(permutation_of_ref(epu8rev, epu8id), epu8rev));
+    REQUIRE(equal(permutation_of_ref(epu8id, epu8rev), epu8rev));
+    REQUIRE(equal(permutation_of_ref(epu8rev, epu8rev), epu8id));
+    REQUIRE(equal(permutation_of_ref(epu8id, RP), RP));
+    const uint8_t FF = 0xff;
+    REQUIRE(equal(
+        (permutation_of_ref(Pv, Pv) |
+         epu8{FF, FF, FF, FF, 0, 0, FF, 0, 0, 0, FF, 0, FF, 0, 0, 0}),
+        epu8{FF, FF, FF, FF, 4, 5, FF, 7, 8, 9, FF, 11, FF, 13, 14, 15}));
+}
+
 TEST_CASE_METHOD(Fix, "Epu8::remove_dups", "[Epu8][023]") {
     REQUIRE(equal(remove_dups(P1), P10));
     REQUIRE(equal(remove_dups(P11), P10));
@@ -716,4 +728,23 @@ TEST_CASE_METHOD(Fix, "is_permutation", "[Epu8][054]") {
     REQUIRE(is_permutation(RP, 16));
     REQUIRE(!is_permutation(RP, 15));
 }
+
+#ifdef SIMDE_X86_SSE4_2_NATIVE
+TEST_CASE_METHOD(Fix, "is_permutation_cmpestri", "[Epu8][070]") {
+    for (auto x : v) {
+      for (size_t i = 0; i < 16; i++) {
+        REQUIRE(is_permutation(x, i) == is_permutation_cmpestri(x, i));
+      }
+    }
+}
+#endif
+
+TEST_CASE_METHOD(Fix, "is_permutation_sort", "[Epu8][080]") {
+    for (auto x : v) {
+      for (size_t i = 0; i < 16; i++) {
+        REQUIRE(is_permutation(x, i) == is_permutation_sort(x, i));
+      }
+    }
+}
+
 }  // namespace HPCombi

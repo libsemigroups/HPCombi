@@ -266,12 +266,26 @@ inline epu8 sort_perm(epu8 & a);
 inline epu8 sort8_perm(epu8 & a);
 
 
-/** Find if a vector is a permutation of one other
+/** @class common_permutation_of
+ * @brief Find if a vector is a permutation of one other
  * @details
  * @param a, b: two #HPCombi::epu8
  * @returns a #HPCombi::epu8
  * For each @f$0 \leq i < 16@f$, \c res[i] is the position in \c a of \c b[i]
      if \c b[i] appears exactly once in \c a, or undefined if not.
+ */
+#ifdef SIMDE_X86_SSE4_2_NATIVE
+/** @copydoc common_permutation_of
+    @par Algorithm: uses string matching cpmestrm intrisics
+ */
+inline epu8 permutation_of_cmpestrm(epu8 a, epu8 b);
+#endif
+/** @copydoc common_permutation_of
+    @par Algorithm: reference implementation
+ */
+inline epu8 permutation_of_ref(epu8 a, epu8 b);
+/** @copydoc common_permutation_of
+    @par Algorithm: architecture dependant
  */
 inline epu8 permutation_of(epu8 a, epu8 b);
 
@@ -610,7 +624,7 @@ inline bool less(epu8 a, epu8 b);
  * @param k : the bound for the lexicographic comparison
  * @return a positive, negative or zero char depending on the result
  */
-inline char less_partial(epu8 a, epu8 b, int k);
+inline int8_t less_partial(epu8 a, epu8 b, int k);
 
 /** return the index of the first zero entry or 16 if there are none
  *  Only index smaller than bound are taken into account.
@@ -685,7 +699,7 @@ inline bool is_transformation(epu8 v, const size_t k = 16);
  */
 inline bool is_partial_permutation(epu8 v, const size_t k = 16);
 
-/** Test for permutations
+/** @class common_is_permutation
  * @details
  * @returns whether \c *this is a permutation.
  * @param v the vector to test
@@ -699,6 +713,19 @@ inline bool is_partial_permutation(epu8 v, const size_t k = 16);
  * The permutation
  * @f$\begin{matrix}0 1 2 3 4 5\\ 2 0 5 3 1 4 \end{matrix}@f$
  * is encoded by the array {2,0,5,3,1,4,6,7,8,9,10,11,12,13,14,15}
+ */
+#ifdef SIMDE_X86_SSE4_2_NATIVE
+/** @copydoc common_is_permutation
+    @par Algorithm: uses string matching cpmestri intrisics
+ */
+inline bool is_permutation_cpmestri(epu8 v, const size_t k = 16);
+#endif
+/** @copydoc common_is_permutation
+    @par Algorithm: sort the vector and compare to identity
+ */
+inline bool is_permutation_sort(epu8 v, const size_t k = 16);
+/** @copydoc common_is_permutation
+    @par Algorithm: architecture dependant
  */
 inline bool is_permutation(epu8 v, const size_t k = 16);
 

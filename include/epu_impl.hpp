@@ -89,7 +89,7 @@ inline bool less(epu8 a, epu8 b) {
     uint64_t diff = first_diff(a, b);
     return (diff < 16) && (a[diff] < b[diff]);
 }
-inline char less_partial(epu8 a, epu8 b, int k) {
+inline int8_t less_partial(epu8 a, epu8 b, int k) {
     uint64_t diff = first_diff(a, b, k);
     return (diff == 16)
                ? 0
@@ -232,14 +232,13 @@ constexpr std::array<epu8, 3> inverting_rounds {{
     // clang-format on
 }};
 
+#ifdef SIMDE_X86_SSE4_2_NATIVE
 #define FIND_IN_VECT                                                           \
     (SIMDE_SIDD_UBYTE_OPS | SIMDE_SIDD_CMP_EQUAL_ANY | SIMDE_SIDD_UNIT_MASK |                 \
      SIMDE_SIDD_NEGATIVE_POLARITY)
 #define FIND_IN_VECT_COMPL                                                     \
     (SIMDE_SIDD_UBYTE_OPS | SIMDE_SIDD_CMP_EQUAL_ANY | SIMDE_SIDD_UNIT_MASK)
-
-inline epu8 permutation_of(epu8 a, epu8 b) {
-#ifdef SIMDE_X86_SSE4_2_NATIVE
+inline epu8 permutation_of_cmpestrm(epu8 a, epu8 b) {
     epu8 res = -static_cast<epu8>(_mm_cmpestrm(a, 8, b, 16, FIND_IN_VECT));
     for (epu8 round : inverting_rounds) {
         a = permuted(a, round);
@@ -247,7 +246,22 @@ inline epu8 permutation_of(epu8 a, epu8 b) {
         res -= static_cast<epu8>(_mm_cmpestrm(a, 8, b, 16, FIND_IN_VECT));
     }
     return res;
+}
+#endif
+
+inline epu8 permutation_of_ref(epu8 a, epu8 b) {
+  auto ar = as_array(a);
+  epu8 res {};
+  for (size_t i = 0; i < 16; i++) {
+    res[i] = std::distance(ar.begin(), std::find(ar.begin(), ar.end(), b[i]));
+  }
+  return res;
+}
+inline epu8 permutation_of(epu8 a, epu8 b) {
+#ifdef SIMDE_X86_SSE4_2_NATIVE
+  return permutation_of_cmpestrm(a, b);
 #else
+  return permutation_of_ref(a, b);
 #endif
 }
 
@@ -446,19 +460,31 @@ inline bool is_partial_permutation(epu8 v, const size_t k) {
         && (diff == 16 || diff < k);
 }
 
-inline bool is_permutation(epu8 v, const size_t k) {
+#ifdef SIMDE_X86_SSE4_2_NATIVE
+inline bool is_permutation_cmpestri(epu8 v, const size_t k) {
     uint64_t diff = last_diff(v, epu8id, 16);
     // (forall x in v, x in Perm16::one())  and
     // (forall x in Perm16::one(), x in v)  and
     // (v = Perm16::one()   or  last diff index < 16)
-#ifdef SIMDE_X86_SSE4_2_NATIVE
     return _mm_cmpestri(epu8id, 16, v, 16, FIRST_NON_ZERO) == 16 &&
            _mm_cmpestri(v, 16, epu8id, 16, FIRST_NON_ZERO) == 16 &&
            (diff == 16 || diff < k);
-#else
+}
+#endif
+
+inline bool is_permutation_sort(epu8 v, const size_t k) {
+    uint64_t diff = last_diff(v, epu8id, 16);
     return equal(sorted(v), epu8id) && (diff == 16 || diff < k);
+}
+
+inline bool is_permutation(epu8 v, const size_t k) {
+#ifdef SIMDE_X86_SSE4_2_NATIVE
+    return is_permutation_cmpestri(v, k);
+#else
+    return is_permutation_sort(v, k);
 #endif
 }
+
 
 }  // namespace HPCombi
 
