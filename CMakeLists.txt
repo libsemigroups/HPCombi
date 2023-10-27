@@ -77,6 +77,10 @@ check_cxx_source_compiles(
 
 check_cxx_compiler_flag('-march=native' HPCOMBI_HAVE_FLAG_ARCH_NATIVE)
 check_cxx_compiler_flag('-mtune=native' HPCOMBI_HAVE_FLAG_TUNE_NATIVE)
+# TODO check for -funroll-loops + -flax-vector-constexpr
+# TODO only check for and set the flags required to make HPCombi work
+
+
 #check_cxx_compiler_flag('-mavx2' HPCOMBI_HAVE_FLAG_AVX2)
 #check_cxx_compiler_flag('-mavx512bw' HPCOMBI_HAVE_FLAG_AVX512BW)
 
