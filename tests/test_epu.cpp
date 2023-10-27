@@ -209,24 +209,24 @@ TEST_CASE_METHOD(Fix, "Epu8::permuted", "[Epu8][011]") {
 }
 
 TEST_CASE_METHOD(Fix, "Epu8::shifted_left", "[Epu8][012]") {
-    REQUIRE(equal(shifted_left(P01), P10));
-    REQUIRE(equal(shifted_left(P112),
-                  epu8{1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 0}));
-    REQUIRE(equal(shifted_left(Pv),
-                  epu8{5, 2, 5, 1, 6, 12, 4, 0, 3, 2, 11, 12, 13, 14, 15, 0}));
+    REQUIRE_THAT(shifted_left(P01), Equals(P10));
+    REQUIRE_THAT(shifted_left(P112),
+                 Equals(epu8{1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 0}));
+    REQUIRE_THAT(shifted_left(Pv), Equals(epu8{5, 2, 5, 1, 6, 12, 4, 0, 3, 2,
+                                               11, 12, 13, 14, 15, 0}));
 }
 
 TEST_CASE_METHOD(Fix, "Epu8::shifted_right", "[Epu8][013]") {
-    REQUIRE(equal(shifted_right(P10), P01));
-    REQUIRE(equal(shifted_right(P112), Epu8({0, 1, 1}, 2)));
-    REQUIRE(equal(shifted_right(Pv),
-                  epu8{0, 5, 5, 2, 5, 1, 6, 12, 4, 0, 3, 2, 11, 12, 13, 14}));
+    REQUIRE_THAT(shifted_right(P10), Equals(P01));
+    REQUIRE_THAT(shifted_right(P112), Equals(Epu8({0, 1, 1}, 2)));
+    REQUIRE_THAT(shifted_right(Pv), Equals(epu8{0, 5, 5, 2, 5, 1, 6, 12, 4, 0,
+                                                3, 2, 11, 12, 13, 14}));
 }
 
 TEST_CASE_METHOD(Fix, "Epu8::reverted", "[Epu8][014]") {
-    REQUIRE(equal(reverted(epu8id), epu8rev));
+    REQUIRE_THAT(reverted(epu8id), Equals(epu8rev));
     for (auto x : v) {
-        REQUIRE(equal(x, reverted(reverted(x))));
+        REQUIRE_THAT(x, Equals(reverted(reverted(x))));
     }
 }
 
@@ -234,17 +234,17 @@ TEST_CASE_METHOD(Fix, "Epu8::as_array", "[Epu8][015]") {
     epu8 x = Epu8({4, 2, 5, 1, 2, 7, 7, 3, 4, 2}, 1);
     auto &refx = as_array(x);
     refx[2] = 42;
-    REQUIRE(equal(x, Epu8({4, 2, 42, 1, 2, 7, 7, 3, 4, 2}, 1)));
+    REQUIRE_THAT(x, Equals(Epu8({4, 2, 42, 1, 2, 7, 7, 3, 4, 2}, 1)));
     std::fill(refx.begin() + 4, refx.end(), 3);
-    REQUIRE(equal(x, Epu8({4, 2, 42, 1}, 3)));
+    REQUIRE_THAT(x, Equals(Epu8({4, 2, 42, 1}, 3)));
     REQUIRE(av == as_array(Pv));
 }
 
 TEST_CASE_METHOD(Fix, "Epu8::from_array", "[Epu8][016]") {
     for (auto x : v) {
-        REQUIRE(equal(x, from_array(as_array(x))));
+        REQUIRE_THAT(x, Equals(from_array(as_array(x))));
     }
-    REQUIRE(equal(Pv, from_array(av)));
+    REQUIRE_THAT(Pv, Equals(from_array(av)));
 }
 
 TEST_CASE_METHOD(Fix, "Epu8::is_sorted", "[Epu8][017]") {
@@ -278,9 +278,9 @@ TEST_CASE_METHOD(Fix, "Epu8::is_sorted", "[Epu8][017]") {
 }
 
 TEST_CASE_METHOD(Fix, "Epu8::sorted", "[Epu8][018]") {
-    REQUIRE(equal(
+    REQUIRE_THAT(
         sorted(epu8{0, 1, 3, 2, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15}),
-        epu8id));
+        Equals(epu8id));
     for (auto &x : v) {
         REQUIRE(is_sorted(sorted(x)));
     }
@@ -293,9 +293,9 @@ TEST_CASE_METHOD(Fix, "Epu8::sorted", "[Epu8][018]") {
 }
 
 TEST_CASE_METHOD(Fix, "Epu8::revsorted", "[Epu8][019]") {
-    REQUIRE(equal(
+    REQUIRE_THAT(
         revsorted(epu8{0, 1, 3, 2, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15}),
-        epu8rev));
+        Equals(epu8rev));
     for (auto &x : v) {
         REQUIRE(is_sorted(reverted(revsorted(x))));
     }
@@ -309,24 +309,26 @@ TEST_CASE_METHOD(Fix, "Epu8::revsorted", "[Epu8][019]") {
 
 TEST_CASE_METHOD(Fix, "Epu8::sort_perm", "[Epu8][020]") {
     epu8 ve{2, 1, 3, 2, 4, 1, 1, 4, 2, 0, 1, 2, 1, 3, 4, 0};
-    REQUIRE(equal(sort_perm(ve),
-                  epu8{9, 15, 1, 5, 6, 10, 12, 3, 0, 8, 11, 2, 13, 7, 4, 14}));
-    REQUIRE(equal(ve, epu8{0, 0, 1, 1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 4, 4, 4}));
+    REQUIRE_THAT(sort_perm(ve),
+                  Equals(epu8{9, 15, 1, 5, 6, 10, 12, 3, 0, 8, 11, 2, 13, 7, 4, 14}));
+    REQUIRE_THAT(ve, Equals(epu8{0, 0, 1, 1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 4, 4, 4}));
 
     for (auto x : v) {
         epu8 xsort = x;
         epu8 psort = sort_perm(xsort);
         REQUIRE(is_sorted(xsort));
         REQUIRE(is_permutation(psort));
-        REQUIRE(equal(permuted(x, psort), xsort));
+        REQUIRE_THAT(permuted(x, psort), Equals(xsort));
     }
 }
 
 TEST_CASE_METHOD(Fix, "Epu8::sort8_perm", "[Epu8][021]") {
     epu8 ve{2, 1, 3, 2, 4, 1, 1, 4, 2, 0, 1, 2, 1, 3, 4, 0};
-    REQUIRE(equal(sort8_perm(ve),
-                  epu8{1, 6, 5, 0, 3, 2, 4, 7, 9, 15, 10, 12, 8, 11, 13, 14}));
-    REQUIRE(equal(ve, epu8{1, 1, 1, 2, 2, 3, 4, 4, 0, 0, 1, 1, 2, 2, 3, 4}));
+    REQUIRE_THAT(
+        sort8_perm(ve),
+        Equals(epu8{1, 6, 5, 0, 3, 2, 4, 7, 9, 15, 10, 12, 8, 11, 13, 14}));
+    REQUIRE_THAT(ve,
+                 Equals(epu8{1, 1, 1, 2, 2, 3, 4, 4, 0, 0, 1, 1, 2, 2, 3, 4}));
 
     for (auto x : v) {
         epu8 xsort = x;
@@ -334,57 +336,59 @@ TEST_CASE_METHOD(Fix, "Epu8::sort8_perm", "[Epu8][021]") {
         REQUIRE(is_sorted(xsort | Epu8({0, 0, 0, 0, 0, 0, 0, 0}, 0xFF)));
         REQUIRE(is_sorted(xsort & Epu8({0, 0, 0, 0, 0, 0, 0, 0}, 0xFF)));
         REQUIRE(is_permutation(psort));
-        REQUIRE(equal(permuted(x, psort), xsort));
+        REQUIRE_THAT(permuted(x, psort), Equals(xsort));
     }
 }
 
 TEST_CASE_METHOD(Fix, "Epu8::permutation_of", "[Epu8][022]") {
-    REQUIRE(equal(permutation_of(epu8id, epu8id), epu8id));
-    REQUIRE(equal(permutation_of(Pa, Pa), epu8id));
-    REQUIRE(equal(permutation_of(epu8rev, epu8id), epu8rev));
-    REQUIRE(equal(permutation_of(epu8id, epu8rev), epu8rev));
-    REQUIRE(equal(permutation_of(epu8rev, epu8rev), epu8id));
-    REQUIRE(equal(permutation_of(epu8id, RP), RP));
+    REQUIRE_THAT(permutation_of(epu8id, epu8id), Equals(epu8id));
+    REQUIRE_THAT(permutation_of(Pa, Pa), Equals(epu8id));
+    REQUIRE_THAT(permutation_of(epu8rev, epu8id), Equals(epu8rev));
+    REQUIRE_THAT(permutation_of(epu8id, epu8rev), Equals(epu8rev));
+    REQUIRE_THAT(permutation_of(epu8rev, epu8rev), Equals(epu8id));
+    REQUIRE_THAT(permutation_of(epu8id, RP), Equals(RP));
     const uint8_t FF = 0xff;
-    REQUIRE(
-        equal((permutation_of(Pv, Pv) |
-               epu8{FF, FF, FF, FF, 0, 0, FF, 0, 0, 0, FF, 0, FF, 0, 0, 0}),
-              epu8{FF, FF, FF, FF, 4, 5, FF, 7, 8, 9, FF, 11, FF, 13, 14, 15}));
+    REQUIRE_THAT(
+        (permutation_of(Pv, Pv) |
+         epu8{FF, FF, FF, FF, 0, 0, FF, 0, 0, 0, FF, 0, FF, 0, 0, 0}),
+        Equals(epu8{FF, FF, FF, FF, 4, 5, FF, 7, 8, 9, FF, 11, FF, 13, 14, 15}));
 }
 TEST_CASE_METHOD(Fix, "Epu8::permutation_of_ref", "[Epu8][022]") {
-    REQUIRE(equal(permutation_of_ref(epu8id, epu8id), epu8id));
-    REQUIRE(equal(permutation_of_ref(Pa, Pa), epu8id));
-    REQUIRE(equal(permutation_of_ref(epu8rev, epu8id), epu8rev));
-    REQUIRE(equal(permutation_of_ref(epu8id, epu8rev), epu8rev));
-    REQUIRE(equal(permutation_of_ref(epu8rev, epu8rev), epu8id));
-    REQUIRE(equal(permutation_of_ref(epu8id, RP), RP));
+    REQUIRE_THAT(permutation_of_ref(epu8id, epu8id), Equals(epu8id));
+    REQUIRE_THAT(permutation_of_ref(Pa, Pa), Equals(epu8id));
+    REQUIRE_THAT(permutation_of_ref(epu8rev, epu8id), Equals(epu8rev));
+    REQUIRE_THAT(permutation_of_ref(epu8id, epu8rev), Equals(epu8rev));
+    REQUIRE_THAT(permutation_of_ref(epu8rev, epu8rev), Equals(epu8id));
+    REQUIRE_THAT(permutation_of_ref(epu8id, RP), Equals(RP));
     const uint8_t FF = 0xff;
-    REQUIRE(
-        equal((permutation_of_ref(Pv, Pv) |
-               epu8{FF, FF, FF, FF, 0, 0, FF, 0, 0, 0, FF, 0, FF, 0, 0, 0}),
-              epu8{FF, FF, FF, FF, 4, 5, FF, 7, 8, 9, FF, 11, FF, 13, 14, 15}));
+    REQUIRE_THAT(
+        (permutation_of_ref(Pv, Pv) |
+         epu8{FF, FF, FF, FF, 0, 0, FF, 0, 0, 0, FF, 0, FF, 0, 0, 0}),
+        Equals(epu8{FF, FF, FF, FF, 4, 5, FF, 7, 8, 9, FF, 11, FF, 13, 14, 15}));
 }
 
 TEST_CASE_METHOD(Fix, "Epu8::remove_dups", "[Epu8][023]") {
-    REQUIRE(equal(remove_dups(P1), P10));
-    REQUIRE(equal(remove_dups(P11), P10));
-    REQUIRE(equal(remove_dups(sorted(P10)),
-                  epu8{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1}));
-    REQUIRE(equal(remove_dups(sorted(Pv)),
-                  epu8{0, 1, 2, 0, 3, 4, 5, 0, 0, 6, 11, 12, 0, 13, 14, 15}));
-    REQUIRE(equal(remove_dups(P1, 1), P1));
-    REQUIRE(equal(remove_dups(P11, 1), Epu8({1, 1, 0}, 1)));
-    REQUIRE(equal(remove_dups(P11, 42), Epu8({1, 42, 0}, 42)));
-    REQUIRE(equal(remove_dups(sorted(P10), 1), P1));
-    REQUIRE(equal(remove_dups(sorted(Pv), 7),
-                  epu8{7, 1, 2, 7, 3, 4, 5, 7, 7, 6, 11, 12, 7, 13, 14, 15}));
+    REQUIRE_THAT(remove_dups(P1), Equals(P10));
+    REQUIRE_THAT(remove_dups(P11), Equals(P10));
+    REQUIRE_THAT(remove_dups(sorted(P10)),
+                 Equals(epu8{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1}));
+    REQUIRE_THAT(
+        remove_dups(sorted(Pv)),
+        Equals(epu8{0, 1, 2, 0, 3, 4, 5, 0, 0, 6, 11, 12, 0, 13, 14, 15}));
+    REQUIRE_THAT(remove_dups(P1, 1), Equals(P1));
+    REQUIRE_THAT(remove_dups(P11, 1), Equals(Epu8({1, 1, 0}, 1)));
+    REQUIRE_THAT(remove_dups(P11, 42), Equals(Epu8({1, 42, 0}, 42)));
+    REQUIRE_THAT(remove_dups(sorted(P10), 1), Equals(P1));
+    REQUIRE_THAT(
+        remove_dups(sorted(Pv), 7),
+        Equals(epu8{7, 1, 2, 7, 3, 4, 5, 7, 7, 6, 11, 12, 7, 13, 14, 15}));
     for (auto x : v) {
         x = sorted(remove_dups(sorted(x)));
-        REQUIRE(equal(x, sorted(remove_dups(x))));
+        REQUIRE_THAT(x, Equals(sorted(remove_dups(x))));
     }
     for (auto x : v) {
         x = sorted(remove_dups(sorted(x), 42));
-        REQUIRE(equal(x, sorted(remove_dups(x, 42))));
+        REQUIRE_THAT(x, Equals(sorted(remove_dups(x, 42))));
     }
 }
 
@@ -413,48 +417,53 @@ TEST_CASE_METHOD(Fix, "Epu8::horiz_sum_ref", "[Epu8][024]") {
 // TEST_AGREES(Fix, Epu8, horiz_sum_ref, horiz_sum, v, "[Epu8][028]")
 
 TEST_CASE_METHOD(Fix, "Epu8::partial_sums_ref", "[Epu8][029]") {
-    REQUIRE(equal(partial_sums_ref(zero), zero));
-    REQUIRE(equal(partial_sums_ref(P01), Epu8({0}, 1)));
-    REQUIRE(
-        equal(partial_sums_ref(epu8id), epu8{0, 1, 3, 6, 10, 15, 21, 28, 36, 45,
-                                             55, 66, 78, 91, 105, 120}));
-    REQUIRE(equal(partial_sums_ref(P10), P1));
-    REQUIRE(equal(partial_sums_ref(P11), Epu8({1}, 2)));
-    REQUIRE(equal(partial_sums_ref(P1), epu8id + Epu8({}, 1)));
-    REQUIRE(equal(partial_sums_ref(P112), epu8{1, 2, 4, 6, 8, 10, 12, 14, 16,
-                                               18, 20, 22, 24, 26, 28, 30}));
-    REQUIRE(equal(partial_sums_ref(Pa1), epu8{4, 6, 11, 12, 14, 21, 28, 31, 35,
-                                              37, 38, 39, 40, 41, 42, 43}));
+    REQUIRE_THAT(partial_sums_ref(zero), Equals(zero));
+    REQUIRE_THAT(partial_sums_ref(P01), Equals(Epu8({0}, 1)));
+    REQUIRE_THAT(partial_sums_ref(epu8id),
+                 Equals(epu8{0, 1, 3, 6, 10, 15, 21, 28, 36, 45, 55, 66, 78, 91,
+                             105, 120}));
+    REQUIRE_THAT(partial_sums_ref(P10), Equals(P1));
+    REQUIRE_THAT(partial_sums_ref(P11), Equals(Epu8({1}, 2)));
+    REQUIRE_THAT(partial_sums_ref(P1), Equals(epu8id + Epu8({}, 1)));
+    REQUIRE_THAT(partial_sums_ref(P112),
+                 Equals(epu8{1, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26,
+                             28, 30}));
+    REQUIRE_THAT(partial_sums_ref(Pa1),
+                 Equals(epu8{4, 6, 11, 12, 14, 21, 28, 31, 35, 37, 38, 39, 40,
+                             41, 42, 43}));
 
-    REQUIRE(equal(partial_sums_ref(Pa2), epu8{4, 6, 11, 12, 14, 23, 30, 33, 37,
-                                              39, 40, 41, 42, 43, 44, 45}));
-    REQUIRE(equal(partial_sums_ref(P51), epu8{5, 6, 12, 18, 24, 30, 36, 42, 48,
-                                              54, 60, 66, 72, 78, 84, 90}));
-    REQUIRE(equal(partial_sums_ref(Pv), epu8{5, 10, 12, 17, 18, 24, 36, 40, 40,
-                                             43, 45, 56, 68, 81, 95, 110}));
-    REQUIRE(equal(partial_sums_ref(P5), epu8{5, 10, 15, 20, 25, 30, 35, 40, 45,
-                                             50, 55, 60, 65, 70, 75, 80}));
-    REQUIRE(equal(partial_sums_ref(epu8rev),
-                  epu8{15, 29, 42, 54, 65, 75, 84, 92, 99, 105, 110, 114, 117,
-                       119, 120, 120}));
-    REQUIRE(
-        equal(partial_sums_ref(Pc), epu8{23, 28, 49, 54, 97, 133, 140, 147, 154,
-                                         161, 168, 175, 182, 189, 196, 203}));
+    REQUIRE_THAT(partial_sums_ref(Pa2),
+                 Equals(epu8{4, 6, 11, 12, 14, 23, 30, 33, 37, 39, 40, 41, 42,
+                             43, 44, 45}));
+    REQUIRE_THAT(partial_sums_ref(P51),
+                 Equals(epu8{5, 6, 12, 18, 24, 30, 36, 42, 48, 54, 60, 66, 72,
+                             78, 84, 90}));
+    REQUIRE_THAT(partial_sums_ref(Pv),
+                 Equals(epu8{5, 10, 12, 17, 18, 24, 36, 40, 40, 43, 45, 56, 68,
+                             81, 95, 110}));
+    REQUIRE_THAT(partial_sums_ref(P5),
+                 Equals(epu8{5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65,
+                             70, 75, 80}));
+    REQUIRE_THAT(partial_sums_ref(epu8rev),
+                 Equals(epu8{15, 29, 42, 54, 65, 75, 84, 92, 99, 105, 110, 114,
+                             117, 119, 120, 120}));
+    REQUIRE_THAT(partial_sums_ref(Pc),
+                 Equals(epu8{23, 28, 49, 54, 97, 133, 140, 147, 154, 161, 168,
+                             175, 182, 189, 196, 203}));
 }
-
 TEST_CASE_METHOD(Fix, "Epu8::partial_sum_gen", "[Epu8][030]") {
     for (auto x : v) {
-        REQUIRE(equal(partial_sums_gen(x), partial_sums_ref(x)));
+        REQUIRE_THAT(partial_sums_gen(x), Equals(partial_sums_ref(x)));
     }
 }
 TEST_CASE_METHOD(Fix, "Epu8::partial_sum_round", "[Epu8][031]") {
     for (auto x : v) {
-        REQUIRE(equal(partial_sums_round(x), partial_sums_ref(x)));
+        REQUIRE_THAT(partial_sums_round(x), Equals(partial_sums_ref(x)));
     }
 }
 TEST_CASE_METHOD(Fix, "Epu8::partial_sum", "[Epu8][032]") {
     for (auto x : v) {
-        REQUIRE(equal(partial_sums(x), partial_sums_ref(x)));
+        REQUIRE_THAT(partial_sums(x), Equals(partial_sums_ref(x)));
     }
 }
 
@@ -482,38 +491,39 @@ TEST_CASE_METHOD(Fix, "Epu8::horiz_max_ref", "[Epu8][033]") {
 // TEST_AGREES(Fix, Epu8, horiz_max_ref, horiz_max, v, "[Epu8][037]")
 
 TEST_CASE_METHOD(Fix, "Epu8::partial_max_ref", "[Epu8][038]") {
-    REQUIRE(equal(partial_max_ref(zero), zero));
-    REQUIRE(equal(partial_max_ref(P01), Epu8({0}, 1)));
-    REQUIRE(equal(partial_max_ref(epu8id), epu8id));
-    REQUIRE(equal(partial_max_ref(P10), P1));
-    REQUIRE(equal(partial_max_ref(P11), P1));
-    REQUIRE(equal(partial_max_ref(P1), P1));
-    REQUIRE(equal(partial_max_ref(P112), P112));
-    REQUIRE(equal(partial_max_ref(Pa1), Epu8({4, 4, 5, 5, 5}, 7)));
-    REQUIRE(equal(partial_max_ref(Pa2), Epu8({4, 4, 5, 5, 5}, 9)));
-    REQUIRE(equal(partial_max_ref(P51), Epu8({5, 5}, 6)));
-    REQUIRE(equal(partial_max_ref(Pv), epu8{5, 5, 5, 5, 5, 6, 12, 12, 12, 12,
-                                            12, 12, 12, 13, 14, 15}));
-    REQUIRE(equal(partial_max_ref(P5), P5));
-    REQUIRE(equal(partial_max_ref(epu8rev), Epu8({}, 15)));
-    REQUIRE(equal(partial_max_ref(Pc), Epu8({23, 23, 23, 23}, 43)));
+    REQUIRE_THAT(partial_max_ref(zero), Equals(zero));
+    REQUIRE_THAT(partial_max_ref(P01), Equals(Epu8({0}, 1)));
+    REQUIRE_THAT(partial_max_ref(epu8id), Equals(epu8id));
+    REQUIRE_THAT(partial_max_ref(P10), Equals(P1));
+    REQUIRE_THAT(partial_max_ref(P11), Equals(P1));
+    REQUIRE_THAT(partial_max_ref(P1), Equals(P1));
+    REQUIRE_THAT(partial_max_ref(P112), Equals(P112));
+    REQUIRE_THAT(partial_max_ref(Pa1), Equals(Epu8({4, 4, 5, 5, 5}, 7)));
+    REQUIRE_THAT(partial_max_ref(Pa2), Equals(Epu8({4, 4, 5, 5, 5}, 9)));
+    REQUIRE_THAT(partial_max_ref(P51), Equals(Epu8({5, 5}, 6)));
+    REQUIRE_THAT(
+        partial_max_ref(Pv),
+        Equals(epu8{5, 5, 5, 5, 5, 6, 12, 12, 12, 12, 12, 12, 12, 13, 14, 15}));
+    REQUIRE_THAT(partial_max_ref(P5), Equals(P5));
+    REQUIRE_THAT(partial_max_ref(epu8rev), Equals(Epu8({}, 15)));
+    REQUIRE_THAT(partial_max_ref(Pc), Equals(Epu8({23, 23, 23, 23}, 43)));
 }
 
 TEST_CASE_METHOD(Fix, "Epu8::partial_max_gen", "[Epu8][039]") {
     for (auto x : v) {
-        REQUIRE(equal(partial_max_gen(x), partial_max_ref(x)));
+        REQUIRE_THAT(partial_max_gen(x), Equals(partial_max_ref(x)));
     }
 }
 
 TEST_CASE_METHOD(Fix, "Epu8::partial_max_round", "[Epu8][040]") {
     for (auto x : v) {
-        REQUIRE(equal(partial_max_round(x), partial_max_ref(x)));
+        REQUIRE_THAT(partial_max_round(x), Equals(partial_max_ref(x)));
     }
 }
 
 TEST_CASE_METHOD(Fix, "Epu8::partial_max", "[Epu8][041]") {
     for (auto x : v) {
-        REQUIRE(equal(partial_max(x), partial_max_ref(x)));
+        REQUIRE_THAT(partial_max(x), Equals(partial_max_ref(x)));
     }
 }
 
@@ -540,67 +550,59 @@ TEST_CASE_METHOD(Fix, "Epu8::horiz_min_ref", "[Epu8][042]") {
 // TEST_AGREES(horiz_min_ref, horiz_min)
 
 TEST_CASE_METHOD(Fix, "Epu8::partial_min_ref", "[Epu8][043]") {
-    REQUIRE(equal(partial_min_ref(zero), zero));
-    REQUIRE(equal(partial_min_ref(P01), zero));
-    REQUIRE(equal(partial_min_ref(epu8id), zero));
-    REQUIRE(equal(partial_min_ref(P10), P10));
-    REQUIRE(equal(partial_min_ref(P11), P11));
-    REQUIRE(equal(partial_min_ref(P1), P1));
-    REQUIRE(equal(partial_min_ref(P112), P1));
-    REQUIRE(equal(partial_min_ref(Pa1), Epu8({4, 2, 2}, 1)));
-    REQUIRE(equal(partial_min_ref(Pa2), Epu8({4, 2, 2}, 1)));
-    REQUIRE(equal(partial_min_ref(P51), Epu8({5}, 1)));
-    REQUIRE(equal(partial_min_ref(Pv), Epu8(
-                                           {
-                                               5,
-                                               5,
-                                               2,
-                                               2,
-                                               1,
-                                               1,
-                                               1,
-                                               1,
-                                           },
-                                           0)));
-    REQUIRE(equal(partial_min_ref(P5), P5));
-    REQUIRE(equal(partial_min_ref(epu8rev), epu8rev));
-    REQUIRE(equal(partial_min_ref(Pc), Epu8({23}, 5)));
+    REQUIRE_THAT(partial_min_ref(zero), Equals(zero));
+    REQUIRE_THAT(partial_min_ref(P01), Equals(zero));
+    REQUIRE_THAT(partial_min_ref(epu8id), Equals(zero));
+    REQUIRE_THAT(partial_min_ref(P10), Equals(P10));
+    REQUIRE_THAT(partial_min_ref(P11), Equals(P11));
+    REQUIRE_THAT(partial_min_ref(P1), Equals(P1));
+    REQUIRE_THAT(partial_min_ref(P112), Equals(P1));
+    REQUIRE_THAT(partial_min_ref(Pa1), Equals(Epu8({4, 2, 2}, 1)));
+    REQUIRE_THAT(partial_min_ref(Pa2), Equals(Epu8({4, 2, 2}, 1)));
+    REQUIRE_THAT(partial_min_ref(P51), Equals(Epu8({5}, 1)));
+    REQUIRE_THAT(
+        partial_min_ref(Pv),
+        Equals(Epu8({5, 5, 2, 2, 1, 1, 1, 1, }, 0)));
+    REQUIRE_THAT(partial_min_ref(P5), Equals(P5));
+    REQUIRE_THAT(partial_min_ref(epu8rev), Equals(epu8rev));
+    REQUIRE_THAT(partial_min_ref(Pc), Equals(Epu8({23}, 5)));
 }
 
 TEST_CASE_METHOD(Fix, "Epu8::partial_min_gen", "[Epu8][044]") {
     for (auto x : v) {
-        REQUIRE(equal(partial_min_gen(x), partial_min_ref(x)));
+        REQUIRE_THAT(partial_min_gen(x), Equals(partial_min_ref(x)));
     }
 }
 
 TEST_CASE_METHOD(Fix, "Epu8::partial_min_round", "[Epu8][045]") {
     for (auto x : v) {
-        REQUIRE(equal(partial_min_round(x), partial_min_ref(x)));
+        REQUIRE_THAT(partial_min_round(x), Equals(partial_min_ref(x)));
     }
 }
 
 TEST_CASE_METHOD(Fix, "Epu8::partial_min", "[Epu8][046]") {
     for (auto x : v) {
-        REQUIRE(equal(partial_min(x), partial_min_ref(x)));
+        REQUIRE_THAT(partial_min(x), Equals(partial_min_ref(x)));
     }
 }
 
 TEST_CASE_METHOD(Fix, "Epu8::eval16_ref", "[Epu8][047]") {
-    REQUIRE(equal(eval16_ref(zero), Epu8({16}, 0)));
-    REQUIRE(equal(eval16_ref(P01), Epu8({15, 1}, 0)));
-    REQUIRE(equal(eval16_ref(epu8id), Epu8({}, 1)));
-    REQUIRE(equal(eval16_ref(P10), Epu8({15, 1}, 0)));
-    REQUIRE(equal(eval16_ref(P11), Epu8({14, 2}, 0)));
-    REQUIRE(equal(eval16_ref(P1), Epu8({0, 16}, 0)));
-    REQUIRE(equal(eval16_ref(P112), Epu8({0, 2, 14}, 0)));
-    REQUIRE(equal(eval16_ref(Pa1), Epu8({0, 7, 3, 1, 2, 1, 0, 2}, 0)));
-    REQUIRE(equal(eval16_ref(Pa2), Epu8({0, 7, 3, 1, 2, 1, 0, 1, 0, 1}, 0)));
-    REQUIRE(equal(eval16_ref(P51), Epu8({0, 1, 0, 0, 0, 1, 14}, 0)));
-    REQUIRE(equal(eval16_ref(Pv),
-                  epu8{1, 1, 2, 1, 1, 3, 1, 0, 0, 0, 0, 1, 2, 1, 1, 1}));
-    REQUIRE(equal(eval16_ref(P5), Epu8({0, 0, 0, 0, 0, 16}, 0)));
-    REQUIRE(equal(eval16_ref(epu8rev), Epu8({}, 1)));
-    REQUIRE(equal(eval16_ref(Pc), Epu8({0, 0, 0, 0, 0, 2, 0, 10}, 0)));
+    REQUIRE_THAT(eval16_ref(zero), Equals(Epu8({16}, 0)));
+    REQUIRE_THAT(eval16_ref(P01), Equals(Epu8({15, 1}, 0)));
+    REQUIRE_THAT(eval16_ref(epu8id), Equals(Epu8({}, 1)));
+    REQUIRE_THAT(eval16_ref(P10), Equals(Epu8({15, 1}, 0)));
+    REQUIRE_THAT(eval16_ref(P11), Equals(Epu8({14, 2}, 0)));
+    REQUIRE_THAT(eval16_ref(P1), Equals(Epu8({0, 16}, 0)));
+    REQUIRE_THAT(eval16_ref(P112), Equals(Epu8({0, 2, 14}, 0)));
+    REQUIRE_THAT(eval16_ref(Pa1), Equals(Epu8({0, 7, 3, 1, 2, 1, 0, 2}, 0)));
+    REQUIRE_THAT(eval16_ref(Pa2),
+                 Equals(Epu8({0, 7, 3, 1, 2, 1, 0, 1, 0, 1}, 0)));
+    REQUIRE_THAT(eval16_ref(P51), Equals(Epu8({0, 1, 0, 0, 0, 1, 14}, 0)));
+    REQUIRE_THAT(eval16_ref(Pv),
+                 Equals(epu8{1, 1, 2, 1, 1, 3, 1, 0, 0, 0, 0, 1, 2, 1, 1, 1}));
+    REQUIRE_THAT(eval16_ref(P5), Equals(Epu8({0, 0, 0, 0, 0, 16}, 0)));
+    REQUIRE_THAT(eval16_ref(epu8rev), Equals(Epu8({}, 1)));
+    REQUIRE_THAT(eval16_ref(Pc), Equals(Epu8({0, 0, 0, 0, 0, 2, 0, 10}, 0)));
 }
 // TODO uncomment
 // TEST_Epu8::AGREES(eval16_ref, eval16_cycle, "[Epu8][000]")
@@ -610,27 +612,27 @@ TEST_CASE_METHOD(Fix, "Epu8::eval16_ref", "[Epu8][047]") {
 // TEST_Epu8::AGREES(eval16_ref, eval16, "[Epu8][000]")
 
 TEST_CASE("Epu8::popcount4", "[Epu8][048]") {
-    REQUIRE(
-        equal(popcount4, epu8{0, 1, 1, 2, 1, 2, 2, 3, 1, 2, 2, 3, 2, 3, 3, 4}));
+    REQUIRE_THAT(popcount4,
+                 Equals(epu8{0, 1, 1, 2, 1, 2, 2, 3, 1, 2, 2, 3, 2, 3, 3, 4}));
 }
 
 TEST_CASE_METHOD(Fix, "Epu8::popcount16", "[Epu8][049]") {
-    REQUIRE(equal(popcount16(Pv),
-                  epu8{2, 2, 1, 2, 1, 2, 2, 1, 0, 2, 1, 3, 2, 3, 3, 4}));
-    REQUIRE(equal(popcount16(RP),
-                  epu8{2, 1, 0, 3, 4, 3, 2, 2, 1, 3, 2, 2, 3, 1, 1, 2}));
-    REQUIRE(equal(popcount16(RP << 1),
-                  epu8{2, 1, 0, 3, 4, 3, 2, 2, 1, 3, 2, 2, 3, 1, 1, 2}));
-    REQUIRE(equal(popcount16(RP << 2),
-                  epu8{2, 1, 0, 3, 4, 3, 2, 2, 1, 3, 2, 2, 3, 1, 1, 2}));
-    REQUIRE(equal(popcount16(Epu8({0, 1, 5, 0xff, 0xf0, 0x35}, 0x0f)),
-                  Epu8({0, 1, 2, 8}, 4)));
+    REQUIRE_THAT(popcount16(Pv),
+                 Equals(epu8{2, 2, 1, 2, 1, 2, 2, 1, 0, 2, 1, 3, 2, 3, 3, 4}));
+    REQUIRE_THAT(popcount16(RP),
+                 Equals(epu8{2, 1, 0, 3, 4, 3, 2, 2, 1, 3, 2, 2, 3, 1, 1, 2}));
+    REQUIRE_THAT(popcount16(RP << 1),
+                 Equals(epu8{2, 1, 0, 3, 4, 3, 2, 2, 1, 3, 2, 2, 3, 1, 1, 2}));
+    REQUIRE_THAT(popcount16(RP << 2),
+                 Equals(epu8{2, 1, 0, 3, 4, 3, 2, 2, 1, 3, 2, 2, 3, 1, 1, 2}));
+    REQUIRE_THAT(popcount16(Epu8({0, 1, 5, 0xff, 0xf0, 0x35}, 0x0f)),
+                 Equals(Epu8({0, 1, 2, 8}, 4)));
 }
 
 TEST_CASE("random_epu8", "[Epu8][050]") {
     for (int i = 0; i < 10; i++) {
         epu8 r = random_epu8(255);
-        REQUIRE(equal(r, r));
+        REQUIRE_THAT(r, Equals(r));
     }
 }
 

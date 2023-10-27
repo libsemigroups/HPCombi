@@ -41,7 +41,7 @@
 #define TEST_AGREES_EPU8(fixture, type, ref, fun, vct, tags)                   \
     TEST_CASE_METHOD(fixture, #type "::" #ref " == " #type "::" #fun, tags) {  \
         for (type p : vct) {                                                   \
-            REQUIRE(equal(p.fun(), p.ref()));                                  \
+            REQUIRE_THAT(p.fun(), Equals(p.ref()));                                  \
         }                                                                      \
     }
 
