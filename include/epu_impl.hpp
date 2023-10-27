@@ -93,7 +93,7 @@ inline int8_t less_partial(epu8 a, epu8 b, int k) {
     uint64_t diff = first_diff(a, b, k);
     return (diff == 16)
                ? 0
-               : static_cast<char>(a[diff]) - static_cast<char>(b[diff]);
+               : static_cast<int8_t>(a[diff]) - static_cast<int8_t>(b[diff]);
 }
 
 

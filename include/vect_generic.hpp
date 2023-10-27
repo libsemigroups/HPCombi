@@ -93,9 +93,9 @@ template <size_t _Size, typename Expo = uint8_t> struct VectGeneric {
         return (diff != _Size) and v[diff] < u[diff];
     }
 
-    char less_partial(const VectGeneric &u, int k) const {
+    int8_t less_partial(const VectGeneric &u, int k) const {
         uint64_t diff = first_diff(u, k);
-        return (diff == _Size) ? 0 : char(v[diff]) - char(u[diff]);
+        return (diff == _Size) ? 0 : int8_t(v[diff]) - int8_t(u[diff]);
     }
 
     VectGeneric permuted(const VectGeneric &u) const {

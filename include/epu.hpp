@@ -622,7 +622,7 @@ inline bool less(epu8 a, epu8 b);
 /** Partial lexicographic comparison between two #HPCombi::epu8
  * @param a, b : the vectors to compare
  * @param k : the bound for the lexicographic comparison
- * @return a positive, negative or zero char depending on the result
+ * @return a positive, negative or zero int8_t depending on the result
  */
 inline int8_t less_partial(epu8 a, epu8 b, int k);
 

@@ -83,7 +83,7 @@ struct alignas(16) Vect16 {
     };
 
     bool operator<(const Vect16 &b) const { return less(v, b.v); };
-    char less_partial(const Vect16 &b, int k) const {
+    int8_t less_partial(const Vect16 &b, int k) const {
         return HPCombi::less_partial(v, b.v, k);
     };
     Vect16 permuted(const Vect16 &b) const {
