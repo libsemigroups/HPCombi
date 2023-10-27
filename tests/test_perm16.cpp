@@ -92,32 +92,55 @@ TEST_CASE("PTransf16::hash", "[PTransf16][001]") {
     REQUIRE(std::hash<PTransf16>()(PTransf16({4, 5, 0}, {9, 0, 1})) != 0);
 }
 
-// TODO uncomment
-// TEST_CASE("PTransf16::image_mask", "[PTransf16][002]") {
-//     REQUIRE(equal(PTransf16({}).image_mask(), Epu8(FF));
-//     REQUIRE(equal(PTransf16({}).image_mask(false), Epu8(FF));
-//     REQUIRE(equal(PTransf16({}).image_mask(true), Epu8(0));
-//     REQUIRE(equal(PTransf16({4, 4, 4, 4}).image_mask(), Epu8({0, 0, 0, 0},
-//     FF)); REQUIRE(equal(PTransf16({4, 4, 4, 4}).image_mask(false),
-//                Epu8({0, 0, 0, 0}, FF));
-//     REQUIRE(equal(PTransf16({4, 4, 4, 4}).image_mask(true),
-//                Epu8({FF, FF, FF, FF}, 0));
-//     REQUIRE(equal(PTransf16(Epu8(1)).image_mask(), Epu8({0, FF}, 0));
-//     REQUIRE(equal(PTransf16(Epu8(2)).image_mask(), Epu8({0, 0, FF}, 0));
-//     REQUIRE(equal(PTransf16(Epu8({2, 2, 2, 0xf}, 2)).image_mask(),
-//                Epu8({0, 0, FF, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, FF}, 0));
-//     REQUIRE(equal(
-//         PTransf16(Epu8({0, 2, 2, 0xf, 2, 2, 2, 2, 5, 2}, 2)).image_mask(),
-//         Epu8({FF, 0, FF, 0, 0, FF, 0, 0, 0, 0, 0, 0, 0, 0, 0, FF}, 0));
-//     REQUIRE(equal(
-//         PTransf16(Epu8({0, 2, 2, 0xf, 2, 2, 2, 2, 5, 2},
-//         2)).image_mask(false), Epu8({FF, 0, FF, 0, 0, FF, 0, 0, 0, 0, 0, 0,
-//         0, 0, 0, FF}, 0));
-//     REQUIRE(equal(
-//         PTransf16(Epu8({0, 2, 2, 0xf, 2, 2, 2, 2, 5, 2},
-//         2)).image_mask(true), Epu8({0, FF, 0, FF, FF, 0, FF, FF, FF, FF, FF,
-//         FF, FF, FF, FF, 0}, 0));
-// }
+TEST_CASE("PTransf16::image_mask", "[PTransf16][002]") {
+    REQUIRE_THAT(PTransf16({}).image_mask(), Equals(Epu8(FF)));
+    REQUIRE_THAT(PTransf16({}).image_mask(false), Equals(Epu8(FF)));
+    REQUIRE_THAT(PTransf16({}).image_mask(true), Equals(Epu8(0)));
+    REQUIRE_THAT(PTransf16({4, 4, 4, 4}).image_mask(),
+                 Equals(Epu8({0, 0, 0, 0}, FF)));
+    REQUIRE_THAT(PTransf16({4, 4, 4, 4}).image_mask(false),
+                 Equals(Epu8({0, 0, 0, 0}, FF)));
+    REQUIRE_THAT(PTransf16({4, 4, 4, 4}).image_mask(true),
+                 Equals(Epu8({FF, FF, FF, FF}, 0)));
+    REQUIRE_THAT(PTransf16(Epu8(1)).image_mask(), Equals(Epu8({0, FF}, 0)));
+    REQUIRE_THAT(PTransf16(Epu8(2)).image_mask(), Equals(Epu8({0, 0, FF}, 0)));
+    REQUIRE_THAT(PTransf16(Epu8({2, 2, 2, 0xf}, 2)).image_mask(),
+                 Equals(Epu8({0, 0, FF, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, FF}, 0)));
+    REQUIRE_THAT(
+        PTransf16(Epu8({0, 2, 2, 0xf, 2, 2, 2, 2, 5, 2}, 2)).image_mask(),
+        Equals(Epu8({FF, 0, FF, 0, 0, FF, 0, 0, 0, 0, 0, 0, 0, 0, 0, FF}, 0)));
+    REQUIRE_THAT(
+        PTransf16(Epu8({0, 2, 2, 0xf, 2, 2, 2, 2, 5, 2}, 2)).image_mask(false),
+        Equals(Epu8({FF, 0, FF, 0, 0, FF, 0, 0, 0, 0, 0, 0, 0, 0, 0, FF}, 0)));
+    REQUIRE_THAT(
+        PTransf16(Epu8({0, 2, 2, 0xf, 2, 2, 2, 2, 5, 2}, 2)).image_mask(true),
+        Equals(Epu8({0, FF, 0, FF, FF, 0, FF, FF, FF, FF, FF, FF, FF, FF, FF, 0}, 0)));
+}
+
+TEST_CASE("PTransf16::image_mask_ref_ref", "[PTransf16][002]") {
+    REQUIRE_THAT(PTransf16({}).image_mask_ref(), Equals(Epu8(FF)));
+    REQUIRE_THAT(PTransf16({}).image_mask_ref(false), Equals(Epu8(FF)));
+    REQUIRE_THAT(PTransf16({}).image_mask_ref(true), Equals(Epu8(0)));
+    REQUIRE_THAT(PTransf16({4, 4, 4, 4}).image_mask_ref(),
+                 Equals(Epu8({0, 0, 0, 0}, FF)));
+    REQUIRE_THAT(PTransf16({4, 4, 4, 4}).image_mask_ref(false),
+                 Equals(Epu8({0, 0, 0, 0}, FF)));
+    REQUIRE_THAT(PTransf16({4, 4, 4, 4}).image_mask_ref(true),
+                 Equals(Epu8({FF, FF, FF, FF}, 0)));
+    REQUIRE_THAT(PTransf16(Epu8(1)).image_mask_ref(), Equals(Epu8({0, FF}, 0)));
+    REQUIRE_THAT(PTransf16(Epu8(2)).image_mask_ref(), Equals(Epu8({0, 0, FF}, 0)));
+    REQUIRE_THAT(PTransf16(Epu8({2, 2, 2, 0xf}, 2)).image_mask_ref(),
+                 Equals(Epu8({0, 0, FF, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, FF}, 0)));
+    REQUIRE_THAT(
+        PTransf16(Epu8({0, 2, 2, 0xf, 2, 2, 2, 2, 5, 2}, 2)).image_mask_ref(),
+        Equals(Epu8({FF, 0, FF, 0, 0, FF, 0, 0, 0, 0, 0, 0, 0, 0, 0, FF}, 0)));
+    REQUIRE_THAT(
+        PTransf16(Epu8({0, 2, 2, 0xf, 2, 2, 2, 2, 5, 2}, 2)).image_mask_ref(false),
+        Equals(Epu8({FF, 0, FF, 0, 0, FF, 0, 0, 0, 0, 0, 0, 0, 0, 0, FF}, 0)));
+    REQUIRE_THAT(
+        PTransf16(Epu8({0, 2, 2, 0xf, 2, 2, 2, 2, 5, 2}, 2)).image_mask_ref(true),
+        Equals(Epu8({0, FF, 0, FF, FF, 0, FF, FF, FF, FF, FF, FF, FF, FF, FF, 0}, 0)));
+}
 
 // TODO uncomment
 // TEST_CASE("PTransf16::left_one", "[PTransf16][003]") {

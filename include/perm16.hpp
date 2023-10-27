@@ -73,7 +73,16 @@ struct alignas(16) PTransf16 : public Vect16 {
     }
 
     /** Returns a mask for the image of \c *this */
-    epu8 image_mask(bool complement = false) const;
+    epu8 image_mask_cmpestrm(bool complement = false) const;
+    /** Returns a mask for the image of \c *this */
+    epu8 image_mask_ref(bool complement = false) const;
+    epu8 image_mask(bool complement = false) const {
+#ifdef SIMDE_X86_SSE4_2_NATIVE
+      return image_mask_cmpestrm(complement);
+#else
+      return image_mask_ref(complement);
+#endif
+    }
     /** Returns a bit mask for the image of \c *this */
     uint32_t image_bitset(bool complement = false) const;
     /** Returns a mask for the domain of \c *this */

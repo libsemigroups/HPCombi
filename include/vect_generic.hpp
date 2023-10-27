@@ -222,10 +222,10 @@ namespace std {
 template <size_t _Size, typename Expo>
 std::ostream &operator<<(std::ostream &stream,
                          const HPCombi::VectGeneric<_Size, Expo> &v) {
-    stream << "[" << std::setw(2) << unsigned(v[0]);
+    stream << "{" << std::setw(2) << unsigned(v[0]);
     for (unsigned i = 1; i < _Size; ++i)
         stream << "," << std::setw(2) << unsigned(v[i]);
-    stream << "]";
+    stream << "}";
     return stream;
 }
 

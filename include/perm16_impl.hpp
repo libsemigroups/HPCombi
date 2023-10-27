@@ -57,13 +57,20 @@ inline PTransf16 PTransf16::right_one() const {
     return domain_mask(true) | epu8id;
 }
 
-inline epu8 PTransf16::image_mask(bool complement) const {
 #ifdef SIMDE_X86_SSE4_2_NATIVE
+inline epu8 PTransf16::image_mask_cmpestrm(bool complement) const {
     return complement ? _mm_cmpestrm(v, 16, one().v, 16, FIND_IN_VECT)
                       : _mm_cmpestrm(v, 16, one().v, 16, FIND_IN_VECT_COMPL);
-#else
-#endif
 }
+#endif
+inline epu8 PTransf16::image_mask_ref(bool complement) const {
+    epu8 res{};
+    for (auto x : *this)
+        if (x != 0xFF)
+             res[x] = 0xFF;
+    return complement ? static_cast<epu8>(!res) : res;
+}
+
 inline uint32_t PTransf16::image_bitset(bool complement) const {
     return simde_mm_movemask_epi8(image_mask(complement));
 }
@@ -73,10 +80,9 @@ inline PTransf16 PTransf16::left_one() const {
 inline uint32_t PTransf16::rank_ref() const {
     TPUBuild<epu8>::array tmp{};
     static_assert(TPUBuild<epu8>::size == 16, "Wrong size of EPU8 array");
-    for (size_t i = 0; i < 16; i++) {
-        if (v[i] != 0xFF)
-            tmp[v[i]] = 1;
-    }
+    for (auto x : *this)
+        if (x != 0xFF)
+            tmp[x] = 1;
     return std::accumulate(tmp.begin(), tmp.end(), uint8_t(0));
 }
 inline uint32_t PTransf16::rank() const {
