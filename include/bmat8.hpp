@@ -1,19 +1,19 @@
-/******************************************************************************/
-/*       Copyright (C) 2018 Finn Smith <fls3@st-andrews.ac.uk>                */
-/*       Copyright (C) 2018 James Mitchell <jdm3@st-andrews.ac.uk>            */
-/*       Copyright (C) 2018 Florent Hivert <Florent.Hivert@lri.fr>,           */
-/*                                                                            */
-/*  Distributed under the terms of the GNU General Public License (GPL)       */
-/*                                                                            */
-/*    This code is distributed in the hope that it will be useful,            */
-/*    but WITHOUT ANY WARRANTY; without even the implied warranty of          */
-/*    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU       */
-/*   General Public License for more details.                                 */
-/*                                                                            */
-/*  The full text of the GPL is available at:                                 */
-/*                                                                            */
-/*                  http://www.gnu.org/licenses/                              */
-/******************************************************************************/
+////////////////////////////////////////////////////////////////////////////////
+//       Copyright (C) 2018 Finn Smith <fls3@st-andrews.ac.uk>                //
+//       Copyright (C) 2018 James Mitchell <jdm3@st-andrews.ac.uk>            //
+//       Copyright (C) 2018 Florent Hivert <Florent.Hivert@lri.fr>,           //
+//                                                                            //
+//  Distributed under the terms of the GNU General Public License (GPL)       //
+//                                                                            //
+//    This code is distributed in the hope that it will be useful,            //
+//    but WITHOUT ANY WARRANTY; without even the implied warranty of          //
+//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU       //
+//   General Public License for more details.                                 //
+//                                                                            //
+//  The full text of the GPL is available at:                                 //
+//                                                                            //
+//                  http://www.gnu.org/licenses/                              //
+////////////////////////////////////////////////////////////////////////////////
 
 // This file contains a declaration of fast boolean matrices up to dimension 8.
 
@@ -32,7 +32,6 @@
 #include <vector>     // for vector
 
 #include "epu.hpp"
-
 #include "perm16.hpp"
 
 #ifndef HPCOMBI_ASSERT

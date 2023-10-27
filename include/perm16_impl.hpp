@@ -328,8 +328,8 @@ inline uint8_t Perm16::nb_cycles_ref() const {
     std::array<bool, 16> b{};
     uint8_t c = 0;
     for (size_t i = 0; i < 16; i++) {
-        if (not b[i]) {
-            for (size_t j = i; not b[j]; j = v[j])
+        if (!b[i]) {
+            for (size_t j = i; !b[j]; j = v[j])
                 b[j] = true;
             c++;
         }

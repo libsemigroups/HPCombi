@@ -26,14 +26,15 @@ namespace HPCombi {
 
 template <size_t _Size, typename Expo = uint8_t>
 struct PermGeneric : public VectGeneric<_Size, Expo> {
-
     using vect = VectGeneric<_Size, Expo>;
 
     static constexpr size_t size() { return _Size; }
 
     PermGeneric() = default;
-    PermGeneric(const vect v) : vect(v){};
-    PermGeneric(std::initializer_list<Expo> il);
+    PermGeneric(const vect v) : vect(v) {}  // NOLINT
+    // Not marked explicit because we want to be able to pass non-initializer
+    // lists here
+    PermGeneric(std::initializer_list<Expo> il);  // NOLINT
 
     PermGeneric operator*(const PermGeneric &p) const {
         return this->permuted(p);

@@ -49,7 +49,8 @@
 namespace HPCombi {
 
 /// Unsigned 8 bits int constant.
-inline constexpr uint8_t operator"" _u8(unsigned long long arg) noexcept {
+inline constexpr uint8_t
+operator"" _u8(unsigned long long arg) noexcept {  // NOLINT
     return static_cast<uint8_t>(arg);
 }
 
@@ -74,7 +75,6 @@ template <typename T> struct ConstFun {
 
 /// Factory object for various SIMD constants in particular constexpr
 template <class TPU> struct TPUBuild {
-
     using type_elem =
         typename std::remove_reference<decltype((TPU{})[0])>::type;
     static constexpr size_t size_elem = sizeof(type_elem);
@@ -205,7 +205,7 @@ inline bool equal(epu8 a, epu8 b) {
     return is_all_zero(simde_mm_xor_si128(a, b));
 }
 /** Non equality of #HPCombi::epu8 */
-inline bool not_equal(epu8 a, epu8 b) { return not equal(a, b); }
+inline bool not_equal(epu8 a, epu8 b) { return !equal(a, b); }
 
 /** Permuting a #HPCombi::epu8 */
 inline epu8 permuted(epu8 a, epu8 b) { return simde_mm_shuffle_epi8(a, b); }
@@ -527,7 +527,7 @@ inline epu8 eval16_cycle(epu8 v);
  */
 inline epu8 eval16_popcount(epu8 v);
 /** @copydoc common_eval16 */
-inline epu8 eval16(epu8 v) { return eval16_cycle(v); };
+inline epu8 eval16(epu8 v) { return eval16_cycle(v); }
 
 /** @class common_first_diff
  * @brief The first difference between two #HPCombi::epu8

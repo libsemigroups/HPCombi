@@ -35,13 +35,12 @@ std::array<Expo, Size> sorted_vect(std::array<Expo, Size> v) {
 /** A generic class for combinatorial integer vectors.
  */
 template <size_t _Size, typename Expo = uint8_t> struct VectGeneric {
-
-    static constexpr size_t Size() { return _Size; };
+    static constexpr size_t Size() { return _Size; }
     using array = std::array<Expo, _Size>;
     array v;
 
     VectGeneric() = default;
-    VectGeneric(std::array<Expo, _Size> _v) : v(_v){};
+    VectGeneric(const std::array<Expo, _Size> &_v) : v(_v) {}  // NOLINT
     VectGeneric(std::initializer_list<Expo> il, Expo def = 0) {
         assert(il.size() <= _Size);
         std::copy(il.begin(), il.end(), v.begin());
@@ -90,7 +89,7 @@ template <size_t _Size, typename Expo = uint8_t> struct VectGeneric {
 
     bool operator<(const VectGeneric &u) const {
         uint64_t diff = first_diff(u);
-        return (diff != _Size) and v[diff] < u[diff];
+        return (diff != _Size) && v[diff] < u[diff];
     }
 
     int8_t less_partial(const VectGeneric &u, int k) const {
@@ -103,7 +102,7 @@ template <size_t _Size, typename Expo = uint8_t> struct VectGeneric {
         for (uint64_t i = 0; i < _Size; i++)
             res[i] = v[u[i]];
         return res;
-    };
+    }
 
     void sort() { std::sort(v.begin(), v.end()); }
 
