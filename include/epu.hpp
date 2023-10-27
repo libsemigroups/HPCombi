@@ -23,6 +23,7 @@
 #include <functional>  // less<>, equal_to<>
 #include <iomanip>
 #include <ostream>
+#include <type_traits>
 
 #ifdef HPCOMBI_HAVE_CONFIG
 #include "HPCombi-config.h"
@@ -50,7 +51,8 @@
 namespace HPCombi {
 
 /// Unsigned 8 bits int constant.
-inline constexpr uint8_t operator"" _u8(unsigned long long arg) noexcept {
+inline constexpr uint8_t
+operator"" _u8(unsigned long long arg) noexcept {  // NOLINT
     return static_cast<uint8_t>(arg);
 }
 
@@ -61,34 +63,26 @@ static_assert(alignof(epu8) == 16,
               "epu8 type is not properly aligned by the compiler !");
 
 /// SIMD vector of 32 unsigned bytes
+/// Currently not really used except in experiments
 using xpu8 = uint8_t __attribute__((vector_size(32)));
 
-namespace {  // Implementation detail code
-
-/// A handmade C++11 constexpr lambda
-template <typename T> struct ConstFun {
-    HPCOMBI_CONSTEXPR_CONSTRUCTOR ConstFun(T cc) : cst(cc) {}
-    HPCOMBI_CONSTEXPR T operator()(T) const { return cst; }
-    /// constant value for constexpr lambda
-    T cst;
-};
+namespace detail {  // Implementation detail code
 
 /// Factory object for various SIMD constants in particular constexpr
 template <class TPU> struct TPUBuild {
-
-    using type_elem =
-        typename std::remove_reference<decltype((TPU{})[0])>::type;
+    using type_elem = typename std::remove_reference_t<decltype((TPU{})[0])>;
     static constexpr size_t size_elem = sizeof(type_elem);
     static constexpr size_t size = sizeof(TPU) / size_elem;
+
     using array = std::array<type_elem, size>;
 
-    template <class Fun, std::size_t... Is>
-    static HPCOMBI_CONSTEXPR TPU make_helper(Fun f,
-                                             std::index_sequence<Is...>) {
+    template <class Fun, decltype(size)... Is>
+    static constexpr TPU make_helper(Fun f, std::index_sequence<Is...>) {
+        static_assert(std::is_invocable_v<Fun, type_elem>);
         return TPU{f(Is)...};
     }
 
-    inline TPU operator()(const std::initializer_list<type_elem> il,
+    inline TPU operator()(std::initializer_list<type_elem> il,
                           type_elem def) const {
         assert(il.size() <= size);
         array res;
@@ -97,86 +91,67 @@ template <class TPU> struct TPUBuild {
         return reinterpret_cast<const TPU &>(res);
     }
 
-    template <class Fun> inline HPCOMBI_CONSTEXPR TPU operator()(Fun f) const {
+    template <class Fun> inline constexpr TPU operator()(Fun f) const {
+        static_assert(std::is_invocable_v<Fun, type_elem>);
         return make_helper(f, std::make_index_sequence<size>{});
     }
 
-    inline HPCOMBI_CONSTEXPR TPU operator()(type_elem c) const {
-        return make_helper(ConstFun<type_elem>(c),
+    inline constexpr TPU operator()(type_elem c) const {
+        return make_helper([c](auto) { return c; },
                            std::make_index_sequence<size>{});
     }
     // explicit overloading for int constants
-    inline HPCOMBI_CONSTEXPR TPU operator()(int c) const {
-        return operator()(uint8_t(c));
+    inline constexpr TPU operator()(int c) const {
+        return operator()(type_elem(c));
     }
-    inline HPCOMBI_CONSTEXPR TPU operator()(size_t c) const {
-        return operator()(uint8_t(c));
+    inline constexpr TPU operator()(size_t c) const {
+        return operator()(type_elem(c));
     }
 };
 
-// The following functions should be constexpr lambdas writen directly in
-// their corresponding methods. However until C++17, constexpr lambda are
-// forbidden. So we put them here.
+}  // namespace detail
+
+// Single instance of the TPUBuild<epu8> factory object
+static constexpr detail::TPUBuild<epu8> Epu8;
+
+/// The identity #HPCombi::epu8
 /// The image of i by the identity function
-HPCOMBI_CONSTEXPR uint8_t id_fun(uint8_t i) { return i; }
-/// The image of i by the left cycle function
-HPCOMBI_CONSTEXPR uint8_t left_cycle_fun(uint8_t i) { return (i + 15) % 16; }
-/// The image of i by the right cycle function
-HPCOMBI_CONSTEXPR
-uint8_t right_cycle_fun(uint8_t i) { return (i + 1) % 16; }
-/// The image of i by a left shift duplicating the hole
-HPCOMBI_CONSTEXPR
-uint8_t left_dup_fun(uint8_t i) { return i == 15 ? 15 : i + 1; }
-/// The image of i by a right shift duplicating the hole
-HPCOMBI_CONSTEXPR
-uint8_t right_dup_fun(uint8_t i) { return i == 0 ? 0 : i - 1; }
-/// The complement of i to 15
-HPCOMBI_CONSTEXPR
-uint8_t complement_fun(uint8_t i) { return 15 - i; }
-HPCOMBI_CONSTEXPR uint8_t popcount4_fun(uint8_t i) {
+constexpr epu8 epu8id = Epu8([](uint8_t i) { return i; });
+/// The reverted identity #HPCombi::epu8
+constexpr epu8 epu8rev = Epu8([](uint8_t i) { return 15 - i; });
+/// Left cycle #HPCombi::epu8 permutation
+constexpr epu8 left_cycle = Epu8([](uint8_t i) { return (i + 15) % 16; });
+/// Right cycle #HPCombi::epu8 permutation
+constexpr epu8 right_cycle = Epu8([](uint8_t i) { return (i + 1) % 16; });
+/// Left shift #HPCombi::epu8, duplicating the rightmost entry
+constexpr epu8 left_dup = Epu8([](uint8_t i) { return i == 15 ? 15 : i + 1; });
+/// Right shift #HPCombi::epu8, duplicating the leftmost entry
+constexpr epu8 right_dup = Epu8([](uint8_t i) { return i == 0 ? 0 : i - 1; });
+/// Popcount #HPCombi::epu8: the ith entry contains the number of bits set in i
+constexpr epu8 popcount4 = Epu8([](uint8_t i) {
     return ((i & 1) != 0 ? 1 : 0) + ((i & 2) != 0 ? 1 : 0) +
            ((i & 4) != 0 ? 1 : 0) + ((i & 8) != 0 ? 1 : 0);
-}
-
-}  // Anonymous namespace
-
-/// Factory object for various SIMD constants in particular constexpr
-TPUBuild<epu8> Epu8;
-
-/// The indentity #HPCombi::epu8
-HPCOMBI_CONSTEXPR epu8 epu8id = Epu8(id_fun);
-/// The reverted identity #HPCombi::epu8
-HPCOMBI_CONSTEXPR epu8 epu8rev = Epu8(complement_fun);
-/// Left cycle #HPCombi::epu8 permutation
-HPCOMBI_CONSTEXPR epu8 left_cycle = Epu8(left_cycle_fun);
-/// Right cycle #HPCombi::epu8 permutation
-HPCOMBI_CONSTEXPR epu8 right_cycle = Epu8(right_cycle_fun);
-/// Left shift #HPCombi::epu8, duplicating the rightmost entry
-HPCOMBI_CONSTEXPR epu8 left_dup = Epu8(left_dup_fun);
-/// Right shift #HPCombi::epu8, duplicating the leftmost entry
-HPCOMBI_CONSTEXPR epu8 right_dup = Epu8(right_dup_fun);
-/// Popcount #HPCombi::epu8: the ith entry contains the number of bits set in i
-HPCOMBI_CONSTEXPR epu8 popcount4 = Epu8(popcount4_fun);
+});
 
 /** Cast a #HPCombi::epu8 to a c++ \c std::array
  *
  *  This is usually faster for algorithm using a lot of indexed acces.
  */
-inline TPUBuild<epu8>::array &as_array(epu8 &v) {
-    return reinterpret_cast<typename TPUBuild<epu8>::array &>(v);
+inline decltype(Epu8)::array &as_array(epu8 &v) {
+    return reinterpret_cast<decltype(Epu8)::array &>(v);
 }
 /** Cast a constant #HPCombi::epu8 to a C++ \c std::array
  *
  *  This is usually faster for algorithm using a lot of indexed acces.
  */
-inline const TPUBuild<epu8>::array &as_array(const epu8 &v) {
-    return reinterpret_cast<const typename TPUBuild<epu8>::array &>(v);
+inline const decltype(Epu8)::array &as_array(const epu8 &v) {
+    return reinterpret_cast<const decltype(Epu8)::array &>(v);
 }
 /** Cast a C++ \c std::array to a #HPCombi::epu8 */
 // Passing the argument by reference triggers a segfault in gcc
 // Since vector types doesn't belongs to the standard, I didn't manage
 // to know if I'm using undefined behavior here.
-inline epu8 from_array(TPUBuild<epu8>::array a) {
+inline epu8 from_array(decltype(Epu8)::array a) {
     return reinterpret_cast<const epu8 &>(a);
 }
 
@@ -206,7 +181,7 @@ inline bool equal(epu8 a, epu8 b) {
     return is_all_zero(simde_mm_xor_si128(a, b));
 }
 /** Non equality of #HPCombi::epu8 */
-inline bool not_equal(epu8 a, epu8 b) { return not equal(a, b); }
+inline bool not_equal(epu8 a, epu8 b) { return !equal(a, b); }
 
 /** Permuting a #HPCombi::epu8 */
 inline epu8 permuted(epu8 a, epu8 b) { return simde_mm_shuffle_epi8(a, b); }
@@ -286,7 +261,7 @@ inline epu8 permutation_of_ref(epu8 a, epu8 b);
 inline epu8 permutation_of(epu8 a, epu8 b);
 
 /** A prime number good for hashing */
-const uint64_t prime = 0x9e3779b97f4a7bb9;
+constexpr uint64_t prime = 0x9e3779b97f4a7bb9;
 
 /** A random #HPCombi::epu8
  * @details
@@ -528,7 +503,7 @@ inline epu8 eval16_cycle(epu8 v);
  */
 inline epu8 eval16_popcount(epu8 v);
 /** @copydoc common_eval16 */
-inline epu8 eval16(epu8 v) { return eval16_cycle(v); };
+inline epu8 eval16(epu8 v) { return eval16_cycle(v); }
 
 /** @class common_first_diff
  * @brief The first difference between two #HPCombi::epu8

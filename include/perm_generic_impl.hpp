@@ -86,8 +86,8 @@ uint64_t PermGeneric<_Size, Expo>::nb_cycles() const {
     std::array<bool, _Size> b{};
     uint64_t c = 0;
     for (size_t i = 0; i < _Size; i++) {
-        if (not b[i]) {
-            for (size_t j = i; not b[j]; j = this->v[j])
+        if (!b[i]) {
+            for (size_t j = i; !b[j]; j = this->v[j])
                 b[j] = true;
             c++;
         }

@@ -24,15 +24,14 @@
 namespace HPCombi {
 
 struct alignas(16) Vect16 {
-
-    static constexpr size_t Size() { return 16; };
-    using array = TPUBuild<epu8>::array;
+    static constexpr size_t Size() { return 16; }
+    using array = decltype(Epu8)::array;
     epu8 v;
 
     Vect16() = default;
     HPCOMBI_CONSTEXPR_CONSTRUCTOR Vect16(epu8 x) : v(x) {}
     Vect16(std::initializer_list<uint8_t> il, uint8_t def = 0)
-        : v(Epu8(il, def)){};
+        : v(Epu8(il, def)) {}
     HPCOMBI_CONSTEXPR_CONSTRUCTOR operator epu8() const { return v; }
 
     Vect16 &operator=(const Vect16 &) = default;
@@ -59,7 +58,7 @@ struct alignas(16) Vect16 {
     }
     size_t last_zero(size_t bound = Size()) const {
         return HPCombi::last_zero(v, bound);
-    };
+    }
     size_t first_non_zero(size_t bound = Size()) const {
         return HPCombi::first_non_zero(v, bound);
     }
@@ -80,19 +79,20 @@ struct alignas(16) Vect16 {
     const_iterator begin() const { return as_array().begin(); }
     const_iterator end() const { return as_array().end(); }
 
-    bool operator==(const Vect16 &b) const { return HPCombi::equal(v, b.v); };
+    bool operator==(const Vect16 &b) const { return HPCombi::equal(v, b.v); }
+
     bool operator!=(const Vect16 &b) const {
         return HPCombi::not_equal(v, b.v);
-    };
+    }
 
-    bool operator<(const Vect16 &b) const { return less(v, b.v); };
+    bool operator<(const Vect16 &b) const { return less(v, b.v); }
     int8_t less_partial(const Vect16 &b, int k) const {
         return HPCombi::less_partial(v, b.v, k);
-    };
+    }
     Vect16 permuted(const Vect16 &b) const { return HPCombi::permuted(v, b.v); }
     uint8_t sum() const { return HPCombi::horiz_sum(v); }
-    Vect16 partial_sums() const { return HPCombi::partial_sums(v); };
-    Vect16 eval16() const { return HPCombi::eval16(v); };
+    Vect16 partial_sums() const { return HPCombi::partial_sums(v); }
+    Vect16 eval16() const { return HPCombi::eval16(v); }
 
     bool is_permutation() const { return HPCombi::is_permutation(v); }
     bool is_permutation(size_t k) const {

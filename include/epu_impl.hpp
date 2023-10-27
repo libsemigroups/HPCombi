@@ -13,7 +13,7 @@
 //                  http://www.gnu.org/licenses/                              //
 //****************************************************************************//
 
-// This is the implementation par of epu.hpp this should be seen as
+// This is the implementation part of epu.hpp this should be seen as
 // implementation details and should not be included directly.
 
 #include <initializer_list>
@@ -113,11 +113,11 @@ inline uint64_t last_non_zero(epu8 v, int bnd) {
 }
 
 /// Apply a sorting network
-template <bool Increassing = true, size_t sz>
+template <bool Increasing = true, size_t sz>
 inline epu8 network_sort(epu8 res, std::array<epu8, sz> rounds) {
     for (auto round : rounds) {
         // This conditional should be optimized out by the compiler
-        epu8 mask = Increassing ? round < epu8id : epu8id < round;
+        epu8 mask = Increasing ? round < epu8id : epu8id < round;
         epu8 b = permuted(res, round);
         // res = mask ? min(res,b) : max(res,b); is not accepted by clang
         res = simde_mm_blendv_epi8(min(res, b), max(res, b), mask);
@@ -126,12 +126,12 @@ inline epu8 network_sort(epu8 res, std::array<epu8, sz> rounds) {
 }
 
 /// Apply a sorting network in place and return the permutation
-template <bool Increassing = true, size_t sz>
+template <bool Increasing = true, size_t sz>
 inline epu8 network_sort_perm(epu8 &v, std::array<epu8, sz> rounds) {
     epu8 res = epu8id;
     for (auto round : rounds) {
         // This conditional should be optimized out by the compiler
-        epu8 mask = Increassing ? round < epu8id : epu8id < round;
+        epu8 mask = Increasing ? round < epu8id : epu8id < round;
         epu8 b = permuted(v, round);
         epu8 cmp = simde_mm_blendv_epi8(b < v, v < b, mask);
         v = simde_mm_blendv_epi8(v, b, cmp);
@@ -147,20 +147,16 @@ inline epu8 network_sort_perm(epu8 &v, std::array<epu8, sz> rounds) {
  * [AoCP3]: "D. Knuth, The art of computer programming vol. 3"
  */
 constexpr std::array<epu8, 9> sorting_rounds
-    // clang-format off
     //     0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15
-{{
-    epu8 { 1,  0,  3,  2,  5,  4,  7,  6,  9,  8, 11, 10, 13, 12, 15, 14},
-    epu8 { 2,  3,  0,  1,  6,  7,  4,  5, 10, 11,  8,  9, 14, 15, 12, 13},
-    epu8 { 4,  5,  6,  7,  0,  1,  2,  3, 12, 13, 14, 15,  8,  9, 10, 11},
-    epu8 { 8,  9, 10, 11, 12, 13, 14, 15,  0,  1,  2,  3,  4,  5,  6,  7},
-    epu8 { 0,  2,  1, 12,  8, 10,  9, 11,  4,  6,  5,  7,  3, 14, 13, 15},
-    epu8 { 0,  4,  8, 10,  1,  9, 12, 13,  2,  5,  3, 14,  6,  7, 11, 15},
-    epu8 { 0,  1,  4,  5,  2,  3,  8,  9,  6,  7, 12, 13, 10, 11, 14, 15},
-    epu8 { 0,  1,  2,  6,  4,  8,  3, 10,  5, 12,  7, 11,  9, 13, 14, 15},
-    epu8 { 0,  1,  2,  4,  3,  6,  5,  8,  7, 10,  9, 12, 11, 13, 14, 15}
-}};
-// clang-format on
+    {{epu8{1, 0, 3, 2, 5, 4, 7, 6, 9, 8, 11, 10, 13, 12, 15, 14},
+      epu8{2, 3, 0, 1, 6, 7, 4, 5, 10, 11, 8, 9, 14, 15, 12, 13},
+      epu8{4, 5, 6, 7, 0, 1, 2, 3, 12, 13, 14, 15, 8, 9, 10, 11},
+      epu8{8, 9, 10, 11, 12, 13, 14, 15, 0, 1, 2, 3, 4, 5, 6, 7},
+      epu8{0, 2, 1, 12, 8, 10, 9, 11, 4, 6, 5, 7, 3, 14, 13, 15},
+      epu8{0, 4, 8, 10, 1, 9, 12, 13, 2, 5, 3, 14, 6, 7, 11, 15},
+      epu8{0, 1, 4, 5, 2, 3, 8, 9, 6, 7, 12, 13, 10, 11, 14, 15},
+      epu8{0, 1, 2, 6, 4, 8, 3, 10, 5, 12, 7, 11, 9, 13, 14, 15},
+      epu8{0, 1, 2, 4, 3, 6, 5, 8, 7, 10, 9, 12, 11, 13, 14, 15}}};
 
 /** A duplicated 8-way sorting network
  * @details [Batcher odd-Even mergesort] sorting network
@@ -233,6 +229,7 @@ constexpr std::array<epu8, 3> inverting_rounds{{
      SIMDE_SIDD_NEGATIVE_POLARITY)
 #define FIND_IN_VECT_COMPL                                                     \
     (SIMDE_SIDD_UBYTE_OPS | SIMDE_SIDD_CMP_EQUAL_ANY | SIMDE_SIDD_UNIT_MASK)
+
 inline epu8 permutation_of_cmpestrm(epu8 a, epu8 b) {
     epu8 res = -static_cast<epu8>(_mm_cmpestrm(a, 8, b, 16, FIND_IN_VECT));
     for (epu8 round : inverting_rounds) {
@@ -395,8 +392,9 @@ inline epu8 eval16_ref(epu8 v) {
             res[v[i]]++;
     return res;
 }
+
 inline epu8 eval16_arr(epu8 v8) {
-    TPUBuild<epu8>::array res{};
+    decltype(Epu8)::array res{};
     auto v = as_array(v8);
     for (size_t i = 0; i < 16; i++)
         if (v[i] < 16)

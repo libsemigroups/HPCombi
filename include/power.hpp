@@ -96,7 +96,6 @@ namespace power_helper {
  * the template for some specific type \c T.
  */
 template <typename T> struct Monoid {
-
     /// The one of type T
     static const T one() { return 1; }
 

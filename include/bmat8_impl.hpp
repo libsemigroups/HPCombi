@@ -1,19 +1,19 @@
-/******************************************************************************/
-/*       Copyright (C) 2018 Finn Smith <fls3@st-andrews.ac.uk>                */
-/*       Copyright (C) 2018 James Mitchell <jdm3@st-andrews.ac.uk>            */
-/*       Copyright (C) 2018 Florent Hivert <Florent.Hivert@lri.fr>,           */
-/*                                                                            */
-/*  Distributed under the terms of the GNU General Public License (GPL)       */
-/*                                                                            */
-/*    This code is distributed in the hope that it will be useful,            */
-/*    but WITHOUT ANY WARRANTY; without even the implied warranty of          */
-/*    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU       */
-/*   General Public License for more details.                                 */
-/*                                                                            */
-/*  The full text of the GPL is available at:                                 */
-/*                                                                            */
-/*                  http://www.gnu.org/licenses/                              */
-/******************************************************************************/
+////////////////////////////////////////////////////////////////////////////////
+//       Copyright (C) 2018 Finn Smith <fls3@st-andrews.ac.uk>                //
+//       Copyright (C) 2018 James Mitchell <jdm3@st-andrews.ac.uk>            //
+//       Copyright (C) 2018 Florent Hivert <Florent.Hivert@lri.fr>,           //
+//                                                                            //
+//  Distributed under the terms of the GNU General Public License (GPL)       //
+//                                                                            //
+//    This code is distributed in the hope that it will be useful,            //
+//    but WITHOUT ANY WARRANTY; without even the implied warranty of          //
+//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU       //
+//   General Public License for more details.                                 //
+//                                                                            //
+//  The full text of the GPL is available at:                                 //
+//                                                                            //
+//                  http://www.gnu.org/licenses/                              //
+////////////////////////////////////////////////////////////////////////////////
 
 // This file contains an implementation of fast boolean matrices up to
 // dimension 8 x 8.
@@ -21,82 +21,79 @@
 namespace HPCombi {
 static_assert(std::is_trivial<BMat8>(), "BMat8 is not a trivial class!");
 
-// clang-format off
-static const constexpr std::array<uint64_t, 8> ROW_MASK = {{
-    0xff00000000000000, 0xff000000000000, 0xff0000000000, 0xff00000000,
-    0xff000000,         0xff0000,         0xff00,         0xff}};
+static const constexpr std::array<uint64_t, 8> ROW_MASK = {
+    {0xff00000000000000, 0xff000000000000, 0xff0000000000, 0xff00000000,
+     0xff000000, 0xff0000, 0xff00, 0xff}};
 
-static const constexpr std::array<uint64_t, 8> COL_MASK = {{
-    0x8080808080808080, 0x4040404040404040, 0x2020202020202020, 0x1010101010101010,
-    0x808080808080808,  0x404040404040404,  0x202020202020202,  0x101010101010101}};
+static const constexpr std::array<uint64_t, 8> COL_MASK = {
+    0x8080808080808080, 0x4040404040404040, 0x2020202020202020,
+    0x1010101010101010, 0x808080808080808,  0x404040404040404,
+    0x202020202020202,  0x101010101010101};
 
-static const constexpr std::array<uint64_t, 64> BIT_MASK = {{
-                                        0x8000000000000000,
-                                        0x4000000000000000,
-                                        0x2000000000000000,
-                                        0x1000000000000000,
-                                        0x800000000000000,
-                                        0x400000000000000,
-                                        0x200000000000000,
-                                        0x100000000000000,
-                                        0x80000000000000,
-                                        0x40000000000000,
-                                        0x20000000000000,
-                                        0x10000000000000,
-                                        0x8000000000000,
-                                        0x4000000000000,
-                                        0x2000000000000,
-                                        0x1000000000000,
-                                        0x800000000000,
-                                        0x400000000000,
-                                        0x200000000000,
-                                        0x100000000000,
-                                        0x80000000000,
-                                        0x40000000000,
-                                        0x20000000000,
-                                        0x10000000000,
-                                        0x8000000000,
-                                        0x4000000000,
-                                        0x2000000000,
-                                        0x1000000000,
-                                        0x800000000,
-                                        0x400000000,
-                                        0x200000000,
-                                        0x100000000,
-                                        0x80000000,
-                                        0x40000000,
-                                        0x20000000,
-                                        0x10000000,
-                                        0x8000000,
-                                        0x4000000,
-                                        0x2000000,
-                                        0x1000000,
-                                        0x800000,
-                                        0x400000,
-                                        0x200000,
-                                        0x100000,
-                                        0x80000,
-                                        0x40000,
-                                        0x20000,
-                                        0x10000,
-                                        0x8000,
-                                        0x4000,
-                                        0x2000,
-                                        0x1000,
-                                        0x800,
-                                        0x400,
-                                        0x200,
-                                        0x100,
-                                        0x80,
-                                        0x40,
-                                        0x20,
-                                        0x10,
-                                        0x8,
-                                        0x4,
-                                        0x2,
-                                        0x1}};
-
-// clang-format on
+static const constexpr std::array<uint64_t, 64> BIT_MASK = {{0x8000000000000000,
+                                                             0x4000000000000000,
+                                                             0x2000000000000000,
+                                                             0x1000000000000000,
+                                                             0x800000000000000,
+                                                             0x400000000000000,
+                                                             0x200000000000000,
+                                                             0x100000000000000,
+                                                             0x80000000000000,
+                                                             0x40000000000000,
+                                                             0x20000000000000,
+                                                             0x10000000000000,
+                                                             0x8000000000000,
+                                                             0x4000000000000,
+                                                             0x2000000000000,
+                                                             0x1000000000000,
+                                                             0x800000000000,
+                                                             0x400000000000,
+                                                             0x200000000000,
+                                                             0x100000000000,
+                                                             0x80000000000,
+                                                             0x40000000000,
+                                                             0x20000000000,
+                                                             0x10000000000,
+                                                             0x8000000000,
+                                                             0x4000000000,
+                                                             0x2000000000,
+                                                             0x1000000000,
+                                                             0x800000000,
+                                                             0x400000000,
+                                                             0x200000000,
+                                                             0x100000000,
+                                                             0x80000000,
+                                                             0x40000000,
+                                                             0x20000000,
+                                                             0x10000000,
+                                                             0x8000000,
+                                                             0x4000000,
+                                                             0x2000000,
+                                                             0x1000000,
+                                                             0x800000,
+                                                             0x400000,
+                                                             0x200000,
+                                                             0x100000,
+                                                             0x80000,
+                                                             0x40000,
+                                                             0x20000,
+                                                             0x10000,
+                                                             0x8000,
+                                                             0x4000,
+                                                             0x2000,
+                                                             0x1000,
+                                                             0x800,
+                                                             0x400,
+                                                             0x200,
+                                                             0x100,
+                                                             0x80,
+                                                             0x40,
+                                                             0x20,
+                                                             0x10,
+                                                             0x8,
+                                                             0x4,
+                                                             0x2,
+                                                             0x1}};
 
 inline bool BMat8::operator()(size_t i, size_t j) const {
     HPCOMBI_ASSERT(i < 8);
@@ -238,7 +235,7 @@ inline BMat8 BMat8::row_space_basis() const {
 
 #if defined(FF)
 #error FF is defined !
-#endif /* FF */
+#endif  // FF
 #define FF 0xff
 
 constexpr std::array<epu8, 4> masks{
@@ -250,11 +247,12 @@ constexpr std::array<epu8, 4> masks{
     }};
 #undef FF
 
-static const epu8 shiftres {1, 2, 4, 8, 0x10, 0x20, 0x40, 0x80};
+static const epu8 shiftres{1, 2, 4, 8, 0x10, 0x20, 0x40, 0x80};
 
 inline void update_bitset(epu8 block, epu8 &set0, epu8 &set1) {
-    static const epu8 bound08 = simde_mm_slli_epi32(static_cast<simde__m128i>(epu8id), 3); // shift for *8
-static const epu8 bound18 = bound08 + Epu8(0x80);
+    static const epu8 bound08 = simde_mm_slli_epi32(
+        static_cast<simde__m128i>(epu8id), 3);  // shift for *8
+    static const epu8 bound18 = bound08 + Epu8(0x80);
     for (size_t slice8 = 0; slice8 < 16; slice8++) {
         epu8 bm5 = Epu8(0xf8) & block; /* 11111000 */
         epu8 shft = simde_mm_shuffle_epi8(shiftres, block - bm5);
@@ -266,12 +264,13 @@ static const epu8 bound18 = bound08 + Epu8(0x80);
 
 inline void BMat8::row_space_bitset(epu8 &res0, epu8 &res1) const {
     epu8 in = simde_mm_set_epi64x(0, _data);
-    epu8 block0 {}, block1 {};
+    epu8 block0{}, block1{};
     for (epu8 m : masks) {
         block0 |= static_cast<epu8>(simde_mm_shuffle_epi8(in, m));
         block1 |= static_cast<epu8>(simde_mm_shuffle_epi8(in, m | Epu8(4)));
     }
-    res0 = epu8 {}; res1 = epu8 {};
+    res0 = epu8{};
+    res1 = epu8{};
     for (size_t r = 0; r < 16; r++) {
         update_bitset(block0 | block1, res0, res1);
         block1 = simde_mm_shuffle_epi8(block1, right_cycle);
@@ -279,7 +278,7 @@ inline void BMat8::row_space_bitset(epu8 &res0, epu8 &res1) const {
 }
 
 inline uint64_t BMat8::row_space_size_bitset() const {
-    epu8 res0 {}, res1 {};
+    epu8 res0{}, res1{};
     row_space_bitset(res0, res1);
     return (__builtin_popcountll(simde_mm_extract_epi64(res0, 0)) +
             __builtin_popcountll(simde_mm_extract_epi64(res1, 0)) +
@@ -292,7 +291,7 @@ inline uint64_t BMat8::row_space_size_incl1() const {
     epu8 block = epu8id;
     uint64_t res = 0;
     for (size_t r = 0; r < 16; r++) {
-        epu8 orincl {};
+        epu8 orincl{};
         for (int i = 0; i < 8; i++) {
             orincl |= ((in | block) == block) & in;
             in = permuted(in, rotboth);
@@ -309,7 +308,7 @@ inline uint64_t BMat8::row_space_size_incl() const {
     uint64_t res = 0;
     for (size_t r = 0; r < 16; r++) {
         epu8 orincl = ((in | block) == block) & in;
-        for (int i = 0; i < 7; i++) {    // Only rotating
+        for (int i = 0; i < 7; i++) {  // Only rotating
             in = permuted(in, rotboth);
             orincl |= ((in | block) == block) & in;
         }
@@ -330,7 +329,7 @@ inline bool BMat8::row_space_included(BMat8 other) const {
     epu8 in = simde_mm_set_epi64x(0, other._data);
     epu8 block = simde_mm_set_epi64x(0, _data);
     epu8 orincl = ((in | block) == block) & in;
-    for (int i = 0; i < 7; i++) {    // Only rotating
+    for (int i = 0; i < 7; i++) {  // Only rotating
         in = permuted(in, rotlow);
         orincl |= ((in | block) == block) & in;
     }
@@ -340,7 +339,7 @@ inline bool BMat8::row_space_included(BMat8 other) const {
 inline epu8 BMat8::row_space_mask(epu8 block) const {
     epu8 in = simde_mm_set_epi64x(_data, _data);
     epu8 orincl = ((in | block) == block) & in;
-    for (int i = 0; i < 7; i++) {    // Only rotating
+    for (int i = 0; i < 7; i++) {  // Only rotating
         in = permuted(in, rotboth);
         orincl |= ((in | block) == block) & in;
     }
@@ -352,7 +351,7 @@ inline std::pair<bool, bool> BMat8::row_space_included2(BMat8 a0, BMat8 b0,
     epu8 in = simde_mm_set_epi64x(b1._data, b0._data);
     epu8 block = simde_mm_set_epi64x(a1._data, a0._data);
     epu8 orincl = ((in | block) == block) & in;
-    for (int i = 0; i < 7; i++) {    // Only rotating
+    for (int i = 0; i < 7; i++) {  // Only rotating
         in = permuted(in, rotboth);
         orincl |= ((in | block) == block) & in;
     }
@@ -362,9 +361,9 @@ inline std::pair<bool, bool> BMat8::row_space_included2(BMat8 a0, BMat8 b0,
 }
 
 inline std::bitset<256> BMat8::row_space_bitset_ref() const {
-    std::bitset<256>     lookup;
+    std::bitset<256> lookup;
     std::vector<uint8_t> row_vec = row_space_basis().rows();
-    auto                 last = std::remove(row_vec.begin(), row_vec.end(), 0);
+    auto last = std::remove(row_vec.begin(), row_vec.end(), 0);
     row_vec.erase(last, row_vec.end());
     for (uint8_t x : row_vec) {
         lookup.set(x);
@@ -404,11 +403,11 @@ inline std::vector<uint8_t> BMat8::rows() const {
 
 inline size_t BMat8::nr_rows() const {
     epu8 x = simde_mm_set_epi64x(_data, 0);
-    return __builtin_popcountll(simde_mm_movemask_epi8(x != epu8 {}));
+    return __builtin_popcountll(simde_mm_movemask_epi8(x != epu8{}));
 }
 
-static HPCOMBI_CONSTEXPR epu8
-  rev8 {7,6,5,4,3,2,1,0,8,9,10,11,12,13,14,15};
+static HPCOMBI_CONSTEXPR epu8 rev8{7, 6, 5,  4,  3,  2,  1,  0,
+                                   8, 9, 10, 11, 12, 13, 14, 15};
 inline BMat8 BMat8::row_permuted(Perm16 p) const {
     epu8 x = simde_mm_set_epi64x(0, _data);
     x = permuted(x, rev8);
@@ -429,7 +428,7 @@ inline BMat8 BMat8::col_permutation_matrix(Perm16 p) {
 inline Perm16 BMat8::right_perm_action_on_basis_ref(BMat8 bm) const {
     // LIBSEMIGROUPS_ASSERT(bm.row_space_basis() == bm);
     std::vector<uint8_t> rows = this->rows();
-    BMat8                product   = *this * bm;
+    BMat8 product = *this * bm;
     std::vector<uint8_t> prod_rows = product.rows();
 
     // LIBSEMIGROUPS_ASSERT(product.row_space_basis() == bm);
@@ -437,27 +436,25 @@ inline Perm16 BMat8::right_perm_action_on_basis_ref(BMat8 bm) const {
     std::vector<uint8_t> perm(8);
     for (size_t i = 0; i < nr_rows(); ++i) {
         uint8_t row = rows[i];
-        perm[i]
-            = std::distance(prod_rows.begin(),
-                            std::find(prod_rows.begin(), prod_rows.end(), row));
+        perm[i] =
+            std::distance(prod_rows.begin(),
+                          std::find(prod_rows.begin(), prod_rows.end(), row));
     }
     std::iota(perm.begin() + nr_rows(), perm.end(), nr_rows());
 
     Perm16 res = Perm16::one();
-    for (size_t i=0; i < 8; i++)
+    for (size_t i = 0; i < 8; i++)
         res[i] = perm[i];
     return res;
- }
+}
 
 inline Perm16 BMat8::right_perm_action_on_basis(BMat8 other) const {
     epu8 x = permuted(simde_mm_set_epi64x(_data, 0), epu8rev);
     epu8 y = permuted(simde_mm_set_epi64x((*this * other)._data, 0), epu8rev);
     // Vector ternary operator is not supported by clang.
     // return (x != (epu8 {})) ? permutation_of(y, x) : epu8id;
-    return simde_mm_blendv_epi8(epu8id, permutation_of(y, x), x != epu8 {});
+    return simde_mm_blendv_epi8(epu8id, permutation_of(y, x), x != epu8{});
 }
-
-
 
 inline std::ostream &BMat8::write(std::ostream &os) const {
     uint64_t x = _data;

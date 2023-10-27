@@ -40,11 +40,10 @@ struct Transf16;
  *
  */
 struct alignas(16) PTransf16 : public Vect16 {
-
-    static constexpr size_t size() { return 16; };
+    static constexpr size_t size() { return 16; }
 
     using vect = HPCombi::Vect16;
-    using array = TPUBuild<epu8>::array;
+    using array = decltype(Epu8)::array;
 
     PTransf16() = default;
     HPCOMBI_CONSTEXPR_CONSTRUCTOR PTransf16(const PTransf16 &v) = default;
@@ -120,7 +119,6 @@ struct alignas(16) PTransf16 : public Vect16 {
  *
  */
 struct Transf16 : public PTransf16 {
-
     Transf16() = default;
     HPCOMBI_CONSTEXPR_CONSTRUCTOR Transf16(const Transf16 &v) = default;
     HPCOMBI_CONSTEXPR_CONSTRUCTOR Transf16(const vect v) : PTransf16(v) {}
@@ -150,7 +148,6 @@ struct Transf16 : public PTransf16 {
  *
  */
 struct PPerm16 : public PTransf16 {
-
     PPerm16() = default;
     HPCOMBI_CONSTEXPR_CONSTRUCTOR PPerm16(const PPerm16 &v) = default;
     HPCOMBI_CONSTEXPR_CONSTRUCTOR PPerm16(const vect v) : PTransf16(v) {}
@@ -210,7 +207,6 @@ struct PPerm16 : public PTransf16 {
  *
  */
 struct Perm16 : public Transf16 /* public PPerm : diamond problem */ {
-
     Perm16() = default;
     HPCOMBI_CONSTEXPR_CONSTRUCTOR Perm16(const Perm16 &) = default;
     HPCOMBI_CONSTEXPR_CONSTRUCTOR Perm16(const vect v) : Transf16(v) {}
