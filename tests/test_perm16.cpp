@@ -364,9 +364,10 @@ TEST_CASE_METHOD(Perm16Fixture, "PPerm16::right_one", "[PPerm16][020]") {
     }
 }
 
-// TODO uncomment
-// TEST_AGREES(Perm16Fixture, PPerm16, inverse_ref, inverse_find, PPlist,
-// "[PPerm16][021]");
+#ifdef SIMDE_X86_SSE4_2_NATIVE
+TEST_AGREES(Perm16Fixture, PPerm16, inverse_ref, inverse_find, PPlist,
+   "[PPerm16][021]");
+#endif
 
 TEST_CASE_METHOD(Perm16Fixture, "Perm16::fix_points_mask", "[PPerm16][022]") {
     REQUIRE(equal(PTransf16::one().fix_points_mask(), Epu8(FF)));
@@ -437,9 +438,9 @@ TEST_CASE_METHOD(Perm16Fixture, "Perm16::inverse_ref", "[Perm16][027]") {
     }
 }
 
-// TODO uncomment
-// TEST_AGREES(Perm16Fixture, Perm16, inverse_ref, inverse_find, Plist,
-// "[Perm16][028]");
+
+TEST_AGREES(Perm16Fixture, Perm16, inverse_ref, inverse_find, Plist,
+            "[Perm16][028]");
 TEST_AGREES(Perm16Fixture, Perm16, inverse_ref, inverse_pow, Plist,
             "[Perm16][029]");
 TEST_AGREES(Perm16Fixture, Perm16, inverse_ref, inverse_cycl, Plist,

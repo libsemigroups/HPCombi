@@ -143,13 +143,12 @@ inline PPerm16 PPerm16::inverse_ref() const {
     return res;
 }
 
-inline PPerm16 PPerm16::inverse_find() const {
 #ifdef SIMDE_X86_SSE4_2_NATIVE
+inline PPerm16 PPerm16::inverse_find() const {
     epu8 mask = _mm_cmpestrm(v, 16, one(), 16, FIND_IN_VECT);
     return permutation_of(v, one()) | mask;
-#else
-#endif
 }
+#endif
 
 inline Perm16 Perm16::random(uint64_t n) {
     static std::random_device rd;

@@ -179,12 +179,14 @@ struct PPerm16 : public PTransf16 {
      *  @f$O(n)@f$ algorithm using reference cast to arrays
      */
     PPerm16 inverse_ref() const;
+#ifdef SIMDE_X86_SSE4_2_NATIVE
     /** @copydoc common_inverse_pperm
      *  @par Algorithm:
      *  @f$O(\log n)@f$ algorithm using some kind of vectorized dichotomic
      * search.
      */
     PPerm16 inverse_find() const;
+#endif
 
     PPerm16 right_one() const { return PTransf16::right_one(); }
     PPerm16 left_one() const { return PTransf16::left_one(); }
