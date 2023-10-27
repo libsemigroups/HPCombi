@@ -13,16 +13,12 @@
 //                  http://www.gnu.org/licenses/                              //
 //****************************************************************************//
 
-#include "power.hpp"
 #include <algorithm>
 #include <iomanip>
+#include <numeric>
 #include <random>
 
-#ifdef HAVE_EXPERIMENTAL_NUMERIC_LCM
-#include <experimental/numeric>  // lcm until c++17
-#else
-#include "fallback/gcdlcm.hpp"  // lcm until c++17
-#endif                          // HAVE_EXPERIMENTAL_NUMERIC_LCM
+#include "power.hpp"
 
 namespace HPCombi {
 
@@ -71,8 +67,8 @@ inline PTransf16 PTransf16::left_one() const {
     return image_mask(true) | epu8id;
 }
 inline uint32_t PTransf16::rank_ref() const {
-    TPUBuild<epu8>::array tmp{};
-    static_assert(TPUBuild<epu8>::size == 16, "Wrong size of EPU8 array");
+    decltype(Epu8)::array tmp{};
+    static_assert(decltype(Epu8)::size == 16, "Wrong size of EPU8 array");
     for (size_t i = 0; i < 16; i++) {
         if (v[i] != 0xFF)
             tmp[v[i]] = 1;
@@ -249,15 +245,11 @@ inline Perm16 Perm16::inverse_cycl() const {
     return res;
 }
 
-static constexpr unsigned lcm_range(unsigned n) {
-#if __cplusplus <= 201103L
-    return n == 1 ? 1 : std::experimental::lcm(lcm_range(n - 1), n);
-#else
-    unsigned res = 1;
-    for (unsigned i = 1; i <= n; ++i)
-        res = std::experimental::lcm(res, i);
+static constexpr uint32_t lcm_range(uint8_t n) {
+    uint32_t res = 1;
+    for (uint8_t i = 1; i <= n; ++i)
+        res = std::lcm(res, i);
     return res;
-#endif
 }
 
 inline Perm16 Perm16::inverse_pow() const {
@@ -274,8 +266,8 @@ inline epu8 Perm16::lehmer_ref() const {
 }
 
 inline epu8 Perm16::lehmer_arr() const {
-    TPUBuild<epu8>::array res{};
-    TPUBuild<epu8>::array ar = as_array();
+    decltype(Epu8)::array res{};
+    decltype(Epu8)::array ar = as_array();
     for (size_t i = 0; i < 16; i++)
         for (size_t j = i + 1; j < 16; j++)
             if (ar[i] > ar[j])
@@ -303,7 +295,7 @@ inline uint8_t Perm16::length_ref() const {
 
 inline uint8_t Perm16::length_arr() const {
     uint8_t res = 0;
-    TPUBuild<epu8>::array ar = as_array();
+    decltype(Epu8)::array ar = as_array();
     for (size_t i = 0; i < 16; i++)
         for (size_t j = i + 1; j < 16; j++)
             if (ar[i] > ar[j])

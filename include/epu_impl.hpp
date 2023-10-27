@@ -13,7 +13,7 @@
 //                  http://www.gnu.org/licenses/                              //
 //****************************************************************************//
 
-// This is the implementation par of epu.hpp this should be seen as
+// This is the implementation part of epu.hpp this should be seen as
 // implementation details and should not be included directly.
 
 #include <initializer_list>
@@ -113,11 +113,11 @@ inline uint64_t last_non_zero(epu8 v, int bnd) {
 }
 
 /// Apply a sorting network
-template <bool Increassing = true, size_t sz>
+template <bool Increasing = true, size_t sz>
 inline epu8 network_sort(epu8 res, std::array<epu8, sz> rounds) {
     for (auto round : rounds) {
         // This conditional should be optimized out by the compiler
-        epu8 mask = Increassing ? round < epu8id : epu8id < round;
+        epu8 mask = Increasing ? round < epu8id : epu8id < round;
         epu8 b = permuted(res, round);
         // res = mask ? min(res,b) : max(res,b); is not accepted by clang
         res = simde_mm_blendv_epi8(min(res, b), max(res, b), mask);
@@ -126,12 +126,12 @@ inline epu8 network_sort(epu8 res, std::array<epu8, sz> rounds) {
 }
 
 /// Apply a sorting network in place and return the permutation
-template <bool Increassing = true, size_t sz>
+template <bool Increasing = true, size_t sz>
 inline epu8 network_sort_perm(epu8 &v, std::array<epu8, sz> rounds) {
     epu8 res = epu8id;
     for (auto round : rounds) {
         // This conditional should be optimized out by the compiler
-        epu8 mask = Increassing ? round < epu8id : epu8id < round;
+        epu8 mask = Increasing ? round < epu8id : epu8id < round;
         epu8 b = permuted(v, round);
         epu8 cmp = simde_mm_blendv_epi8(b < v, v < b, mask);
         v = simde_mm_blendv_epi8(v, b, cmp);
@@ -229,6 +229,7 @@ constexpr std::array<epu8, 3> inverting_rounds{{
      SIMDE_SIDD_NEGATIVE_POLARITY)
 #define FIND_IN_VECT_COMPL                                                     \
     (SIMDE_SIDD_UBYTE_OPS | SIMDE_SIDD_CMP_EQUAL_ANY | SIMDE_SIDD_UNIT_MASK)
+
 inline epu8 permutation_of_cmpestrm(epu8 a, epu8 b) {
     epu8 res = -static_cast<epu8>(_mm_cmpestrm(a, 8, b, 16, FIND_IN_VECT));
     for (epu8 round : inverting_rounds) {
@@ -391,8 +392,9 @@ inline epu8 eval16_ref(epu8 v) {
             res[v[i]]++;
     return res;
 }
+
 inline epu8 eval16_arr(epu8 v8) {
-    TPUBuild<epu8>::array res{};
+    decltype(Epu8)::array res{};
     auto v = as_array(v8);
     for (size_t i = 0; i < 16; i++)
         if (v[i] < 16)

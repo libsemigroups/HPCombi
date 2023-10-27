@@ -25,7 +25,7 @@ namespace HPCombi {
 
 struct alignas(16) Vect16 {
     static constexpr size_t Size() { return 16; }
-    using array = TPUBuild<epu8>::array;
+    using array = decltype(Epu8)::array;
     epu8 v;
 
     Vect16() = default;

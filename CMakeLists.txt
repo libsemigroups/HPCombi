@@ -36,7 +36,7 @@ message(STATUS "**** Build type = ${CMAKE_BUILD_TYPE}")
 ################################
 # General compiler configuration
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_EXTENSIONS OFF) # -std=c++14 instead of -std=gnu++14
 
 add_definitions(-DHPCOMBI_HAVE_CONFIG)
@@ -51,18 +51,6 @@ include(CheckCXXSymbolExists)
 include(CheckIncludeFileCXX)
 include(CheckCXXSourceCompiles)
 include(CheckCXXCompilerFlag)
-
-## Check for static lcm
-check_include_file_cxx("experimental/numeric" HPCOMBI_HAVE_EXPERIMENTAL_NUMERIC)
-if (HPCOMBI_HAVE_EXPERIMENTAL_NUMERIC)
-  check_cxx_source_compiles(
-        "
-        #include <experimental/numeric>
-        static_assert(std::experimental::lcm(4, 6) == 12, \"Buggy lcm\");
-        int main() { }
-        "
-        HPCOMBI_HAVE_EXPERIMENTAL_NUMERIC_LCM)
-endif (HPCOMBI_HAVE_EXPERIMENTAL_NUMERIC)
 
 ## Check for buggy constexpr support G++ 5.0
 check_cxx_source_compiles(
