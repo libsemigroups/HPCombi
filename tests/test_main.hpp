@@ -16,6 +16,12 @@
 #ifndef HPCOMBI_TESTS_TEST_MAIN_HPP_
 #define HPCOMBI_TESTS_TEST_MAIN_HPP_
 
+#include <string>
+
+#include "epu.hpp"
+#include <catch2/catch_test_macros.hpp>
+#include <catch2/matchers/catch_matchers_templated.hpp>
+
 #define TEST_AGREES(fixture, type, ref, fun, vct, tags)                        \
     TEST_CASE_METHOD(fixture, #type "::" #ref " == " #type "::" #fun, tags) {  \
         for (type p : vct) {                                                   \
@@ -38,5 +44,20 @@
             REQUIRE(equal(p.fun(), p.ref()));                                  \
         }                                                                      \
     }
+
+
+struct Equals : Catch::Matchers::MatcherGenericBase {
+    Equals(HPCombi::epu8 v) : v(v) {}
+
+    bool match(HPCombi::epu8 w) const { return HPCombi::equal(v, w); }
+
+    std::string describe() const override {
+      return "\n!=\n" + std::to_string(v);
+    }
+
+private:
+
+    const HPCombi::epu8 v;
+};
 
 #endif  // HPCOMBI_TESTS_TEST_MAIN_HPP_
