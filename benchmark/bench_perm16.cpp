@@ -13,14 +13,14 @@
 //                  http://www.gnu.org/licenses/                              //
 //****************************************************************************//
 
-#include <iostream>
 #include <benchmark/benchmark.h>
-#include <string.h>
+#include <iostream>
 #include <stdlib.h>
+#include <string.h>
 
+#include "bench_fixture.hpp"
 #include "compilerinfo.hpp"
 #include "cpu_x86_impl.hpp"
-#include "bench_fixture.hpp"
 
 #include "perm16.hpp"
 #include "perm_generic.hpp"
@@ -35,17 +35,17 @@ const std::string SIMDSET = cpu_x86::get_highest_SIMD();
 const std::string PROCID = cpu_x86::get_proc_string();
 
 using HPCombi::epu8;
-using HPCombi::Vect16;
+using HPCombi::Perm16;
 using HPCombi::PTransf16;
 using HPCombi::Transf16;
-using HPCombi::Perm16;
+using HPCombi::Vect16;
 
-//##################################################################################
-template<typename TF, typename Sample>
+// ##################################################################################
+template <typename TF, typename Sample>
 void myBench(const string &name, TF pfunc, Sample &sample) {
     string fullname = name + "_" + CXX_VER + "_proc-" + PROCID;
-    benchmark::RegisterBenchmark(fullname.c_str(),
-        [pfunc, sample](benchmark::State& st) {
+    benchmark::RegisterBenchmark(
+        fullname.c_str(), [pfunc, sample](benchmark::State &st) {
             for (auto _ : st) {
                 for (auto elem : sample) {
                     benchmark::DoNotOptimize(pfunc(elem));
@@ -54,25 +54,36 @@ void myBench(const string &name, TF pfunc, Sample &sample) {
         });
 }
 
-#define myBenchLoop(descr, methname, smp)  \
-    myBench(descr, [](Perm16 p) { \
-        for (int i = 0; i < 100; i++) p = p.methname(); \
-        return p; }, smp)
-#define myBenchMeth(descr, methname, smp) \
-    myBench(descr, [](Perm16 p) { \
-        for (int i = 0; i < 100; i++) benchmark::DoNotOptimize(p.methname()); \
-        return p.methname(); }, smp)
+#define myBenchLoop(descr, methname, smp)                                      \
+    myBench(                                                                   \
+        descr,                                                                 \
+        [](Perm16 p) {                                                         \
+            for (int i = 0; i < 100; i++)                                      \
+                p = p.methname();                                              \
+            return p;                                                          \
+        },                                                                     \
+        smp)
+#define myBenchMeth(descr, methname, smp)                                      \
+    myBench(                                                                   \
+        descr,                                                                 \
+        [](Perm16 p) {                                                         \
+            for (int i = 0; i < 100; i++)                                      \
+                benchmark::DoNotOptimize(p.methname());                        \
+            return p.methname();                                               \
+        },                                                                     \
+        smp)
 
-#define myBenchMeth2(descr, methname, smp) \
-    myBench(descr, \
-            [](Perm16 p) {                                              \
-                for (Perm16 p1 : smp) benchmark::DoNotOptimize(p.methname(p1)); \
-                return 1; \
-            }, smp);
+#define myBenchMeth2(descr, methname, smp)                                     \
+    myBench(                                                                   \
+        descr,                                                                 \
+        [](Perm16 p) {                                                         \
+            for (Perm16 p1 : smp)                                              \
+                benchmark::DoNotOptimize(p.methname(p1));                      \
+            return 1;                                                          \
+        },                                                                     \
+        smp);
 
-
-
-//##################################################################################
+// ##################################################################################
 int Bench_inverse() {
     myBenchMeth("inverse_ref1", inverse_ref, sample.perms);
     myBenchMeth("inverse_ref2", inverse_ref, sample.perms);
@@ -131,14 +142,8 @@ int Bench_rank() {
     return 0;
 }
 
-auto dummy = {
-    Bench_inverse(),
-    Bench_lehmer(),
-    Bench_length(),
-    Bench_nb_descents(),
-    Bench_nb_cycles(),
-    Bench_left_weak_leq(),
-    Bench_rank()
-};
+auto dummy = {Bench_inverse(),     Bench_lehmer(),    Bench_length(),
+              Bench_nb_descents(), Bench_nb_cycles(), Bench_left_weak_leq(),
+              Bench_rank()};
 
 BENCHMARK_MAIN();

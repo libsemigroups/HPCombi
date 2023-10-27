@@ -22,7 +22,7 @@
 #include <experimental/numeric>  // lcm until c++17
 #else
 #include "fallback/gcdlcm.hpp"  // lcm until c++17
-#endif                 // HAVE_EXPERIMENTAL_NUMERIC_LCM
+#endif                          // HAVE_EXPERIMENTAL_NUMERIC_LCM
 
 namespace HPCombi {
 
@@ -30,14 +30,15 @@ namespace HPCombi {
 /** Implementation part for inline functions *********************************/
 /*****************************************************************************/
 
-inline PTransf16::PTransf16(std::initializer_list<uint8_t> il) : Vect16(epu8id) {
+inline PTransf16::PTransf16(std::initializer_list<uint8_t> il)
+    : Vect16(epu8id) {
     assert(il.size() <= 16);
     std::copy(il.begin(), il.end(), HPCombi::as_array(v).begin());
 }
 
-inline PTransf16::PTransf16(std::vector<uint8_t> dom,
-                            std::vector<uint8_t> rng, size_t /*unused */) :
-    Vect16(Epu8(0xFF)) {
+inline PTransf16::PTransf16(std::vector<uint8_t> dom, std::vector<uint8_t> rng,
+                            size_t /*unused */)
+    : Vect16(Epu8(0xFF)) {
     assert(dom.size() == rng.size());
     assert(dom.size() <= 16);
     for (size_t i = 0; i < dom.size(); ++i) {

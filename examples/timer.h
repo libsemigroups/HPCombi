@@ -27,75 +27,70 @@
 
 namespace libsemigroups {
 
-  // This is a simple class which can be used to send timing information in a
-  // somewhat human readable format to the standard output.
-  class Timer {
-   public:
+// This is a simple class which can be used to send timing information in a
+// somewhat human readable format to the standard output.
+class Timer {
+  public:
     // Default constructor, timer starts when object is created
     Timer() : _start(std::chrono::high_resolution_clock::now()) {}
 
     // Reset the timer (i.e. time from this point on)
-    void reset() {
-      _start = std::chrono::high_resolution_clock::now();
-    }
+    void reset() { _start = std::chrono::high_resolution_clock::now(); }
 
     // The elapsed time in nanoseconds since last reset
     std::chrono::nanoseconds elapsed() const {
-      return std::chrono::duration_cast<std::chrono::nanoseconds>(
-          std::chrono::high_resolution_clock::now() - _start);
+        return std::chrono::duration_cast<std::chrono::nanoseconds>(
+            std::chrono::high_resolution_clock::now() - _start);
     }
 
     // String containing the somewhat human readable amount of time, this is
     // primarily intended for testing purposes
     std::string string(std::chrono::nanoseconds elapsed) const {
-      std::string out;
-      if (string_it<std::chrono::hours>(out, elapsed, "h ", 0)) {
-        string_it<std::chrono::minutes>(out, elapsed, "m", 0);
+        std::string out;
+        if (string_it<std::chrono::hours>(out, elapsed, "h ", 0)) {
+            string_it<std::chrono::minutes>(out, elapsed, "m", 0);
+            return out;
+        } else if (string_it<std::chrono::minutes>(out, elapsed, "m ", 0)) {
+            string_it<std::chrono::seconds>(out, elapsed, "s", 0);
+            return out;
+        } else if (string_it<std::chrono::milliseconds>(out, elapsed, "ms",
+                                                        9)) {
+            return out;
+        } else if (string_it<std::chrono::microseconds>(out, elapsed, "\u03BCs",
+                                                        9)) {
+            return out;
+        } else if (string_it<std::chrono::nanoseconds>(out, elapsed, "ns", 0)) {
+            return out;
+        }
         return out;
-      } else if (string_it<std::chrono::minutes>(out, elapsed, "m ", 0)) {
-        string_it<std::chrono::seconds>(out, elapsed, "s", 0);
-        return out;
-      } else if (string_it<std::chrono::milliseconds>(out, elapsed, "ms", 9)) {
-        return out;
-      } else if (string_it<std::chrono::microseconds>(
-                     out, elapsed, "\u03BCs", 9)) {
-        return out;
-      } else if (string_it<std::chrono::nanoseconds>(out, elapsed, "ns", 0)) {
-        return out;
-      }
-      return out;
     }
 
     // String containing the somewhat human readable amount of time since the
     // last reset
-    std::string string() const {
-      return string(elapsed());
-    }
+    std::string string() const { return string(elapsed()); }
 
     // Left shift the string containing the somewhat human readable amount of
     // time since last reset to an ostream
-    friend std::ostream& operator<<(std::ostream& os, Timer const& t) {
-      os << t.string();
-      return os;
+    friend std::ostream &operator<<(std::ostream &os, Timer const &t) {
+        os << t.string();
+        return os;
     }
 
-   private:
+  private:
     std::chrono::high_resolution_clock::time_point _start;
 
     template <typename T>
-    bool string_it(std::string&              str,
-                   std::chrono::nanoseconds& elapsed,
-                   std::string               unit,
-                   size_t                    threshold) const {
-      T x = std::chrono::duration_cast<T>(elapsed);
-      if (x > T(threshold)) {
-        str += std::to_string(x.count()) + unit;
-        elapsed -= x;
-        return true;
-      }
-      return false;
+    bool string_it(std::string &str, std::chrono::nanoseconds &elapsed,
+                   std::string unit, size_t threshold) const {
+        T x = std::chrono::duration_cast<T>(elapsed);
+        if (x > T(threshold)) {
+            str += std::to_string(x.count()) + unit;
+            elapsed -= x;
+            return true;
+        }
+        return false;
     }
-  };
+};
 }  // namespace libsemigroups
 
 #endif  // LIBSEMIGROUPS_SRC_TIMER_H_

@@ -194,13 +194,13 @@ inline void BMat8::transpose2(BMat8 &a, BMat8 &b) {
     b._data = simde_mm_extract_epi64(x, 0);
 }
 
-static constexpr epu8 rotlow { 7, 0, 1, 2, 3, 4, 5, 6};
-static constexpr epu8 rothigh
-    { 0, 1, 2, 3, 4, 5, 6, 7,15, 8, 9,10,11,12,13,14};
-static constexpr epu8 rotboth
-    { 7, 0, 1, 2, 3, 4, 5, 6,15, 8, 9,10,11,12,13,14};
-static constexpr epu8 rot2
-    { 6, 7, 0, 1, 2, 3, 4, 5,14,15, 8, 9,10,11,12,13};
+static constexpr epu8 rotlow{7, 0, 1, 2, 3, 4, 5, 6};
+static constexpr epu8 rothigh{0,  1, 2, 3,  4,  5,  6,  7,
+                              15, 8, 9, 10, 11, 12, 13, 14};
+static constexpr epu8 rotboth{7,  0, 1, 2,  3,  4,  5,  6,
+                              15, 8, 9, 10, 11, 12, 13, 14};
+static constexpr epu8 rot2{6,  7,  0, 1, 2,  3,  4,  5,
+                           14, 15, 8, 9, 10, 11, 12, 13};
 
 inline BMat8 BMat8::mult_transpose(BMat8 const &that) const {
     epu8 x = simde_mm_set_epi64x(_data, _data);
@@ -241,8 +241,8 @@ inline BMat8 BMat8::row_space_basis() const {
 #endif /* FF */
 #define FF 0xff
 
-constexpr std::array<epu8, 4> masks {{
-// clang-format off
+constexpr std::array<epu8, 4> masks{
+    {// clang-format off
         {FF, 0,FF, 0,FF, 0,FF, 0,FF, 0,FF, 0,FF, 0,FF, 0},
         {FF,FF, 1, 1,FF,FF, 1, 1,FF,FF, 1, 1,FF,FF, 1, 1},
         {FF,FF,FF,FF, 2, 2, 2, 2,FF,FF,FF,FF, 2, 2, 2, 2},

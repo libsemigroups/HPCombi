@@ -1,9 +1,9 @@
 /* cpu_x86.h
- * 
+ *
  * Author           : Alexander J. Yee
  * Date Created     : 04/12/2014
  * Last Modified    : 04/12/2014
- * 
+ *
  */
 
 #pragma once
@@ -16,12 +16,12 @@
 //  Dependencies
 #include <stdint.h>
 #include <string>
-namespace FeatureDetector{
+namespace FeatureDetector {
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
-struct cpu_x86{
+struct cpu_x86 {
     //  Vendor
     bool Vendor_AMD;
     bool Vendor_Intel;
@@ -71,7 +71,7 @@ struct cpu_x86{
     bool HW_AVX512_IFMA;
     bool HW_AVX512_VBMI;
 
-public:
+  public:
     cpu_x86();
     void detect_host();
 
@@ -83,8 +83,8 @@ public:
     static std::string get_proc_string();
     static std::string get_highest_SIMD();
 
-private:
-    static void print(const char* label, bool yes);
+  private:
+    static void print(const char *label, bool yes);
 
     static bool detect_OS_x64();
     static bool detect_OS_AVX();
@@ -94,5 +94,5 @@ private:
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
-}
+}  // namespace FeatureDetector
 #endif

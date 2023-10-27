@@ -366,7 +366,7 @@ TEST_CASE_METHOD(Perm16Fixture, "PPerm16::right_one", "[PPerm16][020]") {
 
 #ifdef SIMDE_X86_SSE4_2_NATIVE
 TEST_AGREES(Perm16Fixture, PPerm16, inverse_ref, inverse_find, PPlist,
-   "[PPerm16][021]");
+            "[PPerm16][021]");
 #endif
 
 TEST_CASE_METHOD(Perm16Fixture, "Perm16::fix_points_mask", "[PPerm16][022]") {
@@ -437,7 +437,6 @@ TEST_CASE_METHOD(Perm16Fixture, "Perm16::inverse_ref", "[Perm16][027]") {
         REQUIRE(p.inverse() * p == Perm16::one());
     }
 }
-
 
 TEST_AGREES(Perm16Fixture, Perm16, inverse_ref, inverse_find, Plist,
             "[Perm16][028]");

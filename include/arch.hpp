@@ -17,7 +17,7 @@
 #define HPCOMBI_ARCH_HPP_INCLUDED
 
 #if defined(SIMDE_ARCH_AMD64) && !defined(SIMDE_ARCH_X86_SSE4_1)
-#  error("x86_64 architecture without required compiler flags for SSE-4.1 instruction set. Did you forget to provide the flag -march=(native,avx,sse4.1) flag ?")
+#error("x86_64 architecture without required compiler flags for SSE-4.1 instruction set. Did you forget to provide the flag -march=(native,avx,sse4.1) flag ?")
 #endif
 
 #endif  // HPCOMBI_ARCH_HPP_INCLUDED

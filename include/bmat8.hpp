@@ -293,15 +293,10 @@ class BMat8 {
     //! This method returns the 8 x 8 BMat8 with 1s on the main diagonal.
     static BMat8 one(size_t dim = 8) {
         HPCOMBI_ASSERT(dim <= 8);
-        static std::array<uint64_t, 9> const ones = {0x0000000000000000,
-                                                     0x8000000000000000,
-                                                     0x8040000000000000,
-                                                     0x8040200000000000,
-                                                     0x8040201000000000,
-                                                     0x8040201008000000,
-                                                     0x8040201008040000,
-                                                     0x8040201008040200,
-                                                     0x8040201008040201};
+        static std::array<uint64_t, 9> const ones = {
+            0x0000000000000000, 0x8000000000000000, 0x8040000000000000,
+            0x8040200000000000, 0x8040201000000000, 0x8040201008000000,
+            0x8040201008040000, 0x8040201008040200, 0x8040201008040201};
         return BMat8(ones[dim]);
     }
 
@@ -320,7 +315,7 @@ class BMat8 {
     void swap(BMat8 &that) { std::swap(this->_data, that._data); }
 
     //! Write \c this on \c os
-    std::ostream & write(std::ostream &os) const;
+    std::ostream &write(std::ostream &os) const;
 
 #ifdef LIBSEMIGROUPS_DENSEHASHMAP
     // FIXME do this another way

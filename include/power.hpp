@@ -76,12 +76,10 @@ const T square(const T x) {
  */
 template <unsigned exp, typename T, typename M = power_helper::Monoid<T>>
 const T pow(const T x) {
-    return (exp == 0)
-               ? M::one()
-               : (exp % 2 == 0)
-                     ? square<T, M>(pow<unsigned(exp / 2), T, M>(x))
-                     : M::prod(x,
-                               square<T, M>(pow<unsigned(exp / 2), T, M>(x)));
+    return (exp == 0) ? M::one()
+           : (exp % 2 == 0)
+               ? square<T, M>(pow<unsigned(exp / 2), T, M>(x))
+               : M::prod(x, square<T, M>(pow<unsigned(exp / 2), T, M>(x)));
 }
 
 namespace power_helper {

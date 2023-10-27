@@ -21,33 +21,35 @@
 using namespace std;
 using namespace HPCombi;
 
-#define ASSERT(test) if (!(test)) cout << "Test failed in file " << __FILE__ \
-                                       << " line " << __LINE__ << ": " #test << endl
+#define ASSERT(test)                                                           \
+    if (!(test))                                                               \
+    cout << "Test failed in file " << __FILE__ << " line " << __LINE__         \
+         << ": " #test << endl
 
 int main() {
-  auto vrand = rand_perms(1000);
-  auto rep = 10000;
+    auto vrand = rand_perms(1000);
+    auto rep = 10000;
 
-  cout << "Loop   : ";
-  double reftime = timethat(
-      [vrand]() {
-        for (Perm16 v : vrand)
-          ASSERT(v.sum_ref() == 120);
-      },
-      rep);
-  cout << "4 rnds : ";
-  timethat(
-      [vrand]() {
-        for (Perm16 v : vrand)
-          ASSERT(v.sum4() == 120);
-      },
-      rep, reftime);
-  cout << "3 rnds : ";
-  timethat(
-      [vrand]() {
-        for (Perm16 v : vrand)
-          ASSERT(v.sum3() == 120);
-      },
-      rep, reftime);
-  return EXIT_SUCCESS;
+    cout << "Loop   : ";
+    double reftime = timethat(
+        [vrand]() {
+            for (Perm16 v : vrand)
+                ASSERT(v.sum_ref() == 120);
+        },
+        rep);
+    cout << "4 rnds : ";
+    timethat(
+        [vrand]() {
+            for (Perm16 v : vrand)
+                ASSERT(v.sum4() == 120);
+        },
+        rep, reftime);
+    cout << "3 rnds : ";
+    timethat(
+        [vrand]() {
+            for (Perm16 v : vrand)
+                ASSERT(v.sum3() == 120);
+        },
+        rep, reftime);
+    return EXIT_SUCCESS;
 }

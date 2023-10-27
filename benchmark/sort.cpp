@@ -29,52 +29,55 @@ using namespace std;
 using namespace std::chrono;
 using namespace HPCombi;
 
-#define ASSERT(test) if (!(test)) cout << "Test failed in file " << __FILE__ \
-                                       << " line " << __LINE__ << ": " #test << endl
+#define ASSERT(test)                                                           \
+    if (!(test))                                                               \
+    cout << "Test failed in file " << __FILE__ << " line " << __LINE__         \
+         << ": " #test << endl
 
 std::vector<epu8> rand_sample(size_t sz) {
     std::vector<epu8> res;
-    for (size_t i=0; i < sz; i++)
+    for (size_t i = 0; i < sz; i++)
         res.push_back(random_epu8(256));
     return res;
 }
 
 inline epu8 rand_perm() {
-  epu8 res = epu8id;
-  auto &ar = as_array(res);
-  std::random_shuffle(ar.begin(), ar.end());
-  return res;
+    epu8 res = epu8id;
+    auto &ar = as_array(res);
+    std::random_shuffle(ar.begin(), ar.end());
+    return res;
 }
 
 std::vector<epu8> rand_perms(int sz) {
-  std::vector<epu8> res(sz);
-  std::srand(std::time(0));
-  for (int i = 0; i < sz; i++)
-    res[i] = rand_perm();
-  return res;
+    std::vector<epu8> res(sz);
+    std::srand(std::time(0));
+    for (int i = 0; i < sz; i++)
+        res[i] = rand_perm();
+    return res;
 }
 
 template <typename Func>
 double timethat(Func fun, int rep = 1, double reftime = 0) {
-  using std::chrono::duration;
-  using std::chrono::duration_cast;
-  using std::chrono::high_resolution_clock;
-  auto tstart = high_resolution_clock::now();
-  for (int i = 0; i < rep; i++)
-    fun();
-  auto tfin = high_resolution_clock::now();
+    using std::chrono::duration;
+    using std::chrono::duration_cast;
+    using std::chrono::high_resolution_clock;
+    auto tstart = high_resolution_clock::now();
+    for (int i = 0; i < rep; i++)
+        fun();
+    auto tfin = high_resolution_clock::now();
 
-  auto tm = duration_cast<duration<double>>(tfin - tstart);
-  std::cout << "time = " << std::fixed << std::setprecision(6) << tm.count()
-            << "s";
-  if (reftime != 0)
-    std::cout << ", speedup = " << std::setprecision(3) << reftime / tm.count();
-  std::cout << std::endl;
-  return tm.count();
+    auto tm = duration_cast<duration<double>>(tfin - tstart);
+    std::cout << "time = " << std::fixed << std::setprecision(6) << tm.count()
+              << "s";
+    if (reftime != 0)
+        std::cout << ", speedup = " << std::setprecision(3)
+                  << reftime / tm.count();
+    std::cout << std::endl;
+    return tm.count();
 }
 
 struct RoundsMask {
-  // commented out due to a bug in gcc
+    // commented out due to a bug in gcc
     /* constexpr */ RoundsMask() : arr() {
         for (unsigned i = 0; i < HPCombi::sorting_rounds.size(); ++i)
             arr[i] = HPCombi::sorting_rounds[i] < epu8id;
@@ -96,12 +99,12 @@ inline epu8 sort_pair(epu8 a) {
 
 inline epu8 sort_odd_even(epu8 a) {
     const uint8_t FF = 0xff;
-    static const epu8 even =
-        {1, 0, 3, 2, 5, 4, 7, 6, 9, 8, 11, 10, 13, 12, 15, 14};
-    static const epu8 odd =
-        {0, 2, 1, 4, 3, 6, 5, 8, 7, 10, 9, 12, 11, 14, 13, 15};
-    static const epu8 mask =
-        {0, FF, 0, FF, 0, FF, 0, FF, 0, FF, 0, FF, 0, FF, 0, FF};
+    static const epu8 even = {1, 0, 3,  2,  5,  4,  7,  6,
+                              9, 8, 11, 10, 13, 12, 15, 14};
+    static const epu8 odd = {0, 2,  1, 4,  3,  6,  5,  8,
+                             7, 10, 9, 12, 11, 14, 13, 15};
+    static const epu8 mask = {0, FF, 0, FF, 0, FF, 0, FF,
+                              0, FF, 0, FF, 0, FF, 0, FF};
     epu8 b, minab, maxab;
     for (unsigned i = 0; i < 8; ++i) {
         b = permuted(a, even);
@@ -126,7 +129,7 @@ inline epu8 insertion_sort(epu8 p) {
 
 inline epu8 radix_sort(epu8 p) {
     auto &a = HPCombi::as_array(p);
-    std::array<uint8_t, 16> stat {};
+    std::array<uint8_t, 16> stat{};
     for (int i = 0; i < 16; i++)
         stat[a[i]]++;
     int c = 0;

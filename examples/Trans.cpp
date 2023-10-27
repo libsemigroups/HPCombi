@@ -28,21 +28,20 @@
 
 using HPCombi::Transf16;
 
-// Full transformation semigroup on 7 points 
-const Transf16 s  {1, 0, 2, 3, 4, 5, 6};
-const Transf16 cy {1, 2, 3, 4, 5, 6, 0};
-const Transf16 pi {0, 0, 2, 3, 4, 5, 6};
+// Full transformation semigroup on 7 points
+const Transf16 s{1, 0, 2, 3, 4, 5, 6};
+const Transf16 cy{1, 2, 3, 4, 5, 6, 0};
+const Transf16 pi{0, 0, 2, 3, 4, 5, 6};
 const std::vector<Transf16> gens{s, cy, pi};
 
-
-/* Full transformation semigroup on 9 points 
+/* Full transformation semigroup on 9 points
 const Transf16 s  {1, 0, 2, 3, 4, 5, 6, 7, 8};
 const Transf16 cy {1, 2, 3, 4, 5, 6, 7, 8, 0};
 const Transf16 pi {0, 0, 2, 3, 4, 5, 6, 7, 8};
 const std::vector<Transf16> gens{s, cy, pi};
 */
 
-/* James favourite 
+/* James favourite
 const Transf16 a1 {1, 7, 2, 6, 0, 4, 1, 5};
 const Transf16 a2 {2, 4, 6, 1, 4, 5, 2, 7};
 const Transf16 a3 {3, 0, 7, 2, 4, 6, 2, 4};
@@ -57,37 +56,39 @@ const vector<Transf16> gens{a1,a2,a3,a4,a5,a6,a7,a8};
 const uint8_t FE = 0xfe;
 
 int main() {
-  int lg = 0;
+    int lg = 0;
 
 #ifdef HPCOMBI_HAVE_DENSEHASHSET
-  using google::dense_hash_set;
-  dense_hash_set<Transf16, std::hash<Transf16>, std::equal_to<Transf16>> res;
-  res.set_empty_key({FE, FE, FE, FE, FE, FE, FE, FE, FE, FE, FE, FE, FE, FE, FE, FE});
-  // res.resize(500000000);
+    using google::dense_hash_set;
+    dense_hash_set<Transf16, std::hash<Transf16>, std::equal_to<Transf16>> res;
+    res.set_empty_key(
+        {FE, FE, FE, FE, FE, FE, FE, FE, FE, FE, FE, FE, FE, FE, FE, FE});
+    // res.resize(500000000);
 #else
-  using std::unordered_set;
-  unordered_set<Transf16> res;
-  // res.reserve(500000000);
+    using std::unordered_set;
+    unordered_set<Transf16> res;
+    // res.reserve(500000000);
 #endif
 
-  res.insert(Transf16::one());
+    res.insert(Transf16::one());
 
-  std::vector<Transf16> todo, newtodo;
-  todo.push_back(Transf16::one());
-  while (todo.size()) {
-    newtodo.clear();
-    lg++;
-    for (auto v : todo) {
-      for (auto g : gens) {
-        auto el = v * g;
-        if (res.insert(el).second)
-          newtodo.push_back(el);
-      }
+    std::vector<Transf16> todo, newtodo;
+    todo.push_back(Transf16::one());
+    while (todo.size()) {
+        newtodo.clear();
+        lg++;
+        for (auto v : todo) {
+            for (auto g : gens) {
+                auto el = v * g;
+                if (res.insert(el).second)
+                    newtodo.push_back(el);
+            }
+        }
+        std::swap(todo, newtodo);
+        std::cout << lg << ", todo = " << todo.size()
+                  << ", res = " << res.size()
+                  << ", #Bucks = " << res.bucket_count() << std::endl;
     }
-    std::swap(todo, newtodo);
-    std::cout << lg << ", todo = " << todo.size() << ", res = " << res.size()
-         << ", #Bucks = " << res.bucket_count() << std::endl;
-  }
-  std::cout << "res =  " << res.size() << std::endl;
-  exit(0);
+    std::cout << "res =  " << res.size() << std::endl;
+    exit(0);
 }
