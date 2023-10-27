@@ -481,11 +481,17 @@ inline bool is_permutation(epu8 v, const size_t k) {
 namespace std {
 
 inline std::ostream &operator<<(std::ostream &stream, HPCombi::epu8 const &a) {
-    stream << "[" << std::setw(2) << unsigned(a[0]);
+    stream << "{" << std::setw(2) << unsigned(a[0]);
     for (unsigned i = 1; i < 16; ++i)
         stream << "," << std::setw(2) << unsigned(a[i]);
-    stream << "]";
+    stream << "}";
     return stream;
+}
+
+inline std::string to_string(HPCombi::epu8 const &a) {
+    std::ostringstream ss;
+    ss << a;
+    return ss.str();
 }
 
 template <> struct equal_to<HPCombi::epu8> {

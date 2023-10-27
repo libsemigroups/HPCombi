@@ -17,6 +17,7 @@
 #define HPCOMBI_EPU_HPP_INCLUDED
 
 #include <array>
+#include <string>
 #include <cassert>
 #include <cstdint>
 #include <functional>  // less<>, equal_to<>
@@ -726,6 +727,8 @@ inline bool is_permutation(epu8 v, const size_t k = 16);
 namespace std {
 
 inline std::ostream &operator<<(std::ostream &stream, HPCombi::epu8 const &a);
+
+inline std::string to_string(HPCombi::epu8 const &a);
 
 /** We also specialize the struct
  *  - std::equal_to<epu8>

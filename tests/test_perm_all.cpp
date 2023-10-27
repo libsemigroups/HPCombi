@@ -260,28 +260,28 @@ TEMPLATE_TEST_CASE_METHOD(Fixture1, "operator_insert", "[AllPerm][011]",
                           PermTypes) {
     std::ostringstream out, out2;
     out << Fixture1<TestType>::zero;
-    out2 << "[ 0";
+    out2 << "{ 0";
     for (size_t i = 1; i < Fixture1<TestType>::VectType::Size(); i++)
         out2 << ", 0";
-    out2 << "]";
+    out2 << "}";
     REQUIRE(out.str() == out2.str());
 
     out.str("");
     out2.str("");
     out << Fixture1<TestType>::V01;
-    out2 << "[ 0, 1";
+    out2 << "{ 0, 1";
     for (size_t i = 2; i < Fixture1<TestType>::VectType::Size(); i++)
         out2 << ", 0";
-    out2 << "]";
+    out2 << "}";
     REQUIRE(out.str() == out2.str());
 
     out.str("");
     out2.str("");
     out << Fixture1<TestType>::PPa;
-    out2 << "[ 1, 2, 3, 4, 0";
+    out2 << "{ 1, 2, 3, 4, 0";
     for (size_t i = 5; i < Fixture1<TestType>::VectType::Size(); i++)
         out2 << "," << std::setw(2) << i;
-    out2 << "]";
+    out2 << "}";
     REQUIRE(out.str() == out2.str());
 }
 
