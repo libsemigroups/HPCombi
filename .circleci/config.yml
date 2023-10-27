@@ -1,0 +1,32 @@
+# .circleci/config.yml
+
+version: 2.1
+
+jobs:
+  test:
+    docker:
+      - image: reiniscirpons/hpcombi-env-arm64v8:v1
+    resource_class: arm.medium
+    steps:
+      - checkout
+      - run:
+          name: Run cmake
+          command: |
+            mkdir build
+            cd build
+            cmake -DBUILD_TESTING=1 ..
+      - run:
+          name: Run make in tests folder
+          command: |
+            cd build/tests
+            make
+      - run:
+          name: Run tests
+          command: |
+            cd build/tests
+            ./test_all
+
+workflows:
+  test:
+    jobs:
+      - test
