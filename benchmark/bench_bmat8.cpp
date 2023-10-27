@@ -46,7 +46,8 @@ std::vector<BMat8> make_sample(size_t n) {
 std::vector<std::pair<BMat8, BMat8>> make_pair_sample(size_t n) {
     std::vector<std::pair<BMat8, BMat8>> res{};
     for (size_t i = 0; i < n; i++) {
-        res.push_back(std::make_pair(BMat8::random(), BMat8::random()));
+        auto x = BMat8::random();
+        res.push_back(std::make_pair(x, x));
     }
     return res;
 }
@@ -70,7 +71,7 @@ std::vector<std::pair<BMat8, BMat8>> pair_sample = make_pair_sample(1000);
 #define BENCHMARK_MEM_FN(mem_fn, sample)                                       \
     BENCHMARK(#mem_fn) {                                                       \
         for (auto &elem : sample) {                                            \
-            REQUIRE_NOTHROW(elem.mem_fn());                                    \
+            volatile auto dummy = elem.mem_fn();                               \
         }                                                                      \
         return true;                                                           \
     };
@@ -78,8 +79,9 @@ std::vector<std::pair<BMat8, BMat8>> pair_sample = make_pair_sample(1000);
 #define BENCHMARK_MEM_FN_PAIR(mem_fn, sample)                                  \
     BENCHMARK(#mem_fn) {                                                       \
         for (auto &pair : sample) {                                            \
-            REQUIRE_NOTHROW(                                                   \
-                std::make_pair(pair.first.mem_fn(), pair.second.mem_fn()));    \
+            auto val =                                                         \
+                std::make_pair(pair.first.mem_fn(), pair.second.mem_fn());     \
+            REQUIRE(val.first == val.second);                                  \
         }                                                                      \
         return true;                                                           \
     };
@@ -98,13 +100,14 @@ TEST_CASE("Transpose benchmarks 1000 BMat8", "[BMat8][000]") {
     BENCHMARK_MEM_FN(transpose_maskd, sample);
 }
 
-TEST_CASE("Transpose pairs benchmarks 1000 BMat8", "[BMat8][000]") {
+TEST_CASE("Transpose pairs benchmarks 1000 BMat8", "[BMat8][002]") {
     BENCHMARK_MEM_FN_PAIR(transpose, pair_sample);
     BENCHMARK_MEM_FN_PAIR(transpose_mask, pair_sample);
     BENCHMARK_MEM_FN_PAIR(transpose_maskd, pair_sample);
     BENCHMARK("transpose2") {
         for (auto &pair : pair_sample) {
-            REQUIRE_NOTHROW(BMat8::transpose2(pair.first, pair.second));
+            BMat8::transpose2(pair.first, pair.second);
+            REQUIRE(pair.first == pair.second);
         }
         return true;
     };
@@ -153,8 +156,5 @@ p.second, p.first); return res.first == res.second;
     return 0;
 }
 
-auto dummy = {Bench_row_space_size(), Bench_transpose(),
-Bench_transpose2(), Bench_row_space_included(),
-Bench_row_space_included2()};
 */
 }  // namespace HPCombi
