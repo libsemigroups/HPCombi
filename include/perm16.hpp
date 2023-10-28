@@ -46,9 +46,9 @@ struct alignas(16) PTransf16 : public Vect16 {
     using array = decltype(Epu8)::array;
 
     PTransf16() = default;
-    HPCOMBI_CONSTEXPR_CONSTRUCTOR PTransf16(const PTransf16 &v) = default;
-    HPCOMBI_CONSTEXPR_CONSTRUCTOR PTransf16(const vect v) : Vect16(v) {}
-    HPCOMBI_CONSTEXPR_CONSTRUCTOR PTransf16(const epu8 x) : Vect16(x) {}
+    constexpr PTransf16(const PTransf16 &v) = default;
+    constexpr PTransf16(const vect v) : Vect16(v) {}
+    constexpr PTransf16(const epu8 x) : Vect16(x) {}
     PTransf16(std::vector<uint8_t> dom, std::vector<uint8_t> rng,
               size_t = 0 /* unused */);
     PTransf16(std::initializer_list<uint8_t> il);
@@ -65,7 +65,7 @@ struct alignas(16) PTransf16 : public Vect16 {
     }
 
     //! The identity partial transformation.
-    static HPCOMBI_CONSTEXPR PTransf16 one() { return epu8id; }
+    static constexpr PTransf16 one() { return epu8id; }
     //! The product of two partial transformations.
     PTransf16 operator*(const PTransf16 &p) const {
         return HPCombi::permuted(v, p.v) | (p.v == Epu8(0xFF));
@@ -120,9 +120,9 @@ struct alignas(16) PTransf16 : public Vect16 {
  */
 struct Transf16 : public PTransf16 {
     Transf16() = default;
-    HPCOMBI_CONSTEXPR_CONSTRUCTOR Transf16(const Transf16 &v) = default;
-    HPCOMBI_CONSTEXPR_CONSTRUCTOR Transf16(const vect v) : PTransf16(v) {}
-    HPCOMBI_CONSTEXPR_CONSTRUCTOR Transf16(const epu8 x) : PTransf16(x) {}
+    constexpr Transf16(const Transf16 &v) = default;
+    constexpr Transf16(const vect v) : PTransf16(v) {}
+    constexpr Transf16(const epu8 x) : PTransf16(x) {}
     Transf16(std::initializer_list<uint8_t> il) : PTransf16(il) {}
     Transf16 &operator=(const Transf16 &) = default;
 
@@ -132,7 +132,7 @@ struct Transf16 : public PTransf16 {
     }
 
     //! The identity transformation.
-    static HPCOMBI_CONSTEXPR Transf16 one() { return epu8id; }
+    static constexpr Transf16 one() { return epu8id; }
     //! The product of two transformations.
     Transf16 operator*(const Transf16 &p) const {
         return HPCombi::permuted(v, p.v);
@@ -149,9 +149,9 @@ struct Transf16 : public PTransf16 {
  */
 struct PPerm16 : public PTransf16 {
     PPerm16() = default;
-    HPCOMBI_CONSTEXPR_CONSTRUCTOR PPerm16(const PPerm16 &v) = default;
-    HPCOMBI_CONSTEXPR_CONSTRUCTOR PPerm16(const vect v) : PTransf16(v) {}
-    HPCOMBI_CONSTEXPR_CONSTRUCTOR PPerm16(const epu8 x) : PTransf16(x) {}
+    constexpr PPerm16(const PPerm16 &v) = default;
+    constexpr PPerm16(const vect v) : PTransf16(v) {}
+    constexpr PPerm16(const epu8 x) : PTransf16(x) {}
     PPerm16(std::vector<uint8_t> dom, std::vector<uint8_t> rng,
             size_t = 0 /* unused */)
         : PTransf16(dom, rng) {}
@@ -164,7 +164,7 @@ struct PPerm16 : public PTransf16 {
     }
 
     //! The identity partial permutations.
-    static HPCOMBI_CONSTEXPR PPerm16 one() { return epu8id; }
+    static constexpr PPerm16 one() { return epu8id; }
     //! The product of two partial perrmutations.
     PPerm16 operator*(const PPerm16 &p) const {
         return this->PTransf16::operator*(p);
@@ -208,9 +208,9 @@ struct PPerm16 : public PTransf16 {
  */
 struct Perm16 : public Transf16 /* public PPerm : diamond problem */ {
     Perm16() = default;
-    HPCOMBI_CONSTEXPR_CONSTRUCTOR Perm16(const Perm16 &) = default;
-    HPCOMBI_CONSTEXPR_CONSTRUCTOR Perm16(const vect v) : Transf16(v) {}
-    HPCOMBI_CONSTEXPR_CONSTRUCTOR Perm16(const epu8 x) : Transf16(x) {}
+    constexpr Perm16(const Perm16 &) = default;
+    constexpr Perm16(const vect v) : Transf16(v) {}
+    constexpr Perm16(const epu8 x) : Transf16(x) {}
     Perm16 &operator=(const Perm16 &) = default;
     Perm16(std::initializer_list<uint8_t> il) : Transf16(il) {}
 
@@ -221,7 +221,7 @@ struct Perm16 : public Transf16 /* public PPerm : diamond problem */ {
     // being defined (see https://stackoverflow.com/questions/11928089/)
     // therefore we chose to have functions.
     //! The identity partial permutation.
-    static HPCOMBI_CONSTEXPR Perm16 one() { return epu8id; }
+    static constexpr Perm16 one() { return epu8id; }
     //! The product of two permutations
     Perm16 operator*(const Perm16 &p) const {
         return HPCombi::permuted(v, p.v);

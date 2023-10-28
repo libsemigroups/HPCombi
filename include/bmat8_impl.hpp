@@ -406,7 +406,7 @@ inline size_t BMat8::nr_rows() const {
     return __builtin_popcountll(simde_mm_movemask_epi8(x != epu8{}));
 }
 
-static HPCOMBI_CONSTEXPR epu8 rev8{7, 6, 5,  4,  3,  2,  1,  0,
+static constexpr epu8 rev8{7, 6, 5,  4,  3,  2,  1,  0,
                                    8, 9, 10, 11, 12, 13, 14, 15};
 inline BMat8 BMat8::row_permuted(Perm16 p) const {
     epu8 x = simde_mm_set_epi64x(0, _data);

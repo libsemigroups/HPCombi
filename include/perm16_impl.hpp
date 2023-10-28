@@ -114,14 +114,14 @@ inline uint8_t PTransf16::nb_fix_points() const {
     return __builtin_popcountl(fix_points_bitset());
 }
 
-inline static HPCOMBI_CONSTEXPR uint8_t hilo_exchng_fun(uint8_t i) {
+inline static constexpr uint8_t hilo_exchng_fun(uint8_t i) {
     return i < 8 ? i + 8 : i - 8;
 }
-static HPCOMBI_CONSTEXPR epu8 hilo_exchng = Epu8(hilo_exchng_fun);
-inline static HPCOMBI_CONSTEXPR uint8_t hilo_mask_fun(uint8_t i) {
+static constexpr epu8 hilo_exchng = Epu8(hilo_exchng_fun);
+inline static constexpr uint8_t hilo_mask_fun(uint8_t i) {
     return i < 8 ? 0x0 : 0xFF;
 }
-static HPCOMBI_CONSTEXPR epu8 hilo_mask = Epu8(hilo_mask_fun);
+static constexpr epu8 hilo_mask = Epu8(hilo_mask_fun);
 
 inline Transf16::Transf16(uint64_t compressed) {
     epu8 res = simde_mm_set_epi64x(compressed, compressed);

@@ -24,13 +24,10 @@
 #include <iomanip>
 #include <ostream>
 #include <type_traits>
+#include <utility>   // integer_sequences
 
 #ifdef HPCOMBI_HAVE_CONFIG
 #include "HPCombi-config.h"
-#endif
-
-#if __cplusplus <= 201103L
-#include "fallback/seq.hpp"
 #endif
 
 #include "vect_generic.hpp"
@@ -38,15 +35,6 @@
 #include "simde/x86/sse4.1.h"
 #include "simde/x86/sse4.2.h"
 
-#ifdef HPCOMBI_CONSTEXPR_FUN_ARGS
-#define HPCOMBI_CONSTEXPR constexpr
-#define HPCOMBI_CONSTEXPR_CONSTRUCTOR constexpr
-#else
-#pragma message "Using a constexpr broken compiler ! "                         \
-                "Performance may not be optimal"
-#define HPCOMBI_CONSTEXPR const
-#define HPCOMBI_CONSTEXPR_CONSTRUCTOR
-#endif
 
 namespace HPCombi {
 

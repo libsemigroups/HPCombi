@@ -29,10 +29,10 @@ struct alignas(16) Vect16 {
     epu8 v;
 
     Vect16() = default;
-    HPCOMBI_CONSTEXPR_CONSTRUCTOR Vect16(epu8 x) : v(x) {}
+    constexpr Vect16(epu8 x) : v(x) {}
     Vect16(std::initializer_list<uint8_t> il, uint8_t def = 0)
         : v(Epu8(il, def)) {}
-    HPCOMBI_CONSTEXPR_CONSTRUCTOR operator epu8() const { return v; }
+    constexpr operator epu8() const { return v; }
 
     Vect16 &operator=(const Vect16 &) = default;
     Vect16 &operator=(const epu8 &vv) {
