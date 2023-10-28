@@ -22,10 +22,11 @@
 #include <catch2/catch_test_macros.hpp>
 #include <catch2/matchers/catch_matchers_templated.hpp>
 
-#define TEST_AGREES_FUN(fixture, type, ref, fun, vct, tags)                        \
+// In the followings "type" is only used for documentation
+#define TEST_AGREES_FUN(fixture, type, ref, fun, vct, tags)                    \
     TEST_CASE_METHOD(fixture, #type "::" #ref " == " #type "::" #fun, tags) {  \
         for (auto p : vct) {                                                   \
-            REQUIRE(fun(p) == ref(p));                                       \
+            REQUIRE(fun(p) == ref(p));                                         \
         }                                                                      \
     }
 
@@ -59,18 +60,16 @@
         }                                                                      \
     }
 
-
 struct Equals : Catch::Matchers::MatcherGenericBase {
     Equals(HPCombi::epu8 v) : v(v) {}
 
     bool match(HPCombi::epu8 w) const { return HPCombi::equal(v, w); }
 
     std::string describe() const override {
-      return "\n!=\n" + std::to_string(v);
+        return "\n!=\n" + std::to_string(v);
     }
 
-private:
-
+  private:
     const HPCombi::epu8 v;
 };
 

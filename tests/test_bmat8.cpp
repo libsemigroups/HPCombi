@@ -520,8 +520,8 @@ TEST_CASE_METHOD(BMat8Fixture, "BMat8::nr_rows", "[BMat8][025]") {
 TEST_CASE("BMat8::right_perm_action_on_basis_ref", "[BMat8][026]") {
     BMat8 m1({{1, 1, 0}, {1, 0, 1}, {0, 0, 0}});
     BMat8 m2({{0, 0, 0}, {1, 0, 1}, {1, 1, 0}});
-    REQUIRE(m1.right_perm_action_on_basis_ref(m2) == Perm16({1,0}));
-    REQUIRE(m1.right_perm_action_on_basis(m2) == Perm16({1,0}));
+    REQUIRE(m1.right_perm_action_on_basis_ref(m2) == Perm16({1, 0}));
+    REQUIRE(m1.right_perm_action_on_basis(m2) == Perm16({1, 0}));
 
     m1 = BMat8({{1, 1, 0, 1}, {1, 0, 1, 0}, {0, 0, 0, 1}, {0, 0, 0, 0}});
     m2 = BMat8({{1, 0, 0, 0}, {0, 1, 0, 1}, {1, 0, 1, 0}, {0, 0, 0, 1}});
@@ -533,21 +533,20 @@ TEST_CASE("BMat8::right_perm_action_on_basis_ref", "[BMat8][026]") {
     REQUIRE(m1.right_perm_action_on_basis_ref(m2) == Perm16::one());
     REQUIRE(m1.right_perm_action_on_basis(m2) == Perm16::one());
 
-    m1 = BMat8({{0,1,0,0}, {0,0,1,0}, {1,0,0,1}, {0,0,0,0}});
-    m2 = BMat8({{1,0,0,1}, {0,0,1,0}, {0,1,0,0}, {0,0,0,1}});
-    REQUIRE(m1.right_perm_action_on_basis_ref(m2) == Perm16({1,0}));
-    REQUIRE(m1.right_perm_action_on_basis(m2) == Perm16({1,0}));
+    m1 = BMat8({{0, 1, 0, 0}, {0, 0, 1, 0}, {1, 0, 0, 1}, {0, 0, 0, 0}});
+    m2 = BMat8({{1, 0, 0, 1}, {0, 0, 1, 0}, {0, 1, 0, 0}, {0, 0, 0, 1}});
+    REQUIRE(m1.right_perm_action_on_basis_ref(m2) == Perm16({1, 0}));
+    REQUIRE(m1.right_perm_action_on_basis(m2) == Perm16({1, 0}));
 
-    m1 = BMat8({{0,0,0,1}, {1,0,0,0}, {0,0,1,0}, {0,1,0,0}});
-    m2 = BMat8({{0,1,0,0}, {0,0,1,0}, {1,0,0,0}, {0,0,0,1}});
-    REQUIRE(m1.right_perm_action_on_basis_ref(m2) == Perm16({0,2,3,1}));
-    REQUIRE(m1.right_perm_action_on_basis(m2) == Perm16({0,2,3,1}));
+    m1 = BMat8({{0, 0, 0, 1}, {1, 0, 0, 0}, {0, 0, 1, 0}, {0, 1, 0, 0}});
+    m2 = BMat8({{0, 1, 0, 0}, {0, 0, 1, 0}, {1, 0, 0, 0}, {0, 0, 0, 1}});
+    REQUIRE(m1.right_perm_action_on_basis_ref(m2) == Perm16({0, 2, 3, 1}));
+    REQUIRE(m1.right_perm_action_on_basis(m2) == Perm16({0, 2, 3, 1}));
 
-
-    m1 = BMat8({{0,0,0,1}, {0,0,1,0}, {0,1,0,0}, {1,0,0,0}});
-    m2 = BMat8({{0,1,0,0}, {0,0,0,1}, {1,0,0,0}, {0,0,1,0}});
-    REQUIRE(m1.right_perm_action_on_basis_ref(m2) == Perm16({2,0,3,1}));
-    REQUIRE(m1.right_perm_action_on_basis(m2) == Perm16({2,0,3,1}));
+    m1 = BMat8({{0, 0, 0, 1}, {0, 0, 1, 0}, {0, 1, 0, 0}, {1, 0, 0, 0}});
+    m2 = BMat8({{0, 1, 0, 0}, {0, 0, 0, 1}, {1, 0, 0, 0}, {0, 0, 1, 0}});
+    REQUIRE(m1.right_perm_action_on_basis_ref(m2) == Perm16({2, 0, 3, 1}));
+    REQUIRE(m1.right_perm_action_on_basis(m2) == Perm16({2, 0, 3, 1}));
 }
 
 }  // namespace HPCombi

@@ -302,9 +302,10 @@ TEST_CASE_METHOD(Fix, "Epu8::revsorted", "[Epu8][019]") {
 
 TEST_CASE_METHOD(Fix, "Epu8::sort_perm", "[Epu8][020]") {
     epu8 ve{2, 1, 3, 2, 4, 1, 1, 4, 2, 0, 1, 2, 1, 3, 4, 0};
-    REQUIRE_THAT(sort_perm(ve),
-                  Equals(epu8{9, 15, 1, 5, 6, 10, 12, 3, 0, 8, 11, 2, 13, 7, 4, 14}));
-    REQUIRE_THAT(ve, Equals(epu8{0, 0, 1, 1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 4, 4, 4}));
+    REQUIRE_THAT(sort_perm(ve), Equals(epu8{9, 15, 1, 5, 6, 10, 12, 3, 0, 8, 11,
+                                            2, 13, 7, 4, 14}));
+    REQUIRE_THAT(ve,
+                 Equals(epu8{0, 0, 1, 1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 4, 4, 4}));
 
     for (auto x : v) {
         epu8 xsort = x;
@@ -317,9 +318,8 @@ TEST_CASE_METHOD(Fix, "Epu8::sort_perm", "[Epu8][020]") {
 
 TEST_CASE_METHOD(Fix, "Epu8::sort8_perm", "[Epu8][021]") {
     epu8 ve{2, 1, 3, 2, 4, 1, 1, 4, 2, 0, 1, 2, 1, 3, 4, 0};
-    REQUIRE_THAT(
-        sort8_perm(ve),
-        Equals(epu8{1, 6, 5, 0, 3, 2, 4, 7, 9, 15, 10, 12, 8, 11, 13, 14}));
+    REQUIRE_THAT(sort8_perm(ve), Equals(epu8{1, 6, 5, 0, 3, 2, 4, 7, 9, 15, 10,
+                                             12, 8, 11, 13, 14}));
     REQUIRE_THAT(ve,
                  Equals(epu8{1, 1, 1, 2, 2, 3, 4, 4, 0, 0, 1, 1, 2, 2, 3, 4}));
 
@@ -341,10 +341,10 @@ TEST_CASE_METHOD(Fix, "Epu8::permutation_of", "[Epu8][022]") {
     REQUIRE_THAT(permutation_of(epu8rev, epu8rev), Equals(epu8id));
     REQUIRE_THAT(permutation_of(epu8id, RP), Equals(RP));
     const uint8_t FF = 0xff;
-    REQUIRE_THAT(
-        (permutation_of(Pv, Pv) |
-         epu8{FF, FF, FF, FF, 0, 0, FF, 0, 0, 0, FF, 0, FF, 0, 0, 0}),
-        Equals(epu8{FF, FF, FF, FF, 4, 5, FF, 7, 8, 9, FF, 11, FF, 13, 14, 15}));
+    REQUIRE_THAT((permutation_of(Pv, Pv) |
+                  epu8{FF, FF, FF, FF, 0, 0, FF, 0, 0, 0, FF, 0, FF, 0, 0, 0}),
+                 Equals(epu8{FF, FF, FF, FF, 4, 5, FF, 7, 8, 9, FF, 11, FF, 13,
+                             14, 15}));
 }
 TEST_CASE_METHOD(Fix, "Epu8::permutation_of_ref", "[Epu8][022]") {
     REQUIRE_THAT(permutation_of_ref(epu8id, epu8id), Equals(epu8id));
@@ -354,10 +354,10 @@ TEST_CASE_METHOD(Fix, "Epu8::permutation_of_ref", "[Epu8][022]") {
     REQUIRE_THAT(permutation_of_ref(epu8rev, epu8rev), Equals(epu8id));
     REQUIRE_THAT(permutation_of_ref(epu8id, RP), Equals(RP));
     const uint8_t FF = 0xff;
-    REQUIRE_THAT(
-        (permutation_of_ref(Pv, Pv) |
-         epu8{FF, FF, FF, FF, 0, 0, FF, 0, 0, 0, FF, 0, FF, 0, 0, 0}),
-        Equals(epu8{FF, FF, FF, FF, 4, 5, FF, 7, 8, 9, FF, 11, FF, 13, 14, 15}));
+    REQUIRE_THAT((permutation_of_ref(Pv, Pv) |
+                  epu8{FF, FF, FF, FF, 0, 0, FF, 0, 0, 0, FF, 0, FF, 0, 0, 0}),
+                 Equals(epu8{FF, FF, FF, FF, 4, 5, FF, 7, 8, 9, FF, 11, FF, 13,
+                             14, 15}));
 }
 
 TEST_CASE_METHOD(Fix, "Epu8::remove_dups", "[Epu8][023]") {
@@ -491,9 +491,8 @@ TEST_CASE_METHOD(Fix, "Epu8::partial_max_ref", "[Epu8][038]") {
     REQUIRE_THAT(partial_max_ref(Pa1), Equals(Epu8({4, 4, 5, 5, 5}, 7)));
     REQUIRE_THAT(partial_max_ref(Pa2), Equals(Epu8({4, 4, 5, 5, 5}, 9)));
     REQUIRE_THAT(partial_max_ref(P51), Equals(Epu8({5, 5}, 6)));
-    REQUIRE_THAT(
-        partial_max_ref(Pv),
-        Equals(epu8{5, 5, 5, 5, 5, 6, 12, 12, 12, 12, 12, 12, 12, 13, 14, 15}));
+    REQUIRE_THAT(partial_max_ref(Pv), Equals(epu8{5, 5, 5, 5, 5, 6, 12, 12, 12,
+                                                  12, 12, 12, 12, 13, 14, 15}));
     REQUIRE_THAT(partial_max_ref(P5), Equals(P5));
     REQUIRE_THAT(partial_max_ref(epu8rev), Equals(Epu8({}, 15)));
     REQUIRE_THAT(partial_max_ref(Pc), Equals(Epu8({23, 23, 23, 23}, 43)));
@@ -550,9 +549,18 @@ TEST_CASE_METHOD(Fix, "Epu8::partial_min_ref", "[Epu8][043]") {
     REQUIRE_THAT(partial_min_ref(Pa1), Equals(Epu8({4, 2, 2}, 1)));
     REQUIRE_THAT(partial_min_ref(Pa2), Equals(Epu8({4, 2, 2}, 1)));
     REQUIRE_THAT(partial_min_ref(P51), Equals(Epu8({5}, 1)));
-    REQUIRE_THAT(
-        partial_min_ref(Pv),
-        Equals(Epu8({5, 5, 2, 2, 1, 1, 1, 1, }, 0)));
+    REQUIRE_THAT(partial_min_ref(Pv), Equals(Epu8(
+                                          {
+                                              5,
+                                              5,
+                                              2,
+                                              2,
+                                              1,
+                                              1,
+                                              1,
+                                              1,
+                                          },
+                                          0)));
     REQUIRE_THAT(partial_min_ref(P5), Equals(P5));
     REQUIRE_THAT(partial_min_ref(epu8rev), Equals(epu8rev));
     REQUIRE_THAT(partial_min_ref(Pc), Equals(Epu8({23}, 5)));
