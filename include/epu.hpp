@@ -26,10 +26,6 @@
 #include <type_traits>
 #include <utility>   // integer_sequences
 
-#ifdef HPCOMBI_HAVE_CONFIG
-#include "HPCombi-config.h"
-#endif
-
 #include "vect_generic.hpp"
 
 #include "simde/x86/sse4.1.h"
