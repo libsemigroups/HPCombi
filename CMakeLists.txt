@@ -39,8 +39,6 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_EXTENSIONS OFF) # -std=c++14 instead of -std=gnu++14
 
-add_definitions(-DHPCOMBI_HAVE_CONFIG)
-
 message(STATUS "*** Compiler id is ${CMAKE_CXX_COMPILER_ID}")
 # See https://stackoverflow.com/questions/47213356/ for discussion
 cmake_policy(SET CMP0067 NEW)
@@ -180,6 +178,3 @@ if (UNIX)
   add_custom_target(tags etags --members --declarations  `find ${CMAKE_SOURCE_DIR}/ -name *.cpp -or -name *.hpp -or -name *.c -or -name *.h` -o ${CMAKE_SOURCE_DIR}/TAGS)
   add_custom_target(etags DEPENDS tags)
 endif (UNIX)
-
-
-
