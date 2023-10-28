@@ -8,19 +8,10 @@
 #ifndef HPCOMBI_CONFIG_HPP
 #define HPCOMBI_CONFIG_HPP
 
-// Whether the compiler provide the "experimental/numeric" include file
-#cmakedefine HPCOMBI_HAVE_EXPERIMENTAL_NUMERIC
-
-// Whether std::experimental::lcm function works
-#cmakedefine HPCOMBI_HAVE_EXPERIMENTAL_NUMERIC_LCM
-
 // Google sparse hash map
 #cmakedefine HPCOMBI_HAVE_DENSEHASHMAP
 
 // Google sparse hash set
 #cmakedefine HPCOMBI_HAVE_DENSEHASHSET
-
-// GCC-4.8 constexpr function argument bug
-#cmakedefine HPCOMBI_CONSTEXPR_FUN_ARGS
 
 #endif  // HPCOMBI_CONFIG_HPP

@@ -53,15 +53,15 @@ include(CheckCXXSourceCompiles)
 include(CheckCXXCompilerFlag)
 
 ## Check for buggy constexpr support G++ 5.0
-check_cxx_source_compiles(
-  "
-  using T = int;
-  constexpr int exec(T f()) { return f(); }
-  constexpr int foo() { return 1; }
-  static_assert(exec(foo) == 1, \"Failed exec\");
-  int main() {}
-  "
-  HPCOMBI_CONSTEXPR_FUN_ARGS)
+# check_cxx_source_compiles(
+#   "
+#   using T = int;
+#   constexpr int exec(T f()) { return f(); }
+#   constexpr int foo() { return 1; }
+#   static_assert(exec(foo) == 1, \"Failed exec\");
+#   int main() {}
+#   "
+#   HPCOMBI_CONSTEXPR_FUN_ARGS)
 
 check_cxx_compiler_flag('-march=native' HPCOMBI_HAVE_FLAG_ARCH_NATIVE)
 check_cxx_compiler_flag('-mtune=native' HPCOMBI_HAVE_FLAG_TUNE_NATIVE)
