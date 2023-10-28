@@ -142,31 +142,25 @@ TEST_CASE("PTransf16::image_mask_ref_ref", "[PTransf16][002]") {
         Equals(Epu8({0, FF, 0, FF, FF, 0, FF, FF, FF, FF, FF, FF, FF, FF, FF, 0}, 0)));
 }
 
-// TODO uncomment
-// TEST_CASE("PTransf16::left_one", "[PTransf16][003]") {
-//     REQUIRE(PTransf16({}).left_one() == PTransf16::one());
-//     REQUIRE(PTransf16({4, 4, 4, 4}).left_one() ==
-//                PTransf16({FF, FF, FF, FF}));
-//     REQUIRE(PTransf16(Epu8(1)).left_one() == PTransf16(Epu8({FF, 1},
-//     FF))); REQUIRE(PTransf16(Epu8(2)).left_one() ==
-//                PTransf16(Epu8({FF, FF, 2}, FF)));
-//     REQUIRE(PTransf16(Epu8({2, 2, 2, 0xf}, 2)).left_one() ==
-//                PTransf16({FF, FF, 2, FF, FF, FF, FF, FF, FF, FF, FF, FF, FF,
-//                FF,
-//                           FF, 15}));
-//     REQUIRE(PTransf16(Epu8({FF, 2, 2, 0xf}, FF)).left_one() ==
-//                PTransf16({FF, FF, 2, FF, FF, FF, FF, FF, FF, FF, FF, FF, FF,
-//                FF,
-//                           FF, 15}));
-//     REQUIRE(
-//         PTransf16(Epu8({0, 2, 2, 0xf, 2, 2, 2, 2, 5, 2}, 2)).left_one() ==
-//         PTransf16(
-//             {0, FF, 2, FF, FF, 5, FF, FF, FF, FF, FF, FF, FF, FF, FF, 15 }));
-//     REQUIRE(
-//         PTransf16(Epu8({0, 2, FF, 0xf, 2, FF, 2, FF, 5}, FF)).left_one() ==
-//         PTransf16(
-//             {0, FF, 2, FF, FF, 5, FF, FF, FF, FF, FF, FF, FF, FF, FF, 15 }));
-// }
+
+TEST_CASE("PTransf16::left_one", "[PTransf16][003]") {
+    REQUIRE(PTransf16({}).left_one() == PTransf16::one());
+    REQUIRE(PTransf16({4, 4, 4, 4}).left_one() == PTransf16({FF, FF, FF, FF}));
+    REQUIRE(PTransf16(Epu8(1)).left_one() == PTransf16(Epu8({FF, 1}, FF)));
+    REQUIRE(PTransf16(Epu8(2)).left_one() == PTransf16(Epu8({FF, FF, 2}, FF)));
+    REQUIRE(PTransf16(Epu8({2, 2, 2, 0xf}, 2)).left_one() ==
+            PTransf16({FF, FF, 2, FF, FF, FF, FF, FF, FF, FF, FF, FF, FF, FF,
+                       FF, 15}));
+    REQUIRE(PTransf16(Epu8({FF, 2, 2, 0xf}, FF)).left_one() ==
+            PTransf16({FF, FF, 2, FF, FF, FF, FF, FF, FF, FF, FF, FF, FF, FF,
+                       FF, 15}));
+    REQUIRE(PTransf16(Epu8({0, 2, 2, 0xf, 2, 2, 2, 2, 5, 2}, 2)).left_one() ==
+            PTransf16(
+                {0, FF, 2, FF, FF, 5, FF, FF, FF, FF, FF, FF, FF, FF, FF, 15}));
+    REQUIRE(PTransf16(Epu8({0, 2, FF, 0xf, 2, FF, 2, FF, 5}, FF)).left_one() ==
+            PTransf16(
+                {0, FF, 2, FF, FF, 5, FF, FF, FF, FF, FF, FF, FF, FF, FF, 15}));
+}
 
 TEST_CASE("PTransf16::domain_mask", "[PTransf16][004]") {
     REQUIRE_THAT(PTransf16({}).domain_mask(), Equals(Epu8(FF)));
@@ -229,22 +223,22 @@ TEST_CASE("PTransf16::rank_ref", "[PTransf16][006]") {
 }
 
 // TODO uncomment
-// TEST_CASE("PTransf16::rank", "[PTransf16][007]") {
-//     REQUIRE(PTransf16({}).rank() == 16);
-//     REQUIRE(PTransf16({4, 4, 4, 4}).rank() == 12);
-//     REQUIRE(
-//         PTransf16({1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}).rank() ==
-//         1);
-//     REQUIRE(
-//         PTransf16({2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2}).rank() ==
-//         1);
-//     REQUIRE(
-//         PTransf16({2, 2, 2, 0xf, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2}).rank()
-//         == 2);
-//     REQUIRE(
-//         PTransf16({0, 2, 2, 0xf, 2, 2, 2, 2, 5, 2, 2, 2, 2, 2, 2, 2}).rank()
-//         == 4);
-// }
+TEST_CASE("PTransf16::rank", "[PTransf16][007]") {
+    REQUIRE(PTransf16({}).rank() == 16);
+    REQUIRE(PTransf16({4, 4, 4, 4}).rank() == 12);
+    REQUIRE(
+        PTransf16({1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}).rank() ==
+        1);
+    REQUIRE(
+        PTransf16({2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2}).rank() ==
+        1);
+    REQUIRE(
+        PTransf16({2, 2, 2, 0xf, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2}).rank()
+        == 2);
+    REQUIRE(
+        PTransf16({0, 2, 2, 0xf, 2, 2, 2, 2, 5, 2, 2, 2, 2, 2, 2, 2}).rank()
+        == 4);
+}
 
 TEST_CASE("PTransf16::fix_points_mask", "[PTransf16][008]") {
     REQUIRE_THAT(PTransf16({}).fix_points_mask(), Equals(Epu8(FF)));
@@ -369,17 +363,15 @@ TEST_CASE("PPerm16::hash", "[PPerm16][018]") {
     REQUIRE(std::hash<PPerm16>()(PPerm16::one()) != 0);
     REQUIRE(std::hash<PPerm16>()(PPerm16({4, 5, 0}, {9, 0, 1})) != 0);
 }
-// TODO uncomment
-// TEST_CASE_METHOD(Perm16Fixture, "PPerm16::left_one", "[PPerm16][019]") {
-//     REQUIRE(PPerm16({}).left_one() == PPerm16::one());
-//     REQUIRE(PPerm16({FF, FF, FF, 4}).left_one() ==
-//                PPerm16({FF, FF, FF, FF}));
-//     REQUIRE(PPerm16({FF, 4, FF, FF}).left_one() ==
-//                PPerm16({FF, FF, FF, FF}));
-//     for (auto pp : PPlist) {
-//         REQUIRE(pp.left_one() * pp == pp);
-//     }
-// }
+
+TEST_CASE_METHOD(Perm16Fixture, "PPerm16::left_one", "[PPerm16][019]") {
+    REQUIRE(PPerm16({}).left_one() == PPerm16::one());
+    REQUIRE(PPerm16({FF, FF, FF, 4}).left_one() == PPerm16({FF, FF, FF, FF}));
+    REQUIRE(PPerm16({FF, 4, FF, FF}).left_one() == PPerm16({FF, FF, FF, FF}));
+    for (auto pp : PPlist) {
+        REQUIRE(pp.left_one() * pp == pp);
+    }
+}
 
 TEST_CASE_METHOD(Perm16Fixture, "PPerm16::right_one", "[PPerm16][020]") {
     REQUIRE(PPerm16({}).right_one() == PPerm16::one());
@@ -429,21 +421,27 @@ TEST_CASE_METHOD(Perm16Fixture, "Perm16::smallest_fix_point", "[Perm16][023]") {
 
 TEST_CASE_METHOD(Perm16Fixture, "Perm16::smallest_moved_point",
                  "[Perm16][024]") {
-    REQUIRE(Perm16::one().smallest_moved_point() == FF);
-    REQUIRE(PPa.smallest_moved_point() == 0);
-    REQUIRE(PPb.smallest_moved_point() == 0);
-    REQUIRE(RandPerm.smallest_moved_point() == 0);
-    REQUIRE(Perm16({0, 1, 3, 2}).smallest_moved_point() == 2);
+    CHECK(Perm16::one().smallest_moved_point() == int(FF));
+    CHECK(PPa.smallest_moved_point() == 0);
+    CHECK(PPb.smallest_moved_point() == 0);
+    CHECK(RandPerm.smallest_moved_point() == 0);
+    CHECK(Perm16({0, 1, 3, 2}).smallest_moved_point() == 2);
 }
 
-// TODO broken test
-// TEST_CASE_METHOD(Perm16Fixture, "Perm16::largest_fix_point", "[Perm16][025]")
-// {
-//     REQUIRE(Perm16::one().largest_fix_point() == 15);
-//     REQUIRE(PPa.largest_fix_point() == 15);
-//     REQUIRE(PPb.largest_fix_point() == 14);
-//     REQUIRE(RandPerm.largest_fix_point() == 1);
-// }
+TEST_CASE_METHOD(Perm16Fixture, "Perm16::largest_fix_point", "[Perm16][025]") {
+    CHECK(Perm16::one().largest_fix_point() == 15);
+    CHECK(int(PPa.largest_fix_point()) == 15);
+    CHECK(PPb.largest_fix_point() == 14);
+    CHECK(RandPerm.largest_fix_point() == 1);
+    CHECK(PTransf16(Epu8({0, 2, 2, 0xf, 2, 2, 2, 2, 5, 2}, 2))
+          .largest_fix_point() == 2);
+    CHECK(PTransf16(Epu8({0, 2, 2, 0xf, 2, 2, 2, 2, 8, 2}, 10))
+          .largest_fix_point() == 10);
+    CHECK(PTransf16(Epu8({0, 2, 2, 0xf, 2, 2, 2, 2, 8, 2}, 14))
+          .largest_fix_point() == 14);
+    CHECK(PTransf16(Epu8({0, 2, 2, 0xf, 2, 2, 2, 2, 8, 2}, 15))
+          .largest_fix_point() == 15);
+}
 
 TEST_CASE_METHOD(Perm16Fixture, "Perm16::nb_fix_points", "[Perm16][026]") {
     REQUIRE(Perm16::one().nb_fix_points() == 16);

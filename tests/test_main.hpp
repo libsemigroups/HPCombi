@@ -22,17 +22,31 @@
 #include <catch2/catch_test_macros.hpp>
 #include <catch2/matchers/catch_matchers_templated.hpp>
 
+#define TEST_AGREES_FUN(fixture, type, ref, fun, vct, tags)                        \
+    TEST_CASE_METHOD(fixture, #type "::" #ref " == " #type "::" #fun, tags) {  \
+        for (auto p : vct) {                                                   \
+            REQUIRE(fun(p) == ref(p));                                       \
+        }                                                                      \
+    }
+
+#define TEST_AGREES_FUN_EPU8(fixture, type, ref, fun, vct, tags)               \
+    TEST_CASE_METHOD(fixture, #type "::" #ref " == " #type "::" #fun, tags) {  \
+        for (auto p : vct) {                                                   \
+            REQUIRE_THAT(fun(p), Equals(ref(p)));                              \
+        }                                                                      \
+    }
+
 #define TEST_AGREES(fixture, type, ref, fun, vct, tags)                        \
     TEST_CASE_METHOD(fixture, #type "::" #ref " == " #type "::" #fun, tags) {  \
-        for (type p : vct) {                                                   \
+        for (auto p : vct) {                                                   \
             REQUIRE(p.fun() == p.ref());                                       \
         }                                                                      \
     }
 
 #define TEST_AGREES2(fixture, type, ref, fun, vct, tags)                       \
     TEST_CASE_METHOD(fixture, #type "::" #ref " == " #type "::" #fun, tags) {  \
-        for (type p1 : vct) {                                                  \
-            for (type p2 : vct) {                                              \
+        for (auto p1 : vct) {                                                  \
+            for (auto p2 : vct) {                                              \
                 REQUIRE(p1.fun(p2) == p1.ref(p2));                             \
             }                                                                  \
         }                                                                      \
@@ -40,8 +54,8 @@
 
 #define TEST_AGREES_EPU8(fixture, type, ref, fun, vct, tags)                   \
     TEST_CASE_METHOD(fixture, #type "::" #ref " == " #type "::" #fun, tags) {  \
-        for (type p : vct) {                                                   \
-            REQUIRE_THAT(p.fun(), Equals(p.ref()));                                  \
+        for (auto p : vct) {                                                   \
+            REQUIRE_THAT(p.fun(), Equals(p.ref()));                            \
         }                                                                      \
     }
 

@@ -21,13 +21,6 @@
 #include "test_main.hpp"
 #include <catch2/catch_test_macros.hpp>
 
-// TODO uncomment
-// #define TEST_AGREES(ref, fun) \
-//     BOOST_FIXTURE_TEST_CASE(Epu8::agrees_##fun, Fix) { \
-//         for (auto x : v) \
-//             REQUIRE(fun(x) == ref(x)); \
-//     }
-
 namespace HPCombi {
 
 struct Fix {
@@ -409,12 +402,10 @@ TEST_CASE_METHOD(Fix, "Epu8::horiz_sum_ref", "[Epu8][024]") {
     REQUIRE(horiz_sum_ref(Pc) == 203);
 }
 
-// TODO uncomment, compiler complains that Epu8 is an unknown type!?
-// TEST_AGREES(Fix, Epu8, horiz_sum_ref, horiz_sum_gen, v, "[Epu8][025]")
-// TEST_AGREES(Fix, Epu8, horiz_sum_ref, horiz_sum4, v, "[Epu8][026]")
-//
-// TEST_AGREES(Fix, Epu8, horiz_sum_ref, horiz_sum3, v, "[Epu8][027]")
-// TEST_AGREES(Fix, Epu8, horiz_sum_ref, horiz_sum, v, "[Epu8][028]")
+TEST_AGREES_FUN(Fix, Epu8, horiz_sum_ref, horiz_sum_gen, v, "[Epu8][025]")
+TEST_AGREES_FUN(Fix, Epu8, horiz_sum_ref, horiz_sum4, v, "[Epu8][026]")
+TEST_AGREES_FUN(Fix, Epu8, horiz_sum_ref, horiz_sum3, v, "[Epu8][027]")
+TEST_AGREES_FUN(Fix, Epu8, horiz_sum_ref, horiz_sum, v, "[Epu8][028]")
 
 TEST_CASE_METHOD(Fix, "Epu8::partial_sums_ref", "[Epu8][029]") {
     REQUIRE_THAT(partial_sums_ref(zero), Equals(zero));
@@ -484,11 +475,10 @@ TEST_CASE_METHOD(Fix, "Epu8::horiz_max_ref", "[Epu8][033]") {
     REQUIRE(horiz_max_ref(Pc) == 43);
 }
 
-// TODO uncomment, compiler complains that Epu8 is an unknown type!?
-// TEST_AGREES(Fix, Epu8, horiz_max_ref, horiz_max_gen, v, "[Epu8][034]")
-// TEST_AGREES(Fix, Epu8, horiz_max_ref, horiz_max4, v, "[Epu8][035]")
-// TEST_AGREES(Fix, Epu8, horiz_max_ref, horiz_max3, v, "[Epu8][036]")
-// TEST_AGREES(Fix, Epu8, horiz_max_ref, horiz_max, v, "[Epu8][037]")
+TEST_AGREES_FUN(Fix, Epu8, horiz_max_ref, horiz_max_gen, v, "[Epu8][034]")
+TEST_AGREES_FUN(Fix, Epu8, horiz_max_ref, horiz_max4, v, "[Epu8][035]")
+TEST_AGREES_FUN(Fix, Epu8, horiz_max_ref, horiz_max3, v, "[Epu8][036]")
+TEST_AGREES_FUN(Fix, Epu8, horiz_max_ref, horiz_max, v, "[Epu8][037]")
 
 TEST_CASE_METHOD(Fix, "Epu8::partial_max_ref", "[Epu8][038]") {
     REQUIRE_THAT(partial_max_ref(zero), Equals(zero));
@@ -543,11 +533,11 @@ TEST_CASE_METHOD(Fix, "Epu8::horiz_min_ref", "[Epu8][042]") {
     REQUIRE(horiz_min_ref(epu8rev) == 0);
     REQUIRE(horiz_min_ref(Pc) == 5);
 }
-// TODO uncomment
-// TEST_AGREES(horiz_min_ref, horiz_min_gen)
-// TEST_AGREES(horiz_min_ref, horiz_min4)
-// TEST_AGREES(horiz_min_ref, horiz_min3)
-// TEST_AGREES(horiz_min_ref, horiz_min)
+
+TEST_AGREES_FUN(Fix, Epu8, horiz_min_ref, horiz_min_gen, v, "[Epu8][034]")
+TEST_AGREES_FUN(Fix, Epu8, horiz_min_ref, horiz_min4, v, "[Epu8][035]")
+TEST_AGREES_FUN(Fix, Epu8, horiz_min_ref, horiz_min3, v, "[Epu8][036]")
+TEST_AGREES_FUN(Fix, Epu8, horiz_min_ref, horiz_min, v, "[Epu8][037]")
 
 TEST_CASE_METHOD(Fix, "Epu8::partial_min_ref", "[Epu8][043]") {
     REQUIRE_THAT(partial_min_ref(zero), Equals(zero));
@@ -604,12 +594,12 @@ TEST_CASE_METHOD(Fix, "Epu8::eval16_ref", "[Epu8][047]") {
     REQUIRE_THAT(eval16_ref(epu8rev), Equals(Epu8({}, 1)));
     REQUIRE_THAT(eval16_ref(Pc), Equals(Epu8({0, 0, 0, 0, 0, 2, 0, 10}, 0)));
 }
-// TODO uncomment
-// TEST_Epu8::AGREES(eval16_ref, eval16_cycle, "[Epu8][000]")
-// TEST_Epu8::AGREES(eval16_ref, eval16_popcount, "[Epu8][000]")
-// TEST_Epu8::AGREES(eval16_ref, eval16_arr, "[Epu8][000]")
-// TEST_Epu8::AGREES(eval16_ref, eval16_gen, "[Epu8][000]")
-// TEST_Epu8::AGREES(eval16_ref, eval16, "[Epu8][000]")
+
+TEST_AGREES_FUN_EPU8(Fix, Epu8, eval16_ref, eval16_cycle, v, "[Epu8][034]")
+TEST_AGREES_FUN_EPU8(Fix, Epu8, eval16_ref, eval16_popcount, v, "[Epu8][034]")
+TEST_AGREES_FUN_EPU8(Fix, Epu8, eval16_ref, eval16_arr, v, "[Epu8][034]")
+TEST_AGREES_FUN_EPU8(Fix, Epu8, eval16_ref, eval16_gen, v, "[Epu8][034]")
+TEST_AGREES_FUN_EPU8(Fix, Epu8, eval16_ref, eval16, v, "[Epu8][034]")
 
 TEST_CASE("Epu8::popcount4", "[Epu8][048]") {
     REQUIRE_THAT(popcount4,

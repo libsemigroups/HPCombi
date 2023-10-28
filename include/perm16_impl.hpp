@@ -93,24 +93,21 @@ inline uint32_t PTransf16::fix_points_bitset(bool complement) const {
 }
 
 inline uint8_t PTransf16::smallest_fix_point() const {
-    uint32_t res = fix_points_bitset(false);
-    return res == 0 ? 0xFF : __builtin_ffsl(res) - 1;
+    return __builtin_ffs(fix_points_bitset(false)) - 1;
 }
 /** Returns the smallest non fix point of \c *this */
 inline uint8_t PTransf16::smallest_moved_point() const {
-    uint32_t res = fix_points_bitset(true);
-    return res == 0 ? 0xFF : __builtin_ffsl(res) - 1;
+    return __builtin_ffs(fix_points_bitset(true)) - 1;
 }
 /** Returns the largest fix point of \c *this */
 inline uint8_t PTransf16::largest_fix_point() const {
     uint32_t res = fix_points_bitset(false);
-
-    return res == 0 ? 0xFF : 15 - __builtin_ctzl(res);
+    return res == 0 ? 0xFF : 31 - __builtin_clz(res);
 }
 /** Returns the largest non fix point of \c *this */
 inline uint8_t PTransf16::largest_moved_point() const {
     uint32_t res = fix_points_bitset(true);
-    return res == 0 ? 0xFF : 15 - __builtin_ctzl(res);
+    return res == 0 ? 0xFF : 31 - __builtin_clz(res);
 }
 /** Returns the number of fix points of \c *this */
 inline uint8_t PTransf16::nb_fix_points() const {
