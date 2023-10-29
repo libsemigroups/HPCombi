@@ -1,17 +1,17 @@
-/******************************************************************************/
-/*       Copyright (C) 2017 Florent Hivert <Florent.Hivert@lri.fr>,           */
-/*                                                                            */
-/*  Distributed under the terms of the GNU General Public License (GPL)       */
-/*                                                                            */
-/*    This code is distributed in the hope that it will be useful,            */
-/*    but WITHOUT ANY WARRANTY; without even the implied warranty of          */
-/*    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU       */
-/*   General Public License for more details.                                 */
-/*                                                                            */
-/*  The full text of the GPL is available at:                                 */
-/*                                                                            */
-/*                  http://www.gnu.org/licenses/                              */
-/******************************************************************************/
+////////////////////////////////////////////////////////////////////////////////
+//       Copyright (C) 2017 Florent Hivert <Florent.Hivert@lri.fr>,           //
+//                                                                            //
+//  Distributed under the terms of the GNU General Public License (GPL)       //
+//                                                                            //
+//    This code is distributed in the hope that it will be useful,            //
+//    but WITHOUT ANY WARRANTY; without even the implied warranty of          //
+//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU       //
+//   General Public License for more details.                                 //
+//                                                                            //
+//  The full text of the GPL is available at:                                 //
+//                                                                            //
+//                  http://www.gnu.org/licenses/                              //
+////////////////////////////////////////////////////////////////////////////////
 
 #include "hpcombi/perm16.hpp"
 
@@ -228,7 +228,6 @@ TEST_CASE("PTransf16::rank_ref", "[PTransf16][006]") {
               .rank_ref() == 4);
 }
 
-// TODO uncomment
 TEST_CASE("PTransf16::rank", "[PTransf16][007]") {
     CHECK(PTransf16({}).rank() == 16);
     CHECK(PTransf16({4, 4, 4, 4}).rank() == 12);

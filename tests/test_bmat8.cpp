@@ -1,27 +1,31 @@
-/******************************************************************************/
-/*     Copyright (C) 2016-2018 Florent Hivert <Florent.Hivert@lri.fr>,        */
-/*                                                                            */
-/*  Distributed under the terms of the GNU General Public License (GPL)       */
-/*                                                                            */
-/*    This code is distributed in the hope that it will be useful,            */
-/*    but WITHOUT ANY WARRANTY; without even the implied warranty of          */
-/*    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU       */
-/*   General Public License for more details.                                 */
-/*                                                                            */
-/*  The full text of the GPL is available at:                                 */
-/*                                                                            */
-/*                  http://www.gnu.org/licenses/                              */
-/******************************************************************************/
+////////////////////////////////////////////////////////////////////////////////
+//     Copyright (C) 2016-2018 Florent Hivert <Florent.Hivert@lri.fr>,        //
+//                                                                            //
+//  Distributed under the terms of the GNU General Public License (GPL)       //
+//                                                                            //
+//    This code is distributed in the hope that it will be useful,            //
+//    but WITHOUT ANY WARRANTY; without even the implied warranty of          //
+//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU       //
+//   General Public License for more details.                                 //
+//                                                                            //
+//  The full text of the GPL is available at:                                 //
+//                                                                            //
+//                  http://www.gnu.org/licenses/                              //
+////////////////////////////////////////////////////////////////////////////////
 
-#include <iostream>
-#include <sstream>
-#include <vector>
+#include <cstddef>   // for size_t
+#include <cstdint>   // for uint64_t
+#include <iostream>  // for char_traits, ostream, ostrin...
+#include <string>    // for operator==
+#include <utility>   // for pair
+#include <vector>    // for vector, allocator
 
-#include "test_main.hpp"
-#include <catch2/catch_test_macros.hpp>
+#include "test_main.hpp"                 // for TEST_AGREES, TEST_AGREES2
+#include <catch2/catch_test_macros.hpp>  // for operator""_catch_sr, operator==
 
-#include "hpcombi/bmat8.hpp"
-#include "hpcombi/epu.hpp"
+#include "hpcombi/bmat8.hpp"   // for BMat8, operator<<
+#include "hpcombi/perm16.hpp"  // for Perm16
+#include "hpcombi/vect16.hpp"  // for Vect16
 
 namespace HPCombi {
 namespace {
@@ -76,8 +80,8 @@ struct BMat8Fixture {
 };
 }  // namespace
 
-//****************************************************************************//
-//****************************************************************************//
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 
 TEST_CASE_METHOD(BMat8Fixture, "BMat8::one", "[BMat8][000]") {
     CHECK(BMat8::one(0) == zero);

@@ -1,4 +1,4 @@
-//****************************************************************************//
+////////////////////////////////////////////////////////////////////////////////
 //       Copyright (C) 2016 Florent Hivert <Florent.Hivert@lri.fr>,           //
 //                                                                            //
 //  Distributed under the terms of the GNU General Public License (GPL)       //
@@ -11,18 +11,25 @@
 //  The full text of the GPL is available at:                                 //
 //                                                                            //
 //                  http://www.gnu.org/licenses/                              //
-//****************************************************************************//
+////////////////////////////////////////////////////////////////////////////////
 
 #ifndef HPCOMBI_VECT_GENERIC_HPP
 #define HPCOMBI_VECT_GENERIC_HPP
 
-#include <algorithm>
-#include <array>
-#include <cassert>
-#include <cstdint>
-#include <ostream>
-#include <random>
-#include <type_traits>
+#include <algorithm>         // for max, min, shuffle, sort
+#include <array>             // for array
+#include <cassert>           // for assert
+#include <cstddef>           // for size_t
+#include <cstdint>           // for uint64_t, int8_t, int64_t
+#include <functional>        // for hash
+#include <initializer_list>  // for initializer_list
+#include <iomanip>           // for operator<<, setw
+#include <memory>            // for hash
+#include <ostream>           // for operator<<, basic_ostream
+#include <random>            // for mt19937, random_devide
+#include <type_traits>       // for is_trivial
+
+#include "debug.hpp"  // for HPCOMBI_ASSERT
 
 namespace HPCombi {
 

@@ -20,23 +20,19 @@
 #ifndef HPCOMBI_BMAT8_HPP_INCLUDED
 #define HPCOMBI_BMAT8_HPP_INCLUDED
 
-#include <algorithm>  // for uniform_int_distribution, swap
-#include <array>      // for array
-#include <bitset>     // for bitset
-#include <climits>    // for CHAR_BIT
-#include <cstddef>    // for size_t
-#include <cstdint>    // for uint64_t
-#include <iostream>   // for operator<<, ostringstream
-#include <random>     // for mt19937, random_device
-#include <utility>    // for hash
-#include <vector>     // for vector
+#include <array>       // for array
+#include <bitset>      // for bitset
+#include <cstddef>     // for size_t
+#include <cstdint>     // for uint64_t, uint8_t
+#include <functional>  // for hash, __scalar_hash
+#include <iostream>    // for ostream
+#include <memory>      // for hash
+#include <utility>     // for pair, swap
+#include <vector>      // for vector
 
-#include "epu.hpp"
-#include "perm16.hpp"
-
-#ifndef HPCOMBI_ASSERT
-#define HPCOMBI_ASSERT(x) assert(x)
-#endif
+#include "debug.hpp"   // for HPCOMBI_ASSERT
+#include "epu.hpp"     // for epu8
+#include "perm16.hpp"  // for Perm16
 
 namespace HPCombi {
 

@@ -1,4 +1,4 @@
-//****************************************************************************//
+////////////////////////////////////////////////////////////////////////////////
 //       Copyright (C) 2016 Florent Hivert <Florent.Hivert@lri.fr>,           //
 //                                                                            //
 //  Distributed under the terms of the GNU General Public License (GPL)       //
@@ -11,20 +11,21 @@
 //  The full text of the GPL is available at:                                 //
 //                                                                            //
 //                  http://www.gnu.org/licenses/                              //
-//****************************************************************************//
+////////////////////////////////////////////////////////////////////////////////
 
 #ifndef HPCOMBI_PERM16_HPP_INCLUDED
 #define HPCOMBI_PERM16_HPP_INCLUDED
 
-#include <array>
-#include <cassert>
-#include <cstdint>
-#include <functional>  // less<>
-#include <ostream>
-#include <vector>
+#include <cstddef>           // for size_t
+#include <cstdint>           // for uint8_t, uint64_t, uint32_t
+#include <initializer_list>  // for initializer_list
+#include <memory>            // for hash
+#include <type_traits>       // for is_trivial
+#include <vector>            // for vector
 
-#include "epu.hpp"
-#include "vect16.hpp"
+#include "epu.hpp"     // for epu8, permuted, etc
+#include "power.hpp"   // for pow
+#include "vect16.hpp"  // for hash, is_partial_permutation
 
 #include "simde/x86/sse4.1.h"
 #include "simde/x86/sse4.2.h"
@@ -43,7 +44,7 @@ struct alignas(16) PTransf16 : public Vect16 {
     static constexpr size_t size() { return 16; }
 
     using vect = HPCombi::Vect16;
-    using array = decltype(Epu8)::array;
+    using array = typename decltype(Epu8)::array;
 
     PTransf16() = default;
     constexpr PTransf16(const PTransf16 &v) = default;
@@ -438,9 +439,9 @@ struct Perm16 : public Transf16 /* public PPerm : diamond problem */ {
     bool left_weak_leq(Perm16 other) const;
 };
 
-/*****************************************************************************/
-/** Memory layout concepts check  ********************************************/
-/*****************************************************************************/
+///////////////////////////////////////////////////////////////////////////////
+/// Memory layout concepts check  /////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
 
 static_assert(sizeof(epu8) == sizeof(Perm16),
               "epu8 and Perm16 have a different memory layout !");

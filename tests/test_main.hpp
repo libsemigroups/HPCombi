@@ -1,4 +1,4 @@
-//****************************************************************************//
+////////////////////////////////////////////////////////////////////////////////
 //       Copyright (C) 2023 James D. Mitchell <jdm3@st-andrews.ac.uk>         //
 //                                                                            //
 //  Distributed under the terms of the GNU General Public License (GPL)       //
@@ -11,7 +11,7 @@
 //  The full text of the GPL is available at:                                 //
 //                                                                            //
 //                  http://www.gnu.org/licenses/                              //
-//****************************************************************************//
+////////////////////////////////////////////////////////////////////////////////
 
 #ifndef HPCOMBI_TESTS_TEST_MAIN_HPP_
 #define HPCOMBI_TESTS_TEST_MAIN_HPP_

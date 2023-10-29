@@ -1,4 +1,4 @@
-//****************************************************************************//
+////////////////////////////////////////////////////////////////////////////////
 //     Copyright (C) 2016-2018 Florent Hivert <Florent.Hivert@lri.fr>,        //
 //                                                                            //
 //  Distributed under the terms of the GNU General Public License (GPL)       //
@@ -11,25 +11,24 @@
 //  The full text of the GPL is available at:                                 //
 //                                                                            //
 //                  http://www.gnu.org/licenses/                              //
-//****************************************************************************//
+////////////////////////////////////////////////////////////////////////////////
 
 #ifndef HPCOMBI_EPU_HPP_INCLUDED
 #define HPCOMBI_EPU_HPP_INCLUDED
 
-#include <array>
-#include <cassert>
-#include <cstdint>
-#include <functional>  // less<>, equal_to<>
-#include <iomanip>
-#include <ostream>
-#include <string>
-#include <type_traits>
-#include <utility>  // integer_sequences
+#include <array>             // for array
+#include <cstddef>           // for size_t
+#include <cstdint>           // for uint8_t, uint64_t, int8_t
+#include <initializer_list>  // for initializer_list
+#include <ostream>           // for ostream
+#include <string>            // for string
+#include <type_traits>       // for remove_reference_t
+#include <utility>           // for make_index_sequence, ind...
 
-#include "vect_generic.hpp"
+#include "debug.hpp"         // for HPCOMBI_ASSERT
+#include "vect_generic.hpp"  // for VectGeneric
 
-#include "simde/x86/sse4.1.h"
-#include "simde/x86/sse4.2.h"
+#include "simde/x86/sse4.1.h"  // for simde_mm_max_epu8, simde...
 
 namespace HPCombi {
 
@@ -67,7 +66,7 @@ template <class TPU> struct TPUBuild {
 
     inline TPU operator()(std::initializer_list<type_elem> il,
                           type_elem def) const {
-        assert(il.size() <= size);
+        HPCOMBI_ASSERT(il.size() <= size);
         array res;
         std::copy(il.begin(), il.end(), res.begin());
         std::fill(res.begin() + il.size(), res.end(), def);

@@ -1,4 +1,4 @@
-//****************************************************************************//
+////////////////////////////////////////////////////////////////////////////////
 //       Copyright (C) 2016 Florent Hivert <Florent.Hivert@lri.fr>,           //
 //                                                                            //
 //  Distributed under the terms of the GNU General Public License (GPL)       //
@@ -11,20 +11,13 @@
 //  The full text of the GPL is available at:                                 //
 //                                                                            //
 //                  http://www.gnu.org/licenses/                              //
-//****************************************************************************//
-
-#include <algorithm>
-#include <iomanip>
-#include <numeric>
-#include <random>
-
-#include "power.hpp"
+////////////////////////////////////////////////////////////////////////////////
 
 namespace HPCombi {
 
-/*****************************************************************************/
-/** Implementation part for inline functions *********************************/
-/*****************************************************************************/
+///////////////////////////////////////////////////////////////////////////////
+// Implementation part for inline functions  //////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
 
 inline PTransf16::PTransf16(std::initializer_list<uint8_t> il)
     : Vect16(epu8id) {
@@ -228,6 +221,7 @@ inline Perm16 Perm16::inverse_sort() const {
 // We declare PERM16 as a correct Monoid
 namespace power_helper {
 
+// TODO required?
 using Perm16 = Perm16;
 
 template <> struct Monoid<Perm16> {

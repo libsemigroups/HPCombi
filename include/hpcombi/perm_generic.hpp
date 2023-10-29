@@ -1,4 +1,4 @@
-//****************************************************************************//
+////////////////////////////////////////////////////////////////////////////////
 //       Copyright (C) 2016 Florent Hivert <Florent.Hivert@lri.fr>,           //
 //                                                                            //
 //  Distributed under the terms of the GNU General Public License (GPL)       //
@@ -11,16 +11,23 @@
 //  The full text of the GPL is available at:                                 //
 //                                                                            //
 //                  http://www.gnu.org/licenses/                              //
-//****************************************************************************//
+////////////////////////////////////////////////////////////////////////////////
 
 #ifndef HPCOMBI_PERM_GENERIC_HPP
 #define HPCOMBI_PERM_GENERIC_HPP
 
-#include <algorithm>
-#include <array>
-#include <cassert>
-#include <cstdint>
-#include <ostream>
+#include <algorithm>         // for shuffle
+#include <array>             // for array
+#include <cstddef>           // for size_t
+#include <cstdint>           // for uint64_t, uint8_t
+#include <functional>        // for hash
+#include <initializer_list>  // for initializer_list
+#include <memory>            // for hash
+#include <random>            // for mt19937
+#include <type_traits>       // for is_trivial
+
+#include "debug.hpp"         // for HPCOMBI_ASSERT
+#include "vect_generic.hpp"  // for VectGeneric
 
 namespace HPCombi {
 
@@ -53,9 +60,9 @@ struct PermGeneric : public VectGeneric<Size, Expo> {
     bool left_weak_leq(PermGeneric other) const;
 };
 
-/*****************************************************************************/
-/** Memory layout concepts check  ********************************************/
-/*****************************************************************************/
+///////////////////////////////////////////////////////////////////////////////
+// Memory layout concepts check  //////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
 
 static_assert(sizeof(VectGeneric<12>) == sizeof(PermGeneric<12>),
               "VectGeneric and PermGeneric have a different memory layout !");

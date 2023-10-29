@@ -1,4 +1,4 @@
-//****************************************************************************//
+////////////////////////////////////////////////////////////////////////////////
 //       Copyright (C) 2016 Florent Hivert <Florent.Hivert@lri.fr>,           //
 //                                                                            //
 //  Distributed under the terms of the GNU General Public License (GPL)       //
@@ -11,7 +11,7 @@
 //  The full text of the GPL is available at:                                 //
 //                                                                            //
 //                  http://www.gnu.org/licenses/                              //
-//****************************************************************************//
+////////////////////////////////////////////////////////////////////////////////
 
 // This is the implementation part of epu.hpp this should be seen as
 // implementation details and should not be included directly.
@@ -43,9 +43,9 @@
 
 namespace HPCombi {
 
-/*****************************************************************************/
-/** Implementation part for inline functions *********************************/
-/*****************************************************************************/
+///////////////////////////////////////////////////////////////////////////////
+/// Implementation part for inline functions //////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
 
 // Msk is supposed to be a boolean mask (i.e. each entry is either 0 or 255)
 inline uint64_t first_mask(epu8 msk, size_t bound) {

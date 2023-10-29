@@ -1,4 +1,4 @@
-//****************************************************************************//
+////////////////////////////////////////////////////////////////////////////////
 //     Copyright (C) 2016-2018 Florent Hivert <Florent.Hivert@lri.fr>,        //
 //                                                                            //
 //  Distributed under the terms of the GNU General Public License (GPL)       //
@@ -11,21 +11,25 @@
 //  The full text of the GPL is available at:                                 //
 //                                                                            //
 //                  http://www.gnu.org/licenses/                              //
-//****************************************************************************//
+////////////////////////////////////////////////////////////////////////////////
 
 #ifndef HPCOMBI_VECT16_HPP_INCLUDED
 #define HPCOMBI_VECT16_HPP_INCLUDED
 
-#include <type_traits>
+#include <cstddef>           // for size_t
+#include <cstdint>           // for uint8_t, uint64_t, int8_t
+#include <initializer_list>  // for initializer_list
+#include <iosfwd>            // for ostream
+#include <memory>            // for hash
+#include <type_traits>       // for is_trivial
 
 #include "epu.hpp"
-#include "perm16.hpp"  // for is_permutation
 
 namespace HPCombi {
 
 struct alignas(16) Vect16 {
     static constexpr size_t size() { return 16; }
-    using array = decltype(Epu8)::array;
+    using array = typename decltype(Epu8)::array;
     epu8 v;
 
     Vect16() = default;
