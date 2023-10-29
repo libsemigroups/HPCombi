@@ -59,22 +59,22 @@ inline uint64_t last_mask(epu8 msk, size_t bound) {
     return res == 0 ? 16 : (63 - __builtin_clzll(res));
 }
 
-inline uint64_t first_diff_ref(epu8 a, epu8 b, size_t bound) {
+inline uint64_t first_diff_ref(epu8 a, epu8 b, size_t bound) noexcept {
     for (size_t i = 0; i < bound; i++)
         if (a[i] != b[i])
             return i;
     return 16;
 }
 #ifdef SIMDE_X86_SSE4_2_NATIVE
-inline uint64_t first_diff_cmpstr(epu8 a, epu8 b, size_t bound) {
+inline uint64_t first_diff_cmpstr(epu8 a, epu8 b, size_t bound) noexcept {
     return unsigned(_mm_cmpestri(a, bound, b, bound, FIRST_DIFF));
 }
 #endif
-inline uint64_t first_diff_mask(epu8 a, epu8 b, size_t bound) {
+inline uint64_t first_diff_mask(epu8 a, epu8 b, size_t bound) noexcept {
     return first_mask(a != b, bound);
 }
 
-inline uint64_t last_diff_ref(epu8 a, epu8 b, size_t bound) {
+inline uint64_t last_diff_ref(epu8 a, epu8 b, size_t bound) noexcept {
     while (bound != 0) {
         --bound;
         if (a[bound] != b[bound])
@@ -83,35 +83,35 @@ inline uint64_t last_diff_ref(epu8 a, epu8 b, size_t bound) {
     return 16;
 }
 #ifdef SIMDE_X86_SSE4_2_NATIVE
-inline uint64_t last_diff_cmpstr(epu8 a, epu8 b, size_t bound) {
+inline uint64_t last_diff_cmpstr(epu8 a, epu8 b, size_t bound) noexcept {
     return unsigned(_mm_cmpestri(a, bound, b, bound, LAST_DIFF));
 }
 #endif
-inline uint64_t last_diff_mask(epu8 a, epu8 b, size_t bound) {
+inline uint64_t last_diff_mask(epu8 a, epu8 b, size_t bound) noexcept {
     return last_mask(a != b, bound);
 }
 
-inline bool less(epu8 a, epu8 b) {
+inline bool less(epu8 a, epu8 b) noexcept {
     uint64_t diff = first_diff(a, b);
     return (diff < 16) && (a[diff] < b[diff]);
 }
-inline int8_t less_partial(epu8 a, epu8 b, int k) {
+inline int8_t less_partial(epu8 a, epu8 b, int k) noexcept {
     uint64_t diff = first_diff(a, b, k);
     return (diff == 16)
                ? 0
                : static_cast<int8_t>(a[diff]) - static_cast<int8_t>(b[diff]);
 }
 
-inline uint64_t first_zero(epu8 v, int bnd) {
+inline uint64_t first_zero(epu8 v, int bnd) noexcept {
     return first_mask(v == epu8{}, bnd);
 }
-inline uint64_t last_zero(epu8 v, int bnd) {
+inline uint64_t last_zero(epu8 v, int bnd) noexcept {
     return last_mask(v == epu8{}, bnd);
 }
-inline uint64_t first_non_zero(epu8 v, int bnd) {
+inline uint64_t first_non_zero(epu8 v, int bnd) noexcept {
     return first_mask(v != epu8{}, bnd);
 }
-inline uint64_t last_non_zero(epu8 v, int bnd) {
+inline uint64_t last_non_zero(epu8 v, int bnd) noexcept {
     return last_mask(v != epu8{}, bnd);
 }
 
@@ -182,20 +182,22 @@ constexpr std::array<epu8, 6> sorting_rounds8
 }};
 // clang-format on
 
-inline bool is_sorted(epu8 a) {
+inline bool is_sorted(epu8 a) noexcept {
     return simde_mm_movemask_epi8(shifted_right(a) > a) == 0;
 }
-inline epu8 sorted(epu8 a) { return network_sort<true>(a, sorting_rounds); }
-inline epu8 sorted8(epu8 a) { return network_sort<true>(a, sorting_rounds8); }
-inline epu8 revsorted(epu8 a) { return network_sort<false>(a, sorting_rounds); }
-inline epu8 revsorted8(epu8 a) {
+inline epu8 sorted(epu8 a) noexcept {
+    return network_sort<true>(a, sorting_rounds);
+}
+inline epu8 sorted8(epu8 a) noexcept { return network_sort<true>(a, sorting_rounds8); }
+inline epu8 revsorted(epu8 a) noexcept { return network_sort<false>(a, sorting_rounds); }
+inline epu8 revsorted8(epu8 a) noexcept {
     return network_sort<false>(a, sorting_rounds8);
 }
 
-inline epu8 sort_perm(epu8 &a) {
+inline epu8 sort_perm(epu8 &a)  noexcept{
     return network_sort_perm<true>(a, sorting_rounds);
 }
-inline epu8 sort8_perm(epu8 &a) {
+inline epu8 sort8_perm(epu8 &a)  noexcept{
     return network_sort_perm<true>(a, sorting_rounds8);
 }
 
@@ -210,7 +212,7 @@ inline epu8 random_epu8(uint16_t bnd) {
     return res;
 }
 
-inline epu8 remove_dups(epu8 v, uint8_t repl) {
+inline epu8 remove_dups(epu8 v, uint8_t repl) noexcept {
     // Vector ternary operator is not supported by clang.
     // return (v != shifted_right(v) ? v : Epu8(repl);
     return simde_mm_blendv_epi8(Epu8(repl), v, v != shifted_right(v));
@@ -233,7 +235,7 @@ constexpr std::array<epu8, 3> inverting_rounds{{
 #define FIND_IN_VECT_COMPL                                                     \
     (SIMDE_SIDD_UBYTE_OPS | SIMDE_SIDD_CMP_EQUAL_ANY | SIMDE_SIDD_UNIT_MASK)
 
-inline epu8 permutation_of_cmpestrm(epu8 a, epu8 b) {
+inline epu8 permutation_of_cmpestrm(epu8 a, epu8 b) noexcept {
     epu8 res = -static_cast<epu8>(_mm_cmpestrm(a, 8, b, 16, FIND_IN_VECT));
     for (epu8 round : inverting_rounds) {
         a = permuted(a, round);
@@ -244,7 +246,7 @@ inline epu8 permutation_of_cmpestrm(epu8 a, epu8 b) {
 }
 #endif
 
-inline epu8 permutation_of_ref(epu8 a, epu8 b) {
+inline epu8 permutation_of_ref(epu8 a, epu8 b) noexcept {
     auto ar = as_array(a);
     epu8 res{};
     for (size_t i = 0; i < 16; i++) {
@@ -253,7 +255,7 @@ inline epu8 permutation_of_ref(epu8 a, epu8 b) {
     }
     return res;
 }
-inline epu8 permutation_of(epu8 a, epu8 b) {
+inline epu8 permutation_of(epu8 a, epu8 b) noexcept {
 #ifdef SIMDE_X86_SSE4_2_NATIVE
     return permutation_of_cmpestrm(a, b);
 #else
@@ -289,15 +291,15 @@ constexpr std::array<epu8, 4> mining_rounds{{
 
 #undef FF
 
-inline uint8_t horiz_sum_ref(epu8 v) {
+inline uint8_t horiz_sum_ref(epu8 v) noexcept {
     uint8_t res = 0;
     for (size_t i = 0; i < 16; i++)
         res += v[i];
     return res;
 }
-inline uint8_t horiz_sum_gen(epu8 v) { return as_VectGeneric(v).horiz_sum(); }
-inline uint8_t horiz_sum4(epu8 v) { return partial_sums_round(v)[15]; }
-inline uint8_t horiz_sum3(epu8 v) {
+inline uint8_t horiz_sum_gen(epu8 v) noexcept { return as_VectGeneric(v).horiz_sum(); }
+inline uint8_t horiz_sum4(epu8 v) noexcept { return partial_sums_round(v)[15]; }
+inline uint8_t horiz_sum3(epu8 v) noexcept {
     auto sr = summing_rounds;
     v += permuted(v, sr[0]);
     v += permuted(v, sr[1]);
@@ -305,32 +307,32 @@ inline uint8_t horiz_sum3(epu8 v) {
     return v[7] + v[15];
 }
 
-inline epu8 partial_sums_ref(epu8 v) {
+inline epu8 partial_sums_ref(epu8 v) noexcept {
     epu8 res{};
     res[0] = v[0];
     for (size_t i = 1; i < 16; i++)
         res[i] = res[i - 1] + v[i];
     return res;
 }
-inline epu8 partial_sums_gen(epu8 v) {
+inline epu8 partial_sums_gen(epu8 v) noexcept {
     as_VectGeneric(v).partial_sums_inplace();
     return v;
 }
-inline epu8 partial_sums_round(epu8 v) {
+inline epu8 partial_sums_round(epu8 v) noexcept {
     for (epu8 round : summing_rounds)
         v += permuted(v, round);
     return v;
 }
 
-inline uint8_t horiz_max_ref(epu8 v) {
+inline uint8_t horiz_max_ref(epu8 v) noexcept {
     uint8_t res = 0;
     for (size_t i = 0; i < 16; i++)
         res = std::max(res, v[i]);
     return res;
 }
-inline uint8_t horiz_max_gen(epu8 v) { return as_VectGeneric(v).horiz_max(); }
-inline uint8_t horiz_max4(epu8 v) { return partial_max_round(v)[15]; }
-inline uint8_t horiz_max3(epu8 v) {
+inline uint8_t horiz_max_gen(epu8 v) noexcept { return as_VectGeneric(v).horiz_max(); }
+inline uint8_t horiz_max4(epu8 v) noexcept { return partial_max_round(v)[15]; }
+inline uint8_t horiz_max3(epu8 v) noexcept {
     auto sr = summing_rounds;
     v = max(v, permuted(v, sr[0]));
     v = max(v, permuted(v, sr[1]));
@@ -338,32 +340,32 @@ inline uint8_t horiz_max3(epu8 v) {
     return std::max(v[7], v[15]);
 }
 
-inline epu8 partial_max_ref(epu8 v) {
+inline epu8 partial_max_ref(epu8 v) noexcept {
     epu8 res;
     res[0] = v[0];
     for (size_t i = 1; i < 16; i++)
         res[i] = std::max(res[i - 1], v[i]);
     return res;
 }
-inline epu8 partial_max_gen(epu8 v) {
+inline epu8 partial_max_gen(epu8 v) noexcept {
     as_VectGeneric(v).partial_max_inplace();
     return v;
 }
-inline epu8 partial_max_round(epu8 v) {
+inline epu8 partial_max_round(epu8 v) noexcept {
     for (epu8 round : summing_rounds)
         v = max(v, permuted(v, round));
     return v;
 }
 
-inline uint8_t horiz_min_ref(epu8 v) {
+inline uint8_t horiz_min_ref(epu8 v) noexcept {
     uint8_t res = 255;
     for (size_t i = 0; i < 16; i++)
         res = std::min(res, v[i]);
     return res;
 }
-inline uint8_t horiz_min_gen(epu8 v) { return as_VectGeneric(v).horiz_min(); }
-inline uint8_t horiz_min4(epu8 v) { return partial_min_round(v)[15]; }
-inline uint8_t horiz_min3(epu8 v) {
+inline uint8_t horiz_min_gen(epu8 v) noexcept { return as_VectGeneric(v).horiz_min(); }
+inline uint8_t horiz_min4(epu8 v) noexcept { return partial_min_round(v)[15]; }
+inline uint8_t horiz_min3(epu8 v) noexcept {
     auto sr = mining_rounds;
     v = min(v, permuted(v, sr[0]));
     v = min(v, permuted(v, sr[1]));
@@ -371,24 +373,24 @@ inline uint8_t horiz_min3(epu8 v) {
     return std::min(v[7], v[15]);
 }
 
-inline epu8 partial_min_ref(epu8 v) {
+inline epu8 partial_min_ref(epu8 v) noexcept {
     epu8 res;
     res[0] = v[0];
     for (size_t i = 1; i < 16; i++)
         res[i] = std::min(res[i - 1], v[i]);
     return res;
 }
-inline epu8 partial_min_gen(epu8 v) {
+inline epu8 partial_min_gen(epu8 v) noexcept {
     as_VectGeneric(v).partial_min_inplace();
     return v;
 }
-inline epu8 partial_min_round(epu8 v) {
+inline epu8 partial_min_round(epu8 v) noexcept {
     for (epu8 round : mining_rounds)
         v = min(v, permuted(v, round));
     return v;
 }
 
-inline epu8 eval16_ref(epu8 v) {
+inline epu8 eval16_ref(epu8 v) noexcept {
     epu8 res{};
     for (size_t i = 0; i < 16; i++)
         if (v[i] < 16)
@@ -396,7 +398,7 @@ inline epu8 eval16_ref(epu8 v) {
     return res;
 }
 
-inline epu8 eval16_arr(epu8 v8) {
+inline epu8 eval16_arr(epu8 v8) noexcept {
     decltype(Epu8)::array res{};
     auto v = as_array(v8);
     for (size_t i = 0; i < 16; i++)
@@ -404,10 +406,10 @@ inline epu8 eval16_arr(epu8 v8) {
             res[v[i]]++;
     return from_array(res);
 }
-inline epu8 eval16_gen(epu8 v) {
+inline epu8 eval16_gen(epu8 v) noexcept {
     return from_array(as_VectGeneric(v).eval().v);
 }
-inline epu8 eval16_cycle(epu8 v) {
+inline epu8 eval16_cycle(epu8 v) noexcept {
     epu8 res = -(epu8id == v);
     for (int i = 1; i < 16; i++) {
         v = permuted(v, left_cycle);
@@ -415,7 +417,7 @@ inline epu8 eval16_cycle(epu8 v) {
     }
     return res;
 }
-inline epu8 eval16_popcount(epu8 v) {
+inline epu8 eval16_popcount(epu8 v) noexcept {
     epu8 res{};
     for (size_t i = 0; i < 16; i++) {
         res[i] =
@@ -424,11 +426,11 @@ inline epu8 eval16_popcount(epu8 v) {
     return res;
 }
 
-inline epu8 popcount16(epu8 v) {
+inline epu8 popcount16(epu8 v) noexcept {
     return permuted(popcount4, (v & Epu8(0x0f))) + permuted(popcount4, v >> 4);
 }
 
-inline bool is_partial_transformation(epu8 v, const size_t k) {
+inline bool is_partial_transformation(epu8 v, const size_t k) noexcept {
     uint64_t diff = last_diff(v, epu8id, 16);
     // (forall x in v, x + 1 <= 16)  and
     // (v = Perm16::one()   or  last diff index < 16)
@@ -436,13 +438,13 @@ inline bool is_partial_transformation(epu8 v, const size_t k) {
            (diff == 16 || diff < k);
 }
 
-inline bool is_transformation(epu8 v, const size_t k) {
+inline bool is_transformation(epu8 v, const size_t k) noexcept {
     uint64_t diff = last_diff(v, epu8id, 16);
     return (simde_mm_movemask_epi8(v < Epu8(0x10)) == 0xffff) &&
            (diff == 16 || diff < k);
 }
 
-inline bool is_partial_permutation(epu8 v, const size_t k) {
+inline bool is_partial_permutation(epu8 v, const size_t k) noexcept {
     uint64_t diff = last_diff(v, epu8id, 16);
     // (forall x in v, x <= 15)  and
     // (forall x < 15, multiplicity x v <= 1
@@ -453,7 +455,7 @@ inline bool is_partial_permutation(epu8 v, const size_t k) {
 }
 
 #ifdef SIMDE_X86_SSE4_2_NATIVE
-inline bool is_permutation_cmpestri(epu8 v, const size_t k) {
+inline bool is_permutation_cmpestri(epu8 v, const size_t k) noexcept {
     uint64_t diff = last_diff(v, epu8id, 16);
     // (forall x in v, x in Perm16::one())  and
     // (forall x in Perm16::one(), x in v)  and
@@ -464,12 +466,12 @@ inline bool is_permutation_cmpestri(epu8 v, const size_t k) {
 }
 #endif
 
-inline bool is_permutation_sort(epu8 v, const size_t k) {
+inline bool is_permutation_sort(epu8 v, const size_t k) noexcept {
     uint64_t diff = last_diff(v, epu8id, 16);
     return equal(sorted(v), epu8id) && (diff == 16 || diff < k);
 }
 
-inline bool is_permutation(epu8 v, const size_t k) {
+inline bool is_permutation(epu8 v, const size_t k) noexcept {
 #ifdef SIMDE_X86_SSE4_2_NATIVE
     return is_permutation_cmpestri(v, k);
 #else
@@ -496,19 +498,19 @@ inline std::string to_string(HPCombi::epu8 const &a) {
 }
 
 template <> struct equal_to<HPCombi::epu8> {
-    bool operator()(const HPCombi::epu8 &lhs, const HPCombi::epu8 &rhs) const {
+    bool operator()(const HPCombi::epu8 &lhs, const HPCombi::epu8 &rhs) const noexcept {
         return HPCombi::equal(lhs, rhs);
     }
 };
 
 template <> struct not_equal_to<HPCombi::epu8> {
-    bool operator()(const HPCombi::epu8 &lhs, const HPCombi::epu8 &rhs) const {
+    bool operator()(const HPCombi::epu8 &lhs, const HPCombi::epu8 &rhs) const noexcept {
         return HPCombi::not_equal(lhs, rhs);
     }
 };
 
 template <> struct hash<HPCombi::epu8> {
-    inline size_t operator()(HPCombi::epu8 a) const {
+    inline size_t operator()(HPCombi::epu8 a) const noexcept {
         unsigned __int128 v0 = simde_mm_extract_epi64(a, 0);
         unsigned __int128 v1 = simde_mm_extract_epi64(a, 1);
         return ((v1 * HPCombi::prime + v0) * HPCombi::prime) >> 64;
@@ -528,7 +530,7 @@ template <> struct less<HPCombi::epu8> {
     //          but we don't care when using in std::set.
     // 10% faster than calling the lexicographic comparison operator !
     inline size_t operator()(const HPCombi::epu8 &v1,
-                             const HPCombi::epu8 &v2) const {
+                             const HPCombi::epu8 &v2) const noexcept {
         simde__m128 v1v = simde__m128(v1), v2v = simde__m128(v2);
         return v1v[0] == v2v[0] ? v1v[1] < v2v[1] : v1v[0] < v2v[0];
     }

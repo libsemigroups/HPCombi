@@ -166,14 +166,14 @@ template <size_t Size, typename Expo = uint8_t> struct VectGeneric {
         return true;
     }
 
-    uint64_t horiz_sum() const {
+    uint64_t horiz_sum() const noexcept {
         Expo res = 0;
         for (uint64_t i = 0; i < Size; i++)
             res += v[i];
         return res;
     }
 
-    VectGeneric partial_sums() const {
+    VectGeneric partial_sums() const noexcept {
         auto res = *this;
         for (uint64_t i = 1; i < Size; i++)
             res[i] += res[i - 1];
