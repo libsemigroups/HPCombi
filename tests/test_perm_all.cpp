@@ -18,8 +18,8 @@
 #include <tuple>
 #include <vector>
 
-#include "perm16.hpp"
-#include "perm_generic.hpp"
+#include "hpcombi/perm16.hpp"
+#include "hpcombi/perm_generic.hpp"
 
 #include "test_main.hpp"
 #include <catch2/catch_template_test_macros.hpp>

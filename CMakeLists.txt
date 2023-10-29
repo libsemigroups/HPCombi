@@ -71,8 +71,8 @@ add_subdirectory(doc)
 
 include_directories(
   ${CMAKE_SOURCE_DIR}/include
+  ${CMAKE_SOURCE_DIR}/third_party
   ${PROJECT_BINARY_DIR})
-
 
 #########
 # Testing
@@ -101,6 +101,10 @@ install (FILES ${CMAKE_CURRENT_BINARY_DIR}/.VERSION DESTINATION ".")
 install (
   DIRECTORY ${CMAKE_SOURCE_DIR}/include/
   DESTINATION include/${CMAKE_PROJECT_NAME}
+  FILES_MATCHING PATTERN "*.hpp")
+install (
+  DIRECTORY ${CMAKE_SOURCE_DIR}/third_party/
+  DESTINATION third_party/${CMAKE_PROJECT_NAME}
   FILES_MATCHING PATTERN "*.hpp")
 
 ###################
