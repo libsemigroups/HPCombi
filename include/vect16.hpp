@@ -24,7 +24,7 @@
 namespace HPCombi {
 
 struct alignas(16) Vect16 {
-    static constexpr size_t Size() { return 16; }
+    static constexpr size_t size() { return 16; }
     using array = decltype(Epu8)::array;
     epu8 v;
 
@@ -46,23 +46,23 @@ struct alignas(16) Vect16 {
     const uint8_t &operator[](uint64_t i) const { return as_array()[i]; }
     uint8_t &operator[](uint64_t i) { return as_array()[i]; }
 
-    size_t first_diff(const Vect16 &u, size_t bound = Size()) const {
+    size_t first_diff(const Vect16 &u, size_t bound = size()) const {
         return HPCombi::first_diff(v, u.v, bound);
     }
-    size_t last_diff(const Vect16 &u, size_t bound = Size()) const {
+    size_t last_diff(const Vect16 &u, size_t bound = size()) const {
         return HPCombi::last_diff(v, u.v, bound);
     }
 
-    size_t first_zero(size_t bound = Size()) const {
+    size_t first_zero(size_t bound = size()) const {
         return HPCombi::first_zero(v, bound);
     }
-    size_t last_zero(size_t bound = Size()) const {
+    size_t last_zero(size_t bound = size()) const {
         return HPCombi::last_zero(v, bound);
     }
-    size_t first_non_zero(size_t bound = Size()) const {
+    size_t first_non_zero(size_t bound = size()) const {
         return HPCombi::first_non_zero(v, bound);
     }
-    size_t last_non_zero(size_t bound = Size()) const {
+    size_t last_non_zero(size_t bound = size()) const {
         return HPCombi::last_non_zero(v, bound);
     }
 

@@ -35,7 +35,7 @@ std::array<Expo, Size> sorted_vect(std::array<Expo, Size> v) {
 /** A generic class for combinatorial integer vectors.
  */
 template <size_t _Size, typename Expo = uint8_t> struct VectGeneric {
-    static constexpr size_t Size() { return _Size; }
+    static constexpr size_t size() { return _Size; }
     using array = std::array<Expo, _Size>;
     array v;
 
