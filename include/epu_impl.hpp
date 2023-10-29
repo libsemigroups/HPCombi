@@ -19,6 +19,7 @@
 #include <initializer_list>
 #include <iostream>
 #include <random>
+#include <sstream>
 
 #include "vect_generic.hpp"
 
