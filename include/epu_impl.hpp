@@ -522,7 +522,7 @@ template <> struct hash<HPCombi::epu8> {
 };
 
 template <> struct less<HPCombi::epu8> {
-    // WARNING: due to endianess this is not lexicographic comparison,
+    // WARNING: due to endianness this is not lexicographic comparison,
     //          but we don't care when using in std::set.
     // 10% faster than calling the lexicographic comparison operator !
     inline size_t operator()(const HPCombi::epu8 &v1,

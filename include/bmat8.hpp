@@ -80,7 +80,7 @@ class BMat8 {
 
     //! A constructor.
     //!
-    //! This is the copy assignement constructor.
+    //! This is the copy assignment constructor.
     BMat8 &operator=(BMat8 const &) = default;
 
     //! A constructor.
@@ -161,7 +161,7 @@ class BMat8 {
     //! Returns the matrix product of \c this and the transpose of \p that
     //!
     //! This method returns the standard matrix product (over the
-    //! boolean semiring) of two BMat8 objects. This is faster than tranposing
+    //! boolean semiring) of two BMat8 objects. This is faster than transposing
     //! that and calling the product of \c this with it. Implementation uses
     //! vector instructions.
     BMat8 mult_transpose(BMat8 const &that) const;
@@ -176,14 +176,14 @@ class BMat8 {
 
     //! Returns a canonical basis of the row space of \c this
     //!
-    //! Any two matrix with the same row space are garanteed to have the same
+    //! Any two matrix with the same row space are guaranteed to have the same
     //! row space basis. This is a fast implementation using vector
     //! instructions to compute in parallel the union of the other rows
     //! included in a given one.
     BMat8 row_space_basis() const;
     //! Returns a canonical basis of the col space of \c this
     //!
-    //! Any two matrix with the same column row space are garanteed to have
+    //! Any two matrix with the same column row space are guaranteed to have
     //! the same column space basis. Uses #row_space_basis and #transpose.
     BMat8 col_space_basis() const {
         return transpose().row_space_basis().transpose();

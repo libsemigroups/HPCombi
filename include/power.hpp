@@ -91,7 +91,7 @@ namespace power_helper {
  *  - T #one() : the unit of the monoid
  *  - T #prod(T, T) : the product of two elements in the monoid
  *
- * By default for any type \c T, #one is constructed from the litteral 1 and
+ * By default for any type \c T, #one is constructed from the literal 1 and
  * #prod calls the operator *. One can change these default by specializing
  * the template for some specific type \c T.
  */

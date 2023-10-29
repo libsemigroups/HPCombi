@@ -118,14 +118,14 @@ constexpr epu8 popcount4 = Epu8([](uint8_t i) {
 
 /** Cast a #HPCombi::epu8 to a c++ \c std::array
  *
- *  This is usually faster for algorithm using a lot of indexed acces.
+ *  This is usually faster for algorithm using a lot of indexed access.
  */
 inline decltype(Epu8)::array &as_array(epu8 &v) {
     return reinterpret_cast<decltype(Epu8)::array &>(v);
 }
 /** Cast a constant #HPCombi::epu8 to a C++ \c std::array
  *
- *  This is usually faster for algorithm using a lot of indexed acces.
+ *  This is usually faster for algorithm using a lot of indexed access.
  */
 inline const decltype(Epu8)::array &as_array(const epu8 &v) {
     return reinterpret_cast<const decltype(Epu8)::array &>(v);
@@ -140,7 +140,7 @@ inline epu8 from_array(decltype(Epu8)::array a) {
 
 /** Cast a #HPCombi::epu8 to a c++ #HPCombi::VectGeneric
  *
- *  This is usually faster for algorithm using a lot of indexed acces.
+ *  This is usually faster for algorithm using a lot of indexed access.
  */
 inline VectGeneric<16> &as_VectGeneric(epu8 &v) {
     return reinterpret_cast<VectGeneric<16> &>(as_array(v));
@@ -148,7 +148,7 @@ inline VectGeneric<16> &as_VectGeneric(epu8 &v) {
 
 /** Cast a #HPCombi::epu8 to a c++ #HPCombi::VectGeneric
  *
- *  This is usually faster for algorithm using a lot of indexed acces.
+ *  This is usually faster for algorithm using a lot of indexed access.
  */
 inline const VectGeneric<16> &as_VectGeneric(const epu8 &v) {
     return reinterpret_cast<const VectGeneric<16> &>(as_array(v));
@@ -239,7 +239,7 @@ inline epu8 permutation_of_cmpestrm(epu8 a, epu8 b);
  */
 inline epu8 permutation_of_ref(epu8 a, epu8 b);
 /** @copydoc common_permutation_of
-    @par Algorithm: architecture dependant
+    @par Algorithm: architecture dependent
  */
 inline epu8 permutation_of(epu8 a, epu8 b);
 
@@ -259,7 +259,7 @@ inline epu8 random_epu8(uint16_t bnd);
  * @details
  * @param a: supposed to be sorted
  * @param repl: the value replacing the duplicate entries (default to 0)
- * @return the vector \c a where repeated occurences of entries are replaced
+ * @return the vector \c a where repeated occurrences of entries are replaced
  *    by \c repl
  */
 inline epu8 remove_dups(epu8 a, uint8_t repl = 0);
@@ -288,12 +288,12 @@ inline uint8_t horiz_sum_ref(epu8);
 inline uint8_t horiz_sum_gen(epu8);
 /** @copydoc common_horiz_sum
  *  @par Algorithm:
- *  4-stages paralell algorithm
+ *  4-stages parallel algorithm
  */
 inline uint8_t horiz_sum4(epu8);
 /** @copydoc common_horiz_sum
  *  @par Algorithm:
- *  3-stages paralell algorithm + indexed access
+ *  3-stages parallel algorithm + indexed access
  */
 inline uint8_t horiz_sum3(epu8);
 /** @copydoc common_horiz_sum */
@@ -322,7 +322,7 @@ inline epu8 partial_sums_ref(epu8);
 inline epu8 partial_sums_gen(epu8);
 /** @copydoc common_partial_sums
  *  @par Algorithm:
- *  4-stages paralell algorithm
+ *  4-stages parallel algorithm
  */
 inline epu8 partial_sums_round(epu8);
 /** @copydoc common_partial_sums */
@@ -351,12 +351,12 @@ inline uint8_t horiz_max_ref(epu8);
 inline uint8_t horiz_max_gen(epu8);
 /** @copydoc common_horiz_max
  *  @par Algorithm:
- *  4-stages paralell algorithm
+ *  4-stages parallel algorithm
  */
 inline uint8_t horiz_max4(epu8);
 /** @copydoc common_horiz_max
  *  @par Algorithm:
- *  3-stages paralell algorithm + indexed access
+ *  3-stages parallel algorithm + indexed access
  */
 inline uint8_t horiz_max3(epu8);
 /** @copydoc common_horiz_max */
@@ -385,7 +385,7 @@ inline epu8 partial_max_ref(epu8);
 inline epu8 partial_max_gen(epu8);
 /** @copydoc common_partial_max
  *  @par Algorithm:
- *  4-stages paralell algorithm
+ *  4-stages parallel algorithm
  */
 inline epu8 partial_max_round(epu8);
 /** @copydoc common_partial_max */
@@ -414,12 +414,12 @@ inline uint8_t horiz_min_ref(epu8);
 inline uint8_t horiz_min_gen(epu8);
 /** @copydoc common_horiz_min
  *  @par Algorithm:
- *  4-stages paralell algorithm
+ *  4-stages parallel algorithm
  */
 inline uint8_t horiz_min4(epu8);
 /** @copydoc common_horiz_min
  *  @par Algorithm:
- *  3-stages paralell algorithm + indexed access
+ *  3-stages parallel algorithm + indexed access
  */
 inline uint8_t horiz_min3(epu8);
 /** @copydoc common_horiz_min */
@@ -448,7 +448,7 @@ inline epu8 partial_min_ref(epu8);
 inline epu8 partial_min_gen(epu8);
 /** @copydoc common_partial_min
  *  @par Algorithm:
- *  4-stages paralell algorithm
+ *  4-stages parallel algorithm
  */
 inline epu8 partial_min_round(epu8);
 /** @copydoc common_partial_min */
@@ -607,11 +607,11 @@ inline epu8 popcount16(epu8 v);
  * @param k the size of \c *this (default 16)
  *
  * Points where the function is undefined are mapped to \c 0xff. If \c *this
- * is a tranformation of @f$0\dots n-1@f$ for @f$n<16@f$, it should be completed
- * to a transformation of @f$0\dots 15@f$ by adding fixed points. That is the
- * values @f$i\geq n@f$ should be mapped to themself.
+ * is a transformation of @f$0\dots n-1@f$ for @f$n<16@f$, it should be
+ * completed to a transformation of @f$0\dots 15@f$ by adding fixed points. That
+ * is the values @f$i\geq n@f$ should be mapped to themself.
  * @par Example:
- * The partial tranformation
+ * The partial transformation
  * @f$\begin{matrix}0 1 2 3 4 5\\ 2 0 5 . . 4 \end{matrix}@f$
  * is encoded by the array {2,0,5,0xff,0xff,4,6,7,8,9,10,11,12,13,14,15}
  */
@@ -623,12 +623,12 @@ inline bool is_partial_transformation(epu8 v, const size_t k = 16);
  * @param v the vector to test
  * @param k the size of \c *this (default 16)
  *
- * If \c *this is a tranformation of @f$0\dots n-1@f$ for @f$n<16@f$,
+ * If \c *this is a transformation of @f$0\dots n-1@f$ for @f$n<16@f$,
  * it should be completed to a transformation of @f$0\dots 15@f$
  * by adding fixed points. That is the values @f$i\geq n@f$ should be
  * mapped to themself.
  * @par Example:
- * The tranformation
+ * The transformation
  * @f$\begin{matrix}0 1 2 3 4 5\\ 2 0 5 2 1 4 \end{matrix}@f$
  * is encoded by the array {2,0,5,2,1,4,6,7,8,9,10,11,12,13,14,15}
  */
@@ -678,7 +678,7 @@ inline bool is_permutation_cpmestri(epu8 v, const size_t k = 16);
  */
 inline bool is_permutation_sort(epu8 v, const size_t k = 16);
 /** @copydoc common_is_permutation
-    @par Algorithm: architecture dependant
+    @par Algorithm: architecture dependent
  */
 inline bool is_permutation(epu8 v, const size_t k = 16);
 
