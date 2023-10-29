@@ -95,26 +95,25 @@ static const constexpr std::array<uint64_t, 64> BIT_MASK = {{0x8000000000000000,
                                                              0x2,
                                                              0x1}};
 
-inline bool BMat8::operator()(size_t i, size_t j) const {
+inline bool BMat8::operator()(size_t i, size_t j) const noexcept {
     HPCOMBI_ASSERT(i < 8);
     HPCOMBI_ASSERT(j < 8);
     return (_data << (8 * i + j)) >> 63;
 }
 
-inline void BMat8::set(size_t i, size_t j, bool val) {
+inline void BMat8::set(size_t i, size_t j, bool val) noexcept {
     HPCOMBI_ASSERT(i < 8);
     HPCOMBI_ASSERT(j < 8);
     _data ^= (-val ^ _data) & BIT_MASK[8 * i + j];
 }
 
 inline BMat8::BMat8(std::vector<std::vector<bool>> const &mat) {
-    // FIXME exceptions
     HPCOMBI_ASSERT(mat.size() <= 8);
     HPCOMBI_ASSERT(0 < mat.size());
     _data = 0;
     uint64_t pow = 1;
     pow = pow << 63;
-    for (auto row : mat) {
+    for (auto const &row : mat) {
         HPCOMBI_ASSERT(row.size() == mat.size());
         for (auto entry : row) {
             if (entry) {
@@ -126,11 +125,13 @@ inline BMat8::BMat8(std::vector<std::vector<bool>> const &mat) {
     }
 }
 
-static std::random_device _rd;
-static std::mt19937 _gen(_rd());
-static std::uniform_int_distribution<uint64_t> _dist(0, 0xffffffffffffffff);
+inline BMat8 BMat8::random() {
+    static std::random_device _rd;
+    static std::mt19937 _gen(_rd());
+    static std::uniform_int_distribution<uint64_t> _dist(0, 0xffffffffffffffff);
 
-inline BMat8 BMat8::random() { return BMat8(_dist(_gen)); }
+    return BMat8(_dist(_gen));
+}
 
 inline BMat8 BMat8::random(size_t const dim) {
     HPCOMBI_ASSERT(0 < dim && dim <= 8);
@@ -142,7 +143,7 @@ inline BMat8 BMat8::random(size_t const dim) {
     return bm;
 }
 
-inline BMat8 BMat8::transpose() const {
+inline BMat8 BMat8::transpose() const noexcept {
     uint64_t x = _data;
     uint64_t y = (x ^ (x >> 7)) & 0xAA00AA00AA00AA;
     x = x ^ y ^ (y << 7);
@@ -153,7 +154,7 @@ inline BMat8 BMat8::transpose() const {
     return BMat8(x);
 }
 
-inline BMat8 BMat8::transpose_mask() const {
+inline BMat8 BMat8::transpose_mask() const noexcept {
     epu8 x = simde_mm_set_epi64x(_data, _data << 1);
     uint64_t res = simde_mm_movemask_epi8(x);
     x = x << Epu8(2);
@@ -165,7 +166,7 @@ inline BMat8 BMat8::transpose_mask() const {
     return BMat8(res);
 }
 
-inline BMat8 BMat8::transpose_maskd() const {
+inline BMat8 BMat8::transpose_maskd() const noexcept {
     uint64_t res =
         simde_mm_movemask_epi8(simde_mm_set_epi64x(_data, _data << 1));
     res = res << 16 |
@@ -179,7 +180,7 @@ inline BMat8 BMat8::transpose_maskd() const {
 
 using epu64 = uint64_t __attribute__((__vector_size__(16), __may_alias__));
 
-inline void BMat8::transpose2(BMat8 &a, BMat8 &b) {
+inline void BMat8::transpose2(BMat8 &a, BMat8 &b) noexcept {
     epu64 x = simde_mm_set_epi64x(a._data, b._data);
     epu64 y = (x ^ (x >> 7)) & (epu64{0xAA00AA00AA00AA, 0xAA00AA00AA00AA});
     x = x ^ y ^ (y << 7);
@@ -199,7 +200,7 @@ static constexpr epu8 rotboth{7,  0, 1, 2,  3,  4,  5,  6,
 static constexpr epu8 rot2{6,  7,  0, 1, 2,  3,  4,  5,
                            14, 15, 8, 9, 10, 11, 12, 13};
 
-inline BMat8 BMat8::mult_transpose(BMat8 const &that) const {
+inline BMat8 BMat8::mult_transpose(BMat8 const &that) const noexcept {
     epu8 x = simde_mm_set_epi64x(_data, _data);
     epu8 y = simde_mm_shuffle_epi8(simde_mm_set_epi64x(that._data, that._data),
                                    rothigh);
@@ -215,7 +216,7 @@ inline BMat8 BMat8::mult_transpose(BMat8 const &that) const {
                  simde_mm_extract_epi64(data, 1));
 }
 
-inline epu8 BMat8::row_space_basis_internal() const {
+inline epu8 BMat8::row_space_basis_internal() const noexcept {
     epu8 res = remove_dups(revsorted8(simde_mm_set_epi64x(0, _data)));
     epu8 rescy = res;
     // We now compute the union of all the included different rows
@@ -228,7 +229,7 @@ inline epu8 BMat8::row_space_basis_internal() const {
     return res;
 }
 
-inline BMat8 BMat8::row_space_basis() const {
+inline BMat8 BMat8::row_space_basis() const noexcept {
     return BMat8(
         simde_mm_extract_epi64(sorted8(row_space_basis_internal()), 0));
 }
@@ -249,7 +250,9 @@ constexpr std::array<epu8, 4> masks{
 
 static const epu8 shiftres{1, 2, 4, 8, 0x10, 0x20, 0x40, 0x80};
 
-inline void update_bitset(epu8 block, epu8 &set0, epu8 &set1) {
+namespace detail {
+
+inline void row_space_update_bitset(epu8 block, epu8 &set0, epu8 &set1) noexcept {
     static const epu8 bound08 = simde_mm_slli_epi32(
         static_cast<simde__m128i>(epu8id), 3);  // shift for *8
     static const epu8 bound18 = bound08 + Epu8(0x80);
@@ -261,8 +264,9 @@ inline void update_bitset(epu8 block, epu8 &set0, epu8 &set1) {
         block = simde_mm_shuffle_epi8(block, right_cycle);
     }
 }
+}
 
-inline void BMat8::row_space_bitset(epu8 &res0, epu8 &res1) const {
+inline void BMat8::row_space_bitset(epu8 &res0, epu8 &res1) const noexcept {
     epu8 in = simde_mm_set_epi64x(0, _data);
     epu8 block0{}, block1{};
     for (epu8 m : masks) {
@@ -272,12 +276,12 @@ inline void BMat8::row_space_bitset(epu8 &res0, epu8 &res1) const {
     res0 = epu8{};
     res1 = epu8{};
     for (size_t r = 0; r < 16; r++) {
-        update_bitset(block0 | block1, res0, res1);
+        detail::row_space_update_bitset(block0 | block1, res0, res1);
         block1 = simde_mm_shuffle_epi8(block1, right_cycle);
     }
 }
 
-inline uint64_t BMat8::row_space_size_bitset() const {
+inline uint64_t BMat8::row_space_size_bitset() const noexcept {
     epu8 res0{}, res1{};
     row_space_bitset(res0, res1);
     return (__builtin_popcountll(simde_mm_extract_epi64(res0, 0)) +
@@ -286,7 +290,7 @@ inline uint64_t BMat8::row_space_size_bitset() const {
             __builtin_popcountll(simde_mm_extract_epi64(res1, 1)));
 }
 
-inline uint64_t BMat8::row_space_size_incl1() const {
+inline uint64_t BMat8::row_space_size_incl1() const noexcept {
     epu8 in = simde_mm_set_epi64x(_data, _data);
     epu8 block = epu8id;
     uint64_t res = 0;
@@ -302,7 +306,7 @@ inline uint64_t BMat8::row_space_size_incl1() const {
     return res;
 }
 
-inline uint64_t BMat8::row_space_size_incl() const {
+inline uint64_t BMat8::row_space_size_incl() const noexcept {
     epu8 in = simde_mm_set_epi64x(_data, _data);
     epu8 block = epu8id;
     uint64_t res = 0;
@@ -318,14 +322,15 @@ inline uint64_t BMat8::row_space_size_incl() const {
     return res;
 }
 
-inline bool BMat8::row_space_included_bitset(BMat8 other) const {
+inline bool BMat8::row_space_included_bitset(BMat8 other) const noexcept {
     epu8 this0, this1, other0, other1;
     this->row_space_bitset(this0, this1);
     other.row_space_bitset(other0, other1);
+    // Double inclusion of bitsets
     return equal(this0 | other0, other0) && equal(this1 | other1, other1);
 }
 
-inline bool BMat8::row_space_included(BMat8 other) const {
+inline bool BMat8::row_space_included(BMat8 other) const noexcept {
     epu8 in = simde_mm_set_epi64x(0, other._data);
     epu8 block = simde_mm_set_epi64x(0, _data);
     epu8 orincl = ((in | block) == block) & in;
@@ -336,7 +341,7 @@ inline bool BMat8::row_space_included(BMat8 other) const {
     return equal(block, orincl);
 }
 
-inline epu8 BMat8::row_space_mask(epu8 block) const {
+inline epu8 BMat8::row_space_mask(epu8 block) const noexcept {
     epu8 in = simde_mm_set_epi64x(_data, _data);
     epu8 orincl = ((in | block) == block) & in;
     for (int i = 0; i < 7; i++) {  // Only rotating
@@ -382,7 +387,7 @@ inline std::bitset<256> BMat8::row_space_bitset_ref() const {
     return lookup;
 }
 
-inline bool BMat8::row_space_included_ref(BMat8 other) const {
+inline bool BMat8::row_space_included_ref(BMat8 other) const noexcept {
     std::bitset<256> thisspace = row_space_bitset_ref();
     std::bitset<256> otherspace = other.row_space_bitset_ref();
     return (thisspace | otherspace) == otherspace;
@@ -401,27 +406,31 @@ inline std::vector<uint8_t> BMat8::rows() const {
     return rows;
 }
 
-inline size_t BMat8::nr_rows() const {
+inline size_t BMat8::nr_rows() const noexcept {
     epu8 x = simde_mm_set_epi64x(_data, 0);
     return __builtin_popcountll(simde_mm_movemask_epi8(x != epu8{}));
 }
 
 static constexpr epu8 rev8{7, 6, 5,  4,  3,  2,  1,  0,
                                    8, 9, 10, 11, 12, 13, 14, 15};
-inline BMat8 BMat8::row_permuted(Perm16 p) const {
+
+inline BMat8 BMat8::row_permuted(Perm16 p) const noexcept {
     epu8 x = simde_mm_set_epi64x(0, _data);
     x = permuted(x, rev8);
     x = permuted(x, p);
     x = permuted(x, rev8);
     return BMat8(simde_mm_extract_epi64(x, 0));
 }
-inline BMat8 BMat8::col_permuted(Perm16 p) const {
+
+inline BMat8 BMat8::col_permuted(Perm16 p) const noexcept {
     return transpose().row_permuted(p).transpose();
 }
-inline BMat8 BMat8::row_permutation_matrix(Perm16 p) {
+
+inline BMat8 BMat8::row_permutation_matrix(Perm16 p) noexcept {
     return one().row_permuted(p);
 }
-inline BMat8 BMat8::col_permutation_matrix(Perm16 p) {
+
+inline BMat8 BMat8::col_permutation_matrix(Perm16 p) noexcept {
     return one().row_permuted(p).transpose();
 }
 
@@ -448,7 +457,7 @@ inline Perm16 BMat8::right_perm_action_on_basis_ref(BMat8 bm) const {
     return res;
 }
 
-inline Perm16 BMat8::right_perm_action_on_basis(BMat8 other) const {
+inline Perm16 BMat8::right_perm_action_on_basis(BMat8 other) const noexcept {
     epu8 x = permuted(simde_mm_set_epi64x(_data, 0), epu8rev);
     epu8 y = permuted(simde_mm_set_epi64x((*this * other)._data, 0), epu8rev);
     // Vector ternary operator is not supported by clang.
@@ -456,6 +465,7 @@ inline Perm16 BMat8::right_perm_action_on_basis(BMat8 other) const {
     return simde_mm_blendv_epi8(epu8id, permutation_of(y, x), x != epu8{});
 }
 
+// Not noexcept because std::ostream::operator<< isn't
 inline std::ostream &BMat8::write(std::ostream &os) const {
     uint64_t x = _data;
     uint64_t pow = 1;
@@ -478,6 +488,7 @@ inline std::ostream &BMat8::write(std::ostream &os) const {
 
 namespace std {
 
+// Not noexcept because BMat8::write isn't
 inline std::ostream &operator<<(std::ostream &os, HPCombi::BMat8 const &bm) {
     return bm.write(os);
 }
