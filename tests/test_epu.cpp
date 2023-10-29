@@ -442,21 +442,12 @@ TEST_CASE_METHOD(Fix, "Epu8::partial_sums_ref", "[Epu8][029]") {
                  Equals(epu8{23, 28, 49, 54, 97, 133, 140, 147, 154, 161, 168,
                              175, 182, 189, 196, 203}));
 }
-TEST_CASE_METHOD(Fix, "Epu8::partial_sum_gen", "[Epu8][030]") {
-    for (auto x : v) {
-        REQUIRE_THAT(partial_sums_gen(x), Equals(partial_sums_ref(x)));
-    }
-}
-TEST_CASE_METHOD(Fix, "Epu8::partial_sum_round", "[Epu8][031]") {
-    for (auto x : v) {
-        REQUIRE_THAT(partial_sums_round(x), Equals(partial_sums_ref(x)));
-    }
-}
-TEST_CASE_METHOD(Fix, "Epu8::partial_sum", "[Epu8][032]") {
-    for (auto x : v) {
-        REQUIRE_THAT(partial_sums(x), Equals(partial_sums_ref(x)));
-    }
-}
+TEST_AGREES_EPU8_FUN(
+    Fix, Epu8, partial_sums_ref, partial_sums_gen, v, "[Epu8][030]")
+TEST_AGREES_EPU8_FUN(
+    Fix, Epu8, partial_sums_ref, partial_sums_round, v, "[Epu8][030]")
+TEST_AGREES_EPU8_FUN(
+    Fix, Epu8, partial_sums_ref, partial_sums, v, "[Epu8][030]")
 
 TEST_CASE_METHOD(Fix, "Epu8::horiz_max_ref", "[Epu8][033]") {
     REQUIRE(horiz_max_ref(zero) == 0);
@@ -497,24 +488,12 @@ TEST_CASE_METHOD(Fix, "Epu8::partial_max_ref", "[Epu8][038]") {
     REQUIRE_THAT(partial_max_ref(epu8rev), Equals(Epu8({}, 15)));
     REQUIRE_THAT(partial_max_ref(Pc), Equals(Epu8({23, 23, 23, 23}, 43)));
 }
-
-TEST_CASE_METHOD(Fix, "Epu8::partial_max_gen", "[Epu8][039]") {
-    for (auto x : v) {
-        REQUIRE_THAT(partial_max_gen(x), Equals(partial_max_ref(x)));
-    }
-}
-
-TEST_CASE_METHOD(Fix, "Epu8::partial_max_round", "[Epu8][040]") {
-    for (auto x : v) {
-        REQUIRE_THAT(partial_max_round(x), Equals(partial_max_ref(x)));
-    }
-}
-
-TEST_CASE_METHOD(Fix, "Epu8::partial_max", "[Epu8][041]") {
-    for (auto x : v) {
-        REQUIRE_THAT(partial_max(x), Equals(partial_max_ref(x)));
-    }
-}
+TEST_AGREES_EPU8_FUN(
+    Fix, Epu8, partial_max_ref, partial_max_gen, v, "[Epu8][030]")
+TEST_AGREES_EPU8_FUN(
+    Fix, Epu8, partial_max_ref, partial_max_round, v, "[Epu8][030]")
+TEST_AGREES_EPU8_FUN(
+    Fix, Epu8, partial_max_ref, partial_max, v, "[Epu8][030]")
 
 TEST_CASE_METHOD(Fix, "Epu8::horiz_min_ref", "[Epu8][042]") {
     REQUIRE(horiz_min_ref(zero) == 0);
@@ -549,40 +528,19 @@ TEST_CASE_METHOD(Fix, "Epu8::partial_min_ref", "[Epu8][043]") {
     REQUIRE_THAT(partial_min_ref(Pa1), Equals(Epu8({4, 2, 2}, 1)));
     REQUIRE_THAT(partial_min_ref(Pa2), Equals(Epu8({4, 2, 2}, 1)));
     REQUIRE_THAT(partial_min_ref(P51), Equals(Epu8({5}, 1)));
-    REQUIRE_THAT(partial_min_ref(Pv), Equals(Epu8(
-                                          {
-                                              5,
-                                              5,
-                                              2,
-                                              2,
-                                              1,
-                                              1,
-                                              1,
-                                              1,
-                                          },
-                                          0)));
+    REQUIRE_THAT(partial_min_ref(Pv),  // clang-format off
+                 Equals(Epu8({5, 5, 2, 2, 1, 1, 1, 1, }, 0)));
+    // clang-format on
     REQUIRE_THAT(partial_min_ref(P5), Equals(P5));
     REQUIRE_THAT(partial_min_ref(epu8rev), Equals(epu8rev));
     REQUIRE_THAT(partial_min_ref(Pc), Equals(Epu8({23}, 5)));
 }
-
-TEST_CASE_METHOD(Fix, "Epu8::partial_min_gen", "[Epu8][044]") {
-    for (auto x : v) {
-        REQUIRE_THAT(partial_min_gen(x), Equals(partial_min_ref(x)));
-    }
-}
-
-TEST_CASE_METHOD(Fix, "Epu8::partial_min_round", "[Epu8][045]") {
-    for (auto x : v) {
-        REQUIRE_THAT(partial_min_round(x), Equals(partial_min_ref(x)));
-    }
-}
-
-TEST_CASE_METHOD(Fix, "Epu8::partial_min", "[Epu8][046]") {
-    for (auto x : v) {
-        REQUIRE_THAT(partial_min(x), Equals(partial_min_ref(x)));
-    }
-}
+TEST_AGREES_EPU8_FUN(
+    Fix, Epu8, partial_min_ref, partial_min_gen, v, "[Epu8][030]")
+TEST_AGREES_EPU8_FUN(
+    Fix, Epu8, partial_min_ref, partial_min_round, v, "[Epu8][030]")
+TEST_AGREES_EPU8_FUN(
+    Fix, Epu8, partial_min_ref, partial_min, v, "[Epu8][030]")
 
 TEST_CASE_METHOD(Fix, "Epu8::eval16_ref", "[Epu8][047]") {
     REQUIRE_THAT(eval16_ref(zero), Equals(Epu8({16}, 0)));
@@ -628,9 +586,13 @@ TEST_CASE_METHOD(Fix, "Epu8::popcount16", "[Epu8][049]") {
 }
 
 TEST_CASE("random_epu8", "[Epu8][050]") {
-    for (int i = 0; i < 10; i++) {
-        epu8 r = random_epu8(255);
-        REQUIRE_THAT(r, Equals(r));
+    for (int bnd : {1, 10, 100, 255, 256}) {
+        for (int i = 0; i < 10; i++) {
+            epu8 r = random_epu8(bnd);
+            REQUIRE_THAT(r, Equals(r));
+            for (auto v : as_array(r))
+                REQUIRE(v < bnd);
+        }
     }
 }
 

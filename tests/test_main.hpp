@@ -60,6 +60,13 @@
         }                                                                      \
     }
 
+#define TEST_AGREES_EPU8_FUN(fixture, type, ref, fun, vct, tags)               \
+    TEST_CASE_METHOD(fixture, #type "::" #ref " == " #type "::" #fun, tags) {  \
+        for (auto p : vct) {                                                   \
+            REQUIRE_THAT(fun(p), Equals(ref(p)));                              \
+        }                                                                      \
+    }
+
 struct Equals : Catch::Matchers::MatcherGenericBase {
     Equals(HPCombi::epu8 v) : v(v) {}
 
