@@ -15,7 +15,7 @@
 #ifndef BENCH_FIXTURE
 #define BENCH_FIXTURE
 
-#include "epu.hpp"
+#include "hpcombi/epu.hpp"
 
 using HPCombi::epu8;
 

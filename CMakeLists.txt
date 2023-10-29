@@ -66,7 +66,6 @@ endif()
 ###################
 # Project Structure
 add_subdirectory(examples)
-add_subdirectory(benchmark)
 add_subdirectory(doc)
 
 include_directories(
@@ -77,11 +76,12 @@ include_directories(
 #########
 # Testing
 
-IF (BUILD_TESTING)
+if (BUILD_TESTING)
   include(CTest)
   enable_testing ()
   add_subdirectory(tests)
-ENDIF(BUILD_TESTING)
+  add_subdirectory(benchmark)
+endif(BUILD_TESTING)
 
 #####################
 

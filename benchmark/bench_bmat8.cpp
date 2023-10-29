@@ -24,7 +24,7 @@
 // #include "compilerinfo.hpp"
 // #include "cpu_x86_impl.hpp"
 
-#include "bmat8.hpp"
+#include "hpcombi/bmat8.hpp"
 
 // using namespace FeatureDetector;
 // using namespace std;
@@ -52,8 +52,15 @@ std::vector<std::pair<BMat8, BMat8>> make_pair_sample(size_t n) {
     return res;
 }
 
-std::vector<BMat8> sample = make_sample(1000);
-std::vector<std::pair<BMat8, BMat8>> pair_sample = make_pair_sample(1000);
+class Fix_BMat8 {
+  public:
+    Fix_BMat8()
+        : sample(make_sample(1000)), pair_sample(make_pair_sample(1000)) {}
+    ~Fix_BMat8() {}
+    const std::vector<BMat8> sample;
+    std::vector<std::pair<BMat8, BMat8>>
+        pair_sample;  // not const, transpose2 is in place
+};
 
 // template <typename TF, typename Sample>
 // void myBench(const std::string &name, TF pfunc, Sample &sample) {
@@ -86,7 +93,7 @@ std::vector<std::pair<BMat8, BMat8>> pair_sample = make_pair_sample(1000);
         return true;                                                           \
     };
 
-TEST_CASE("Row space size benchmarks 1000 BMat8", "[BMat8][000]") {
+TEST_CASE_METHOD(Fix_BMat8, "Row space size benchmarks 1000 BMat8", "[BMat8][000]") {
     BENCHMARK_MEM_FN(row_space_size_ref, sample);
     BENCHMARK_MEM_FN(row_space_size_bitset, sample);
     BENCHMARK_MEM_FN(row_space_size_incl1, sample);
@@ -94,13 +101,13 @@ TEST_CASE("Row space size benchmarks 1000 BMat8", "[BMat8][000]") {
     BENCHMARK_MEM_FN(row_space_size, sample);
 }
 
-TEST_CASE("Transpose benchmarks 1000 BMat8", "[BMat8][000]") {
+TEST_CASE_METHOD(Fix_BMat8, "Transpose benchmarks 1000 BMat8", "[BMat8][000]") {
     BENCHMARK_MEM_FN(transpose, sample);
     BENCHMARK_MEM_FN(transpose_mask, sample);
     BENCHMARK_MEM_FN(transpose_maskd, sample);
 }
 
-TEST_CASE("Transpose pairs benchmarks 1000 BMat8", "[BMat8][002]") {
+TEST_CASE_METHOD(Fix_BMat8, "Transpose pairs benchmarks 1000 BMat8", "[BMat8][002]") {
     BENCHMARK_MEM_FN_PAIR(transpose, pair_sample);
     BENCHMARK_MEM_FN_PAIR(transpose_mask, pair_sample);
     BENCHMARK_MEM_FN_PAIR(transpose_maskd, pair_sample);

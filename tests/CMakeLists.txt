@@ -32,13 +32,9 @@ endif()
 
 message(STATUS "Building tests")
 
-include_directories(
-  ${CMAKE_SOURCE_DIR}/include
-  ${CMAKE_SOURCE_DIR}/include/fallback
-  ${PROJECT_BINARY_DIR})
-
 set(test_src
   test_epu.cpp test_perm16.cpp test_perm_all.cpp test_bmat8.cpp)
+
 foreach(f ${test_src})
   get_filename_component(testName ${f} NAME_WE)
   add_executable (${testName} ${f} test_main.cpp)

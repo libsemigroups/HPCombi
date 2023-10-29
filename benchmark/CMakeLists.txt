@@ -30,11 +30,7 @@ else()
   message(STATUS "Using system Catch2")
 endif()
 
-message(STATUS "Building tests")
-
-include_directories(
-  ${CMAKE_SOURCE_DIR}/include
-  ${PROJECT_BINARY_DIR})
+message(STATUS "Building benchmark")
 
 set(benchmark_src
   bench_epu8.cpp bench_perm16.cpp bench_bmat8.cpp sort.cpp inverse.cpp)
