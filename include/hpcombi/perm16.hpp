@@ -145,9 +145,7 @@ struct Transf16 : public PTransf16 {
     explicit operator uint64_t() const;
 };
 
-/** Partial permutationof @f$\{0\dots 15\}@f$
- *
- */
+//! Partial permutation of @f$\{0, \dots, 15\}@f$
 struct PPerm16 : public PTransf16 {
     PPerm16() = default;
     constexpr PPerm16(const PPerm16 &v) = default;
