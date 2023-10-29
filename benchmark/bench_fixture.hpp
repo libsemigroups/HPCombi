@@ -15,6 +15,9 @@
 #ifndef BENCH_FIXTURE
 #define BENCH_FIXTURE
 
+#include <random>
+#include <vector>
+
 #include "hpcombi/epu.hpp"
 
 using HPCombi::epu8;
@@ -30,9 +33,11 @@ std::vector<epu8> rand_epu8(size_t sz) {
 }
 
 inline epu8 rand_perm() {
+    static std::random_device rd;
+    static std::mt19937 g(rd());
     epu8 res = HPCombi::epu8id;
     auto &ar = HPCombi::as_array(res);
-    std::random_shuffle(ar.begin(), ar.end());
+    std::shuffle(ar.begin(), ar.end(), g);
     return res;
 }
 
