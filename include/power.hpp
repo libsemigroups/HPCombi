@@ -21,7 +21,7 @@
  * time to a O(log n) long sequence of multiplication. Furthermore such
  * expression not only works for numbers for for any type where there is a
  * neutral element and an associative (non necessarily commutative) product,
- * namely what mathematician calls a \e monoid. This include for example,
+ * namely what mathematicians call \e monoids. These include for example,
  * strings where the neutral element is the empty string and the product is
  * the concatenation.
  *
