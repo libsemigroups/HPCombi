@@ -21,14 +21,9 @@
 #include <catch2/catch_test_macros.hpp>
 
 #include "bench_fixture.hpp"
-// #include "compilerinfo.hpp"
-// #include "cpu_x86_impl.hpp"
+#include "bench_main.hpp"
 
 #include "hpcombi/bmat8.hpp"
-
-// using namespace FeatureDetector;
-// using namespace std;
-// using HPCombi::epu8;
 
 namespace HPCombi {
 
@@ -62,46 +57,6 @@ class Fix_BMat8 {
         pair_sample;  // not const, transpose2 is in place
 };
 
-// template <typename TF, typename Sample>
-// void myBench(const std::string &name, TF pfunc, Sample &sample) {
-//     std::string fullname = name + "_" + CXX_VER + "_proc-" + PROCID;
-//     benchmark::RegisterBenchmark(
-//         fullname.c_str(), [pfunc, sample](benchmark::State &st) {
-//             for (auto _ : st) {
-//                 for (auto elem : sample) {
-//                     benchmark::DoNotOptimize(pfunc(elem));
-//                 }
-//             }
-//         });
-// }
-
-#define BENCHMARK_MEM_FN(mem_fn, sample)                                       \
-    BENCHMARK(#mem_fn) {                                                       \
-        for (auto &elem : sample) {                                            \
-            volatile auto dummy = elem.mem_fn();                               \
-        }                                                                      \
-        return true;                                                           \
-    };
-
-#define BENCHMARK_MEM_FN_PAIR_EQ(mem_fn, sample)                                  \
-    BENCHMARK(#mem_fn) {                                                       \
-        for (auto &pair : sample) {                                            \
-            auto val =                                                         \
-                std::make_pair(pair.first.mem_fn(), pair.second.mem_fn());     \
-            REQUIRE(val.first == val.second);                                  \
-        }                                                                      \
-        return true;                                                           \
-    };
-
-#define BENCHMARK_MEM_FN_PAIR(mem_fn, sample)                                  \
-    BENCHMARK(#mem_fn) {                                                       \
-        for (auto &pair : sample) {                                            \
-            volatile auto val = pair.first.mem_fn(pair.second);                \
-        }                                                                      \
-        return true;                                                           \
-    };
-
-
 TEST_CASE_METHOD(Fix_BMat8, "Row space size benchmarks 1000 BMat8",
                  "[BMat8][000]") {
     BENCHMARK_MEM_FN(row_space_size_ref, sample);
@@ -131,8 +86,7 @@ TEST_CASE_METHOD(Fix_BMat8, "Transpose pairs benchmarks 1000 BMat8",
     };
 }
 
-TEST_CASE_METHOD(Fix_BMat8,
-                 "Inclusion of row spaces benchmarks 1000 BMat8",
+TEST_CASE_METHOD(Fix_BMat8, "Inclusion of row spaces benchmarks 1000 BMat8",
                  "[BMat8][002]") {
     BENCHMARK_MEM_FN_PAIR(row_space_included_ref, pair_sample);
     BENCHMARK_MEM_FN_PAIR(row_space_included_bitset, pair_sample);
@@ -152,10 +106,8 @@ TEST_CASE_METHOD(Fix_BMat8,
     };
     BENCHMARK("Calling twice implementation") {
         for (auto &pair : pair_sample) {
-            volatile auto val = (
-                pair.first.row_space_included(pair.second) ==
-                pair.second.row_space_included(pair.first));
-
+            volatile auto val = (pair.first.row_space_included(pair.second) ==
+                                 pair.second.row_space_included(pair.first));
         }
         return true;
     };
