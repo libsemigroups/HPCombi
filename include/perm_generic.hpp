@@ -24,11 +24,11 @@
 
 namespace HPCombi {
 
-template <size_t _Size, typename Expo = uint8_t>
-struct PermGeneric : public VectGeneric<_Size, Expo> {
-    using vect = VectGeneric<_Size, Expo>;
+template <size_t Size, typename Expo = uint8_t>
+struct PermGeneric : public VectGeneric<Size, Expo> {
+    using vect = VectGeneric<Size, Expo>;
 
-    static constexpr size_t size() { return _Size; }
+    static constexpr size_t size() { return Size; }
 
     PermGeneric() = default;
     PermGeneric(const vect v) : vect(v) {}  // NOLINT

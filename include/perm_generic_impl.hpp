@@ -15,34 +15,34 @@
 
 namespace HPCombi {
 
-template <size_t _Size, typename Expo>
-PermGeneric<_Size, Expo>::PermGeneric(std::initializer_list<Expo> il) {
-    assert(il.size() <= _Size);
+template <size_t Size, typename Expo>
+PermGeneric<Size, Expo>::PermGeneric(std::initializer_list<Expo> il) {
+    assert(il.size() <= Size);
     std::copy(il.begin(), il.end(), this->v.begin());
-    for (Expo i = il.size(); i < _Size; i++)
+    for (Expo i = il.size(); i < Size; i++)
         this->v[i] = i;
 }
 
-template <size_t _Size, typename Expo>
-PermGeneric<_Size, Expo>
-PermGeneric<_Size, Expo>::elementary_transposition(uint64_t i) {
-    assert(i < _Size);
+template <size_t Size, typename Expo>
+PermGeneric<Size, Expo>
+PermGeneric<Size, Expo>::elementary_transposition(uint64_t i) {
+    assert(i < Size);
     PermGeneric res{{}};
     res[i] = i + 1;
     res[i + 1] = i;
     return res;
 }
 
-template <size_t _Size, typename Expo>
-PermGeneric<_Size, Expo> PermGeneric<_Size, Expo>::inverse() const {
+template <size_t Size, typename Expo>
+PermGeneric<Size, Expo> PermGeneric<Size, Expo>::inverse() const {
     PermGeneric res;
-    for (uint64_t i = 0; i < _Size; i++)
+    for (uint64_t i = 0; i < Size; i++)
         res[this->v[i]] = i;
     return res;
 }
 
-template <size_t _Size, typename Expo>
-PermGeneric<_Size, Expo> PermGeneric<_Size, Expo>::random() {
+template <size_t Size, typename Expo>
+PermGeneric<Size, Expo> PermGeneric<Size, Expo>::random() {
     static std::random_device rd;
     static std::mt19937 g(rd());
 
@@ -51,41 +51,40 @@ PermGeneric<_Size, Expo> PermGeneric<_Size, Expo>::random() {
     return res;
 }
 
-template <size_t _Size, typename Expo>
-typename PermGeneric<_Size, Expo>::vect
-PermGeneric<_Size, Expo>::lehmer() const {
+template <size_t Size, typename Expo>
+typename PermGeneric<Size, Expo>::vect PermGeneric<Size, Expo>::lehmer() const {
     vect res{};
-    for (size_t i = 0; i < _Size; i++)
-        for (size_t j = i + 1; j < _Size; j++)
+    for (size_t i = 0; i < Size; i++)
+        for (size_t j = i + 1; j < Size; j++)
             if (this->v[i] > this->v[j])
                 res[i]++;
     return res;
 }
 
-template <size_t _Size, typename Expo>
-uint64_t PermGeneric<_Size, Expo>::length() const {
+template <size_t Size, typename Expo>
+uint64_t PermGeneric<Size, Expo>::length() const {
     uint64_t res = 0;
-    for (size_t i = 0; i < _Size; i++)
-        for (size_t j = i + 1; j < _Size; j++)
+    for (size_t i = 0; i < Size; i++)
+        for (size_t j = i + 1; j < Size; j++)
             if (this->v[i] > this->v[j])
                 res++;
     return res;
 }
 
-template <size_t _Size, typename Expo>
-uint64_t PermGeneric<_Size, Expo>::nb_descents() const {
+template <size_t Size, typename Expo>
+uint64_t PermGeneric<Size, Expo>::nb_descents() const {
     uint64_t res = 0;
-    for (size_t i = 0; i < _Size - 1; i++)
+    for (size_t i = 0; i < Size - 1; i++)
         if (this->v[i] > this->v[i + 1])
             res++;
     return res;
 }
 
-template <size_t _Size, typename Expo>
-uint64_t PermGeneric<_Size, Expo>::nb_cycles() const {
-    std::array<bool, _Size> b{};
+template <size_t Size, typename Expo>
+uint64_t PermGeneric<Size, Expo>::nb_cycles() const {
+    std::array<bool, Size> b{};
     uint64_t c = 0;
-    for (size_t i = 0; i < _Size; i++) {
+    for (size_t i = 0; i < Size; i++) {
         if (!b[i]) {
             for (size_t j = i; !b[j]; j = this->v[j])
                 b[j] = true;
@@ -95,10 +94,10 @@ uint64_t PermGeneric<_Size, Expo>::nb_cycles() const {
     return c;
 }
 
-template <size_t _Size, typename Expo>
-bool PermGeneric<_Size, Expo>::left_weak_leq(PermGeneric other) const {
-    for (size_t i = 0; i < _Size; i++) {
-        for (size_t j = i + 1; j < _Size; j++) {
+template <size_t Size, typename Expo>
+bool PermGeneric<Size, Expo>::left_weak_leq(PermGeneric other) const {
+    for (size_t i = 0; i < Size; i++) {
+        for (size_t j = i + 1; j < Size; j++) {
             if ((this->v[i] > this->v[j]) && (other[i] < other[j]))
                 return false;
         }
@@ -110,10 +109,10 @@ bool PermGeneric<_Size, Expo>::left_weak_leq(PermGeneric other) const {
 
 namespace std {
 
-template <size_t _Size, typename Expo>
-struct hash<HPCombi::PermGeneric<_Size, Expo>> {
-    size_t operator()(const HPCombi::PermGeneric<_Size, Expo> &ar) const {
-        return hash<HPCombi::VectGeneric<_Size, Expo>>()(ar);
+template <size_t Size, typename Expo>
+struct hash<HPCombi::PermGeneric<Size, Expo>> {
+    size_t operator()(const HPCombi::PermGeneric<Size, Expo> &ar) const {
+        return hash<HPCombi::VectGeneric<Size, Expo>>()(ar);
     }
 };
 
