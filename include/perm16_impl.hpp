@@ -63,7 +63,7 @@ inline epu8 PTransf16::image_mask_ref(bool complement) const {
     epu8 res{};
     for (auto x : *this)
         if (x != 0xFF)
-             res[x] = 0xFF;
+            res[x] = 0xFF;
     return complement ? static_cast<epu8>(!res) : res;
 }
 

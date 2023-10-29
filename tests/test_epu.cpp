@@ -442,12 +442,12 @@ TEST_CASE_METHOD(Fix, "Epu8::partial_sums_ref", "[Epu8][029]") {
                  Equals(epu8{23, 28, 49, 54, 97, 133, 140, 147, 154, 161, 168,
                              175, 182, 189, 196, 203}));
 }
-TEST_AGREES_EPU8_FUN(
-    Fix, Epu8, partial_sums_ref, partial_sums_gen, v, "[Epu8][030]")
-TEST_AGREES_EPU8_FUN(
-    Fix, Epu8, partial_sums_ref, partial_sums_round, v, "[Epu8][030]")
-TEST_AGREES_EPU8_FUN(
-    Fix, Epu8, partial_sums_ref, partial_sums, v, "[Epu8][030]")
+TEST_AGREES_EPU8_FUN(Fix, Epu8, partial_sums_ref, partial_sums_gen, v,
+                     "[Epu8][030]")
+TEST_AGREES_EPU8_FUN(Fix, Epu8, partial_sums_ref, partial_sums_round, v,
+                     "[Epu8][030]")
+TEST_AGREES_EPU8_FUN(Fix, Epu8, partial_sums_ref, partial_sums, v,
+                     "[Epu8][030]")
 
 TEST_CASE_METHOD(Fix, "Epu8::horiz_max_ref", "[Epu8][033]") {
     REQUIRE(horiz_max_ref(zero) == 0);
@@ -488,12 +488,11 @@ TEST_CASE_METHOD(Fix, "Epu8::partial_max_ref", "[Epu8][038]") {
     REQUIRE_THAT(partial_max_ref(epu8rev), Equals(Epu8({}, 15)));
     REQUIRE_THAT(partial_max_ref(Pc), Equals(Epu8({23, 23, 23, 23}, 43)));
 }
-TEST_AGREES_EPU8_FUN(
-    Fix, Epu8, partial_max_ref, partial_max_gen, v, "[Epu8][030]")
-TEST_AGREES_EPU8_FUN(
-    Fix, Epu8, partial_max_ref, partial_max_round, v, "[Epu8][030]")
-TEST_AGREES_EPU8_FUN(
-    Fix, Epu8, partial_max_ref, partial_max, v, "[Epu8][030]")
+TEST_AGREES_EPU8_FUN(Fix, Epu8, partial_max_ref, partial_max_gen, v,
+                     "[Epu8][030]")
+TEST_AGREES_EPU8_FUN(Fix, Epu8, partial_max_ref, partial_max_round, v,
+                     "[Epu8][030]")
+TEST_AGREES_EPU8_FUN(Fix, Epu8, partial_max_ref, partial_max, v, "[Epu8][030]")
 
 TEST_CASE_METHOD(Fix, "Epu8::horiz_min_ref", "[Epu8][042]") {
     REQUIRE(horiz_min_ref(zero) == 0);
@@ -535,12 +534,11 @@ TEST_CASE_METHOD(Fix, "Epu8::partial_min_ref", "[Epu8][043]") {
     REQUIRE_THAT(partial_min_ref(epu8rev), Equals(epu8rev));
     REQUIRE_THAT(partial_min_ref(Pc), Equals(Epu8({23}, 5)));
 }
-TEST_AGREES_EPU8_FUN(
-    Fix, Epu8, partial_min_ref, partial_min_gen, v, "[Epu8][030]")
-TEST_AGREES_EPU8_FUN(
-    Fix, Epu8, partial_min_ref, partial_min_round, v, "[Epu8][030]")
-TEST_AGREES_EPU8_FUN(
-    Fix, Epu8, partial_min_ref, partial_min, v, "[Epu8][030]")
+TEST_AGREES_EPU8_FUN(Fix, Epu8, partial_min_ref, partial_min_gen, v,
+                     "[Epu8][030]")
+TEST_AGREES_EPU8_FUN(Fix, Epu8, partial_min_ref, partial_min_round, v,
+                     "[Epu8][030]")
+TEST_AGREES_EPU8_FUN(Fix, Epu8, partial_min_ref, partial_min, v, "[Epu8][030]")
 
 TEST_CASE_METHOD(Fix, "Epu8::eval16_ref", "[Epu8][047]") {
     REQUIRE_THAT(eval16_ref(zero), Equals(Epu8({16}, 0)));

@@ -17,20 +17,19 @@
 #define HPCOMBI_EPU_HPP_INCLUDED
 
 #include <array>
-#include <string>
 #include <cassert>
 #include <cstdint>
 #include <functional>  // less<>, equal_to<>
 #include <iomanip>
 #include <ostream>
+#include <string>
 #include <type_traits>
-#include <utility>   // integer_sequences
+#include <utility>  // integer_sequences
 
 #include "vect_generic.hpp"
 
 #include "simde/x86/sse4.1.h"
 #include "simde/x86/sse4.2.h"
-
 
 namespace HPCombi {
 
