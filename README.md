@@ -1,4 +1,4 @@
-# HPCombi   ![build status](https://api.travis-ci.org/hivert/HPCombi.svg?branch=master)
+# HPCombi
 High Performance Combinatorics in C++ using vector instructions v0.0.8
 
 SSE and AVX instruction sets allows for very fast manipulation of
