@@ -312,7 +312,7 @@ class BMat8 {
     //! Write \c this on \c os
     std::ostream &write(std::ostream &os) const;
 
-#ifdef LIBSEMIGROUPS_DENSEHASHMAP
+#ifdef HPCOMBI_HAVE_DENSEHASHMAP
     // FIXME do this another way
     BMat8 empty_key() const { return BMat8(0xFF7FBFDFEFF7FBFE); }
 #endif

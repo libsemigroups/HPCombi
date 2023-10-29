@@ -426,12 +426,12 @@ inline BMat8 BMat8::col_permutation_matrix(Perm16 p) {
 }
 
 inline Perm16 BMat8::right_perm_action_on_basis_ref(BMat8 bm) const {
-    // LIBSEMIGROUPS_ASSERT(bm.row_space_basis() == bm);
+    HPCOMBI_ASSERT(bm.row_space_basis() == bm);
     std::vector<uint8_t> rows = this->rows();
     BMat8 product = *this * bm;
     std::vector<uint8_t> prod_rows = product.rows();
 
-    // LIBSEMIGROUPS_ASSERT(product.row_space_basis() == bm);
+    HPCOMBI_ASSERT(product.row_space_basis() == bm);
 
     std::vector<uint8_t> perm(8);
     for (size_t i = 0; i < nr_rows(); ++i) {
