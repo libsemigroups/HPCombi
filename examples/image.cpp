@@ -13,8 +13,6 @@
 //                  http://www.gnu.org/licenses/                              //
 //****************************************************************************//
 
-#include "perm16.hpp"
-#include "timer.h"
 #include <array>
 #include <cassert>
 #include <cstdint>
@@ -25,7 +23,9 @@
 #include <tuple>
 #include <utility>  // pair
 #include <vector>
-#include <x86intrin.h>
+
+#include "hpcombi/perm16.hpp"
+#include "timer.h"
 
 template <typename T>
 std::ostream &operator<<(std::ostream &out, const std::vector<T> &v) {

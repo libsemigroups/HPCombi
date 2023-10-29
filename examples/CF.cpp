@@ -13,12 +13,12 @@
 //                  http://www.gnu.org/licenses/                              //
 //****************************************************************************//
 
-#include "perm16.hpp"
 #include <array>
 #include <cassert>
 #include <cstdint>
 #include <iostream>
-#include <x86intrin.h>
+
+#include "hpcombi/perm16.hpp"
 
 using namespace std;
 using namespace HPCombi;

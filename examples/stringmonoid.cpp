@@ -17,9 +17,10 @@
  * #HPCombi::power_helper::Monoid
  */
 
-#include "power.hpp"
 #include <cassert>
 #include <string>
+
+#include "hpcombi/power.hpp"
 
 namespace HPCombi {
 namespace power_helper {

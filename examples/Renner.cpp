@@ -13,7 +13,6 @@
 //                  http://www.gnu.org/licenses/                              //
 //****************************************************************************//
 
-#include "perm16.hpp"
 #include <array>
 #include <cassert>
 #include <cstdint>
@@ -27,7 +26,10 @@
 #else
 #include <unordered_map>
 #endif
-#include <x86intrin.h>
+
+#include "simde/x86/sse4.1.h"  // for simde_mm_max_epu8, simde...
+#include "hpcombi/perm16.hpp"
+
 
 template <typename T>
 std::ostream &operator<<(std::ostream &out, const std::vector<T> &v) {
@@ -84,10 +86,10 @@ inline PTransf16 mult1(PTransf16 x, PTransf16 y) { return x * y; }
 
 inline PTransf16 act0(PTransf16 x, PTransf16 y) {
     PTransf16 minab, maxab, mask, b = x * y;
-    mask = _mm_cmplt_epi8(y, Perm16::one());
-    minab = _mm_min_epi8(x, b);
-    maxab = _mm_max_epi8(x, b);
-    return static_cast<epu8>(_mm_blendv_epi8(maxab, minab, mask)) |
+    mask = simde_mm_cmplt_epi8(y, Perm16::one());
+    minab = simde_mm_min_epi8(x, b);
+    maxab = simde_mm_max_epi8(x, b);
+    return static_cast<epu8>(simde_mm_blendv_epi8(maxab, minab, mask)) |
            (y.v == Epu8(0xFF));
 }
 

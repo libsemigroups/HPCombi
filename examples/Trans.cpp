@@ -13,18 +13,20 @@
 //                  http://www.gnu.org/licenses/                              //
 //****************************************************************************//
 
-#include "perm16.hpp"
 #include <array>
 #include <cassert>
 #include <cstdint>
 #include <functional>  // less<>
 #include <iostream>
 #include <vector>
+
 #ifdef HPCOMBI_HAVE_DENSEHASHSET
 #include <sparsehash/dense_hash_set>
 #else
 #include <unordered_set>
 #endif
+
+#include "hpcombi/perm16.hpp"
 
 using HPCombi::Transf16;
 

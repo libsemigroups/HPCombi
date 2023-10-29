@@ -27,9 +27,13 @@ else()
    add_compile_definitions(HPCOMBI_HAVE_DENSEHASHSET)
 endif()
 
-include_directories(${CMAKE_SOURCE_DIR}/include ${PROJECT_BINARY_DIR})
+include_directories(
+  ${CMAKE_SOURCE_DIR}/include
+  ${CMAKE_SOURCE_DIR}/third_party
+  ${PROJECT_BINARY_DIR})
 
-set(usage_examples RD.cpp Renner.cpp stringmonoid.cpp Trans.cpp CF.cpp image.cpp)
+set(usage_examples RD.cpp Renner.cpp stringmonoid.cpp Trans.cpp CF.cpp
+    image.cpp pattern.cpp)
 
 foreach(f ${usage_examples})
   get_filename_component(exampleName ${f} NAME_WE)
