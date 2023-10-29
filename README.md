@@ -8,13 +8,15 @@ and benchmark them on various compiler and architecture.
 
 ## Authors
 
-Florent Hivert <florent.hivert@lri.fr>
+- Florent Hivert <florent.hivert@lisn.fr>
+- James Mitchell <jdm3@st-andrews.ac.uk>
 
 ## Contributors
 
-- James Mitchell : discussions + test cases + Travis CI + BMat8 reference code
 - Finn Smith : discussions + BMat8 reference code
 - Viviane Pons : algorithms discussions
+- Reinis Cirpons : CI
+
 
 ## Acknowledgments
 
