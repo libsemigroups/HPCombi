@@ -249,7 +249,8 @@ constexpr uint64_t prime = 0x9e3779b97f4a7bb9;
 
 /** A random #HPCombi::epu8
  * @details
- * @param bnd : the upper bound for the value of the entries
+ * @param bnd : the upper bound for the value of the entries.
+ *    \c bnd must verify @f$ 0 < bnd \leq 256 @f$. This is not checked.
  * @returns a random #HPCombi::epu8 with value in the interval
  *    @f$[0, 1, 2, ..., bnd-1]@f$.
  */
@@ -259,7 +260,8 @@ inline epu8 random_epu8(uint16_t bnd);
  * @details
  * @param a: supposed to be sorted
  * @param repl: the value replacing the duplicate entries (default to 0)
- * @return a where repeated occurences of entries are replaced by \c repl
+ * @return the vector \c a where repeated occurences of entries are replaced
+ *    by \c repl
  */
 inline epu8 remove_dups(epu8 a, uint8_t repl = 0);
 
