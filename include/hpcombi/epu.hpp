@@ -157,7 +157,9 @@ inline const VectGeneric<16> &as_VectGeneric(const epu8 &v) {
 /** Test whether all the entries of a #HPCombi::epu8 are zero */
 inline bool is_all_zero(epu8 a) noexcept { return simde_mm_testz_si128(a, a); }
 /** Test whether all the entries of a #HPCombi::epu8 are one */
-inline bool is_all_one(epu8 a) noexcept { return simde_mm_testc_si128(a, Epu8(0xFF)); }
+inline bool is_all_one(epu8 a) noexcept {
+    return simde_mm_testc_si128(a, Epu8(0xFF));
+}
 
 /** Equality of #HPCombi::epu8 */
 inline bool equal(epu8 a, epu8 b) noexcept {
@@ -167,11 +169,15 @@ inline bool equal(epu8 a, epu8 b) noexcept {
 inline bool not_equal(epu8 a, epu8 b) noexcept { return !equal(a, b); }
 
 /** Permuting a #HPCombi::epu8 */
-inline epu8 permuted(epu8 a, epu8 b) noexcept { return simde_mm_shuffle_epi8(a, b); }
+inline epu8 permuted(epu8 a, epu8 b) noexcept {
+    return simde_mm_shuffle_epi8(a, b);
+}
 /** Left shifted of a #HPCombi::epu8 inserting a 0
  * @warning we use the convention that the 0 entry is on the left !
  */
-inline epu8 shifted_right(epu8 a) noexcept { return simde_mm_bslli_si128(a, 1); }
+inline epu8 shifted_right(epu8 a) noexcept {
+    return simde_mm_bslli_si128(a, 1);
+}
 /** Right shifted of a #HPCombi::epu8 inserting a 0
  * @warning we use the convention that the 0 entry is on the left !
  */

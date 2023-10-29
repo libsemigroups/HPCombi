@@ -188,16 +188,20 @@ inline bool is_sorted(epu8 a) noexcept {
 inline epu8 sorted(epu8 a) noexcept {
     return network_sort<true>(a, sorting_rounds);
 }
-inline epu8 sorted8(epu8 a) noexcept { return network_sort<true>(a, sorting_rounds8); }
-inline epu8 revsorted(epu8 a) noexcept { return network_sort<false>(a, sorting_rounds); }
+inline epu8 sorted8(epu8 a) noexcept {
+    return network_sort<true>(a, sorting_rounds8);
+}
+inline epu8 revsorted(epu8 a) noexcept {
+    return network_sort<false>(a, sorting_rounds);
+}
 inline epu8 revsorted8(epu8 a) noexcept {
     return network_sort<false>(a, sorting_rounds8);
 }
 
-inline epu8 sort_perm(epu8 &a)  noexcept{
+inline epu8 sort_perm(epu8 &a) noexcept {
     return network_sort_perm<true>(a, sorting_rounds);
 }
-inline epu8 sort8_perm(epu8 &a)  noexcept{
+inline epu8 sort8_perm(epu8 &a) noexcept {
     return network_sort_perm<true>(a, sorting_rounds8);
 }
 
@@ -297,7 +301,9 @@ inline uint8_t horiz_sum_ref(epu8 v) noexcept {
         res += v[i];
     return res;
 }
-inline uint8_t horiz_sum_gen(epu8 v) noexcept { return as_VectGeneric(v).horiz_sum(); }
+inline uint8_t horiz_sum_gen(epu8 v) noexcept {
+    return as_VectGeneric(v).horiz_sum();
+}
 inline uint8_t horiz_sum4(epu8 v) noexcept { return partial_sums_round(v)[15]; }
 inline uint8_t horiz_sum3(epu8 v) noexcept {
     auto sr = summing_rounds;
@@ -330,7 +336,9 @@ inline uint8_t horiz_max_ref(epu8 v) noexcept {
         res = std::max(res, v[i]);
     return res;
 }
-inline uint8_t horiz_max_gen(epu8 v) noexcept { return as_VectGeneric(v).horiz_max(); }
+inline uint8_t horiz_max_gen(epu8 v) noexcept {
+    return as_VectGeneric(v).horiz_max();
+}
 inline uint8_t horiz_max4(epu8 v) noexcept { return partial_max_round(v)[15]; }
 inline uint8_t horiz_max3(epu8 v) noexcept {
     auto sr = summing_rounds;
@@ -363,7 +371,9 @@ inline uint8_t horiz_min_ref(epu8 v) noexcept {
         res = std::min(res, v[i]);
     return res;
 }
-inline uint8_t horiz_min_gen(epu8 v) noexcept { return as_VectGeneric(v).horiz_min(); }
+inline uint8_t horiz_min_gen(epu8 v) noexcept {
+    return as_VectGeneric(v).horiz_min();
+}
 inline uint8_t horiz_min4(epu8 v) noexcept { return partial_min_round(v)[15]; }
 inline uint8_t horiz_min3(epu8 v) noexcept {
     auto sr = mining_rounds;
@@ -498,13 +508,15 @@ inline std::string to_string(HPCombi::epu8 const &a) {
 }
 
 template <> struct equal_to<HPCombi::epu8> {
-    bool operator()(const HPCombi::epu8 &lhs, const HPCombi::epu8 &rhs) const noexcept {
+    bool operator()(const HPCombi::epu8 &lhs,
+                    const HPCombi::epu8 &rhs) const noexcept {
         return HPCombi::equal(lhs, rhs);
     }
 };
 
 template <> struct not_equal_to<HPCombi::epu8> {
-    bool operator()(const HPCombi::epu8 &lhs, const HPCombi::epu8 &rhs) const noexcept {
+    bool operator()(const HPCombi::epu8 &lhs,
+                    const HPCombi::epu8 &rhs) const noexcept {
         return HPCombi::not_equal(lhs, rhs);
     }
 };
