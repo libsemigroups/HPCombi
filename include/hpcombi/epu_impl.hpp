@@ -23,6 +23,7 @@
 
 #include "vect_generic.hpp"
 
+#ifdef SIMDE_X86_SSE4_2_NATIVE
 // Comparison mode for _mm_cmpestri
 #define FIRST_DIFF                                                             \
     (SIMDE_SIDD_UBYTE_OPS | SIMDE_SIDD_CMP_EQUAL_EACH |                        \
@@ -40,6 +41,7 @@
 #define LAST_NON_ZERO                                                          \
     (SIMDE_SIDD_UBYTE_OPS | SIMDE_SIDD_CMP_EQUAL_ANY |                         \
      SIMDE_SIDD_MASKED_NEGATIVE_POLARITY | SIMDE_SIDD_MOST_SIGNIFICANT)
+#endif
 
 namespace HPCombi {
 

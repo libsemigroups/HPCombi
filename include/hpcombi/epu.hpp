@@ -29,6 +29,7 @@
 #include "vect_generic.hpp"  // for VectGeneric
 
 #include "simde/x86/sse4.1.h"  // for simde_mm_max_epu8, simde...
+#include "simde/x86/sse4.2.h"  // for ???
 
 namespace HPCombi {
 
