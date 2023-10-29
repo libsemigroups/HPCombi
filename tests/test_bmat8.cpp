@@ -111,11 +111,8 @@ TEST_CASE_METHOD(BMat8Fixture, "BMat8::transpose", "[BMat8][001]") {
     }
 }
 
-TEST_AGREES(BMat8Fixture, BMat8, transpose, transpose_mask, BMlist,
-            "[BMat8][002]");
-
-TEST_AGREES(BMat8Fixture, BMat8, transpose, transpose_maskd, BMlist,
-            "[BMat8][003]");
+TEST_AGREES(BMat8Fixture, transpose, transpose_mask, BMlist, "[BMat8][002]");
+TEST_AGREES(BMat8Fixture, transpose, transpose_maskd, BMlist, "[BMat8][003]");
 
 TEST_CASE_METHOD(BMat8Fixture, "BMat8::transpose2", "[BMat8][004]") {
     for (auto a : BMlist) {
@@ -344,13 +341,13 @@ TEST_CASE_METHOD(BMat8Fixture, "BMat8::row_space_size", "[BMat8][012]") {
     CHECK(bmm1.row_space_size() == 6);
 }
 
-TEST_AGREES(BMat8Fixture, BMat8, row_space_size_ref, row_space_size, BMlist,
+TEST_AGREES(BMat8Fixture, row_space_size_ref, row_space_size, BMlist,
             "[BMat8][013]");
-TEST_AGREES(BMat8Fixture, BMat8, row_space_size_ref, row_space_size_incl,
+TEST_AGREES(BMat8Fixture, row_space_size_ref, row_space_size_incl,
             BMlist, "[BMat8][014]");
-TEST_AGREES(BMat8Fixture, BMat8, row_space_size_ref, row_space_size_incl1,
+TEST_AGREES(BMat8Fixture, row_space_size_ref, row_space_size_incl1,
             BMlist, "[BMat8][015]");
-TEST_AGREES(BMat8Fixture, BMat8, row_space_size_ref, row_space_size_bitset,
+TEST_AGREES(BMat8Fixture, row_space_size_ref, row_space_size_bitset,
             BMlist, "[BMat8][016]");
 
 TEST_CASE_METHOD(BMat8Fixture, "BMat8::row_space_included", "[BMat8][017]") {
@@ -373,9 +370,9 @@ TEST_CASE_METHOD(BMat8Fixture, "BMat8::row_space_included", "[BMat8][017]") {
     CHECK(m3.row_space_included(BMat8::one()));
 }
 
-TEST_AGREES2(BMat8Fixture, BMat8, row_space_included, row_space_included_ref,
+TEST_AGREES2(BMat8Fixture, row_space_included, row_space_included_ref,
              BMlist, "[BMat8][018]");
-TEST_AGREES2(BMat8Fixture, BMat8, row_space_included, row_space_included_bitset,
+TEST_AGREES2(BMat8Fixture, row_space_included, row_space_included_bitset,
              BMlist, "[BMat8][019]");
 
 TEST_CASE_METHOD(BMat8Fixture, "BMat8::row_space_included2", "[BMat8][020]") {

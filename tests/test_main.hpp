@@ -22,48 +22,47 @@
 #include <catch2/catch_test_macros.hpp>
 #include <catch2/matchers/catch_matchers_templated.hpp>
 
-// In the followings "type" is only used for documentation
-#define TEST_AGREES_FUN(fixture, type, ref, fun, vct, tags)                    \
-    TEST_CASE_METHOD(fixture, #type "::" #ref " == " #type "::" #fun, tags) {  \
+#define TEST_AGREES_FUN(fixture, ref, fun, vct, tags)                          \
+    TEST_CASE_METHOD(fixture, #ref " == " #fun, tags) {                        \
         for (auto p : vct) {                                                   \
-            CHECK(fun(p) == ref(p));                                         \
+            CHECK(fun(p) == ref(p));                                           \
         }                                                                      \
     }
 
-#define TEST_AGREES_FUN_EPU8(fixture, type, ref, fun, vct, tags)               \
-    TEST_CASE_METHOD(fixture, #type "::" #ref " == " #type "::" #fun, tags) {  \
+#define TEST_AGREES_FUN_EPU8(fixture, ref, fun, vct, tags)                     \
+    TEST_CASE_METHOD(fixture, #ref " == " #fun, tags) {                        \
         for (auto p : vct) {                                                   \
-            CHECK_THAT(fun(p), Equals(ref(p)));                              \
+            CHECK_THAT(fun(p), Equals(ref(p)));                                \
         }                                                                      \
     }
 
-#define TEST_AGREES(fixture, type, ref, fun, vct, tags)                        \
-    TEST_CASE_METHOD(fixture, #type "::" #ref " == " #type "::" #fun, tags) {  \
+#define TEST_AGREES(fixture, ref, fun, vct, tags)                              \
+    TEST_CASE_METHOD(fixture, #ref " == " #fun, tags) {                        \
         for (auto p : vct) {                                                   \
-            CHECK(p.fun() == p.ref());                                       \
+            CHECK(p.fun() == p.ref());                                         \
         }                                                                      \
     }
 
-#define TEST_AGREES2(fixture, type, ref, fun, vct, tags)                       \
-    TEST_CASE_METHOD(fixture, #type "::" #ref " == " #type "::" #fun, tags) {  \
+#define TEST_AGREES2(fixture, ref, fun, vct, tags)                             \
+    TEST_CASE_METHOD(fixture, #ref " == " #fun, tags) {                        \
         for (auto p1 : vct) {                                                  \
             for (auto p2 : vct) {                                              \
-                CHECK(p1.fun(p2) == p1.ref(p2));                             \
+                CHECK(p1.fun(p2) == p1.ref(p2));                               \
             }                                                                  \
         }                                                                      \
     }
 
-#define TEST_AGREES_EPU8(fixture, type, ref, fun, vct, tags)                   \
-    TEST_CASE_METHOD(fixture, #type "::" #ref " == " #type "::" #fun, tags) {  \
+#define TEST_AGREES_EPU8(fixture, ref, fun, vct, tags)                         \
+    TEST_CASE_METHOD(fixture, #ref " == " #fun, tags) {                        \
         for (auto p : vct) {                                                   \
-            CHECK_THAT(p.fun(), Equals(p.ref()));                            \
+            CHECK_THAT(p.fun(), Equals(p.ref()));                              \
         }                                                                      \
     }
 
-#define TEST_AGREES_EPU8_FUN(fixture, type, ref, fun, vct, tags)               \
-    TEST_CASE_METHOD(fixture, #type "::" #ref " == " #type "::" #fun, tags) {  \
+#define TEST_AGREES_EPU8_FUN(fixture, ref, fun, vct, tags)                     \
+    TEST_CASE_METHOD(fixture, #ref " == " #fun, tags) {                        \
         for (auto p : vct) {                                                   \
-            CHECK_THAT(fun(p), Equals(ref(p)));                              \
+            CHECK_THAT(fun(p), Equals(ref(p)));                                \
         }                                                                      \
     }
 

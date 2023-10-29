@@ -389,8 +389,7 @@ TEST_CASE_METHOD(Perm16Fixture, "PPerm16::right_one", "[PPerm16][020]") {
 }
 
 #ifdef SIMDE_X86_SSE4_2_NATIVE
-TEST_AGREES(Perm16Fixture, PPerm16, inverse_ref, inverse_find, PPlist,
-            "[PPerm16][021]");
+TEST_AGREES(Perm16Fixture, inverse_ref, inverse_find, PPlist, "[PPerm16][021]");
 #endif
 
 TEST_CASE_METHOD(Perm16Fixture, "Perm16::fix_points_mask", "[PPerm16][022]") {
@@ -471,14 +470,10 @@ TEST_CASE_METHOD(Perm16Fixture, "Perm16::inverse_ref", "[Perm16][027]") {
     }
 }
 
-TEST_AGREES(Perm16Fixture, Perm16, inverse_ref, inverse_find, Plist,
-            "[Perm16][028]");
-TEST_AGREES(Perm16Fixture, Perm16, inverse_ref, inverse_pow, Plist,
-            "[Perm16][029]");
-TEST_AGREES(Perm16Fixture, Perm16, inverse_ref, inverse_cycl, Plist,
-            "[Perm16][030]");
-TEST_AGREES(Perm16Fixture, Perm16, inverse_ref, inverse, Plist,
-            "[Perm16][031]");
+TEST_AGREES(Perm16Fixture, inverse_ref, inverse_find, Plist, "[Perm16][028]");
+TEST_AGREES(Perm16Fixture, inverse_ref, inverse_pow, Plist, "[Perm16][029]");
+TEST_AGREES(Perm16Fixture, inverse_ref, inverse_cycl, Plist, "[Perm16][030]");
+TEST_AGREES(Perm16Fixture, inverse_ref, inverse, Plist, "[Perm16][031]");
 
 TEST_CASE_METHOD(Perm16Fixture, "Perm16::lehmer_ref", "[Perm16][032]") {
     CHECK_THAT(Perm16::one().lehmer(), Equals(zero));
@@ -488,10 +483,8 @@ TEST_CASE_METHOD(Perm16Fixture, "Perm16::lehmer_ref", "[Perm16][032]") {
                  Equals(epu8{1, 1, 1, 3, 0, 1, 0, 0, 0, 0, 0, 0, 0, 2, 1, 0}));
 }
 
-TEST_AGREES_EPU8(Perm16Fixture, Perm16, lehmer_ref, lehmer_arr, Plist,
-                 "[Perm16][033]");
-TEST_AGREES_EPU8(Perm16Fixture, Perm16, lehmer_ref, lehmer, Plist,
-                 "[Perm16][034]");
+TEST_AGREES_EPU8(Perm16Fixture, lehmer_ref, lehmer_arr, Plist, "[Perm16][033]");
+TEST_AGREES_EPU8(Perm16Fixture, lehmer_ref, lehmer, Plist, "[Perm16][034]");
 
 TEST_CASE_METHOD(Perm16Fixture, "Perm16::length_ref", "[Perm16][035]") {
     CHECK(Perm16::one().length() == 0);
@@ -499,9 +492,8 @@ TEST_CASE_METHOD(Perm16Fixture, "Perm16::length_ref", "[Perm16][035]") {
     CHECK(PPb.length() == 10);
 }
 
-TEST_AGREES(Perm16Fixture, Perm16, length_ref, length_arr, Plist,
-            "[Perm16][036]");
-TEST_AGREES(Perm16Fixture, Perm16, length_ref, length, Plist, "[Perm16][037]");
+TEST_AGREES(Perm16Fixture, length_ref, length_arr, Plist, "[Perm16][036]");
+TEST_AGREES(Perm16Fixture, length_ref, length, Plist, "[Perm16][037]");
 
 TEST_CASE_METHOD(Perm16Fixture, "Perm16::nb_descents_ref", "[Perm16][038]") {
     CHECK(Perm16::one().nb_descents_ref() == 0);
@@ -510,7 +502,7 @@ TEST_CASE_METHOD(Perm16Fixture, "Perm16::nb_descents_ref", "[Perm16][038]") {
     CHECK(Perm16::one().nb_descents() == 0);
 }
 
-TEST_AGREES(Perm16Fixture, Perm16, nb_descents_ref, nb_descents, Plist,
+TEST_AGREES(Perm16Fixture, nb_descents_ref, nb_descents, Plist,
             "[Perm16][039]");
 
 TEST_CASE_METHOD(Perm16Fixture, "Perm16::nb_cycles_ref", "[Perm16][040]") {
@@ -519,8 +511,7 @@ TEST_CASE_METHOD(Perm16Fixture, "Perm16::nb_cycles_ref", "[Perm16][040]") {
     CHECK(PPb.nb_cycles_ref() == 10);
 }
 
-TEST_AGREES(Perm16Fixture, Perm16, nb_cycles_ref, nb_cycles, Plist,
-            "[Perm16][041]");
+TEST_AGREES(Perm16Fixture, nb_cycles_ref, nb_cycles, Plist, "[Perm16][041]");
 
 TEST_CASE_METHOD(Perm16Fixture, "Perm16::left_weak_leq_ref", "[Perm16][042]") {
     CHECK(Perm16::one().left_weak_leq_ref(Perm16::one()));
