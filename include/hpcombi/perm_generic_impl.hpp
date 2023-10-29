@@ -17,7 +17,7 @@ namespace HPCombi {
 
 template <size_t Size, typename Expo>
 PermGeneric<Size, Expo>::PermGeneric(std::initializer_list<Expo> il) {
-    assert(il.size() <= Size);
+    HPCOMBI_ASSERT(il.size() <= Size);
     std::copy(il.begin(), il.end(), this->v.begin());
     for (Expo i = il.size(); i < Size; i++)
         this->v[i] = i;
@@ -26,7 +26,7 @@ PermGeneric<Size, Expo>::PermGeneric(std::initializer_list<Expo> il) {
 template <size_t Size, typename Expo>
 PermGeneric<Size, Expo>
 PermGeneric<Size, Expo>::elementary_transposition(uint64_t i) {
-    assert(i < Size);
+    HPCOMBI_ASSERT(i < Size);
     PermGeneric res{{}};
     res[i] = i + 1;
     res[i + 1] = i;

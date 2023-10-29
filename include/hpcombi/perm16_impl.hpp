@@ -28,17 +28,17 @@ namespace HPCombi {
 
 inline PTransf16::PTransf16(std::initializer_list<uint8_t> il)
     : Vect16(epu8id) {
-    assert(il.size() <= 16);
+    HPCOMBI_ASSERT(il.size() <= 16);
     std::copy(il.begin(), il.end(), HPCombi::as_array(v).begin());
 }
 
 inline PTransf16::PTransf16(std::vector<uint8_t> dom, std::vector<uint8_t> rng,
                             size_t /*unused */)
     : Vect16(Epu8(0xFF)) {
-    assert(dom.size() == rng.size());
-    assert(dom.size() <= 16);
+    HPCOMBI_ASSERT(dom.size() == rng.size());
+    HPCOMBI_ASSERT(dom.size() <= 16);
     for (size_t i = 0; i < dom.size(); ++i) {
-        assert(dom[i] < 16);
+        HPCOMBI_ASSERT(dom[i] < 16);
         v[dom[i]] = rng[i];
     }
 }
@@ -191,7 +191,7 @@ inline Perm16 Perm16::unrankSJT(int n, int r) {
 }
 
 inline Perm16 Perm16::elementary_transposition(uint64_t i) {
-    assert(i < 16);
+    HPCOMBI_ASSERT(i < 16);
     epu8 res = one();
     res[i] = i + 1;
     res[i + 1] = i;

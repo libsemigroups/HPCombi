@@ -42,7 +42,7 @@ template <size_t Size, typename Expo = uint8_t> struct VectGeneric {
     VectGeneric() = default;
     VectGeneric(const std::array<Expo, Size> &_v) : v(_v) {}  // NOLINT
     VectGeneric(std::initializer_list<Expo> il, Expo def = 0) {
-        assert(il.size() <= Size);
+        HPCOMBI_ASSERT(il.size() <= Size);
         std::copy(il.begin(), il.end(), v.begin());
         std::fill(v.begin() + il.size(), v.end(), def);
     }
