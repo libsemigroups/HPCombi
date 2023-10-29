@@ -83,7 +83,7 @@ class Fix_BMat8 {
         return true;                                                           \
     };
 
-#define BENCHMARK_MEM_FN_PAIR(mem_fn, sample)                                  \
+#define BENCHMARK_MEM_FN_PAIR_EQ(mem_fn, sample)                                  \
     BENCHMARK(#mem_fn) {                                                       \
         for (auto &pair : sample) {                                            \
             auto val =                                                         \
@@ -93,7 +93,17 @@ class Fix_BMat8 {
         return true;                                                           \
     };
 
-TEST_CASE_METHOD(Fix_BMat8, "Row space size benchmarks 1000 BMat8", "[BMat8][000]") {
+#define BENCHMARK_MEM_FN_PAIR(mem_fn, sample)                                  \
+    BENCHMARK(#mem_fn) {                                                       \
+        for (auto &pair : sample) {                                            \
+            volatile auto val = pair.first.mem_fn(pair.second);                \
+        }                                                                      \
+        return true;                                                           \
+    };
+
+
+TEST_CASE_METHOD(Fix_BMat8, "Row space size benchmarks 1000 BMat8",
+                 "[BMat8][000]") {
     BENCHMARK_MEM_FN(row_space_size_ref, sample);
     BENCHMARK_MEM_FN(row_space_size_bitset, sample);
     BENCHMARK_MEM_FN(row_space_size_incl1, sample);
@@ -107,10 +117,11 @@ TEST_CASE_METHOD(Fix_BMat8, "Transpose benchmarks 1000 BMat8", "[BMat8][000]") {
     BENCHMARK_MEM_FN(transpose_maskd, sample);
 }
 
-TEST_CASE_METHOD(Fix_BMat8, "Transpose pairs benchmarks 1000 BMat8", "[BMat8][002]") {
-    BENCHMARK_MEM_FN_PAIR(transpose, pair_sample);
-    BENCHMARK_MEM_FN_PAIR(transpose_mask, pair_sample);
-    BENCHMARK_MEM_FN_PAIR(transpose_maskd, pair_sample);
+TEST_CASE_METHOD(Fix_BMat8, "Transpose pairs benchmarks 1000 BMat8",
+                 "[BMat8][002]") {
+    BENCHMARK_MEM_FN_PAIR_EQ(transpose, pair_sample);
+    BENCHMARK_MEM_FN_PAIR_EQ(transpose_mask, pair_sample);
+    BENCHMARK_MEM_FN_PAIR_EQ(transpose_maskd, pair_sample);
     BENCHMARK("transpose2") {
         for (auto &pair : pair_sample) {
             BMat8::transpose2(pair.first, pair.second);
@@ -119,49 +130,35 @@ TEST_CASE_METHOD(Fix_BMat8, "Transpose pairs benchmarks 1000 BMat8", "[BMat8][00
         return true;
     };
 }
-/*
 
-
-
-int Bench_row_space_included() {
-    myBench(
-        "row_space_incl_ref",
-        [](std::pair<BMat8, BMat8> p) {
-            return p.first.row_space_included_ref(p.second);
-        },
-        pair_sample);
-    myBench(
-        "row_space_incl_bitset",
-        [](std::pair<BMat8, BMat8> p) {
-            return p.first.row_space_included_bitset(p.second);
-        },
-        pair_sample);
-    myBench(
-        "row_space_incl_rotate",
-        [](std::pair<BMat8, BMat8> p) {
-            return p.first.row_space_included(p.second);
-        },
-        pair_sample);
-    return 0;
+TEST_CASE_METHOD(Fix_BMat8,
+                 "Inclusion of row spaces benchmarks 1000 BMat8",
+                 "[BMat8][002]") {
+    BENCHMARK_MEM_FN_PAIR(row_space_included_ref, pair_sample);
+    BENCHMARK_MEM_FN_PAIR(row_space_included_bitset, pair_sample);
+    BENCHMARK_MEM_FN_PAIR(row_space_included, pair_sample);
 }
 
-int Bench_row_space_included2() {
-    myBench(
-        "row_space_incl2_rotate",
-        [](std::pair<BMat8, BMat8> p) {
-            return p.first.row_space_included(p.second) ==
-                   p.second.row_space_included(p.first);
-        },
-        pair_sample);
-    myBench(
-        "row_space_incl2",
-        [](std::pair<BMat8, BMat8> p) {
-            auto res = BMat8::row_space_included2(p.first, p.second,
-p.second, p.first); return res.first == res.second;
-        },
-        pair_sample);
-    return 0;
+TEST_CASE_METHOD(Fix_BMat8,
+                 "Inclusion of row spaces benchmarks 1000 BMat8 by pairs",
+                 "[BMat8][002]") {
+    BENCHMARK("rotating pairs implementation") {
+        for (auto &pair : pair_sample) {
+            auto res = BMat8::row_space_included2(pair.first, pair.second,
+                                                  pair.second, pair.first);
+            volatile auto val = (res.first == res.second);
+        }
+        return true;
+    };
+    BENCHMARK("Calling twice implementation") {
+        for (auto &pair : pair_sample) {
+            volatile auto val = (
+                pair.first.row_space_included(pair.second) ==
+                pair.second.row_space_included(pair.first));
+
+        }
+        return true;
+    };
 }
 
-*/
 }  // namespace HPCombi
