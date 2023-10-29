@@ -121,8 +121,8 @@ struct alignas(16) PTransf16 : public Vect16 {
 struct Transf16 : public PTransf16 {
     Transf16() = default;
     constexpr Transf16(const Transf16 &v) = default;
-    constexpr Transf16(const vect v) : PTransf16(v) {}
-    constexpr Transf16(const epu8 x) : PTransf16(x) {}
+    /* implicit */ constexpr Transf16(const vect v) : PTransf16(v) {}  // NOLINT
+    /* implicit */ constexpr Transf16(const epu8 x) : PTransf16(x) {}  // NOLINT
     Transf16(std::initializer_list<uint8_t> il) : PTransf16(il) {}
     Transf16 &operator=(const Transf16 &) = default;
 
@@ -150,8 +150,8 @@ struct Transf16 : public PTransf16 {
 struct PPerm16 : public PTransf16 {
     PPerm16() = default;
     constexpr PPerm16(const PPerm16 &v) = default;
-    constexpr PPerm16(const vect v) : PTransf16(v) {}
-    constexpr PPerm16(const epu8 x) : PTransf16(x) {}
+    /* implicit */ constexpr PPerm16(const vect v) : PTransf16(v) {}  // NOLINT
+    /* implicit */ constexpr PPerm16(const epu8 x) : PTransf16(x) {}  // NOLINT
     PPerm16(std::vector<uint8_t> dom, std::vector<uint8_t> rng,
             size_t = 0 /* unused */)
         : PTransf16(dom, rng) {}
@@ -209,8 +209,8 @@ struct PPerm16 : public PTransf16 {
 struct Perm16 : public Transf16 /* public PPerm : diamond problem */ {
     Perm16() = default;
     constexpr Perm16(const Perm16 &) = default;
-    constexpr Perm16(const vect v) : Transf16(v) {}
-    constexpr Perm16(const epu8 x) : Transf16(x) {}
+    /* implicit */ constexpr Perm16(const vect v) : Transf16(v) {}  // NOLINT
+    /* implicit */ constexpr Perm16(const epu8 x) : Transf16(x) {}  // NOLINT
     Perm16 &operator=(const Perm16 &) = default;
     Perm16(std::initializer_list<uint8_t> il) : Transf16(il) {}
 
