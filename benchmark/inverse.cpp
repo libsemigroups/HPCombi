@@ -23,7 +23,7 @@
 #include <vector>
 #include <x86intrin.h>
 
-#include "perm16.hpp"
+#include "hpcombi/perm16.hpp"
 #include "testtools.hpp"
 
 using namespace std;

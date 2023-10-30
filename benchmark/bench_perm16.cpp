@@ -13,137 +13,115 @@
 //                  http://www.gnu.org/licenses/                              //
 //****************************************************************************//
 
-#include <benchmark/benchmark.h>
+#include <cstdlib>
 #include <iostream>
-#include <stdlib.h>
-#include <string.h>
+#include <string>
+
+#include <catch2/benchmark/catch_benchmark.hpp>
+#include <catch2/catch_test_macros.hpp>
 
 #include "bench_fixture.hpp"
-#include "compilerinfo.hpp"
-#include "cpu_x86_impl.hpp"
+#include "bench_main.hpp"
 
-#include "perm16.hpp"
-#include "perm_generic.hpp"
+#include "hpcombi/perm16.hpp"
+#include "hpcombi/perm_generic.hpp"
 
-using namespace FeatureDetector;
+
 using namespace std;
-using HPCombi::epu8;
-
-// const Fix_perm16 sample;
-const Fix_epu8 sample;
-const std::string SIMDSET = cpu_x86::get_highest_SIMD();
-const std::string PROCID = cpu_x86::get_proc_string();
-
 using HPCombi::epu8;
 using HPCombi::Perm16;
 using HPCombi::PTransf16;
 using HPCombi::Transf16;
 using HPCombi::Vect16;
 
-// ##################################################################################
-template <typename TF, typename Sample>
-void myBench(const string &name, TF pfunc, Sample &sample) {
-    string fullname = name + "_" + CXX_VER + "_proc-" + PROCID;
-    benchmark::RegisterBenchmark(
-        fullname.c_str(), [pfunc, sample](benchmark::State &st) {
-            for (auto _ : st) {
-                for (auto elem : sample) {
-                    benchmark::DoNotOptimize(pfunc(elem));
-                }
-            }
-        });
+// using namespace FeatureDetector;
+const std::string PROCID = "TODO";
+// const std::string SIMDSET = cpu_x86::get_highest_SIMD();
+
+std::vector<Perm16> make_Perm16(size_t n) {
+    std::vector<epu8> gens = rand_perms(n);
+    std::vector<Perm16> res{};
+    std::transform(gens.cbegin(), gens.cend(), std::back_inserter(res),
+                   [](epu8 x) -> Perm16 { return x; });
+    return res;
 }
 
-#define myBenchLoop(descr, methname, smp)                                      \
-    myBench(                                                                   \
-        descr,                                                                 \
-        [](Perm16 p) {                                                         \
-            for (int i = 0; i < 100; i++)                                      \
-                p = p.methname();                                              \
-            return p;                                                          \
-        },                                                                     \
-        smp)
-#define myBenchMeth(descr, methname, smp)                                      \
-    myBench(                                                                   \
-        descr,                                                                 \
-        [](Perm16 p) {                                                         \
-            for (int i = 0; i < 100; i++)                                      \
-                benchmark::DoNotOptimize(p.methname());                        \
-            return p.methname();                                               \
-        },                                                                     \
-        smp)
-
-#define myBenchMeth2(descr, methname, smp)                                     \
-    myBench(                                                                   \
-        descr,                                                                 \
-        [](Perm16 p) {                                                         \
-            for (Perm16 p1 : smp)                                              \
-                benchmark::DoNotOptimize(p.methname(p1));                      \
-            return 1;                                                          \
-        },                                                                     \
-        smp);
-
-// ##################################################################################
-int Bench_inverse() {
-    myBenchMeth("inverse_ref1", inverse_ref, sample.perms);
-    myBenchMeth("inverse_ref2", inverse_ref, sample.perms);
-    myBenchMeth("inverse_arr", inverse_arr, sample.perms);
-    myBenchMeth("inverse_sort", inverse_sort, sample.perms);
-    myBenchMeth("inverse_find", inverse_find, sample.perms);
-    myBenchMeth("inverse_pow", inverse_pow, sample.perms);
-    myBenchMeth("inverse_cycl", inverse_cycl, sample.perms);
-    return 0;
+std::vector<std::pair<Perm16, Perm16>> make_Pair_Perm16(size_t n) {
+    std::vector<epu8> gens = rand_perms(n);
+    std::vector<std::pair<Perm16, Perm16>> res{};
+    for (auto g1 : gens)
+        for (auto g2 : gens) {
+            res.push_back({g1, g2});
+        }
+    return res;
 }
 
-int Bench_lehmer() {
-    myBenchMeth("lehmer_ref1", lehmer_ref, sample.perms);
-    myBenchMeth("lehmer_ref2", lehmer_ref, sample.perms);
-    myBenchMeth("lehmer_arr", lehmer_arr, sample.perms);
-    myBenchMeth("lehmer_opt", lehmer, sample.perms);
-    return 0;
+std::vector<Transf16> make_Transf16(size_t n) {
+    std::vector<epu8> gens = rand_transf(n);
+    std::vector<Transf16> res{};
+    std::transform(gens.cbegin(), gens.cend(), std::back_inserter(res),
+                   [](epu8 x) -> Transf16 { return x; });
+    return res;
 }
 
-int Bench_length() {
-    myBenchMeth("length_ref1", length_ref, sample.perms);
-    myBenchMeth("length_ref2", length_ref, sample.perms);
-    myBenchMeth("length_arr", length_arr, sample.perms);
-    myBenchMeth("length_opt", length, sample.perms);
-    return 0;
+class Fix_Perm16 {
+  public:
+    Fix_Perm16() :
+            sample_Perm16(make_Perm16(1000)),
+            sample_Transf16(make_Transf16(1000)),
+            sample_pair_Perm16(make_Pair_Perm16(40))
+    {}
+    ~Fix_Perm16() {}
+    const std::vector<Perm16> sample_Perm16;
+    const std::vector<Transf16> sample_Transf16;
+    const std::vector<std::pair<Perm16, Perm16>> sample_pair_Perm16;
+};
+
+
+TEST_CASE_METHOD(Fix_Perm16, "Inverse of 1000 Perm16", "[Perm16][000]") {
+    BENCHMARK_MEM_FN(inverse_ref, sample_Perm16);
+    BENCHMARK_MEM_FN(inverse_arr, sample_Perm16);
+    BENCHMARK_MEM_FN(inverse_sort, sample_Perm16);
+    BENCHMARK_MEM_FN(inverse_find, sample_Perm16);
+    BENCHMARK_MEM_FN(inverse_pow, sample_Perm16);
+    BENCHMARK_MEM_FN(inverse_cycl, sample_Perm16);
+    BENCHMARK_MEM_FN(inverse, sample_Perm16);
 }
 
-int Bench_nb_descents() {
-    myBenchMeth("nb_descents_ref1", nb_descents_ref, sample.perms);
-    myBenchMeth("nb_descents_ref2", nb_descents_ref, sample.perms);
-    myBenchMeth("nb_descents_opt", nb_descents, sample.perms);
-    return 0;
+TEST_CASE_METHOD(Fix_Perm16, "Lehmer code of 1000 Perm16", "[Perm16][000]") {
+    BENCHMARK_MEM_FN(lehmer_ref, sample_Perm16);
+    BENCHMARK_MEM_FN(lehmer_arr, sample_Perm16);
+    BENCHMARK_MEM_FN(lehmer, sample_Perm16);
 }
 
-int Bench_nb_cycles() {
-    myBenchMeth("nb_cycles_ref1", nb_cycles_ref, sample.perms);
-    myBenchMeth("nb_cycles_ref2", nb_cycles_ref, sample.perms);
-    myBenchMeth("nb_cycles_opt", nb_cycles, sample.perms);
-    return 0;
+TEST_CASE_METHOD(Fix_Perm16, "Coxeter Length of 1000 Perm16", "[Perm16][000]") {
+    BENCHMARK_MEM_FN(length_ref, sample_Perm16);
+    BENCHMARK_MEM_FN(length_arr, sample_Perm16);
+    BENCHMARK_MEM_FN(length, sample_Perm16);
 }
 
-int Bench_left_weak_leq() {
-    myBenchMeth2("leqweak_ref1", left_weak_leq_ref, sample.perms);
-    myBenchMeth2("leqweak_ref2", left_weak_leq_ref, sample.perms);
-    myBenchMeth2("leqweak_ref3", left_weak_leq_ref, sample.perms);
-    myBenchMeth2("leqweak_length", left_weak_leq_length, sample.perms);
-    myBenchMeth2("leqweak_opt", left_weak_leq, sample.perms);
-    return 0;
+TEST_CASE_METHOD(Fix_Perm16, "Number of descents of 1000 Perm16",
+                 "[Perm16][000]") {
+    BENCHMARK_MEM_FN(nb_descents_ref, sample_Perm16);
+    BENCHMARK_MEM_FN(nb_descents, sample_Perm16);
 }
 
-int Bench_rank() {
-    myBenchMeth("rank_ref1", rank_ref, sample.perms);
-    myBenchMeth("rank_ref2", rank_ref, sample.perms);
-    myBenchMeth("rank_ref3", rank_ref, sample.perms);
-    myBenchMeth("rank_opt", rank, sample.perms);
-    return 0;
+TEST_CASE_METHOD(Fix_Perm16, "Number of cycles of 1000 Perm16",
+                 "[Perm16][000]") {
+    BENCHMARK_MEM_FN(nb_cycles_ref, sample_Perm16);
+    BENCHMARK_MEM_FN(nb_cycles, sample_Perm16);
 }
 
-auto dummy = {Bench_inverse(),     Bench_lehmer(),    Bench_length(),
-              Bench_nb_descents(), Bench_nb_cycles(), Bench_left_weak_leq(),
-              Bench_rank()};
+TEST_CASE_METHOD(Fix_Perm16, "Weak order comparison of 1600 pairs of Perm16",
+                 "[Perm16][000]") {
+    BENCHMARK_MEM_FN_PAIR(left_weak_leq_ref, sample_pair_Perm16);
+    BENCHMARK_MEM_FN_PAIR(left_weak_leq_length, sample_pair_Perm16);
+    BENCHMARK_MEM_FN_PAIR(left_weak_leq, sample_pair_Perm16);
+}
 
-BENCHMARK_MAIN();
+TEST_CASE_METHOD(Fix_Perm16, "Rank of 1000 PTransf16",
+                 "[PTransf16][000]") {
+    BENCHMARK_MEM_FN(rank_ref, sample_Transf16);
+    BENCHMARK_MEM_FN(rank, sample_Transf16);
+}
+

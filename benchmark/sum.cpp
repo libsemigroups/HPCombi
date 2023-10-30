@@ -13,7 +13,7 @@
 //                  http://www.gnu.org/licenses/                              //
 //****************************************************************************//
 
-#include "perm16.hpp"
+#include "hpcombi/perm16.hpp"
 #include "testtools.hpp"
 #include <cstdlib>
 #include <iostream>

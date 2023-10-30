@@ -49,11 +49,22 @@ std::vector<epu8> rand_perms(int sz) {
     return res;
 }
 
+std::vector<epu8> rand_transf(int sz) {
+    std::vector<epu8> res(sz);
+    std::srand(std::time(0));
+    for (int i = 0; i < sz; i++)
+        res[i] = HPCombi::random_epu8(15);
+    return res;
+}
+
 class Fix_epu8 {
   public:
-    Fix_epu8() : vects(rand_epu8(size)), perms(rand_perms(size)) {}
+    Fix_epu8() : vects(rand_epu8(size)),
+                 transf(rand_transf(size)),
+                 perms(rand_perms(size)) {}
     ~Fix_epu8() {}
     const std::vector<epu8> vects;
+    const std::vector<epu8> transf;
     const std::vector<epu8> perms;
 };
 

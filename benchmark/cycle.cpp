@@ -22,7 +22,7 @@
 #include <iostream>
 #include <vector>
 
-#include "perm16.hpp"
+#include "hpcombi/perm16.hpp"
 #include "testtools.hpp"
 
 using namespace std;

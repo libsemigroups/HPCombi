@@ -21,7 +21,7 @@
 #include <iostream>
 #include <vector>
 
-#include "perm16.hpp"
+#include "hpcombi/perm16.hpp"
 namespace HPCombi {
 
 constexpr unsigned int factorial(unsigned int n) {
