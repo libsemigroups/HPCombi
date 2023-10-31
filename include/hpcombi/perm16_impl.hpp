@@ -74,8 +74,17 @@ inline uint32_t PTransf16::rank_ref() const {
             tmp[x] = 1;
     return std::accumulate(tmp.begin(), tmp.end(), uint8_t(0));
 }
-inline uint32_t PTransf16::rank() const {
+
+inline uint32_t PTransf16::rank_cmpestrm() const {
     return __builtin_popcountl(image_bitset());
+}
+
+inline uint32_t PTransf16::rank() const {
+#ifdef SIMDE_X86_SSE4_2_NATIVE
+    return rank_cmpestrm();
+#else
+    return rank_ref();
+#endif
 }
 
 inline epu8 PTransf16::fix_points_mask(bool complement) const {

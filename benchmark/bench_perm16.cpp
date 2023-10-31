@@ -26,7 +26,6 @@
 #include "hpcombi/perm16.hpp"
 #include "hpcombi/perm_generic.hpp"
 
-
 using namespace std;
 using HPCombi::epu8;
 using HPCombi::Perm16;
@@ -66,17 +65,15 @@ std::vector<Transf16> make_Transf16(size_t n) {
 
 class Fix_Perm16 {
   public:
-    Fix_Perm16() :
-            sample_Perm16(make_Perm16(1000)),
-            sample_Transf16(make_Transf16(1000)),
-            sample_pair_Perm16(make_Pair_Perm16(40))
-    {}
+    Fix_Perm16()
+        : sample_Perm16(make_Perm16(1000)),
+          sample_Transf16(make_Transf16(1000)),
+          sample_pair_Perm16(make_Pair_Perm16(40)) {}
     ~Fix_Perm16() {}
     const std::vector<Perm16> sample_Perm16;
     const std::vector<Transf16> sample_Transf16;
     const std::vector<std::pair<Perm16, Perm16>> sample_pair_Perm16;
 };
-
 
 TEST_CASE_METHOD(Fix_Perm16, "Inverse of 1000 Perm16", "[Perm16][000]") {
     BENCHMARK_MEM_FN(inverse_ref, sample_Perm16);
@@ -88,40 +85,39 @@ TEST_CASE_METHOD(Fix_Perm16, "Inverse of 1000 Perm16", "[Perm16][000]") {
     BENCHMARK_MEM_FN(inverse, sample_Perm16);
 }
 
-TEST_CASE_METHOD(Fix_Perm16, "Lehmer code of 1000 Perm16", "[Perm16][000]") {
+TEST_CASE_METHOD(Fix_Perm16, "Lehmer code of 1000 Perm16", "[Perm16][001]") {
     BENCHMARK_MEM_FN(lehmer_ref, sample_Perm16);
     BENCHMARK_MEM_FN(lehmer_arr, sample_Perm16);
     BENCHMARK_MEM_FN(lehmer, sample_Perm16);
 }
 
-TEST_CASE_METHOD(Fix_Perm16, "Coxeter Length of 1000 Perm16", "[Perm16][000]") {
+TEST_CASE_METHOD(Fix_Perm16, "Coxeter Length of 1000 Perm16", "[Perm16][002]") {
     BENCHMARK_MEM_FN(length_ref, sample_Perm16);
     BENCHMARK_MEM_FN(length_arr, sample_Perm16);
     BENCHMARK_MEM_FN(length, sample_Perm16);
 }
 
 TEST_CASE_METHOD(Fix_Perm16, "Number of descents of 1000 Perm16",
-                 "[Perm16][000]") {
+                 "[Perm16][003]") {
     BENCHMARK_MEM_FN(nb_descents_ref, sample_Perm16);
     BENCHMARK_MEM_FN(nb_descents, sample_Perm16);
 }
 
 TEST_CASE_METHOD(Fix_Perm16, "Number of cycles of 1000 Perm16",
-                 "[Perm16][000]") {
+                 "[Perm16][004]") {
     BENCHMARK_MEM_FN(nb_cycles_ref, sample_Perm16);
     BENCHMARK_MEM_FN(nb_cycles, sample_Perm16);
 }
 
 TEST_CASE_METHOD(Fix_Perm16, "Weak order comparison of 1600 pairs of Perm16",
-                 "[Perm16][000]") {
+                 "[Perm16][005]") {
     BENCHMARK_MEM_FN_PAIR(left_weak_leq_ref, sample_pair_Perm16);
     BENCHMARK_MEM_FN_PAIR(left_weak_leq_length, sample_pair_Perm16);
     BENCHMARK_MEM_FN_PAIR(left_weak_leq, sample_pair_Perm16);
 }
 
-TEST_CASE_METHOD(Fix_Perm16, "Rank of 1000 PTransf16",
-                 "[PTransf16][000]") {
+TEST_CASE_METHOD(Fix_Perm16, "Rank of 1000 PTransf16", "[PTransf16][006]") {
     BENCHMARK_MEM_FN(rank_ref, sample_Transf16);
+    BENCHMARK_MEM_FN(rank_cmpestrm, sample_Transf16);
     BENCHMARK_MEM_FN(rank, sample_Transf16);
 }
-

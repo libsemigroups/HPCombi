@@ -99,6 +99,8 @@ struct alignas(16) PTransf16 : public Vect16 {
     uint32_t rank_ref() const;
     /** Returns the size of the image of \c *this */
     uint32_t rank() const;
+    //! Returns the size of the image of \c *this
+    uint32_t rank_cmpestrm() const;
 
     /** Returns a mask for the fix point of \c *this */
     epu8 fix_points_mask(bool complement = false) const;
