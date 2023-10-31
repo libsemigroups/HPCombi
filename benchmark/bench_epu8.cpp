@@ -112,28 +112,31 @@ static const epu8 bla = {0, 2, 1, 4, 3, 6, 5, 8, 7, 10, 9, 12, 11, 14, 13, 15};
 }  // namespace
 
 TEST_CASE_METHOD(Fix_epu8, "Sorting", "[Perm16][000]") {
-    BENCHMARK_FREE_FN("| no lambda | perms | 1", std_sort, Fix_epu8::perms);
-    BENCHMARK_FREE_FN("| no lambda | perms | 2", std_sort, Fix_epu8::perms);
-    BENCHMARK_FREE_FN("| no lambda | perms | 3", std_sort, Fix_epu8::perms);
-    BENCHMARK_FREE_FN("| no lambda | perms | 4", std_sort, Fix_epu8::perms);
-    BENCHMARK_FREE_FN("| no lambda | perms", arr_sort, Fix_epu8::perms);
-    BENCHMARK_FREE_FN("| no lambda | perms", gen_sort, Fix_epu8::perms);
-    BENCHMARK_FREE_FN("| no lambda | perms", insertion_sort, Fix_epu8::perms);
-    BENCHMARK_FREE_FN("| no lambda | perms", sort_odd_even, Fix_epu8::perms);
-    BENCHMARK_FREE_FN("| no lambda | perms", radix_sort, Fix_epu8::perms);
-    BENCHMARK_FREE_FN("| no lambda | perms", sort_pair, Fix_epu8::perms);
-    BENCHMARK_FREE_FN("| no lambda | perms", HPCombi::sorted, Fix_epu8::perms);
-
-    // lambda function is needed for inlining
+    BENCHMARK_FREE_FN("| no lambda | perms", std_sort, Fix_epu8::perms);
     BENCHMARK_LAMBDA("| lambda | perms", std_sort, Fix_epu8::perms);
+
+    BENCHMARK_FREE_FN("| no lambda | perms", arr_sort, Fix_epu8::perms);
     BENCHMARK_LAMBDA("| lambda | perms", arr_sort, Fix_epu8::perms);
 
+    BENCHMARK_FREE_FN("| no lambda | perms", gen_sort, Fix_epu8::perms);
     BENCHMARK_LAMBDA("| lambda | perms", gen_sort, Fix_epu8::perms);
+
+    BENCHMARK_FREE_FN("| no lambda | perms", insertion_sort, Fix_epu8::perms);
     BENCHMARK_LAMBDA("| lambda | perms", insertion_sort, Fix_epu8::perms);
+
+    BENCHMARK_FREE_FN("| no lambda | perms", sort_odd_even, Fix_epu8::perms);
     BENCHMARK_LAMBDA("| lambda | perms", sort_odd_even, Fix_epu8::perms);
+
     BENCHMARK_LAMBDA("| lambda | perms", radix_sort, Fix_epu8::perms);
+    BENCHMARK_FREE_FN("| no lambda | perms", radix_sort, Fix_epu8::perms);
+
+    BENCHMARK_FREE_FN("| no lambda | perms", sort_pair, Fix_epu8::perms);
     BENCHMARK_LAMBDA("| lambda | perms", sort_pair, Fix_epu8::perms);
+
+    BENCHMARK_FREE_FN("| no lambda | perms", HPCombi::sorted, Fix_epu8::perms);
     BENCHMARK_LAMBDA("| lambda | perms", HPCombi::sorted, Fix_epu8::perms);
+
+    // lambda function is needed for inlining
 
     BENCHMARK_LAMBDA("| lambda | vects", std_sort, Fix_epu8::vects);
     BENCHMARK_LAMBDA("| lambda | vects", arr_sort, Fix_epu8::vects);

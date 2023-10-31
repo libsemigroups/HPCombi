@@ -53,6 +53,7 @@ namespace detail {  // Implementation detail code
 
 /// Factory object for various SIMD constants in particular constexpr
 template <class TPU> struct TPUBuild {
+    // Type for Packed Unsigned integer (TPU)
     using type_elem = typename std::remove_reference_t<decltype((TPU{})[0])>;
     static constexpr size_t size_elem = sizeof(type_elem);
     static constexpr size_t size = sizeof(TPU) / size_elem;
@@ -153,6 +154,9 @@ inline VectGeneric<16> &as_VectGeneric(epu8 &v) {
 inline const VectGeneric<16> &as_VectGeneric(const epu8 &v) {
     return reinterpret_cast<const VectGeneric<16> &>(as_array(v));
 }
+
+// TODO up to this point in this file, everything could be generic to support
+// larger perms, such as Perm32 in the experiments dir.
 
 /** Test whether all the entries of a #HPCombi::epu8 are zero */
 inline bool is_all_zero(epu8 a) noexcept { return simde_mm_testz_si128(a, a); }
