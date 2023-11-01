@@ -47,19 +47,12 @@ template <size_t Size, typename Expo = uint8_t> struct VectGeneric {
     array v;
 
     VectGeneric() = default;
-    constexpr VectGeneric(const VectGeneric &v) = default;
 
-    VectGeneric(const std::array<Expo, Size> &_v) : v(_v) {}  // NOLINT
+    VectGeneric(const array &_v) : v(_v) {}  // NOLINT
     VectGeneric(std::initializer_list<Expo> il, Expo def = 0) {
         HPCOMBI_ASSERT(il.size() <= Size);
         std::copy(il.begin(), il.end(), v.begin());
         std::fill(v.begin() + il.size(), v.end(), def);
-    }
-
-    VectGeneric &operator=(const VectGeneric &) = default;
-    VectGeneric &operator=(const array &vv) {
-        v = vv;
-        return *this;
     }
 
     Expo operator[](uint64_t i) const { return v[i]; }
