@@ -57,8 +57,7 @@ class Fix_BMat8 {
         pair_sample;  // not const, transpose2 is in place
 };
 
-TEST_CASE_METHOD(Fix_BMat8, "Row space size benchmarks 1000 BMat8",
-                 "[BMat8][000]") {
+TEST_CASE_METHOD(Fix_BMat8, "Row space size", "[BMat8][000]") {
     BENCHMARK_MEM_FN(row_space_size_ref, sample);
     BENCHMARK_MEM_FN(row_space_size_bitset, sample);
     BENCHMARK_MEM_FN(row_space_size_incl1, sample);
@@ -66,14 +65,13 @@ TEST_CASE_METHOD(Fix_BMat8, "Row space size benchmarks 1000 BMat8",
     BENCHMARK_MEM_FN(row_space_size, sample);
 }
 
-TEST_CASE_METHOD(Fix_BMat8, "Transpose benchmarks 1000 BMat8", "[BMat8][000]") {
+TEST_CASE_METHOD(Fix_BMat8, "Transpose", "[BMat8][000]") {
     BENCHMARK_MEM_FN(transpose, sample);
     BENCHMARK_MEM_FN(transpose_mask, sample);
     BENCHMARK_MEM_FN(transpose_maskd, sample);
 }
 
-TEST_CASE_METHOD(Fix_BMat8, "Transpose pairs benchmarks 1000 BMat8",
-                 "[BMat8][002]") {
+TEST_CASE_METHOD(Fix_BMat8, "Transpose pairs", "[BMat8][002]") {
     BENCHMARK_MEM_FN_PAIR_EQ(transpose, pair_sample);
     BENCHMARK_MEM_FN_PAIR_EQ(transpose_mask, pair_sample);
     BENCHMARK_MEM_FN_PAIR_EQ(transpose_maskd, pair_sample);
@@ -86,16 +84,13 @@ TEST_CASE_METHOD(Fix_BMat8, "Transpose pairs benchmarks 1000 BMat8",
     };
 }
 
-TEST_CASE_METHOD(Fix_BMat8, "Inclusion of row spaces benchmarks 1000 BMat8",
-                 "[BMat8][002]") {
+TEST_CASE_METHOD(Fix_BMat8, "Row spaces inclusion", "[BMat8][002]") {
     BENCHMARK_MEM_FN_PAIR(row_space_included_ref, pair_sample);
     BENCHMARK_MEM_FN_PAIR(row_space_included_bitset, pair_sample);
     BENCHMARK_MEM_FN_PAIR(row_space_included, pair_sample);
 }
 
-TEST_CASE_METHOD(Fix_BMat8,
-                 "Inclusion of row spaces benchmarks 1000 BMat8 by pairs",
-                 "[BMat8][002]") {
+TEST_CASE_METHOD(Fix_BMat8, "Pair row space inclusion", "[BMat8][002]") {
     BENCHMARK("rotating pairs implementation") {
         for (auto &pair : pair_sample) {
             auto res = BMat8::row_space_included2(pair.first, pair.second,
