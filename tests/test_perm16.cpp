@@ -27,7 +27,10 @@ std::vector<Perm16> all_perms(uint8_t sz) {
     epu8 x = HPCombi::epu8id;
     res.push_back(x);
     auto &refx = HPCombi::as_array(x);
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wstringop-overflow"
     while (std::next_permutation(refx.begin(), refx.begin() + sz)) {
+#pragma GCC diagnostic pop
         res.push_back(x);
     }
     return res;
