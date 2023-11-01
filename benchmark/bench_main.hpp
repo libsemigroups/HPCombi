@@ -38,20 +38,34 @@
         return true;                                                           \
     };
 
-#define BENCHMARK_MEM_FN_PAIR_EQ(mem_fn, sample)                               \
+#define BENCHMARK_MEM_FN_PAIR(mem_fn, sample)                                  \
     BENCHMARK(#mem_fn) {                                                       \
         for (auto &pair : sample) {                                            \
-            auto val =                                                         \
-                std::make_pair(pair.first.mem_fn(), pair.second.mem_fn());     \
-            REQUIRE(val.first == val.second);                                  \
+            volatile auto val = pair.first.mem_fn(pair.second);                \
         }                                                                      \
         return true;                                                           \
     };
 
-#define BENCHMARK_FREE_FN_PAIR(free_fn, sample)                         \
-    BENCHMARK(#free_fn) {                                                       \
+#define BENCHMARK_FREE_FN_PAIR(free_fn, sample)                                \
+    BENCHMARK(#free_fn) {                                                      \
         for (auto &pair : sample) {                                            \
-            volatile auto val = free_fn(pair.first, pair.second);         \
+            volatile auto val = free_fn(pair.first, pair.second);              \
+        }                                                                      \
+        return true;                                                           \
+    };
+
+#define BENCHMARK_FREE_FN_PAIR_EQ(mem_fn, sample)                              \
+    BENCHMARK(#mem_fn) {                                                       \
+        for (auto &pair : sample) {                                            \
+            REQUIRE(free_fn(pair.first) == free_fn(pair.second));              \
+        }                                                                      \
+        return true;                                                           \
+    };
+
+#define BENCHMARK_MEM_FN_PAIR_EQ(mem_fn, sample)                               \
+    BENCHMARK(#mem_fn) {                                                       \
+        for (auto &pair : sample) {                                            \
+            REQUIRE(pair.first.mem_fn() == pair.second.mem_fn());              \
         }                                                                      \
         return true;                                                           \
     };
