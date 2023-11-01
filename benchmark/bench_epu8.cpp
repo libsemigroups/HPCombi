@@ -52,11 +52,11 @@ inline epu8 sort_pair(epu8 a) {
 inline epu8 sort_odd_even(epu8 a) {
     const uint8_t FF = 0xff;
     static constexpr const epu8 even = {1, 0, 3,  2,  5,  4,  7,  6,
-                              9, 8, 11, 10, 13, 12, 15, 14};
+                                        9, 8, 11, 10, 13, 12, 15, 14};
     static constexpr const epu8 odd = {0, 2,  1, 4,  3,  6,  5,  8,
-                             7, 10, 9, 12, 11, 14, 13, 15};
+                                       7, 10, 9, 12, 11, 14, 13, 15};
     static constexpr const epu8 mask = {0, FF, 0, FF, 0, FF, 0, FF,
-                              0, FF, 0, FF, 0, FF, 0, FF};
+                                        0, FF, 0, FF, 0, FF, 0, FF};
     epu8 b, minab, maxab;
     for (unsigned i = 0; i < 8; ++i) {
         b = HPCombi::permuted(a, even);
@@ -79,7 +79,7 @@ inline epu8 insertion_sort(epu8 p) {
     return p;
 }
 
-inline epu8 radix_sort(epu8 p) {
+__attribute__((always_inline)) inline epu8 radix_sort(epu8 p) {
     auto &a = HPCombi::as_array(p);
     std::array<uint8_t, 16> stat{};
     for (int i = 0; i < 16; i++)
@@ -111,7 +111,7 @@ static const epu8 bla = {0, 2, 1, 4, 3, 6, 5, 8, 7, 10, 9, 12, 11, 14, 13, 15};
 
 }  // namespace
 
-TEST_CASE_METHOD(Fix_epu8, "Sorting", "[Perm16][000]") {
+TEST_CASE_METHOD(Fix_epu8, "Sorting", "[Epu8][000]") {
     BENCHMARK_FREE_FN("| no lambda | perms", std_sort, Fix_epu8::perms);
     BENCHMARK_LAMBDA("| lambda | perms", std_sort, Fix_epu8::perms);
 
@@ -147,7 +147,6 @@ TEST_CASE_METHOD(Fix_epu8, "Sorting", "[Perm16][000]") {
     BENCHMARK_LAMBDA("| lambda | vects", HPCombi::sorted, Fix_epu8::vects);
 }
 
-
 TEST_CASE_METHOD(Fix_epu8, "Permuting", "[Epu8][001]") {
     BENCHMARK_FREE_FN_PAIR(HPCombi::permuted_ref, pairs);
     BENCHMARK_FREE_FN_PAIR(HPCombi::permuted, pairs);
@@ -155,21 +154,18 @@ TEST_CASE_METHOD(Fix_epu8, "Permuting", "[Epu8][001]") {
 
 /*
 int Bench_hsum() {
-    myBench("hsum_ref1_nolmbd", HPCombi::horiz_sum_ref, sample.perms);
-    myBench("hsum_ref2_nolmbd", HPCombi::horiz_sum_ref, sample.perms);
-    myBench("hsum_ref3_nolmbd", HPCombi::horiz_sum_ref, sample.perms);
+TEST_CASE_METHOD(Fix_epu8, "hsum", "[Epu8][000]") {
+    BENCHMARK_FREE_FN("| no lambda", horiz_sum_ref, Fix_epu8::perms);
+    BENCHMARK_FREE_FN("| no lambda", horiz_sum_gen, Fix_epu8::perms);
+    BENCHMARK_FREE_FN("| no lambda", horiz_sum4, Fix_epu8::perms);
+    BENCHMARK_FREE_FN("| no lambda", horiz_sum3, Fix_epu8::perms);
 
-    myBench("hsum_ref_nolmbd", HPCombi::horiz_sum_ref, sample.perms);
-    myBench("hsum_gen_nolmbd", HPCombi::horiz_sum_gen, sample.perms);
-    myBench("hsum_sum4_nolmbd", HPCombi::horiz_sum4, sample.perms);
-    myBench("hsum_sum3_nolmbd", HPCombi::horiz_sum3, sample.perms);
-
-    MYBENCH("hsum_ref_lmbd", HPCombi::horiz_sum_ref, sample.perms);
-    MYBENCH("hsum_gen_lmbd", HPCombi::horiz_sum_gen, sample.perms);
-    MYBENCH("hsum_sum4_lmbd", HPCombi::horiz_sum4, sample.perms);
-    MYBENCH("hsum_sum3_lmbd", HPCombi::horiz_sum3, sample.perms);
-    return 0;
+    BENCHMARK_LAMBDA("| lambda ", horiz_sum_ref, Fix_epu8::perms);
+    BENCHMARK_LAMBDA("| lambda ", horiz_sum_gen, Fix_epu8::perms);
+    BENCHMARK_LAMBDA("| lambda ", horiz_sum4, Fix_epu8::perms);
+    BENCHMARK_LAMBDA("| lambda ", horiz_sum3, Fix_epu8::perms);
 }
+/*
 //
 ##################################################################################
 int Bench_psum() {
@@ -213,8 +209,9 @@ int Bench_pmax() {
     myBench("pmax_ref3_nolmbd", HPCombi::partial_max_ref, sample.perms);
 
     myBench("pmax_ref_nolmbd", HPCombi::partial_max_ref, sample.perms);
-    //    myBench("pmax_gen_nolmbd", HPCombi::partial_max_gen, sample.perms);
-    myBench("pmax_rnd_nolmbd", HPCombi::partial_max_round, sample.perms);
+    //    myBench("pmax_gen_nolmbd", HPCombi::partial_max_gen,
+sample.perms); myBench("pmax_rnd_nolmbd", HPCombi::partial_max_round,
+sample.perms);
 
     MYBENCH("pmax_ref_lmbd", HPCombi::partial_max_ref, sample.perms);
     //    MYBENCH("pmax_gen_lmbd", HPCombi::partial_max_gen, sample.perms);
@@ -248,8 +245,9 @@ int Bench_pmin() {
     myBench("pmin_ref3_nolmbd", HPCombi::partial_min_ref, sample.perms);
 
     myBench("pmin_ref_nolmbd", HPCombi::partial_min_ref, sample.perms);
-    //    myBench("pmin_gen_nolmbd", HPCombi::partial_min_gen, sample.perms);
-    myBench("pmin_rnd_nolmbd", HPCombi::partial_min_round, sample.perms);
+    //    myBench("pmin_gen_nolmbd", HPCombi::partial_min_gen,
+sample.perms); myBench("pmin_rnd_nolmbd", HPCombi::partial_min_round,
+sample.perms);
 
     MYBENCH("pmin_ref_lmbd", HPCombi::partial_min_ref, sample.perms);
     //    MYBENCH("pmin_gen_lmbd", HPCombi::partial_min_gen, sample.perms);
@@ -282,17 +280,17 @@ int Bench_eval() {
 ##################################################################################
 int Bench_first_diff() {
     MYBENCH2("firstDiff_ref_lmbd", HPCombi::first_diff_ref, sample.perms);
-    MYBENCH2("firstDiff_cmpstr_lmbd", HPCombi::first_diff_cmpstr, sample.perms);
-    MYBENCH2("firstDiff_mask_lmbd", HPCombi::first_diff_mask, sample.perms);
-    return 0;
+    MYBENCH2("firstDiff_cmpstr_lmbd", HPCombi::first_diff_cmpstr,
+sample.perms); MYBENCH2("firstDiff_mask_lmbd", HPCombi::first_diff_mask,
+sample.perms); return 0;
 }
 
 //
 ##################################################################################
 int Bench_last_diff() {
     MYBENCH2("lastDiff_ref_lmbd", HPCombi::last_diff_ref, sample.perms);
-    MYBENCH2("lastDiff_cmpstr_lmbd", HPCombi::last_diff_cmpstr, sample.perms);
-    MYBENCH2("lastDiff_mask_lmbd", HPCombi::last_diff_mask, sample.perms);
-    return 0;
+    MYBENCH2("lastDiff_cmpstr_lmbd", HPCombi::last_diff_cmpstr,
+sample.perms); MYBENCH2("lastDiff_mask_lmbd", HPCombi::last_diff_mask,
+sample.perms); return 0;
 } */
 }  // namespace HPCombi
