@@ -47,6 +47,8 @@ template <size_t Size, typename Expo = uint8_t> struct VectGeneric {
     array v;
 
     VectGeneric() = default;
+    constexpr VectGeneric(const VectGeneric &v) = default;
+
     VectGeneric(const std::array<Expo, Size> &_v) : v(_v) {}  // NOLINT
     VectGeneric(std::initializer_list<Expo> il, Expo def = 0) {
         HPCOMBI_ASSERT(il.size() <= Size);
@@ -106,8 +108,10 @@ template <size_t Size, typename Expo = uint8_t> struct VectGeneric {
 
     VectGeneric permuted(const VectGeneric &u) const {
         VectGeneric res;
-        for (uint64_t i = 0; i < Size; i++)
-            res[i] = v[u[i]];
+        for (uint64_t i = 0; i < Size; i++) {
+            if (u[i] < Size)
+                res[i] = v[u[i]];
+        }
         return res;
     }
 

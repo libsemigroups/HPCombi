@@ -49,6 +49,14 @@ namespace HPCombi {
 /// Implementation part for inline functions //////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
 
+/** Permuting a #HPCombi::epu8 */
+inline epu8 permuted_ref(epu8 a, epu8 b) noexcept {
+    epu8 res;
+    for (uint64_t i = 0; i < 16; i++)
+        res[i] = a[b[i] & 0xF];
+    return res;
+}
+
 // Msk is supposed to be a boolean mask (i.e. each entry is either 0 or 255)
 inline uint64_t first_mask(epu8 msk, size_t bound) {
     uint64_t res = simde_mm_movemask_epi8(msk & (epu8id < Epu8(bound)));

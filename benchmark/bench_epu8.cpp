@@ -51,11 +51,11 @@ inline epu8 sort_pair(epu8 a) {
 
 inline epu8 sort_odd_even(epu8 a) {
     const uint8_t FF = 0xff;
-    static const epu8 even = {1, 0, 3,  2,  5,  4,  7,  6,
+    static constexpr const epu8 even = {1, 0, 3,  2,  5,  4,  7,  6,
                               9, 8, 11, 10, 13, 12, 15, 14};
-    static const epu8 odd = {0, 2,  1, 4,  3,  6,  5,  8,
+    static constexpr const epu8 odd = {0, 2,  1, 4,  3,  6,  5,  8,
                              7, 10, 9, 12, 11, 14, 13, 15};
-    static const epu8 mask = {0, FF, 0, FF, 0, FF, 0, FF,
+    static constexpr const epu8 mask = {0, FF, 0, FF, 0, FF, 0, FF,
                               0, FF, 0, FF, 0, FF, 0, FF};
     epu8 b, minab, maxab;
     for (unsigned i = 0; i < 8; ++i) {
@@ -145,6 +145,12 @@ TEST_CASE_METHOD(Fix_epu8, "Sorting", "[Perm16][000]") {
     BENCHMARK_LAMBDA("| lambda | vects", sort_odd_even, Fix_epu8::vects);
     BENCHMARK_LAMBDA("| lambda | vects", sort_pair, Fix_epu8::vects);
     BENCHMARK_LAMBDA("| lambda | vects", HPCombi::sorted, Fix_epu8::vects);
+}
+
+
+TEST_CASE_METHOD(Fix_epu8, "Permuting", "[Epu8][001]") {
+    BENCHMARK_FREE_FN_PAIR(HPCombi::permuted_ref, pairs);
+    BENCHMARK_FREE_FN_PAIR(HPCombi::permuted, pairs);
 }
 
 /*

@@ -48,10 +48,10 @@
         return true;                                                           \
     };
 
-#define BENCHMARK_MEM_FN_PAIR(mem_fn, sample)                                  \
-    BENCHMARK(#mem_fn) {                                                       \
+#define BENCHMARK_FREE_FN_PAIR(free_fn, sample)                         \
+    BENCHMARK(#free_fn) {                                                       \
         for (auto &pair : sample) {                                            \
-            volatile auto val = pair.first.mem_fn(pair.second);                \
+            volatile auto val = free_fn(pair.first, pair.second);         \
         }                                                                      \
         return true;                                                           \
     };

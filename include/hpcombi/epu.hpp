@@ -173,6 +173,8 @@ inline bool equal(epu8 a, epu8 b) noexcept {
 inline bool not_equal(epu8 a, epu8 b) noexcept { return !equal(a, b); }
 
 /** Permuting a #HPCombi::epu8 */
+inline epu8 permuted_ref(epu8 a, epu8 b) noexcept;
+/** Permuting a #HPCombi::epu8 */
 inline epu8 permuted(epu8 a, epu8 b) noexcept {
     return simde_mm_shuffle_epi8(a, b);
 }
