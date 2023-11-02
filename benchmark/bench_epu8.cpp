@@ -255,4 +255,15 @@ TEST_CASE_METHOD(Fix_epu8, "last diff", "[Epu8][000]") {
 #endif
     BENCHMARK_LAMBDA2("| lambda", last_diff_mask, Fix_epu8::pairs);
 }
+
+TEST_CASE_METHOD(Fix_epu8, "is_permutation", "[Epu8][000]") {
+    BENCHMARK_FREE_FN("| no lambda", is_permutation_sort, Fix_epu8::perms);
+    BENCHMARK_FREE_FN("| no lambda", is_permutation_eval, Fix_epu8::perms);
+    BENCHMARK_FREE_FN("| no lambda", is_permutation, Fix_epu8::perms);
+
+    BENCHMARK_LAMBDA("| lambda", is_permutation_sort, Fix_epu8::perms);
+    BENCHMARK_LAMBDA("| lambda", is_permutation_eval, Fix_epu8::perms);
+    BENCHMARK_LAMBDA("| lambda", is_permutation, Fix_epu8::perms);
+}
+
 }  // namespace HPCombi

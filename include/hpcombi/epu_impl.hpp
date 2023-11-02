@@ -489,6 +489,10 @@ inline bool is_permutation_sort(epu8 v, const size_t k) noexcept {
     uint64_t diff = last_diff(v, epu8id, 16);
     return equal(sorted(v), epu8id) && (diff == 16 || diff < k);
 }
+inline bool is_permutation_eval(epu8 v, const size_t k) noexcept {
+    uint64_t diff = last_diff(v, epu8id, 16);
+    return equal(eval16(v), Epu8({}, 1)) && (diff == 16 || diff < k);
+}
 
 inline bool is_permutation(epu8 v, const size_t k) noexcept {
 #ifdef SIMDE_X86_SSE4_2_NATIVE

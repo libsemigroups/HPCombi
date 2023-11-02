@@ -695,7 +695,7 @@ TEST_CASE_METHOD(Fix, "is_permutation", "[Epu8][054]") {
 TEST_CASE_METHOD(Fix, "is_permutation_cmpestri", "[Epu8][070]") {
     for (auto x : v) {
         for (size_t i = 0; i < 16; i++) {
-            CHECK(is_permutation(x, i) == is_permutation_cmpestri(x, i));
+            CHECK(is_permutation_cmpestri(x, i) == is_permutation(x, i));
         }
     }
 }
@@ -704,7 +704,15 @@ TEST_CASE_METHOD(Fix, "is_permutation_cmpestri", "[Epu8][070]") {
 TEST_CASE_METHOD(Fix, "is_permutation_sort", "[Epu8][080]") {
     for (auto x : v) {
         for (size_t i = 0; i < 16; i++) {
-            CHECK(is_permutation(x, i) == is_permutation_sort(x, i));
+            CHECK(is_permutation_sort(x, i) == is_permutation(x, i));
+        }
+    }
+}
+
+TEST_CASE_METHOD(Fix, "is_permutation_eval", "[Epu8][080]") {
+    for (auto x : v) {
+        for (size_t i = 0; i < 16; i++) {
+            CHECK(is_permutation_eval(x, i) == is_permutation(x, i));
         }
     }
 }

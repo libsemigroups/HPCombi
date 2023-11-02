@@ -690,6 +690,10 @@ inline bool is_permutation_cpmestri(epu8 v, const size_t k = 16) noexcept;
  */
 inline bool is_permutation_sort(epu8 v, const size_t k = 16) noexcept;
 /** @copydoc common_is_permutation
+    @par Algorithm: uses evaluation
+ */
+inline bool is_permutation_eval(epu8 v, const size_t k = 16) noexcept;
+/** @copydoc common_is_permutation
     @par Algorithm: architecture dependent
  */
 inline bool is_permutation(epu8 v, const size_t k = 16) noexcept;
