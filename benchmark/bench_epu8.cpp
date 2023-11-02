@@ -152,8 +152,6 @@ TEST_CASE_METHOD(Fix_epu8, "Permuting", "[Epu8][001]") {
     BENCHMARK_FREE_FN_PAIR(HPCombi::permuted, pairs);
 }
 
-/*
-int Bench_hsum() {
 TEST_CASE_METHOD(Fix_epu8, "hsum", "[Epu8][000]") {
     BENCHMARK_FREE_FN("| no lambda", horiz_sum_ref, Fix_epu8::perms);
     BENCHMARK_FREE_FN("| no lambda", horiz_sum_gen, Fix_epu8::perms);
@@ -176,90 +174,59 @@ TEST_CASE_METHOD(Fix_epu8, "partial sums", "[Epu8][000]") {
     BENCHMARK_LAMBDA("| lambda", partial_sums_gen, Fix_epu8::perms);
     BENCHMARK_LAMBDA("| lambda", partial_sums_round, Fix_epu8::perms);
 }
-/*
-//
 
-//
-##################################################################################
-int Bench_hmax() {
+TEST_CASE_METHOD(Fix_epu8, "horiz max", "[Epu8][000]") {
     BENCHMARK_FREE_FN("| no lambda", horiz_max_ref, Fix_epu8::perms);
     BENCHMARK_FREE_FN("| no lambda", horiz_max_ref, Fix_epu8::perms);
     BENCHMARK_FREE_FN("| no lambda", horiz_max_ref, Fix_epu8::perms);
 
     BENCHMARK_FREE_FN("| no lambda", horiz_max_ref, Fix_epu8::perms);
-    //    BENCHMARK_FREE_FN("| no lambda", horiz_max_gen,
-Fix_epu8::perms); BENCHMARK_FREE_FN("| no lambda", horiz_max4,
-Fix_epu8::perms); BENCHMARK_FREE_FN("| no lambda", horiz_max3,
-Fix_epu8::perms);
+    //    BENCHMARK_FREE_FN("| no lambda", horiz_max_gen, Fix_epu8::perms);
+    BENCHMARK_FREE_FN("| no lambda", horiz_max4, Fix_epu8::perms);
+    BENCHMARK_FREE_FN("| no lambda", horiz_max3, Fix_epu8::perms);
 
     BENCHMARK_LAMBDA("| lambda", horiz_max_ref, Fix_epu8::perms);
     //    BENCHMARK_LAMBDA("| lambda", horiz_max_gen, Fix_epu8::perms);
     BENCHMARK_LAMBDA("| lambda", horiz_max4, Fix_epu8::perms);
     BENCHMARK_LAMBDA("| lambda", horiz_max3, Fix_epu8::perms);
-    return 0;
 }
-//
-##################################################################################
-int Bench_pmax() {
+
+TEST_CASE_METHOD(Fix_epu8, "partial max", "[Epu8][000]") {
     BENCHMARK_FREE_FN("| no lambda", partial_max_ref, Fix_epu8::perms);
     BENCHMARK_FREE_FN("| no lambda", partial_max_ref, Fix_epu8::perms);
     BENCHMARK_FREE_FN("| no lambda", partial_max_ref, Fix_epu8::perms);
 
     BENCHMARK_FREE_FN("| no lambda", partial_max_ref, Fix_epu8::perms);
-    //    BENCHMARK_FREE_FN("| no lambda", partial_max_gen,
-Fix_epu8::perms); BENCHMARK_FREE_FN("| no lambda", partial_max_round,
-Fix_epu8::perms);
+    //    BENCHMARK_FREE_FN("| no lambda", partial_max_gen, Fix_epu8::perms);
+    BENCHMARK_FREE_FN("| no lambda", partial_max_round, Fix_epu8::perms);
 
     BENCHMARK_LAMBDA("| lambda", partial_max_ref, Fix_epu8::perms);
-    //    BENCHMARK_LAMBDA("| lambda", partial_max_gen,
-Fix_epu8::perms); BENCHMARK_LAMBDA("| lambda", partial_max_round,
-Fix_epu8::perms); return 0;
+    //    BENCHMARK_LAMBDA("| lambda", partial_max_gen, Fix_epu8::perms);
+    BENCHMARK_LAMBDA("| lambda", partial_max_round, Fix_epu8::perms);
 }
 
-//
-##################################################################################
-int Bench_hmin() {
+TEST_CASE_METHOD(Fix_epu8, "horiz min", "[Epu8][000]") {
     BENCHMARK_FREE_FN("| no lambda", horiz_min_ref, Fix_epu8::perms);
-    BENCHMARK_FREE_FN("| no lambda", horiz_min_ref, Fix_epu8::perms);
-    BENCHMARK_FREE_FN("| no lambda", horiz_min_ref, Fix_epu8::perms);
-
-    BENCHMARK_FREE_FN("| no lambda", horiz_min_ref, Fix_epu8::perms);
-    //    BENCHMARK_FREE_FN("| no lambda", horiz_min_gen,
-Fix_epu8::perms); BENCHMARK_FREE_FN("| no lambda", horiz_min4,
-Fix_epu8::perms); BENCHMARK_FREE_FN("| no lambda", horiz_min3,
-Fix_epu8::perms);
+    //    BENCHMARK_FREE_FN("| no lambda", horiz_min_gen, Fix_epu8::perms);
+    BENCHMARK_FREE_FN("| no lambda", horiz_min4, Fix_epu8::perms);
+    BENCHMARK_FREE_FN("| no lambda", horiz_min3, Fix_epu8::perms);
 
     BENCHMARK_LAMBDA("| lambda", horiz_min_ref, Fix_epu8::perms);
     //    BENCHMARK_LAMBDA("| lambda", horiz_min_gen, Fix_epu8::perms);
     BENCHMARK_LAMBDA("| lambda", horiz_min4, Fix_epu8::perms);
     BENCHMARK_LAMBDA("| lambda", horiz_min3, Fix_epu8::perms);
-    return 0;
 }
-//
-##################################################################################
-int Bench_pmin() {
-    BENCHMARK_FREE_FN("| no lambda", partial_min_ref, Fix_epu8::perms);
-    BENCHMARK_FREE_FN("| no lambda", partial_min_ref, Fix_epu8::perms);
-    BENCHMARK_FREE_FN("| no lambda", partial_min_ref, Fix_epu8::perms);
 
+TEST_CASE_METHOD(Fix_epu8, "partial min", "[Epu8][000]") {
     BENCHMARK_FREE_FN("| no lambda", partial_min_ref, Fix_epu8::perms);
-    //    BENCHMARK_FREE_FN("| no lambda", partial_min_gen,
-Fix_epu8::perms); BENCHMARK_FREE_FN("| no lambda", partial_min_round,
-Fix_epu8::perms);
-
+    //    BENCHMARK_FREE_FN("| no lambda", partial_min_gen, Fix_epu8::perms);
+    BENCHMARK_FREE_FN("| no lambda", partial_min_round, Fix_epu8::perms);
+    //    BENCHMARK_LAMBDA("| lambda", partial_min_gen, Fix_epu8::perms);
     BENCHMARK_LAMBDA("| lambda", partial_min_ref, Fix_epu8::perms);
-    //    BENCHMARK_LAMBDA("| lambda", partial_min_gen,
-Fix_epu8::perms); BENCHMARK_LAMBDA("| lambda", partial_min_round,
-Fix_epu8::perms); return 0;
+    BENCHMARK_LAMBDA("| lambda", partial_min_round, Fix_epu8::perms);
 }
 
-//
-##################################################################################
-int Bench_eval() {
-    BENCHMARK_FREE_FN("| no lambda", eval16_ref, Fix_epu8::perms);
-    BENCHMARK_FREE_FN("| no lambda", eval16_ref, Fix_epu8::perms);
-    BENCHMARK_FREE_FN("| no lambda", eval16_ref, Fix_epu8::perms);
-
+TEST_CASE_METHOD(Fix_epu8, "eval16", "[Epu8][000]") {
     BENCHMARK_FREE_FN("| no lambda", eval16_ref, Fix_epu8::perms);
     BENCHMARK_FREE_FN("| no lambda", eval16_gen, Fix_epu8::perms);
     BENCHMARK_FREE_FN("| no lambda", eval16_popcount, Fix_epu8::perms);
@@ -271,24 +238,21 @@ int Bench_eval() {
     BENCHMARK_LAMBDA("| lambda", eval16_popcount, Fix_epu8::perms);
     BENCHMARK_LAMBDA("| lambda", eval16_arr, Fix_epu8::perms);
     BENCHMARK_LAMBDA("| lambda", eval16_cycle, Fix_epu8::perms);
-    return 0;
 }
 
-//
-##################################################################################
-int Bench_first_diff() {
-    MYBENCH2("firstDiff_ref_lmbd", first_diff_ref, Fix_epu8::perms);
-    MYBENCH2("firstDiff_cmpstr_lmbd", first_diff_cmpstr,
-Fix_epu8::perms); MYBENCH2("firstDiff_mask_lmbd", first_diff_mask,
-Fix_epu8::perms); return 0;
+TEST_CASE_METHOD(Fix_epu8, "first diff", "[Epu8][000]") {
+    BENCHMARK_LAMBDA2("| lambda", first_diff_ref, Fix_epu8::pairs);
+#ifdef SIMDE_X86_SSE4_2_NATIVE
+    BENCHMARK_LAMBDA2("| lambda", first_diff_cmpstr, Fix_epu8::pairs);
+#endif
+    BENCHMARK_LAMBDA2("| lambda", first_diff_mask, Fix_epu8::pairs);
 }
 
-//
-##################################################################################
-int Bench_last_diff() {
-    MYBENCH2("lastDiff_ref_lmbd", last_diff_ref, Fix_epu8::perms);
-    MYBENCH2("lastDiff_cmpstr_lmbd", last_diff_cmpstr,
-Fix_epu8::perms); MYBENCH2("lastDiff_mask_lmbd", last_diff_mask,
-Fix_epu8::perms); return 0;
-} */
+TEST_CASE_METHOD(Fix_epu8, "last diff", "[Epu8][000]") {
+    BENCHMARK_LAMBDA2("| lambda", last_diff_ref, Fix_epu8::pairs);
+#ifdef SIMDE_X86_SSE4_2_NATIVE
+    BENCHMARK_LAMBDA2("| lambda", last_diff_cmpstr, Fix_epu8::pairs);
+#endif
+    BENCHMARK_LAMBDA2("| lambda", last_diff_mask, Fix_epu8::pairs);
+}
 }  // namespace HPCombi

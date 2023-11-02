@@ -47,18 +47,12 @@ struct alignas(16) PTransf16 : public Vect16 {
     using array = typename decltype(Epu8)::array;
 
     PTransf16() = default;
-    constexpr PTransf16(const PTransf16 &v) = default;
+
     constexpr PTransf16(const vect v) : Vect16(v) {}
     constexpr PTransf16(const epu8 x) : Vect16(x) {}
     PTransf16(std::vector<uint8_t> dom, std::vector<uint8_t> rng,
               size_t = 0 /* unused */);
     PTransf16(std::initializer_list<uint8_t> il);
-
-    PTransf16 &operator=(const PTransf16 &) = default;
-    PTransf16 &operator=(const epu8 &vv) {
-        v = vv;
-        return *this;
-    }
 
     //! Return whether \c *this is a well constructed object
     bool validate(size_t k = 16) const {

@@ -215,10 +215,11 @@ inline epu8 sort8_perm(epu8 &a) noexcept {
 
 inline epu8 random_epu8(uint16_t bnd) {
     epu8 res;
-    std::random_device rd;
 
-    std::default_random_engine e1(rd());
+    static std::random_device rd;
+    static std::default_random_engine e1(rd());
     std::uniform_int_distribution<int> uniform_dist(0, bnd - 1);
+
     for (size_t i = 0; i < 16; i++)
         res[i] = uniform_dist(e1);
     return res;

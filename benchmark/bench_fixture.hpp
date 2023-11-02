@@ -60,19 +60,16 @@ std::vector<epu8> rand_transf(int sz) {
 std::vector<std::pair<epu8, epu8>> make_pair_sample(size_t sz) {
     std::vector<std::pair<epu8, epu8>> res{};
     for (size_t i = 0; i < sz; i++) {
-        res.push_back(std::make_pair(HPCombi::random_epu8(15),
-                                     HPCombi::random_epu8(15)));
+        res.emplace_back(HPCombi::random_epu8(15), HPCombi::random_epu8(15));
     }
     return res;
 }
 
 class Fix_epu8 {
   public:
-    Fix_epu8() : vects(rand_epu8(size)),
-                 transf(rand_transf(size)),
-                 perms(rand_perms(size)),
-                 pairs(make_pair_sample(size))
-    {}
+    Fix_epu8()
+        : vects(rand_epu8(size)), transf(rand_transf(size)),
+          perms(rand_perms(size)), pairs(make_pair_sample(size)) {}
     ~Fix_epu8() {}
     const std::vector<epu8> vects;
     const std::vector<epu8> transf;
