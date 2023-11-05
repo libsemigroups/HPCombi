@@ -449,10 +449,15 @@ inline Perm16 BMat8::right_perm_action_on_basis_ref(BMat8 bm) const {
             std::distance(prod_rows.begin(),
                           std::find(prod_rows.begin(), prod_rows.end(), row));
     }
+
+#ifndef __clang__
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wstringop-overflow"
+#endif
     std::iota(perm.begin() + nr_rows(), perm.end(), nr_rows());
+#ifndef __clang__
 #pragma GCC diagnostic pop
+#endif
 
     Perm16 res = Perm16::one();
     for (size_t i = 0; i < 8; i++)

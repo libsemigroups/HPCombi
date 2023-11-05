@@ -261,8 +261,10 @@ TEST_CASE_METHOD(Fix, "Epu8::is_sorted", "[Epu8][018]") {
     epu8 x = epu8id;
     CHECK(is_sorted(x));
     auto &refx = as_array(x);
+#ifndef __clang__
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wstringop-overflow"
+#endif
     while (std::next_permutation(refx.begin(), refx.begin() + 9)) {
         CHECK(!is_sorted(x));
     }
@@ -275,7 +277,9 @@ TEST_CASE_METHOD(Fix, "Epu8::is_sorted", "[Epu8][018]") {
     while (std::next_permutation(refx.begin(), refx.begin() + 14)) {
         CHECK(!is_sorted(x));
     }
+#ifndef __clang__
 #pragma GCC diagnostic pop
+#endif
 }
 
 TEST_CASE_METHOD(Fix, "Epu8::sorted", "[Epu8][019]") {
@@ -290,10 +294,14 @@ TEST_CASE_METHOD(Fix, "Epu8::sorted", "[Epu8][019]") {
     auto &refx = as_array(x);
     do {
         CHECK_THAT(sorted(x), IsSorted);
+#ifndef __clang__
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wstringop-overflow"
+#endif
     } while (std::next_permutation(refx.begin(), refx.begin() + 9));
+#ifndef __clang__
 #pragma GCC diagnostic pop
+#endif
 }
 
 TEST_CASE_METHOD(Fix, "Epu8::revsorted", "[Epu8][020]") {
@@ -308,10 +316,14 @@ TEST_CASE_METHOD(Fix, "Epu8::revsorted", "[Epu8][020]") {
     auto &refx = as_array(x);
     do {
         CHECK_THAT(reverted(revsorted(x)), IsSorted);
+#ifndef __clang__
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wstringop-overflow"
+#endif
     } while (std::next_permutation(refx.begin(), refx.begin() + 9));
+#ifndef __clang__
 #pragma GCC diagnostic pop
+#endif
 }
 
 TEST_CASE_METHOD(Fix, "Epu8::sort_perm", "[Epu8][021]") {
