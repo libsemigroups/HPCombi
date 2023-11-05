@@ -1,5 +1,5 @@
 ////////////////////////////////////////////////////////////////////////////////
-//     Copyright (C) 2016-2018 Florent Hivert <Florent.Hivert@lri.fr>,        //
+//     Copyright (C) 2016-2023 Florent Hivert <Florent.Hivert@lri.fr>,        //
 //                                                                            //
 //  Distributed under the terms of the GNU General Public License (GPL)       //
 //                                                                            //
@@ -13,8 +13,8 @@
 //                  http://www.gnu.org/licenses/                              //
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef HPCOMBI_EPU_HPP_INCLUDED
-#define HPCOMBI_EPU_HPP_INCLUDED
+#ifndef HPCOMBI_EPU8_HPP_INCLUDED
+#define HPCOMBI_EPU8_HPP_INCLUDED
 
 #include <array>             // for array
 #include <cstddef>           // for size_t
@@ -668,4 +668,4 @@ inline std::string to_string(HPCombi::epu8 const &a);
 
 #include "epu8_impl.hpp"
 
-#endif  // HPCOMBI_EPU_HPP_INCLUDED
+#endif  // HPCOMBI_EPU8_HPP_INCLUDED
