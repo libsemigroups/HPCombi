@@ -1,5 +1,5 @@
 //****************************************************************************//
-//       Copyright (C) 2018 Florent Hivert <Florent.Hivert@lri.fr>,           //
+//       Copyright (C) 2018-2023 Florent Hivert <Florent.Hivert@lri.fr>,      //
 //                                                                            //
 //  Distributed under the terms of the GNU General Public License (GPL)       //
 //                                                                            //
@@ -32,7 +32,7 @@ namespace {
 struct RoundsMask {
     constexpr RoundsMask() : arr() {
         for (unsigned i = 0; i < sorting_rounds.size(); ++i)
-            arr[i] = sorting_rounds[i] < epu8id;
+            arr[i] = sorting_rounds[i] < Epu8.id();
     }
     epu8 arr[sorting_rounds.size()];
 };

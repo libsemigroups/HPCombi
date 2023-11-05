@@ -26,6 +26,7 @@
 #include <utility>           // for make_index_sequence, ind...
 
 #include "debug.hpp"         // for HPCOMBI_ASSERT
+#include "builder.hpp"       // for TPUBuild
 #include "vect_generic.hpp"  // for VectGeneric
 
 #include "simde/x86/sse4.1.h"  // for simde_mm_max_epu8, simde...
@@ -49,73 +50,12 @@ static_assert(alignof(epu8) == 16,
 /// Currently not really used except in experiments
 using xpu8 = uint8_t __attribute__((vector_size(32)));
 
-namespace detail {  // Implementation detail code
 
-/// Factory object for various SIMD constants in particular constexpr
-template <class TPU> struct TPUBuild {
-    // Type for Packed Unsigned integer (TPU)
-    using type_elem = typename std::remove_reference_t<decltype((TPU{})[0])>;
-    static constexpr size_t size_elem = sizeof(type_elem);
-    static constexpr size_t size = sizeof(TPU) / size_elem;
+/** Factory object acting as a class constructor for type #HPCombi::epu8.
+ * see #HPCombi::TPUBuild for usage and capability
+ */
+constexpr TPUBuild<epu8> Epu8 {};
 
-    using array = std::array<type_elem, size>;
-
-    template <class Fun, decltype(size)... Is>
-    static constexpr TPU make_helper(Fun f, std::index_sequence<Is...>) {
-        static_assert(std::is_invocable_v<Fun, type_elem>);
-        return TPU{f(Is)...};
-    }
-
-    inline TPU operator()(std::initializer_list<type_elem> il,
-                          type_elem def) const {
-        HPCOMBI_ASSERT(il.size() <= size);
-        array res;
-        std::copy(il.begin(), il.end(), res.begin());
-        std::fill(res.begin() + il.size(), res.end(), def);
-        return reinterpret_cast<const TPU &>(res);
-    }
-
-    template <class Fun> inline constexpr TPU operator()(Fun f) const {
-        static_assert(std::is_invocable_v<Fun, type_elem>);
-        return make_helper(f, std::make_index_sequence<size>{});
-    }
-
-    inline constexpr TPU operator()(type_elem c) const {
-        return make_helper([c](auto) { return c; },
-                           std::make_index_sequence<size>{});
-    }
-    // explicit overloading for int constants
-    inline constexpr TPU operator()(int c) const {
-        return operator()(type_elem(c));
-    }
-    inline constexpr TPU operator()(size_t c) const {
-        return operator()(type_elem(c));
-    }
-};
-
-}  // namespace detail
-
-// Single instance of the TPUBuild<epu8> factory object
-static constexpr detail::TPUBuild<epu8> Epu8;
-
-/// The identity #HPCombi::epu8
-/// The image of i by the identity function
-constexpr epu8 epu8id = Epu8([](uint8_t i) { return i; });
-/// The reverted identity #HPCombi::epu8
-constexpr epu8 epu8rev = Epu8([](uint8_t i) { return 15 - i; });
-/// Left cycle #HPCombi::epu8 permutation
-constexpr epu8 left_cycle = Epu8([](uint8_t i) { return (i + 15) % 16; });
-/// Right cycle #HPCombi::epu8 permutation
-constexpr epu8 right_cycle = Epu8([](uint8_t i) { return (i + 1) % 16; });
-/// Left shift #HPCombi::epu8, duplicating the rightmost entry
-constexpr epu8 left_dup = Epu8([](uint8_t i) { return i == 15 ? 15 : i + 1; });
-/// Right shift #HPCombi::epu8, duplicating the leftmost entry
-constexpr epu8 right_dup = Epu8([](uint8_t i) { return i == 0 ? 0 : i - 1; });
-/// Popcount #HPCombi::epu8: the ith entry contains the number of bits set in i
-constexpr epu8 popcount4 = Epu8([](uint8_t i) {
-    return ((i & 1) != 0 ? 1 : 0) + ((i & 2) != 0 ? 1 : 0) +
-           ((i & 4) != 0 ? 1 : 0) + ((i & 8) != 0 ? 1 : 0);
-});
 
 /** Cast a #HPCombi::epu8 to a c++ \c std::array
  *
@@ -189,7 +129,7 @@ inline epu8 shifted_right(epu8 a) noexcept {
  */
 inline epu8 shifted_left(epu8 a) noexcept { return simde_mm_bsrli_si128(a, 1); }
 /** Reverting a #HPCombi::epu8 */
-inline epu8 reverted(epu8 a) noexcept { return permuted(a, epu8rev); }
+inline epu8 reverted(epu8 a) noexcept { return permuted(a, Epu8.rev()); }
 
 /** Vector min between two #HPCombi::epu8 0 */
 inline epu8 min(epu8 a, epu8 b) noexcept { return simde_mm_min_epu8(a, b); }

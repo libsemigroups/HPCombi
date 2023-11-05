@@ -1,0 +1,115 @@
+////////////////////////////////////////////////////////////////////////////////
+//     Copyright (C) 2023      Florent Hivert <Florent.Hivert@lri.fr>,        //
+//                                                                            //
+//  Distributed under the terms of the GNU General Public License (GPL)       //
+//                                                                            //
+//    This code is distributed in the hope that it will be useful,            //
+//    but WITHOUT ANY WARRANTY; without even the implied warranty of          //
+//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU       //
+//   General Public License for more details.                                 //
+//                                                                            //
+//  The full text of the GPL is available at:                                 //
+//                                                                            //
+//                  http://www.gnu.org/licenses/                              //
+////////////////////////////////////////////////////////////////////////////////
+
+#ifndef HPCOMBI_BUILDER_HPP_INCLUDED
+#define HPCOMBI_BUILDER_HPP_INCLUDED
+
+namespace HPCombi {
+
+/** Class for factory object associated to a SIMD packed unsigned integers.
+ * @details
+ * The main purpose of this class is to be able to construct in a \c constexpr
+ * way various instances of the \c TPU SIMD vector type. The behavior of
+ * an instance of \c TPUBuild<TPU> is designed to mimic the behavior of \c TPU
+ * if it where a class:
+ * - calling \c operator() on an instance which acts similarly to a
+ *   class constructor,
+ * - calling a member function such as #id acts as a static member function.
+ */
+template <class TPU> struct TPUBuild {
+
+    /// Type of the elements
+    using type_elem = typename std::remove_reference_t<decltype((TPU{})[0])>;
+
+    /// Size of the elements
+    static constexpr size_t size_elem = sizeof(type_elem);
+
+    /// Number of elements
+    static constexpr size_t size = sizeof(TPU) / size_elem;
+
+    /// Array equivalent type
+    using array = std::array<type_elem, size>;
+
+    template <class Fun, decltype(size)... Is>
+    static constexpr TPU make_helper(Fun f, std::index_sequence<Is...>) {
+        static_assert(std::is_invocable_v<Fun, type_elem>);
+        return TPU{f(Is)...};
+    }
+
+    /// Construct a TPU from an \c std::initializer_list and a default value
+    inline constexpr TPU operator()(std::initializer_list<type_elem> il,
+                          type_elem def) const {
+        HPCOMBI_ASSERT(il.size() <= size);
+        array res;
+        std::copy(il.begin(), il.end(), res.begin());
+        std::fill(res.begin() + il.size(), res.end(), def);
+        return reinterpret_cast<const TPU &>(res);
+    }
+
+    /// Construct a TPU from a function giving the values at \f$1,2,\dots\f$
+    template <class Fun> inline constexpr TPU operator()(Fun f) const {
+        static_assert(std::is_invocable_v<Fun, type_elem>);
+        return make_helper(f, std::make_index_sequence<size>{});
+    }
+
+    /// Construct a constant TPU
+    inline constexpr TPU operator()(type_elem c) const {
+        return operator()([c](auto) { return c; });
+    }
+    /// explicit overloading for int constants
+    inline constexpr TPU operator()(int c) const {
+        return operator()(type_elem(c));
+    }
+    /// explicit overloading for size_t constants
+    inline constexpr TPU operator()(size_t c) const {
+        return operator()(type_elem(c));
+    }
+
+    /// Return the identity element of type \c TPU
+    constexpr TPU id() const { return operator()([](type_elem i) { return i; }); }
+    /// Return the reversed element of type \c TPU
+    constexpr TPU rev() const {
+        return (*this)([](type_elem i) { return size - 1 - i; });
+    }
+    /// Left cycle \c TPU permutation
+    constexpr TPU left_cycle() const {
+        return (*this)([](type_elem i) { return (i + size - 1) % size; });
+    }
+    /// Right cycle \c TPU permutation
+    constexpr TPU right_cycle() const {
+        return (*this)([](type_elem i) { return (i + 1) % size; });
+    }
+    /// Left shift \c TPU, duplicating the rightmost entry
+    constexpr TPU left_dup() const {
+        return (*this)([](type_elem i) { return i == 15 ? 15 : i + 1; });
+    }
+    /// Right shift \c TPU, duplicating the leftmost entry
+    constexpr TPU right_dup() const {
+        return (*this)([](type_elem i) { return i == 0 ? 0 : i - 1; });
+    }
+    /// Popcount \c TPU: the ith entry contains the number of bits set in i
+    constexpr TPU popcount() const {
+        return (*this)([](type_elem i) {
+            return (((i & 0x01) != 0 ? 1 : 0) + ((i & 0x02) != 0 ? 1 : 0) +
+                    ((i & 0x04) != 0 ? 1 : 0) + ((i & 0x08) != 0 ? 1 : 0) +
+                    ((i & 0x10) != 0 ? 1 : 0) + ((i & 0x20) != 0 ? 1 : 0) +
+                    ((i & 0x40) != 0 ? 1 : 0) + ((i & 0x80) != 0 ? 1 : 0));
+        });
+    }
+};
+
+}  // namespace HPCombi
+
+#endif  // HPCOMBI_BUILDER_HPP_INCLUDED

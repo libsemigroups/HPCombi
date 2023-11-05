@@ -254,14 +254,14 @@ namespace detail {
 
 inline void row_space_update_bitset(epu8 block, epu8 &set0, epu8 &set1) noexcept {
     static const epu8 bound08 = simde_mm_slli_epi32(
-        static_cast<simde__m128i>(epu8id), 3);  // shift for *8
+        static_cast<simde__m128i>(Epu8.id()), 3);  // shift for *8
     static const epu8 bound18 = bound08 + Epu8(0x80);
     for (size_t slice8 = 0; slice8 < 16; slice8++) {
         epu8 bm5 = Epu8(0xf8) & block; /* 11111000 */
         epu8 shft = simde_mm_shuffle_epi8(shiftres, block - bm5);
         set0 |= (bm5 == bound08) & shft;
         set1 |= (bm5 == bound18) & shft;
-        block = simde_mm_shuffle_epi8(block, right_cycle);
+        block = simde_mm_shuffle_epi8(block, Epu8.right_cycle());
     }
 }
 }
@@ -277,7 +277,7 @@ inline void BMat8::row_space_bitset(epu8 &res0, epu8 &res1) const noexcept {
     res1 = epu8{};
     for (size_t r = 0; r < 16; r++) {
         detail::row_space_update_bitset(block0 | block1, res0, res1);
-        block1 = simde_mm_shuffle_epi8(block1, right_cycle);
+        block1 = simde_mm_shuffle_epi8(block1, Epu8.right_cycle());
     }
 }
 
@@ -292,7 +292,7 @@ inline uint64_t BMat8::row_space_size_bitset() const noexcept {
 
 inline uint64_t BMat8::row_space_size_incl1() const noexcept {
     epu8 in = simde_mm_set_epi64x(_data, _data);
-    epu8 block = epu8id;
+    epu8 block = Epu8.id();
     uint64_t res = 0;
     for (size_t r = 0; r < 16; r++) {
         epu8 orincl{};
@@ -308,7 +308,7 @@ inline uint64_t BMat8::row_space_size_incl1() const noexcept {
 
 inline uint64_t BMat8::row_space_size_incl() const noexcept {
     epu8 in = simde_mm_set_epi64x(_data, _data);
-    epu8 block = epu8id;
+    epu8 block = Epu8.id();
     uint64_t res = 0;
     for (size_t r = 0; r < 16; r++) {
         epu8 orincl = ((in | block) == block) & in;
@@ -466,11 +466,11 @@ inline Perm16 BMat8::right_perm_action_on_basis_ref(BMat8 bm) const {
 }
 
 inline Perm16 BMat8::right_perm_action_on_basis(BMat8 other) const noexcept {
-    epu8 x = permuted(simde_mm_set_epi64x(_data, 0), epu8rev);
-    epu8 y = permuted(simde_mm_set_epi64x((*this * other)._data, 0), epu8rev);
+    epu8 x = permuted(simde_mm_set_epi64x(_data, 0), Epu8.rev());
+    epu8 y = permuted(simde_mm_set_epi64x((*this * other)._data, 0), Epu8.rev());
     // Vector ternary operator is not supported by clang.
-    // return (x != (epu8 {})) ? permutation_of(y, x) : epu8id;
-    return simde_mm_blendv_epi8(epu8id, permutation_of(y, x), x != epu8{});
+    // return (x != (epu8 {})) ? permutation_of(y, x) : Epu8.id();
+    return simde_mm_blendv_epi8(Epu8.id(), permutation_of(y, x), x != epu8{});
 }
 
 // Not noexcept because std::ostream::operator<< isn't

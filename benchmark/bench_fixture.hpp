@@ -1,5 +1,5 @@
 //****************************************************************************//
-//       Copyright (C) 2016 Florent Hivert <Florent.Hivert@lri.fr>,           //
+//       Copyright (C) 2016-2023 Florent Hivert <Florent.Hivert@lri.fr>,      //
 //                                                                            //
 //  Distributed under the terms of the GNU General Public License (GPL)       //
 //                                                                            //
@@ -35,7 +35,7 @@ std::vector<epu8> rand_epu8(size_t sz) {
 inline epu8 rand_perm() {
     static std::random_device rd;
     static std::mt19937 g(rd());
-    epu8 res = HPCombi::epu8id;
+    epu8 res = HPCombi::Epu8.id();
     auto &ar = HPCombi::as_array(res);
     std::shuffle(ar.begin(), ar.end(), g);
     return res;

@@ -1,5 +1,5 @@
 ////////////////////////////////////////////////////////////////////////////////
-//       Copyright (C) 2017 Florent Hivert <Florent.Hivert@lri.fr>,           //
+//       Copyright (C) 2017-2023 Florent Hivert <Florent.Hivert@lri.fr>,      //
 //                                                                            //
 //  Distributed under the terms of the GNU General Public License (GPL)       //
 //                                                                            //
@@ -24,7 +24,7 @@ const uint8_t FF = 0xff;
 namespace {
 std::vector<Perm16> all_perms(uint8_t sz) {
     std::vector<Perm16> res{};
-    epu8 x = HPCombi::epu8id;
+    epu8 x = HPCombi::Epu8.id();
     res.push_back(x);
     auto &refx = HPCombi::as_array(x);
 #ifndef __clang__

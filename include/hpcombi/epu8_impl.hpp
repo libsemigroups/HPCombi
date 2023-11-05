@@ -59,11 +59,11 @@ inline epu8 permuted_ref(epu8 a, epu8 b) noexcept {
 
 // Msk is supposed to be a boolean mask (i.e. each entry is either 0 or 255)
 inline uint64_t first_mask(epu8 msk, size_t bound) {
-    uint64_t res = simde_mm_movemask_epi8(msk & (epu8id < Epu8(bound)));
+    uint64_t res = simde_mm_movemask_epi8(msk & (Epu8.id() < Epu8(bound)));
     return res == 0 ? 16 : (__builtin_ffsll(res) - 1);
 }
 inline uint64_t last_mask(epu8 msk, size_t bound) {
-    auto res = simde_mm_movemask_epi8(msk & (epu8id < Epu8(bound)));
+    auto res = simde_mm_movemask_epi8(msk & (Epu8.id() < Epu8(bound)));
     return res == 0 ? 16 : (63 - __builtin_clzll(res));
 }
 
@@ -128,7 +128,7 @@ template <bool Increasing = true, size_t sz>
 inline epu8 network_sort(epu8 res, std::array<epu8, sz> rounds) {
     for (auto round : rounds) {
         // This conditional should be optimized out by the compiler
-        epu8 mask = Increasing ? round < epu8id : epu8id < round;
+        epu8 mask = Increasing ? round < Epu8.id() : Epu8.id() < round;
         epu8 b = permuted(res, round);
         // res = mask ? min(res,b) : max(res,b); is not accepted by clang
         res = simde_mm_blendv_epi8(min(res, b), max(res, b), mask);
@@ -139,10 +139,10 @@ inline epu8 network_sort(epu8 res, std::array<epu8, sz> rounds) {
 /// Apply a sorting network in place and return the permutation
 template <bool Increasing = true, size_t sz>
 inline epu8 network_sort_perm(epu8 &v, std::array<epu8, sz> rounds) {
-    epu8 res = epu8id;
+    epu8 res = Epu8.id();
     for (auto round : rounds) {
         // This conditional should be optimized out by the compiler
-        epu8 mask = Increasing ? round < epu8id : epu8id < round;
+        epu8 mask = Increasing ? round < Epu8.id() : Epu8.id() < round;
         epu8 b = permuted(v, round);
         epu8 cmp = simde_mm_blendv_epi8(b < v, v < b, mask);
         v = simde_mm_blendv_epi8(v, b, cmp);
@@ -231,7 +231,7 @@ inline void merge_rev(epu8 &a, epu8 &b) noexcept {
     b = network_sort<true>(b, merge_rounds);
 }
 inline void merge(epu8 &a, epu8 &b) noexcept {
-    a = permuted(a, epu8rev);
+    a = permuted(a, Epu8.rev());
     merge_rev(a, b);
 }
 // TODO : AVX2 version.
@@ -453,10 +453,10 @@ inline epu8 eval16_gen(epu8 v) noexcept {
     return from_array(as_VectGeneric(v).eval().v);
 }
 inline epu8 eval16_cycle(epu8 v) noexcept {
-    epu8 res = -(epu8id == v);
+    epu8 res = -(Epu8.id() == v);
     for (int i = 1; i < 16; i++) {
-        v = permuted(v, left_cycle);
-        res -= (epu8id == v);
+        v = permuted(v, Epu8.left_cycle());
+        res -= (Epu8.id() == v);
     }
     return res;
 }
@@ -470,11 +470,12 @@ inline epu8 eval16_popcount(epu8 v) noexcept {
 }
 
 inline epu8 popcount16(epu8 v) noexcept {
-    return permuted(popcount4, (v & Epu8(0x0f))) + permuted(popcount4, v >> 4);
+    return (permuted(Epu8.popcount(), v & Epu8(0x0f)) +
+            permuted(Epu8.popcount(), v >> 4));
 }
 
 inline bool is_partial_transformation(epu8 v, const size_t k) noexcept {
-    uint64_t diff = last_diff(v, epu8id, 16);
+    uint64_t diff = last_diff(v, Epu8.id(), 16);
     // (forall x in v, x + 1 <= 16)  and
     // (v = Perm16::one()   or  last diff index < 16)
     return (simde_mm_movemask_epi8(v + Epu8(1) <= Epu8(0x10)) == 0xffff) &&
@@ -482,13 +483,13 @@ inline bool is_partial_transformation(epu8 v, const size_t k) noexcept {
 }
 
 inline bool is_transformation(epu8 v, const size_t k) noexcept {
-    uint64_t diff = last_diff(v, epu8id, 16);
+    uint64_t diff = last_diff(v, Epu8.id(), 16);
     return (simde_mm_movemask_epi8(v < Epu8(0x10)) == 0xffff) &&
            (diff == 16 || diff < k);
 }
 
 inline bool is_partial_permutation(epu8 v, const size_t k) noexcept {
-    uint64_t diff = last_diff(v, epu8id, 16);
+    uint64_t diff = last_diff(v, Epu8.id(), 16);
     // (forall x in v, x <= 15)  and
     // (forall x < 15, multiplicity x v <= 1
     // (v = Perm16::one()   or  last diff index < 16)
@@ -499,22 +500,22 @@ inline bool is_partial_permutation(epu8 v, const size_t k) noexcept {
 
 #ifdef SIMDE_X86_SSE4_2_NATIVE
 inline bool is_permutation_cmpestri(epu8 v, const size_t k) noexcept {
-    uint64_t diff = last_diff(v, epu8id, 16);
+    uint64_t diff = last_diff(v, Epu8.id(), 16);
     // (forall x in v, x in Perm16::one())  and
     // (forall x in Perm16::one(), x in v)  and
     // (v = Perm16::one()   or  last diff index < 16)
-    return _mm_cmpestri(epu8id, 16, v, 16, FIRST_NON_ZERO) == 16 &&
-           _mm_cmpestri(v, 16, epu8id, 16, FIRST_NON_ZERO) == 16 &&
+    return _mm_cmpestri(Epu8.id(), 16, v, 16, FIRST_NON_ZERO) == 16 &&
+           _mm_cmpestri(v, 16, Epu8.id(), 16, FIRST_NON_ZERO) == 16 &&
            (diff == 16 || diff < k);
 }
 #endif
 
 inline bool is_permutation_sort(epu8 v, const size_t k) noexcept {
-    uint64_t diff = last_diff(v, epu8id, 16);
-    return equal(sorted(v), epu8id) && (diff == 16 || diff < k);
+    uint64_t diff = last_diff(v, Epu8.id(), 16);
+    return equal(sorted(v), Epu8.id()) && (diff == 16 || diff < k);
 }
 inline bool is_permutation_eval(epu8 v, const size_t k) noexcept {
-    uint64_t diff = last_diff(v, epu8id, 16);
+    uint64_t diff = last_diff(v, Epu8.id(), 16);
     return equal(eval16(v), Epu8({}, 1)) && (diff == 16 || diff < k);
 }
 

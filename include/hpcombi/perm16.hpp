@@ -60,7 +60,7 @@ struct alignas(16) PTransf16 : public Vect16 {
     }
 
     //! The identity partial transformation.
-    static constexpr PTransf16 one() { return epu8id; }
+    static constexpr PTransf16 one() { return Epu8.id(); }
     //! The product of two partial transformations.
     PTransf16 operator*(const PTransf16 &p) const {
         return HPCombi::permuted(v, p.v) | (p.v == Epu8(0xFF));
@@ -129,7 +129,7 @@ struct Transf16 : public PTransf16 {
     }
 
     //! The identity transformation.
-    static constexpr Transf16 one() { return epu8id; }
+    static constexpr Transf16 one() { return Epu8.id(); }
     //! The product of two transformations.
     Transf16 operator*(const Transf16 &p) const {
         return HPCombi::permuted(v, p.v);
@@ -159,7 +159,7 @@ struct PPerm16 : public PTransf16 {
     }
 
     //! The identity partial permutations.
-    static constexpr PPerm16 one() { return epu8id; }
+    static constexpr PPerm16 one() { return Epu8.id(); }
     //! The product of two partial perrmutations.
     PPerm16 operator*(const PPerm16 &p) const {
         return this->PTransf16::operator*(p);
@@ -216,7 +216,7 @@ struct Perm16 : public Transf16 /* public PPerm : diamond problem */ {
     // being defined (see https://stackoverflow.com/questions/11928089/)
     // therefore we chose to have functions.
     //! The identity partial permutation.
-    static constexpr Perm16 one() { return epu8id; }
+    static constexpr Perm16 one() { return Epu8.id(); }
     //! The product of two permutations
     Perm16 operator*(const Perm16 &p) const {
         return HPCombi::permuted(v, p.v);

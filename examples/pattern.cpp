@@ -68,8 +68,8 @@ void make_subsets_of_size(int n, int k) {
 template <int Size>
 epu8 extract_pattern(epu8 perm, epu8 permset) {
     epu8 cst = Epu8({}, Size);
-    epu8 res = permuted(perm, permset) | (epu8id >= cst);
-    res = sort_perm(res) & (epu8id < cst);
+    epu8 res = permuted(perm, permset) | (Epu8.id() >= cst);
+    res = sort_perm(res) & (Epu8.id() < cst);
     return res;
 }
 

@@ -20,7 +20,7 @@ namespace HPCombi {
 ///////////////////////////////////////////////////////////////////////////////
 
 inline PTransf16::PTransf16(std::initializer_list<uint8_t> il)
-    : Vect16(epu8id) {
+    : Vect16(Epu8.id()) {
     HPCOMBI_ASSERT(il.size() <= 16);
     std::copy(il.begin(), il.end(), HPCombi::as_array(v).begin());
 }
@@ -43,7 +43,7 @@ inline uint32_t PTransf16::domain_bitset(bool complement) const {
     return simde_mm_movemask_epi8(domain_mask(complement));
 }
 inline PTransf16 PTransf16::right_one() const {
-    return domain_mask(true) | epu8id;
+    return domain_mask(true) | Epu8.id();
 }
 
 #ifdef SIMDE_X86_SSE4_2_NATIVE
@@ -64,7 +64,7 @@ inline uint32_t PTransf16::image_bitset(bool complement) const {
     return simde_mm_movemask_epi8(image_mask(complement));
 }
 inline PTransf16 PTransf16::left_one() const {
-    return image_mask(true) | epu8id;
+    return image_mask(true) | Epu8.id();
 }
 inline uint32_t PTransf16::rank_ref() const {
     decltype(Epu8)::array tmp{};
@@ -349,7 +349,7 @@ inline epu8 Perm16::cycles_partition() const {
 }
 
 inline uint8_t Perm16::nb_cycles_unroll() const {
-    epu8 res = (epu8id == cycles_partition());
+    epu8 res = (Epu8.id() == cycles_partition());
     return __builtin_popcountl(simde_mm_movemask_epi8(res));
 }
 
