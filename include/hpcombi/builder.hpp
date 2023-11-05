@@ -16,6 +16,14 @@
 #ifndef HPCOMBI_BUILDER_HPP_INCLUDED
 #define HPCOMBI_BUILDER_HPP_INCLUDED
 
+#include <array>             // for array
+#include <cstddef>           // for size_t
+#include <initializer_list>  // for initializer_list
+#include <type_traits>       // for remove_reference_t
+#include <utility>           // for make_index_sequence, ind...
+
+#include "vect_generic.hpp"  // for VectGeneric
+
 namespace HPCombi {
 
 /** Class for factory object associated to a SIMD packed unsigned integers.
@@ -77,6 +85,14 @@ template <class TPU> struct TPUBuild {
         return operator()(type_elem(c));
     }
 
+    /// explicit overloading for #array
+    // Passing the argument by reference used to trigger a segfault in gcc
+    // Since vector types doesn't belongs to the standard, I didn't manage
+    // to know if I'm using undefined behavior here.
+    inline constexpr TPU operator()(array a) const {
+        return reinterpret_cast<const TPU &>(a);
+    }
+
     /// Return the identity element of type \c TPU
     constexpr TPU id() const { return operator()([](type_elem i) { return i; }); }
     /// Return the reversed element of type \c TPU
@@ -109,6 +125,42 @@ template <class TPU> struct TPUBuild {
         });
     }
 };
+
+/** Cast a TPU to a c++ \c std::array
+ *
+ *  This is usually faster for algorithm using a lot of indexed access.
+ */
+template <class TPU>
+inline typename TPUBuild<TPU>::array &as_array(TPU &v) noexcept {
+    return reinterpret_cast<typename TPUBuild<TPU>::array &>(v);
+}
+/** Cast a constant TPU to a constant c++ \c std::array
+ *
+ *  This is usually faster for algorithm using a lot of indexed access.
+ */
+template <class TPU>
+inline const typename TPUBuild<TPU>::array &as_array(const TPU &v) noexcept {
+    return reinterpret_cast<const typename TPUBuild<TPU>::array &>(v);
+}
+
+/** Cast a #HPCombi::epu8 to a c++ #HPCombi::VectGeneric
+ *
+ *  This is usually faster for algorithm using a lot of indexed access.
+ */
+template <class TPU>
+inline VectGeneric<TPUBuild<TPU>::size> &as_VectGeneric(TPU &v) {
+    return reinterpret_cast<VectGeneric<TPUBuild<TPU>::size> &>(as_array(v));
+}
+
+/** Cast a #HPCombi::epu8 to a c++ #HPCombi::VectGeneric
+ *
+ *  This is usually faster for algorithm using a lot of indexed access.
+ */
+template <class TPU>
+inline const VectGeneric<TPUBuild<TPU>::size> &as_VectGeneric(const TPU &v) {
+    return reinterpret_cast<const VectGeneric<TPUBuild<TPU>::size> &>(
+        as_array(v));
+}
 
 }  // namespace HPCombi
 

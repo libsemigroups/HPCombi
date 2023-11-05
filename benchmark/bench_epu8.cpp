@@ -99,7 +99,7 @@ inline epu8 std_sort(epu8 &p) {
 
 inline epu8 arr_sort(epu8 &p) {
     auto &ar = as_array(p);
-    return from_array(sorted_vect(ar));
+    return Epu8(sorted_vect(ar));
 }
 
 inline epu8 gen_sort(epu8 p) {

@@ -447,10 +447,10 @@ inline epu8 eval16_arr(epu8 v8) noexcept {
     for (size_t i = 0; i < 16; i++)
         if (v[i] < 16)
             res[v[i]]++;
-    return from_array(res);
+    return Epu8(res);
 }
 inline epu8 eval16_gen(epu8 v) noexcept {
-    return from_array(as_VectGeneric(v).eval().v);
+    return Epu8(as_VectGeneric(v).eval().v);
 }
 inline epu8 eval16_cycle(epu8 v) noexcept {
     epu8 res = -(Epu8.id() == v);

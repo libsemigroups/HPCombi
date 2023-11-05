@@ -278,7 +278,7 @@ inline epu8 Perm16::lehmer_arr() const {
         for (size_t j = i + 1; j < 16; j++)
             if (ar[i] > ar[j])
                 res[i]++;
-    return from_array(res);
+    return Epu8(res);
 }
 
 inline epu8 Perm16::lehmer() const {

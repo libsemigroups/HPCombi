@@ -19,11 +19,8 @@
 #include <array>             // for array
 #include <cstddef>           // for size_t
 #include <cstdint>           // for uint8_t, uint64_t, int8_t
-#include <initializer_list>  // for initializer_list
 #include <ostream>           // for ostream
 #include <string>            // for string
-#include <type_traits>       // for remove_reference_t
-#include <utility>           // for make_index_sequence, ind...
 
 #include "debug.hpp"         // for HPCOMBI_ASSERT
 #include "builder.hpp"       // for TPUBuild
@@ -46,57 +43,12 @@ using epu8 = uint8_t __attribute__((vector_size(16)));
 static_assert(alignof(epu8) == 16,
               "epu8 type is not properly aligned by the compiler !");
 
-/// SIMD vector of 32 unsigned bytes
-/// Currently not really used except in experiments
-using xpu8 = uint8_t __attribute__((vector_size(32)));
-
 
 /** Factory object acting as a class constructor for type #HPCombi::epu8.
  * see #HPCombi::TPUBuild for usage and capability
  */
 constexpr TPUBuild<epu8> Epu8 {};
 
-
-/** Cast a #HPCombi::epu8 to a c++ \c std::array
- *
- *  This is usually faster for algorithm using a lot of indexed access.
- */
-inline decltype(Epu8)::array &as_array(epu8 &v) noexcept {
-    return reinterpret_cast<decltype(Epu8)::array &>(v);
-}
-/** Cast a constant #HPCombi::epu8 to a C++ \c std::array
- *
- *  This is usually faster for algorithm using a lot of indexed access.
- */
-inline const decltype(Epu8)::array &as_array(const epu8 &v) noexcept {
-    return reinterpret_cast<const decltype(Epu8)::array &>(v);
-}
-/** Cast a C++ \c std::array to a #HPCombi::epu8 */
-// Passing the argument by reference triggers a segfault in gcc
-// Since vector types doesn't belongs to the standard, I didn't manage
-// to know if I'm using undefined behavior here.
-inline epu8 from_array(decltype(Epu8)::array a) noexcept {
-    return reinterpret_cast<const epu8 &>(a);
-}
-
-/** Cast a #HPCombi::epu8 to a c++ #HPCombi::VectGeneric
- *
- *  This is usually faster for algorithm using a lot of indexed access.
- */
-inline VectGeneric<16> &as_VectGeneric(epu8 &v) {
-    return reinterpret_cast<VectGeneric<16> &>(as_array(v));
-}
-
-/** Cast a #HPCombi::epu8 to a c++ #HPCombi::VectGeneric
- *
- *  This is usually faster for algorithm using a lot of indexed access.
- */
-inline const VectGeneric<16> &as_VectGeneric(const epu8 &v) {
-    return reinterpret_cast<const VectGeneric<16> &>(as_array(v));
-}
-
-// TODO up to this point in this file, everything could be generic to support
-// larger perms, such as Perm32 in the experiments dir.
 
 /** Test whether all the entries of a #HPCombi::epu8 are zero */
 inline bool is_all_zero(epu8 a) noexcept { return simde_mm_testz_si128(a, a); }

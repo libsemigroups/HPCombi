@@ -238,11 +238,11 @@ TEST_CASE_METHOD(Fix, "Epu8::as_array", "[Epu8][016]") {
     CHECK(av == as_array(Pv));
 }
 
-TEST_CASE_METHOD(Fix, "Epu8::from_array", "[Epu8][017]") {
+TEST_CASE_METHOD(Fix, "Epu8(array)", "[Epu8][017]") {
     for (auto x : v) {
-        CHECK_THAT(x, Equals(from_array(as_array(x))));
+        CHECK_THAT(x, Equals(Epu8(as_array(x))));
     }
-    CHECK_THAT(Pv, Equals(from_array(av)));
+    CHECK_THAT(Pv, Equals(Epu8(av)));
 }
 
 TEST_CASE_METHOD(Fix, "Epu8::is_sorted", "[Epu8][018]") {
