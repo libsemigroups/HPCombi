@@ -162,6 +162,15 @@ inline const VectGeneric<TPUBuild<TPU>::size> &as_VectGeneric(const TPU &v) {
         as_array(v));
 }
 
+template <class TPU>
+inline std::ostream &ostream_insert(std::ostream &stream, const TPU &a) {
+    stream << "{" << std::setw(2) << unsigned(a[0]);
+    for (unsigned i = 1; i < HPCombi::TPUBuild<TPU>::size; ++i)
+        stream << "," << std::setw(2) << unsigned(a[i]);
+    stream << "}";
+    return stream;
+}
+
 }  // namespace HPCombi
 
 #endif  // HPCOMBI_BUILDER_HPP_INCLUDED

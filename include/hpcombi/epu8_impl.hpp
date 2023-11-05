@@ -531,15 +531,11 @@ inline bool is_permutation(epu8 v, const size_t k) noexcept {
 
 namespace std {
 
-inline std::ostream &operator<<(std::ostream &stream, HPCombi::epu8 const &a) {
-    stream << "{" << std::setw(2) << unsigned(a[0]);
-    for (unsigned i = 1; i < 16; ++i)
-        stream << "," << std::setw(2) << unsigned(a[i]);
-    stream << "}";
-    return stream;
+inline std::ostream &operator<<(std::ostream &stream, const HPCombi::epu8 &a) {
+        return HPCombi::ostream_insert(stream, a);
 }
 
-inline std::string to_string(HPCombi::epu8 const &a) {
+inline std::string to_string(const HPCombi::epu8 &a) {
     std::ostringstream ss;
     ss << a;
     return ss.str();
