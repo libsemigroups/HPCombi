@@ -213,6 +213,30 @@ inline epu8 sort8_perm(epu8 &a) noexcept {
     return network_sort_perm<true>(a, sorting_rounds8);
 }
 
+constexpr std::array<epu8, 6> merge_rounds
+    // clang-format off
+    //     0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15
+{{
+    epu8 { 8,  9, 10, 11, 12, 13, 14, 15,  0,  1,  2,  3,  4,  5,  6,  7},
+    epu8 { 4,  5,  6,  7,  0,  1,  2,  3, 12, 13, 14, 15,  8,  9, 10, 11},
+    epu8 { 2,  3,  0,  1,  6,  7,  4,  5, 10, 11,  8,  9, 14, 15, 12, 13},
+    epu8 { 1,  0,  3,  2,  5,  4,  7,  6,  9,  8, 11, 10, 13, 12, 15, 14},
+}};
+// clang-format on
+inline void merge_rev(epu8 &a, epu8 &b) noexcept {
+    epu8 mn = min(a, b);
+    b = max(a, b);
+    a = mn;
+    a = network_sort<true>(a, merge_rounds);
+    b = network_sort<true>(b, merge_rounds);
+}
+inline void merge(epu8 &a, epu8 &b) noexcept {
+    a = permuted(a, epu8rev);
+    merge_rev(a, b);
+}
+// TODO : AVX2 version.
+// TODO : compute merge_rounds on the fly instead of loading those from memory
+
 inline epu8 random_epu8(uint16_t bnd) {
     epu8 res;
 

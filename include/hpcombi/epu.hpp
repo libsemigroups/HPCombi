@@ -228,9 +228,21 @@ inline epu8 revsorted8(epu8 a) noexcept;
 inline epu8 sort_perm(epu8 &a) noexcept;
 /** Sort \c this and return the sorting permutation
  * @details
- * @par Algorithm: Uses a 9 stages sorting network #sorting_rounds8
+ * @par Algorithm: Uses a 6 stages sorting network #sorting_rounds8
  */
 inline epu8 sort8_perm(epu8 &a) noexcept;
+
+/** @class common_merge
+ * @brief Merge two sorted epu8
+ * @details
+ * @param a, b: two #HPCombi::epu8
+ * @returns void
+ * after executing merge, \c a and \c are sorted \c a[15] <= \c b[0]
+ */
+/** @copydoc common_merge
+ *  @par Algorithm: bitonic merge sorting network
+ */
+inline void merge(epu8 &a, epu8 &b) noexcept;
 
 /** @class common_permutation_of
  * @brief Find if a vector is a permutation of one other

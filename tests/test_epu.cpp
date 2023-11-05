@@ -18,10 +18,14 @@
 
 #include "test_main.hpp"
 #include <catch2/catch_test_macros.hpp>
+#include <catch2/matchers/catch_matchers_predicate.hpp>
 
 #include "hpcombi/epu.hpp"
 
 namespace HPCombi {
+
+auto IsSorted =
+    Catch::Matchers::Predicate<epu8>(is_sorted, "is_sorted");
 
 struct Fix {
     Fix()
@@ -279,13 +283,13 @@ TEST_CASE_METHOD(Fix, "Epu8::sorted", "[Epu8][018]") {
         sorted(epu8{0, 1, 3, 2, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15}),
         Equals(epu8id));
     for (auto &x : v) {
-        CHECK(is_sorted(sorted(x)));
+        CHECK_THAT(sorted(x), IsSorted);
     }
     epu8 x = epu8id;
-    CHECK(is_sorted(x));
+    CHECK_THAT(sorted(x), IsSorted);
     auto &refx = as_array(x);
     do {
-        CHECK(is_sorted(sorted(x)));
+        CHECK_THAT(sorted(x), IsSorted);
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wstringop-overflow"
     } while (std::next_permutation(refx.begin(), refx.begin() + 9));
@@ -297,13 +301,13 @@ TEST_CASE_METHOD(Fix, "Epu8::revsorted", "[Epu8][019]") {
         revsorted(epu8{0, 1, 3, 2, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15}),
         Equals(epu8rev));
     for (auto &x : v) {
-        CHECK(is_sorted(reverted(revsorted(x))));
+        CHECK_THAT(reverted(revsorted(x)), IsSorted);
     }
     epu8 x = epu8id;
-    CHECK(is_sorted(x));
+    CHECK_THAT(x, IsSorted);
     auto &refx = as_array(x);
     do {
-        CHECK(is_sorted(reverted(revsorted(x))));
+        CHECK_THAT(reverted(revsorted(x)), IsSorted);
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wstringop-overflow"
     } while (std::next_permutation(refx.begin(), refx.begin() + 9));
@@ -320,7 +324,7 @@ TEST_CASE_METHOD(Fix, "Epu8::sort_perm", "[Epu8][020]") {
     for (auto x : v) {
         epu8 xsort = x;
         epu8 psort = sort_perm(xsort);
-        CHECK(is_sorted(xsort));
+        CHECK_THAT(xsort, IsSorted);
         CHECK(is_permutation(psort));
         CHECK_THAT(permuted(x, psort), Equals(xsort));
     }
@@ -336,8 +340,8 @@ TEST_CASE_METHOD(Fix, "Epu8::sort8_perm", "[Epu8][021]") {
     for (auto x : v) {
         epu8 xsort = x;
         epu8 psort = sort_perm(xsort);
-        CHECK(is_sorted(xsort | Epu8({0, 0, 0, 0, 0, 0, 0, 0}, 0xFF)));
-        CHECK(is_sorted(xsort & Epu8({0, 0, 0, 0, 0, 0, 0, 0}, 0xFF)));
+        CHECK_THAT(xsort | Epu8({0, 0, 0, 0, 0, 0, 0, 0}, 0xFF), IsSorted);
+        CHECK_THAT(xsort & Epu8({0, 0, 0, 0, 0, 0, 0, 0}, 0xFF), IsSorted);
         CHECK(is_permutation(psort));
         CHECK_THAT(permuted(x, psort), Equals(xsort));
     }
@@ -368,6 +372,27 @@ TEST_CASE_METHOD(Fix, "Epu8::permutation_of_ref", "[Epu8][022]") {
                 epu8{FF, FF, FF, FF, 0, 0, FF, 0, 0, 0, FF, 0, FF, 0, 0, 0}),
                Equals(epu8{FF, FF, FF, FF, 4, 5, FF, 7, 8, 9, FF, 11, FF, 13,
                            14, 15}));
+}
+
+TEST_CASE_METHOD(Fix, "Epu8::merge", "[Epu8][022]") {
+    std::vector<std::pair<epu8, epu8>> sample_pairs {{
+            { epu8 {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
+              epu8 {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1}
+            }
+        }};
+    for (auto x : v)
+        for (auto y : v)
+            sample_pairs.emplace_back(x, y);
+    for (auto p : sample_pairs) {
+        epu8 x = p.first;
+        epu8 y = p.second;
+        x = sorted(x);
+        y = sorted(y);
+        merge(x, y);
+        CHECK_THAT(x, IsSorted);
+        CHECK_THAT(y, IsSorted);
+        CHECK(x[15] <= y[0]);
+    }
 }
 
 TEST_CASE_METHOD(Fix, "Epu8::remove_dups", "[Epu8][023]") {
