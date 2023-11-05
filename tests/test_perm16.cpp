@@ -122,7 +122,7 @@ TEST_CASE("PTransf16::image_mask", "[PTransf16][002]") {
             {0, FF, 0, FF, FF, 0, FF, FF, FF, FF, FF, FF, FF, FF, FF, 0}, 0)));
 }
 
-TEST_CASE("PTransf16::image_mask_ref_ref", "[PTransf16][002]") {
+TEST_CASE("PTransf16::image_mask_ref_ref", "[PTransf16][003]") {
     CHECK_THAT(PTransf16({}).image_mask_ref(), Equals(Epu8(FF)));
     CHECK_THAT(PTransf16({}).image_mask_ref(false), Equals(Epu8(FF)));
     CHECK_THAT(PTransf16({}).image_mask_ref(true), Equals(Epu8(0)));
@@ -152,7 +152,7 @@ TEST_CASE("PTransf16::image_mask_ref_ref", "[PTransf16][002]") {
             {0, FF, 0, FF, FF, 0, FF, FF, FF, FF, FF, FF, FF, FF, FF, 0}, 0)));
 }
 
-TEST_CASE("PTransf16::left_one", "[PTransf16][003]") {
+TEST_CASE("PTransf16::left_one", "[PTransf16][004]") {
     CHECK(PTransf16({}).left_one() == PTransf16::one());
     CHECK(PTransf16({4, 4, 4, 4}).left_one() == PTransf16({FF, FF, FF, FF}));
     CHECK(PTransf16(Epu8(1)).left_one() == PTransf16(Epu8({FF, 1}, FF)));
@@ -171,7 +171,7 @@ TEST_CASE("PTransf16::left_one", "[PTransf16][003]") {
               {0, FF, 2, FF, FF, 5, FF, FF, FF, FF, FF, FF, FF, FF, FF, 15}));
 }
 
-TEST_CASE("PTransf16::domain_mask", "[PTransf16][004]") {
+TEST_CASE("PTransf16::domain_mask", "[PTransf16][005]") {
     CHECK_THAT(PTransf16({}).domain_mask(), Equals(Epu8(FF)));
     CHECK_THAT(PTransf16({4, 4, 4, 4}).domain_mask(), Equals(Epu8(FF)));
     CHECK_THAT(PTransf16({4, 4, 4, 4}).domain_mask(false), Equals(Epu8(FF)));
@@ -193,7 +193,7 @@ TEST_CASE("PTransf16::domain_mask", "[PTransf16][004]") {
         Equals(Epu8({0, 0, FF, 0, 0, FF, 0, FF, 0}, FF)));
 }
 
-TEST_CASE("PTransf16::right_one", "[PTransf16][005]") {
+TEST_CASE("PTransf16::right_one", "[PTransf16][006]") {
     CHECK(PTransf16({}).right_one() == PTransf16::one());
     CHECK(PTransf16({4, 4, 4, 4}).right_one() == PTransf16::one());
     CHECK(PTransf16(Epu8(1)).right_one() == PTransf16::one());
@@ -210,7 +210,7 @@ TEST_CASE("PTransf16::right_one", "[PTransf16][005]") {
         PTransf16({0, 1, FF, 3, 4, FF, 6, FF, 8, FF, FF, FF, FF, FF, FF, FF}));
 }
 
-TEST_CASE("PTransf16::rank_ref", "[PTransf16][006]") {
+TEST_CASE("PTransf16::rank_ref", "[PTransf16][007]") {
     CHECK(PTransf16({}).rank_ref() == 16);
     CHECK(PTransf16({4, 4, 4, 4}).rank_ref() == 12);
     CHECK(PTransf16({1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1})
@@ -231,7 +231,7 @@ TEST_CASE("PTransf16::rank_ref", "[PTransf16][006]") {
               .rank_ref() == 4);
 }
 
-TEST_CASE("PTransf16::rank", "[PTransf16][007]") {
+TEST_CASE("PTransf16::rank", "[PTransf16][008]") {
     CHECK(PTransf16({}).rank() == 16);
     CHECK(PTransf16({4, 4, 4, 4}).rank() == 12);
     CHECK(PTransf16({1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}).rank() ==
@@ -246,7 +246,7 @@ TEST_CASE("PTransf16::rank", "[PTransf16][007]") {
         4);
 }
 
-TEST_CASE("PTransf16::fix_points_mask", "[PTransf16][008]") {
+TEST_CASE("PTransf16::fix_points_mask", "[PTransf16][009]") {
     CHECK_THAT(PTransf16({}).fix_points_mask(), Equals(Epu8(FF)));
     CHECK_THAT(PTransf16({}).fix_points_mask(false), Equals(Epu8(FF)));
     CHECK_THAT(PTransf16({}).fix_points_mask(true), Equals(Epu8(0)));
@@ -274,7 +274,7 @@ TEST_CASE("PTransf16::fix_points_mask", "[PTransf16][008]") {
                Equals(Epu8({0, FF, 0}, FF)));
 }
 
-TEST_CASE("PTransf16::fix_points_bitset", "[PTransf16][009]") {
+TEST_CASE("PTransf16::fix_points_bitset", "[PTransf16][010]") {
     CHECK(PTransf16({}).fix_points_bitset() == 0xFFFF);
     CHECK(PTransf16({}).fix_points_bitset(false) == 0xFFFF);
     CHECK(PTransf16({}).fix_points_bitset(true) == 0);
@@ -292,7 +292,7 @@ TEST_CASE("PTransf16::fix_points_bitset", "[PTransf16][009]") {
               .fix_points_bitset(true) == 0xFFFA);
 }
 
-TEST_CASE("PTransf16::nb_fix_points", "[PTransf16][010]") {
+TEST_CASE("PTransf16::nb_fix_points", "[PTransf16][011]") {
     CHECK(PTransf16({}).nb_fix_points() == 16);
     CHECK(PTransf16({4, 4, 4, 4}).nb_fix_points() == 12);
     CHECK(PTransf16(Epu8(1)).nb_fix_points() == 1);
@@ -307,7 +307,7 @@ TEST_CASE("PTransf16::nb_fix_points", "[PTransf16][010]") {
 }
 
 TEST_CASE_METHOD(Perm16Fixture, "Transf16::operator uint64",
-                 "[Transf16][011]") {
+                 "[Transf16][012]") {
     CHECK(static_cast<uint64_t>(Transf16::one()) == 0xf7e6d5c4b3a29180);
     CHECK(static_cast<uint64_t>(zero) == 0x0);
     CHECK(static_cast<uint64_t>(P10) == 0x1);
@@ -318,7 +318,7 @@ TEST_CASE_METHOD(Perm16Fixture, "Transf16::operator uint64",
 }
 
 TEST_CASE_METHOD(Perm16Fixture, "Transf16::Transf16(uint64_t)",
-                 "[Transf16][012]") {
+                 "[Transf16][013]") {
     CHECK(static_cast<Transf16>(0x0) == zero);
     CHECK(static_cast<Transf16>(0x1) == P10);
     CHECK(static_cast<Transf16>(0x100) == P01);
@@ -327,13 +327,13 @@ TEST_CASE_METHOD(Perm16Fixture, "Transf16::Transf16(uint64_t)",
     }
 }
 
-TEST_CASE_METHOD(Perm16Fixture, "Transf16::hash", "[Transf16][013]") {
+TEST_CASE_METHOD(Perm16Fixture, "Transf16::hash", "[Transf16][014]") {
     CHECK(std::hash<Transf16>()(Transf16::one()) != 0);
     CHECK(std::hash<Transf16>()(Transf16(Epu8(1))) != 0);
     CHECK(std::hash<Transf16>()(RandT) != 0);
 }
 
-TEST_CASE_METHOD(Perm16Fixture, "Perm16::operator uint64_t", "[Perm16][014]") {
+TEST_CASE_METHOD(Perm16Fixture, "Perm16::operator uint64_t", "[Perm16][015]") {
     CHECK(static_cast<uint64_t>(Perm16::one()) == 0xf7e6d5c4b3a29180);
     CHECK(static_cast<uint64_t>(PPa) == 0xf7e6d5c0b4a39281);
     CHECK(static_cast<uint64_t>(PPb) == 0xd7e4f5c0b6a39281);
@@ -344,17 +344,17 @@ TEST_CASE_METHOD(Perm16Fixture, "Perm16::operator uint64_t", "[Perm16][014]") {
     }
 }
 
-TEST_CASE("Perm::operator==", "[Perm16][015]") {
+TEST_CASE("Perm::operator==", "[Perm16][016]") {
     CHECK(Perm16::one() * Perm16::one() == Perm16::one());
 }
 
-TEST_CASE_METHOD(Perm16Fixture, "Perm16::hash", "[Perm16][016]") {
+TEST_CASE_METHOD(Perm16Fixture, "Perm16::hash", "[Perm16][017]") {
     CHECK(std::hash<Perm16>()(Transf16::one()) != 0);
     CHECK(std::hash<Perm16>()(PPa) != 0);
     CHECK(std::hash<Perm16>()(RandPerm) != 0);
 }
 
-TEST_CASE("PPerm16::PPerm16", "[PPerm16][017]") {
+TEST_CASE("PPerm16::PPerm16", "[PPerm16][018]") {
     const uint8_t FF = 0xff;
     CHECK(
         PPerm16({4, 5, 0}, {9, 0, 1}) ==
@@ -364,12 +364,12 @@ TEST_CASE("PPerm16::PPerm16", "[PPerm16][017]") {
         PPerm16({1, FF, FF, FF, 9, 0, FF, FF, 2, FF, FF, FF, FF, FF, FF, FF}));
 }
 
-TEST_CASE("PPerm16::hash", "[PPerm16][018]") {
+TEST_CASE("PPerm16::hash", "[PPerm16][019]") {
     CHECK(std::hash<PPerm16>()(PPerm16::one()) != 0);
     CHECK(std::hash<PPerm16>()(PPerm16({4, 5, 0}, {9, 0, 1})) != 0);
 }
 
-TEST_CASE_METHOD(Perm16Fixture, "PPerm16::left_one", "[PPerm16][019]") {
+TEST_CASE_METHOD(Perm16Fixture, "PPerm16::left_one", "[PPerm16][020]") {
     CHECK(PPerm16({}).left_one() == PPerm16::one());
     CHECK(PPerm16({FF, FF, FF, 4}).left_one() == PPerm16({FF, FF, FF, FF}));
     CHECK(PPerm16({FF, 4, FF, FF}).left_one() == PPerm16({FF, FF, FF, FF}));
@@ -378,7 +378,7 @@ TEST_CASE_METHOD(Perm16Fixture, "PPerm16::left_one", "[PPerm16][019]") {
     }
 }
 
-TEST_CASE_METHOD(Perm16Fixture, "PPerm16::right_one", "[PPerm16][020]") {
+TEST_CASE_METHOD(Perm16Fixture, "PPerm16::right_one", "[PPerm16][021]") {
     CHECK(PPerm16({}).right_one() == PPerm16::one());
     CHECK(PPerm16({FF, FF, FF, 4}).right_one() == PPerm16({FF, FF, FF}));
     CHECK(PPerm16({FF, 4, FF, FF}).right_one() == PPerm16({FF, 1, FF, FF}));
@@ -388,10 +388,10 @@ TEST_CASE_METHOD(Perm16Fixture, "PPerm16::right_one", "[PPerm16][020]") {
 }
 
 #ifdef SIMDE_X86_SSE4_2_NATIVE
-TEST_AGREES(Perm16Fixture, inverse_ref, inverse_find, PPlist, "[PPerm16][021]");
+TEST_AGREES(Perm16Fixture, inverse_ref, inverse_find, PPlist, "[PPerm16][022]");
 #endif
 
-TEST_CASE_METHOD(Perm16Fixture, "Perm16::fix_points_mask", "[PPerm16][022]") {
+TEST_CASE_METHOD(Perm16Fixture, "Perm16::fix_points_mask", "[PPerm16][023]") {
     CHECK_THAT(PTransf16::one().fix_points_mask(), Equals(Epu8(FF)));
     CHECK_THAT(Perm16::one().fix_points_mask(), Equals(Epu8(FF)));
     CHECK_THAT(PPa.fix_points_mask(), Equals(Epu8({0, 0, 0, 0, 0}, FF)));
@@ -415,7 +415,7 @@ TEST_CASE_METHOD(Perm16Fixture, "Perm16::fix_points_mask", "[PPerm16][022]") {
     CHECK_THAT(RandPerm.fix_points_mask(true), Equals(Epu8({FF, 0}, FF)));
 }
 
-TEST_CASE_METHOD(Perm16Fixture, "Perm16::smallest_fix_point", "[Perm16][023]") {
+TEST_CASE_METHOD(Perm16Fixture, "Perm16::smallest_fix_point", "[Perm16][024]") {
     CHECK(Perm16::one().smallest_fix_point() == 0);
     CHECK(PPa.smallest_fix_point() == 5);
     CHECK(PPb.smallest_fix_point() == 5);
@@ -423,7 +423,7 @@ TEST_CASE_METHOD(Perm16Fixture, "Perm16::smallest_fix_point", "[Perm16][023]") {
 }
 
 TEST_CASE_METHOD(Perm16Fixture, "Perm16::smallest_moved_point",
-                 "[Perm16][024]") {
+                 "[Perm16][025]") {
     CHECK(Perm16::one().smallest_moved_point() == int(FF));
     CHECK(PPa.smallest_moved_point() == 0);
     CHECK(PPb.smallest_moved_point() == 0);
@@ -431,7 +431,7 @@ TEST_CASE_METHOD(Perm16Fixture, "Perm16::smallest_moved_point",
     CHECK(Perm16({0, 1, 3, 2}).smallest_moved_point() == 2);
 }
 
-TEST_CASE_METHOD(Perm16Fixture, "Perm16::largest_fix_point", "[Perm16][025]") {
+TEST_CASE_METHOD(Perm16Fixture, "Perm16::largest_fix_point", "[Perm16][026]") {
     CHECK(Perm16::one().largest_fix_point() == 15);
     CHECK(int(PPa.largest_fix_point()) == 15);
     CHECK(PPb.largest_fix_point() == 14);
@@ -446,7 +446,7 @@ TEST_CASE_METHOD(Perm16Fixture, "Perm16::largest_fix_point", "[Perm16][025]") {
               .largest_fix_point() == 15);
 }
 
-TEST_CASE_METHOD(Perm16Fixture, "Perm16::nb_fix_points", "[Perm16][026]") {
+TEST_CASE_METHOD(Perm16Fixture, "Perm16::nb_fix_points", "[Perm16][027]") {
     CHECK(Perm16::one().nb_fix_points() == 16);
     CHECK(PPa.nb_fix_points() == 11);
     CHECK(PPb.nb_fix_points() == 8);
@@ -454,7 +454,7 @@ TEST_CASE_METHOD(Perm16Fixture, "Perm16::nb_fix_points", "[Perm16][026]") {
     CHECK(Perm16({0, 1, 3, 2}).nb_fix_points() == 14);
 }
 
-TEST_CASE_METHOD(Perm16Fixture, "Perm16::inverse_ref", "[Perm16][027]") {
+TEST_CASE_METHOD(Perm16Fixture, "Perm16::inverse_ref", "[Perm16][028]") {
     CHECK(PPa * PPa.inverse() == Perm16::one());
     CHECK(PPa.inverse() * PPa == Perm16::one());
     CHECK(PPb * PPb.inverse() == Perm16::one());
@@ -468,12 +468,12 @@ TEST_CASE_METHOD(Perm16Fixture, "Perm16::inverse_ref", "[Perm16][027]") {
     }
 }
 
-TEST_AGREES(Perm16Fixture, inverse_ref, inverse_find, Plist, "[Perm16][028]");
-TEST_AGREES(Perm16Fixture, inverse_ref, inverse_pow, Plist, "[Perm16][029]");
-TEST_AGREES(Perm16Fixture, inverse_ref, inverse_cycl, Plist, "[Perm16][030]");
-TEST_AGREES(Perm16Fixture, inverse_ref, inverse, Plist, "[Perm16][031]");
+TEST_AGREES(Perm16Fixture, inverse_ref, inverse_find, Plist, "[Perm16][029]");
+TEST_AGREES(Perm16Fixture, inverse_ref, inverse_pow, Plist, "[Perm16][030]");
+TEST_AGREES(Perm16Fixture, inverse_ref, inverse_cycl, Plist, "[Perm16][031]");
+TEST_AGREES(Perm16Fixture, inverse_ref, inverse, Plist, "[Perm16][032]");
 
-TEST_CASE_METHOD(Perm16Fixture, "Perm16::lehmer_ref", "[Perm16][032]") {
+TEST_CASE_METHOD(Perm16Fixture, "Perm16::lehmer_ref", "[Perm16][033]") {
     CHECK_THAT(Perm16::one().lehmer(), Equals(zero));
     CHECK_THAT(PPa.lehmer(),
                Equals(epu8{1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}));
@@ -481,19 +481,19 @@ TEST_CASE_METHOD(Perm16Fixture, "Perm16::lehmer_ref", "[Perm16][032]") {
                Equals(epu8{1, 1, 1, 3, 0, 1, 0, 0, 0, 0, 0, 0, 0, 2, 1, 0}));
 }
 
-TEST_AGREES_EPU8(Perm16Fixture, lehmer_ref, lehmer_arr, Plist, "[Perm16][033]");
-TEST_AGREES_EPU8(Perm16Fixture, lehmer_ref, lehmer, Plist, "[Perm16][034]");
+TEST_AGREES_EPU8(Perm16Fixture, lehmer_ref, lehmer_arr, Plist, "[Perm16][034]");
+TEST_AGREES_EPU8(Perm16Fixture, lehmer_ref, lehmer, Plist, "[Perm16][035]");
 
-TEST_CASE_METHOD(Perm16Fixture, "Perm16::length_ref", "[Perm16][035]") {
+TEST_CASE_METHOD(Perm16Fixture, "Perm16::length_ref", "[Perm16][036]") {
     CHECK(Perm16::one().length() == 0);
     CHECK(PPa.length() == 4);
     CHECK(PPb.length() == 10);
 }
 
-TEST_AGREES(Perm16Fixture, length_ref, length_arr, Plist, "[Perm16][036]");
-TEST_AGREES(Perm16Fixture, length_ref, length, Plist, "[Perm16][037]");
+TEST_AGREES(Perm16Fixture, length_ref, length_arr, Plist, "[Perm16][037]");
+TEST_AGREES(Perm16Fixture, length_ref, length, Plist, "[Perm16][038]");
 
-TEST_CASE_METHOD(Perm16Fixture, "Perm16::nb_descents_ref", "[Perm16][038]") {
+TEST_CASE_METHOD(Perm16Fixture, "Perm16::nb_descents_ref", "[Perm16][039]") {
     CHECK(Perm16::one().nb_descents_ref() == 0);
     CHECK(PPa.nb_descents_ref() == 1);
     CHECK(PPb.nb_descents_ref() == 4);
@@ -501,17 +501,17 @@ TEST_CASE_METHOD(Perm16Fixture, "Perm16::nb_descents_ref", "[Perm16][038]") {
 }
 
 TEST_AGREES(Perm16Fixture, nb_descents_ref, nb_descents, Plist,
-            "[Perm16][039]");
+            "[Perm16][040]");
 
-TEST_CASE_METHOD(Perm16Fixture, "Perm16::nb_cycles_ref", "[Perm16][040]") {
+TEST_CASE_METHOD(Perm16Fixture, "Perm16::nb_cycles_ref", "[Perm16][041]") {
     CHECK(Perm16::one().nb_cycles_ref() == 16);
     CHECK(PPa.nb_cycles_ref() == 12);
     CHECK(PPb.nb_cycles_ref() == 10);
 }
 
-TEST_AGREES(Perm16Fixture, nb_cycles_ref, nb_cycles, Plist, "[Perm16][041]");
+TEST_AGREES(Perm16Fixture, nb_cycles_ref, nb_cycles, Plist, "[Perm16][042]");
 
-TEST_CASE_METHOD(Perm16Fixture, "Perm16::left_weak_leq_ref", "[Perm16][042]") {
+TEST_CASE_METHOD(Perm16Fixture, "Perm16::left_weak_leq_ref", "[Perm16][043]") {
     CHECK(Perm16::one().left_weak_leq_ref(Perm16::one()));
     CHECK(Perm16::one().left_weak_leq_ref(PPa));
     CHECK(Perm16::one().left_weak_leq_ref(PPb));
@@ -519,7 +519,7 @@ TEST_CASE_METHOD(Perm16Fixture, "Perm16::left_weak_leq_ref", "[Perm16][042]") {
     CHECK(PPb.left_weak_leq_ref(PPb));
 }
 
-TEST_CASE_METHOD(Perm16Fixture, "Perm16::left_weak_leq", "[Perm16][043]") {
+TEST_CASE_METHOD(Perm16Fixture, "Perm16::left_weak_leq", "[Perm16][044]") {
     for (auto u : PlistSmall) {
         for (auto v : PlistSmall) {
             CHECK(u.left_weak_leq(v) == u.left_weak_leq_ref(v));

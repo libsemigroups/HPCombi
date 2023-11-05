@@ -204,9 +204,9 @@ TEST_CASE_METHOD(Fix, "Epu8::permuted", "[Epu8][011]") {
                  epu8{2, 2, 1, 2, 3, 6, 12, 4, 5, 16, 17, 11, 12, 13, 14, 15}),
         Equals(epu8{5, 5, 2, 5, 1, 6, 12, 4, 0, 3, 2, 11, 12, 13, 14, 15}));
 }
-TEST_AGREES2_FUN_EPU8(Fix, permuted, permuted_ref, v, "[Epu8][011]")
+TEST_AGREES2_FUN_EPU8(Fix, permuted, permuted_ref, v, "[Epu8][012]")
 
-TEST_CASE_METHOD(Fix, "Epu8::shifted_left", "[Epu8][012]") {
+TEST_CASE_METHOD(Fix, "Epu8::shifted_left", "[Epu8][013]") {
     CHECK_THAT(shifted_left(P01), Equals(P10));
     CHECK_THAT(shifted_left(P112),
                Equals(epu8{1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 0}));
@@ -214,21 +214,21 @@ TEST_CASE_METHOD(Fix, "Epu8::shifted_left", "[Epu8][012]") {
                                              12, 13, 14, 15, 0}));
 }
 
-TEST_CASE_METHOD(Fix, "Epu8::shifted_right", "[Epu8][013]") {
+TEST_CASE_METHOD(Fix, "Epu8::shifted_right", "[Epu8][014]") {
     CHECK_THAT(shifted_right(P10), Equals(P01));
     CHECK_THAT(shifted_right(P112), Equals(Epu8({0, 1, 1}, 2)));
     CHECK_THAT(shifted_right(Pv), Equals(epu8{0, 5, 5, 2, 5, 1, 6, 12, 4, 0, 3,
                                               2, 11, 12, 13, 14}));
 }
 
-TEST_CASE_METHOD(Fix, "Epu8::reverted", "[Epu8][014]") {
+TEST_CASE_METHOD(Fix, "Epu8::reverted", "[Epu8][015]") {
     CHECK_THAT(reverted(epu8id), Equals(epu8rev));
     for (auto x : v) {
         CHECK_THAT(x, Equals(reverted(reverted(x))));
     }
 }
 
-TEST_CASE_METHOD(Fix, "Epu8::as_array", "[Epu8][015]") {
+TEST_CASE_METHOD(Fix, "Epu8::as_array", "[Epu8][016]") {
     epu8 x = Epu8({4, 2, 5, 1, 2, 7, 7, 3, 4, 2}, 1);
     auto &refx = as_array(x);
     refx[2] = 42;
@@ -238,14 +238,14 @@ TEST_CASE_METHOD(Fix, "Epu8::as_array", "[Epu8][015]") {
     CHECK(av == as_array(Pv));
 }
 
-TEST_CASE_METHOD(Fix, "Epu8::from_array", "[Epu8][016]") {
+TEST_CASE_METHOD(Fix, "Epu8::from_array", "[Epu8][017]") {
     for (auto x : v) {
         CHECK_THAT(x, Equals(from_array(as_array(x))));
     }
     CHECK_THAT(Pv, Equals(from_array(av)));
 }
 
-TEST_CASE_METHOD(Fix, "Epu8::is_sorted", "[Epu8][017]") {
+TEST_CASE_METHOD(Fix, "Epu8::is_sorted", "[Epu8][018]") {
     CHECK(is_sorted(epu8id));
     CHECK(
         is_sorted(epu8{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15}));
@@ -278,7 +278,7 @@ TEST_CASE_METHOD(Fix, "Epu8::is_sorted", "[Epu8][017]") {
 #pragma GCC diagnostic pop
 }
 
-TEST_CASE_METHOD(Fix, "Epu8::sorted", "[Epu8][018]") {
+TEST_CASE_METHOD(Fix, "Epu8::sorted", "[Epu8][019]") {
     CHECK_THAT(
         sorted(epu8{0, 1, 3, 2, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15}),
         Equals(epu8id));
@@ -296,7 +296,7 @@ TEST_CASE_METHOD(Fix, "Epu8::sorted", "[Epu8][018]") {
 #pragma GCC diagnostic pop
 }
 
-TEST_CASE_METHOD(Fix, "Epu8::revsorted", "[Epu8][019]") {
+TEST_CASE_METHOD(Fix, "Epu8::revsorted", "[Epu8][020]") {
     CHECK_THAT(
         revsorted(epu8{0, 1, 3, 2, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15}),
         Equals(epu8rev));
@@ -314,7 +314,7 @@ TEST_CASE_METHOD(Fix, "Epu8::revsorted", "[Epu8][019]") {
 #pragma GCC diagnostic pop
 }
 
-TEST_CASE_METHOD(Fix, "Epu8::sort_perm", "[Epu8][020]") {
+TEST_CASE_METHOD(Fix, "Epu8::sort_perm", "[Epu8][021]") {
     epu8 ve{2, 1, 3, 2, 4, 1, 1, 4, 2, 0, 1, 2, 1, 3, 4, 0};
     CHECK_THAT(sort_perm(ve), Equals(epu8{9, 15, 1, 5, 6, 10, 12, 3, 0, 8, 11,
                                           2, 13, 7, 4, 14}));
@@ -330,7 +330,7 @@ TEST_CASE_METHOD(Fix, "Epu8::sort_perm", "[Epu8][020]") {
     }
 }
 
-TEST_CASE_METHOD(Fix, "Epu8::sort8_perm", "[Epu8][021]") {
+TEST_CASE_METHOD(Fix, "Epu8::sort8_perm", "[Epu8][022]") {
     epu8 ve{2, 1, 3, 2, 4, 1, 1, 4, 2, 0, 1, 2, 1, 3, 4, 0};
     CHECK_THAT(sort8_perm(ve), Equals(epu8{1, 6, 5, 0, 3, 2, 4, 7, 9, 15, 10,
                                            12, 8, 11, 13, 14}));
@@ -347,7 +347,7 @@ TEST_CASE_METHOD(Fix, "Epu8::sort8_perm", "[Epu8][021]") {
     }
 }
 
-TEST_CASE_METHOD(Fix, "Epu8::permutation_of", "[Epu8][022]") {
+TEST_CASE_METHOD(Fix, "Epu8::permutation_of", "[Epu8][023]") {
     CHECK_THAT(permutation_of(epu8id, epu8id), Equals(epu8id));
     CHECK_THAT(permutation_of(Pa, Pa), Equals(epu8id));
     CHECK_THAT(permutation_of(epu8rev, epu8id), Equals(epu8rev));
@@ -360,7 +360,7 @@ TEST_CASE_METHOD(Fix, "Epu8::permutation_of", "[Epu8][022]") {
                Equals(epu8{FF, FF, FF, FF, 4, 5, FF, 7, 8, 9, FF, 11, FF, 13,
                            14, 15}));
 }
-TEST_CASE_METHOD(Fix, "Epu8::permutation_of_ref", "[Epu8][022]") {
+TEST_CASE_METHOD(Fix, "Epu8::permutation_of_ref", "[Epu8][024]") {
     CHECK_THAT(permutation_of_ref(epu8id, epu8id), Equals(epu8id));
     CHECK_THAT(permutation_of_ref(Pa, Pa), Equals(epu8id));
     CHECK_THAT(permutation_of_ref(epu8rev, epu8id), Equals(epu8rev));
@@ -374,7 +374,7 @@ TEST_CASE_METHOD(Fix, "Epu8::permutation_of_ref", "[Epu8][022]") {
                            14, 15}));
 }
 
-TEST_CASE_METHOD(Fix, "Epu8::merge", "[Epu8][022]") {
+TEST_CASE_METHOD(Fix, "Epu8::merge", "[Epu8][025]") {
     std::vector<std::pair<epu8, epu8>> sample_pairs {{
             { epu8 {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
               epu8 {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1}
@@ -395,7 +395,7 @@ TEST_CASE_METHOD(Fix, "Epu8::merge", "[Epu8][022]") {
     }
 }
 
-TEST_CASE_METHOD(Fix, "Epu8::remove_dups", "[Epu8][023]") {
+TEST_CASE_METHOD(Fix, "Epu8::remove_dups", "[Epu8][026]") {
     CHECK_THAT(remove_dups(P1), Equals(P10));
     CHECK_THAT(remove_dups(P11), Equals(P10));
     CHECK_THAT(remove_dups(sorted(P10)),
@@ -419,7 +419,7 @@ TEST_CASE_METHOD(Fix, "Epu8::remove_dups", "[Epu8][023]") {
     }
 }
 
-TEST_CASE_METHOD(Fix, "Epu8::horiz_sum_ref", "[Epu8][024]") {
+TEST_CASE_METHOD(Fix, "Epu8::horiz_sum_ref", "[Epu8][027]") {
     CHECK(horiz_sum_ref(zero) == 0);
     CHECK(horiz_sum_ref(P01) == 1);
     CHECK(horiz_sum_ref(epu8id) == 120);
@@ -436,12 +436,12 @@ TEST_CASE_METHOD(Fix, "Epu8::horiz_sum_ref", "[Epu8][024]") {
     CHECK(horiz_sum_ref(Pc) == 203);
 }
 
-TEST_AGREES_FUN(Fix, horiz_sum_ref, horiz_sum_gen, v, "[Epu8][025]")
-TEST_AGREES_FUN(Fix, horiz_sum_ref, horiz_sum4, v, "[Epu8][026]")
-TEST_AGREES_FUN(Fix, horiz_sum_ref, horiz_sum3, v, "[Epu8][027]")
-TEST_AGREES_FUN(Fix, horiz_sum_ref, horiz_sum, v, "[Epu8][028]")
+TEST_AGREES_FUN(Fix, horiz_sum_ref, horiz_sum_gen, v, "[Epu8][028]")
+TEST_AGREES_FUN(Fix, horiz_sum_ref, horiz_sum4, v, "[Epu8][029]")
+TEST_AGREES_FUN(Fix, horiz_sum_ref, horiz_sum3, v, "[Epu8][030]")
+TEST_AGREES_FUN(Fix, horiz_sum_ref, horiz_sum, v, "[Epu8][031]")
 
-TEST_CASE_METHOD(Fix, "Epu8::partial_sums_ref", "[Epu8][029]") {
+TEST_CASE_METHOD(Fix, "Epu8::partial_sums_ref", "[Epu8][032]") {
     CHECK_THAT(partial_sums_ref(zero), Equals(zero));
     CHECK_THAT(partial_sums_ref(P01), Equals(Epu8({0}, 1)));
     CHECK_THAT(partial_sums_ref(epu8id),
@@ -476,12 +476,12 @@ TEST_CASE_METHOD(Fix, "Epu8::partial_sums_ref", "[Epu8][029]") {
                Equals(epu8{23, 28, 49, 54, 97, 133, 140, 147, 154, 161, 168,
                            175, 182, 189, 196, 203}));
 }
-TEST_AGREES_FUN_EPU8(Fix, partial_sums_ref, partial_sums_gen, v, "[Epu8][030]")
+TEST_AGREES_FUN_EPU8(Fix, partial_sums_ref, partial_sums_gen, v, "[Epu8][033]")
 TEST_AGREES_FUN_EPU8(Fix, partial_sums_ref, partial_sums_round, v,
-                     "[Epu8][030]")
-TEST_AGREES_FUN_EPU8(Fix, partial_sums_ref, partial_sums, v, "[Epu8][030]")
+                     "[Epu8][034]")
+TEST_AGREES_FUN_EPU8(Fix, partial_sums_ref, partial_sums, v, "[Epu8][035]")
 
-TEST_CASE_METHOD(Fix, "Epu8::horiz_max_ref", "[Epu8][033]") {
+TEST_CASE_METHOD(Fix, "Epu8::horiz_max_ref", "[Epu8][036]") {
     CHECK(horiz_max_ref(zero) == 0);
     CHECK(horiz_max_ref(P01) == 1);
     CHECK(horiz_max_ref(epu8id) == 15);
@@ -498,12 +498,12 @@ TEST_CASE_METHOD(Fix, "Epu8::horiz_max_ref", "[Epu8][033]") {
     CHECK(horiz_max_ref(Pc) == 43);
 }
 
-TEST_AGREES_FUN(Fix, horiz_max_ref, horiz_max_gen, v, "[Epu8][034]")
-TEST_AGREES_FUN(Fix, horiz_max_ref, horiz_max4, v, "[Epu8][035]")
-TEST_AGREES_FUN(Fix, horiz_max_ref, horiz_max3, v, "[Epu8][036]")
-TEST_AGREES_FUN(Fix, horiz_max_ref, horiz_max, v, "[Epu8][037]")
+TEST_AGREES_FUN(Fix, horiz_max_ref, horiz_max_gen, v, "[Epu8][037]")
+TEST_AGREES_FUN(Fix, horiz_max_ref, horiz_max4, v, "[Epu8][038]")
+TEST_AGREES_FUN(Fix, horiz_max_ref, horiz_max3, v, "[Epu8][039]")
+TEST_AGREES_FUN(Fix, horiz_max_ref, horiz_max, v, "[Epu8][040]")
 
-TEST_CASE_METHOD(Fix, "Epu8::partial_max_ref", "[Epu8][038]") {
+TEST_CASE_METHOD(Fix, "Epu8::partial_max_ref", "[Epu8][041]") {
     CHECK_THAT(partial_max_ref(zero), Equals(zero));
     CHECK_THAT(partial_max_ref(P01), Equals(Epu8({0}, 1)));
     CHECK_THAT(partial_max_ref(epu8id), Equals(epu8id));
@@ -520,11 +520,11 @@ TEST_CASE_METHOD(Fix, "Epu8::partial_max_ref", "[Epu8][038]") {
     CHECK_THAT(partial_max_ref(epu8rev), Equals(Epu8({}, 15)));
     CHECK_THAT(partial_max_ref(Pc), Equals(Epu8({23, 23, 23, 23}, 43)));
 }
-TEST_AGREES_FUN_EPU8(Fix, partial_max_ref, partial_max_gen, v, "[Epu8][030]")
-TEST_AGREES_FUN_EPU8(Fix, partial_max_ref, partial_max_round, v, "[Epu8][030]")
-TEST_AGREES_FUN_EPU8(Fix, partial_max_ref, partial_max, v, "[Epu8][030]")
+TEST_AGREES_FUN_EPU8(Fix, partial_max_ref, partial_max_gen, v, "[Epu8][042]")
+TEST_AGREES_FUN_EPU8(Fix, partial_max_ref, partial_max_round, v, "[Epu8][043]")
+TEST_AGREES_FUN_EPU8(Fix, partial_max_ref, partial_max, v, "[Epu8][044]")
 
-TEST_CASE_METHOD(Fix, "Epu8::horiz_min_ref", "[Epu8][042]") {
+TEST_CASE_METHOD(Fix, "Epu8::horiz_min_ref", "[Epu8][045]") {
     CHECK(horiz_min_ref(zero) == 0);
     CHECK(horiz_min_ref(P01) == 0);
     CHECK(horiz_min_ref(epu8id) == 0);
@@ -541,12 +541,12 @@ TEST_CASE_METHOD(Fix, "Epu8::horiz_min_ref", "[Epu8][042]") {
     CHECK(horiz_min_ref(Pc) == 5);
 }
 
-TEST_AGREES_FUN(Fix, horiz_min_ref, horiz_min_gen, v, "[Epu8][034]")
-TEST_AGREES_FUN(Fix, horiz_min_ref, horiz_min4, v, "[Epu8][035]")
-TEST_AGREES_FUN(Fix, horiz_min_ref, horiz_min3, v, "[Epu8][036]")
-TEST_AGREES_FUN(Fix, horiz_min_ref, horiz_min, v, "[Epu8][037]")
+TEST_AGREES_FUN(Fix, horiz_min_ref, horiz_min_gen, v, "[Epu8][046]")
+TEST_AGREES_FUN(Fix, horiz_min_ref, horiz_min4, v, "[Epu8][047]")
+TEST_AGREES_FUN(Fix, horiz_min_ref, horiz_min3, v, "[Epu8][048]")
+TEST_AGREES_FUN(Fix, horiz_min_ref, horiz_min, v, "[Epu8][049]")
 
-TEST_CASE_METHOD(Fix, "Epu8::partial_min_ref", "[Epu8][043]") {
+TEST_CASE_METHOD(Fix, "Epu8::partial_min_ref", "[Epu8][050]") {
     CHECK_THAT(partial_min_ref(zero), Equals(zero));
     CHECK_THAT(partial_min_ref(P01), Equals(zero));
     CHECK_THAT(partial_min_ref(epu8id), Equals(zero));
@@ -564,11 +564,11 @@ TEST_CASE_METHOD(Fix, "Epu8::partial_min_ref", "[Epu8][043]") {
     CHECK_THAT(partial_min_ref(epu8rev), Equals(epu8rev));
     CHECK_THAT(partial_min_ref(Pc), Equals(Epu8({23}, 5)));
 }
-TEST_AGREES_FUN_EPU8(Fix, partial_min_ref, partial_min_gen, v, "[Epu8][030]")
-TEST_AGREES_FUN_EPU8(Fix, partial_min_ref, partial_min_round, v, "[Epu8][030]")
-TEST_AGREES_FUN_EPU8(Fix, partial_min_ref, partial_min, v, "[Epu8][030]")
+TEST_AGREES_FUN_EPU8(Fix, partial_min_ref, partial_min_gen, v, "[Epu8][051]")
+TEST_AGREES_FUN_EPU8(Fix, partial_min_ref, partial_min_round, v, "[Epu8][052]")
+TEST_AGREES_FUN_EPU8(Fix, partial_min_ref, partial_min, v, "[Epu8][053]")
 
-TEST_CASE_METHOD(Fix, "Epu8::eval16_ref", "[Epu8][047]") {
+TEST_CASE_METHOD(Fix, "Epu8::eval16_ref", "[Epu8][054]") {
     CHECK_THAT(eval16_ref(zero), Equals(Epu8({16}, 0)));
     CHECK_THAT(eval16_ref(P01), Equals(Epu8({15, 1}, 0)));
     CHECK_THAT(eval16_ref(epu8id), Equals(Epu8({}, 1)));
@@ -587,18 +587,18 @@ TEST_CASE_METHOD(Fix, "Epu8::eval16_ref", "[Epu8][047]") {
     CHECK_THAT(eval16_ref(Pc), Equals(Epu8({0, 0, 0, 0, 0, 2, 0, 10}, 0)));
 }
 
-TEST_AGREES_FUN_EPU8(Fix, eval16_ref, eval16_cycle, v, "[Epu8][034]")
-TEST_AGREES_FUN_EPU8(Fix, eval16_ref, eval16_popcount, v, "[Epu8][034]")
-TEST_AGREES_FUN_EPU8(Fix, eval16_ref, eval16_arr, v, "[Epu8][034]")
-TEST_AGREES_FUN_EPU8(Fix, eval16_ref, eval16_gen, v, "[Epu8][034]")
-TEST_AGREES_FUN_EPU8(Fix, eval16_ref, eval16, v, "[Epu8][034]")
+TEST_AGREES_FUN_EPU8(Fix, eval16_ref, eval16_cycle, v, "[Epu8][055]")
+TEST_AGREES_FUN_EPU8(Fix, eval16_ref, eval16_popcount, v, "[Epu8][056]")
+TEST_AGREES_FUN_EPU8(Fix, eval16_ref, eval16_arr, v, "[Epu8][057]")
+TEST_AGREES_FUN_EPU8(Fix, eval16_ref, eval16_gen, v, "[Epu8][058]")
+TEST_AGREES_FUN_EPU8(Fix, eval16_ref, eval16, v, "[Epu8][059]")
 
-TEST_CASE("Epu8::popcount4", "[Epu8][048]") {
+TEST_CASE("Epu8::popcount4", "[Epu8][060]") {
     CHECK_THAT(popcount4,
                Equals(epu8{0, 1, 1, 2, 1, 2, 2, 3, 1, 2, 2, 3, 2, 3, 3, 4}));
 }
 
-TEST_CASE_METHOD(Fix, "Epu8::popcount16", "[Epu8][049]") {
+TEST_CASE_METHOD(Fix, "Epu8::popcount16", "[Epu8][061]") {
     CHECK_THAT(popcount16(Pv),
                Equals(epu8{2, 2, 1, 2, 1, 2, 2, 1, 0, 2, 1, 3, 2, 3, 3, 4}));
     CHECK_THAT(popcount16(RP),
@@ -611,7 +611,7 @@ TEST_CASE_METHOD(Fix, "Epu8::popcount16", "[Epu8][049]") {
                Equals(Epu8({0, 1, 2, 8}, 4)));
 }
 
-TEST_CASE("random_epu8", "[Epu8][050]") {
+TEST_CASE("random_epu8", "[Epu8][062]") {
     for (int bnd : {1, 10, 100, 255, 256}) {
         for (int i = 0; i < 10; i++) {
             epu8 r = random_epu8(bnd);
@@ -622,7 +622,7 @@ TEST_CASE("random_epu8", "[Epu8][050]") {
     }
 }
 
-TEST_CASE_METHOD(Fix, "is_partial_transformation", "[Epu8][051]") {
+TEST_CASE_METHOD(Fix, "is_partial_transformation", "[Epu8][063]") {
     CHECK(is_partial_transformation(zero));
     CHECK(is_partial_transformation(P01));
     CHECK(is_partial_transformation(P10));
@@ -645,7 +645,7 @@ TEST_CASE_METHOD(Fix, "is_partial_transformation", "[Epu8][051]") {
     CHECK(!is_partial_transformation(Epu8({1, 2, 1, 0xFF, 0, 16, 0xFF, 2}, 0)));
 }
 
-TEST_CASE_METHOD(Fix, "is_transformation", "[Epu8][052]") {
+TEST_CASE_METHOD(Fix, "is_transformation", "[Epu8][064]") {
     CHECK(is_transformation(zero));
     CHECK(is_transformation(P01));
     CHECK(is_transformation(P10));
@@ -666,7 +666,7 @@ TEST_CASE_METHOD(Fix, "is_transformation", "[Epu8][052]") {
     CHECK(!is_transformation(RP, 15));
 }
 
-TEST_CASE_METHOD(Fix, "is_partial_permutation", "[Epu8][053]") {
+TEST_CASE_METHOD(Fix, "is_partial_permutation", "[Epu8][065]") {
     CHECK(!is_partial_permutation(zero));
     CHECK(!is_partial_permutation(P01));
     CHECK(!is_partial_permutation(P10));
@@ -695,7 +695,7 @@ TEST_CASE_METHOD(Fix, "is_partial_permutation", "[Epu8][053]") {
     CHECK(!is_partial_permutation(Epu8({1, 2, 1, 0xFF, 0, 16, 0xFF, 2}, 0)));
 }
 
-TEST_CASE_METHOD(Fix, "is_permutation", "[Epu8][054]") {
+TEST_CASE_METHOD(Fix, "is_permutation", "[Epu8][066]") {
     CHECK(!is_permutation(zero));
     CHECK(!is_permutation(P01));
     CHECK(!is_permutation(P10));
@@ -717,7 +717,7 @@ TEST_CASE_METHOD(Fix, "is_permutation", "[Epu8][054]") {
 }
 
 #ifdef SIMDE_X86_SSE4_2_NATIVE
-TEST_CASE_METHOD(Fix, "is_permutation_cmpestri", "[Epu8][070]") {
+TEST_CASE_METHOD(Fix, "is_permutation_cmpestri", "[Epu8][067]") {
     for (auto x : v) {
         for (size_t i = 0; i < 16; i++) {
             CHECK(is_permutation_cmpestri(x, i) == is_permutation(x, i));
@@ -726,7 +726,7 @@ TEST_CASE_METHOD(Fix, "is_permutation_cmpestri", "[Epu8][070]") {
 }
 #endif
 
-TEST_CASE_METHOD(Fix, "is_permutation_sort", "[Epu8][080]") {
+TEST_CASE_METHOD(Fix, "is_permutation_sort", "[Epu8][068]") {
     for (auto x : v) {
         for (size_t i = 0; i < 16; i++) {
             CHECK(is_permutation_sort(x, i) == is_permutation(x, i));
@@ -734,7 +734,7 @@ TEST_CASE_METHOD(Fix, "is_permutation_sort", "[Epu8][080]") {
     }
 }
 
-TEST_CASE_METHOD(Fix, "is_permutation_eval", "[Epu8][080]") {
+TEST_CASE_METHOD(Fix, "is_permutation_eval", "[Epu8][069]") {
     for (auto x : v) {
         for (size_t i = 0; i < 16; i++) {
             CHECK(is_permutation_eval(x, i) == is_permutation(x, i));

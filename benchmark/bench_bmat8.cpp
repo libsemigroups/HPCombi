@@ -65,7 +65,7 @@ TEST_CASE_METHOD(Fix_BMat8, "Row space size", "[BMat8][000]") {
     BENCHMARK_MEM_FN(row_space_size, sample);
 }
 
-TEST_CASE_METHOD(Fix_BMat8, "Transpose", "[BMat8][000]") {
+TEST_CASE_METHOD(Fix_BMat8, "Transpose", "[BMat8][001]") {
     BENCHMARK_MEM_FN(transpose, sample);
     BENCHMARK_MEM_FN(transpose_mask, sample);
     BENCHMARK_MEM_FN(transpose_maskd, sample);
@@ -84,13 +84,13 @@ TEST_CASE_METHOD(Fix_BMat8, "Transpose pairs", "[BMat8][002]") {
     };
 }
 
-TEST_CASE_METHOD(Fix_BMat8, "Row spaces inclusion", "[BMat8][002]") {
+TEST_CASE_METHOD(Fix_BMat8, "Row spaces inclusion", "[BMat8][003]") {
     BENCHMARK_MEM_FN_PAIR(row_space_included_ref, pair_sample);
     BENCHMARK_MEM_FN_PAIR(row_space_included_bitset, pair_sample);
     BENCHMARK_MEM_FN_PAIR(row_space_included, pair_sample);
 }
 
-TEST_CASE_METHOD(Fix_BMat8, "Pair row space inclusion", "[BMat8][002]") {
+TEST_CASE_METHOD(Fix_BMat8, "Pair row space inclusion", "[BMat8][004]") {
     BENCHMARK("rotating pairs implementation") {
         for (auto &pair : pair_sample) {
             auto res = BMat8::row_space_included2(pair.first, pair.second,
