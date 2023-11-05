@@ -23,7 +23,7 @@
 #include "bench_fixture.hpp"
 #include "bench_main.hpp"
 
-#include "hpcombi/epu.hpp"
+#include "hpcombi/epu8.hpp"
 
 namespace HPCombi {
 

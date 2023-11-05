@@ -18,7 +18,7 @@
 
 #include <string>
 
-#include "hpcombi/epu.hpp"
+#include "hpcombi/epu8.hpp"
 
 #include <catch2/catch_test_macros.hpp>
 #include <catch2/matchers/catch_matchers_templated.hpp>

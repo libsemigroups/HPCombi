@@ -23,7 +23,7 @@
 #include <vector>
 #include <x86intrin.h>
 
-#include "hpcombi/epu.hpp"
+#include "hpcombi/epu8.hpp"
 
 using namespace std;
 using namespace std::chrono;

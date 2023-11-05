@@ -23,7 +23,7 @@
 #include <memory>            // for hash
 #include <type_traits>       // for is_trivial
 
-#include "epu.hpp"
+#include "epu8.hpp"
 
 namespace HPCombi {
 

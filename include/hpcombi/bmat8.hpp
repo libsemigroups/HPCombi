@@ -31,7 +31,7 @@
 #include <vector>      // for vector
 
 #include "debug.hpp"   // for HPCOMBI_ASSERT
-#include "epu.hpp"     // for epu8
+#include "epu8.hpp"     // for epu8
 #include "perm16.hpp"  // for Perm16
 
 namespace HPCombi {

@@ -13,7 +13,7 @@
 //                  http://www.gnu.org/licenses/                              //
 ////////////////////////////////////////////////////////////////////////////////
 
-// This is the implementation part of epu.hpp this should be seen as
+// This is the implementation part of epu8.hpp this should be seen as
 // implementation details and should not be included directly.
 
 #include <initializer_list>

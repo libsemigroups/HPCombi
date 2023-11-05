@@ -726,6 +726,6 @@ inline std::string to_string(HPCombi::epu8 const &a);
  */
 }  // namespace std
 
-#include "epu_impl.hpp"
+#include "epu8_impl.hpp"
 
 #endif  // HPCOMBI_EPU_HPP_INCLUDED

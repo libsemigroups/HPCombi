@@ -18,7 +18,7 @@
 
 #include "bmat8.hpp"
 #include "debug.hpp"
-#include "epu.hpp"
+#include "epu8.hpp"
 #include "perm16.hpp"
 #include "perm_generic.hpp"
 #include "power.hpp"

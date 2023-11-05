@@ -18,7 +18,7 @@
 #include <random>
 #include <vector>
 
-#include "hpcombi/epu.hpp"
+#include "hpcombi/epu8.hpp"
 
 using HPCombi::epu8;
 

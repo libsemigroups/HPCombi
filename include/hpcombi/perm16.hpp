@@ -23,7 +23,7 @@
 #include <type_traits>       // for is_trivial
 #include <vector>            // for vector
 
-#include "epu.hpp"     // for epu8, permuted, etc
+#include "epu8.hpp"     // for epu8, permuted, etc
 #include "power.hpp"   // for pow
 #include "vect16.hpp"  // for hash, is_partial_permutation
 
