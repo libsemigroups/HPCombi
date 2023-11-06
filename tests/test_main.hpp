@@ -19,6 +19,7 @@
 #include <string>
 
 #include "hpcombi/epu8.hpp"
+#include "hpcombi/xpu8.hpp"
 
 #include <catch2/catch_test_macros.hpp>
 #include <catch2/matchers/catch_matchers_templated.hpp>
@@ -87,17 +88,18 @@
         }                                                                      \
     }
 
+template <typename TPU>
 struct Equals : Catch::Matchers::MatcherGenericBase {
-    Equals(HPCombi::epu8 v) : v(v) {}
+    Equals(TPU v) : v(v) {}
 
-    bool match(HPCombi::epu8 w) const { return HPCombi::equal(v, w); }
+    bool match(TPU w) const { return HPCombi::equal(v, w); }
 
     std::string describe() const override {
         return "\n!=\n" + std::to_string(v);
     }
 
   private:
-    const HPCombi::epu8 v;
+    const TPU v;
 };
 
 #endif  // HPCOMBI_TESTS_TEST_MAIN_HPP_

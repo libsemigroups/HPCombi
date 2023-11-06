@@ -37,6 +37,20 @@ namespace HPCombi {
 
 /// SIMD vector of 32 unsigned bytes
 using xpu8 = uint8_t __attribute__((vector_size(32)));
+using epu8x2 = std::array<epu8, 2>;
+
+inline xpu8 &from_epu8x2(epu8x2 &p) { return reinterpret_cast<xpu8 &>(p); }
+inline const xpu8 &from_epu8x2(const epu8x2 &p) {
+    return reinterpret_cast<const xpu8 &>(p);
+}
+inline epu8x2 &to_epu8x2(xpu8 &p) { return reinterpret_cast<epu8x2 &>(p); }
+inline const epu8x2 &to_epu8x2(const xpu8 &p) {
+    return reinterpret_cast<const epu8x2 &>(p);
+}
+// xpu8 to_xpu8(epu8x2 p) { return reinterpret_cast<xpu8 &>(p); }
+// epu8x2 from_xpu8(xpu8 p) { return reinterpret_cast<epu8x2 &>(p); }
+// __m256d to_m256d(epu8x2 p) { return reinterpret_cast<__m256d &>(p); }
+// epu8x2 from_m256d(__m256d p) { return reinterpret_cast<epu8x2 &>(p); }
 
 static_assert(alignof(xpu8) == 32,
               "xpu8 type is not properly aligned by the compiler !");
@@ -68,6 +82,8 @@ inline xpu8 min(xpu8 a, xpu8 b) noexcept { return simde_mm256_min_epu8(a, b); }
 /** Vector max between two #HPCombi::xpu8 0 */
 inline xpu8 max(xpu8 a, xpu8 b) noexcept { return simde_mm256_max_epu8(a, b); }
 
+inline xpu8 permuted(xpu8 x1, xpu8 x2) noexcept;
+inline xpu8 permuted_ref(xpu8 a, xpu8 b) noexcept;
 
 }  // namespace HPCombi
 
