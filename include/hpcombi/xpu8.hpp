@@ -82,8 +82,12 @@ inline xpu8 min(xpu8 a, xpu8 b) noexcept { return simde_mm256_min_epu8(a, b); }
 /** Vector max between two #HPCombi::xpu8 0 */
 inline xpu8 max(xpu8 a, xpu8 b) noexcept { return simde_mm256_max_epu8(a, b); }
 
-inline xpu8 permuted(xpu8 x1, xpu8 x2) noexcept;
+/// Undefined results if x2[i] >= 32
 inline xpu8 permuted_ref(xpu8 a, xpu8 b) noexcept;
+inline xpu8 permuted_unsafe(xpu8 x1, xpu8 x2) noexcept;
+inline xpu8 permuted(xpu8 x1, xpu8 x2) noexcept {
+    return permuted_unsafe(x1, x2 & Xpu8(0x1f));
+}
 
 }  // namespace HPCombi
 

@@ -26,10 +26,8 @@
 
 namespace HPCombi {
 
-inline xpu8 permuted(xpu8 x1, xpu8 x2) noexcept {
+inline xpu8 permuted_unsafe(xpu8 x1, xpu8 x2) noexcept {
     const epu8x2 &v1 = to_epu8x2(x1);
-    x2 = x2 & Xpu8(0x1f);
-    // std::cout << x2 << std::endl;
     const epu8x2 &v2 = to_epu8x2(x2);
     return from_epu8x2({
             _mm_blendv_epi8(_mm_shuffle_epi8(v1[1], v2[0]),
