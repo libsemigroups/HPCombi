@@ -30,15 +30,17 @@ inline xpu8 permuted_unsafe(xpu8 x1, xpu8 x2) noexcept {
     const epu8x2 &v1 = to_epu8x2(x1);
     const epu8x2 &v2 = to_epu8x2(x2);
     return from_epu8x2({
-            _mm_blendv_epi8(_mm_shuffle_epi8(v1[1], v2[0]),
-                            _mm_shuffle_epi8(v1[0], v2[0]), v2[0] < 16),
-            _mm_blendv_epi8(_mm_shuffle_epi8(v1[1], v2[1]),
-                            _mm_shuffle_epi8(v1[0], v2[1]), v2[1] < 16)});
+            simde_mm_blendv_epi8(
+                simde_mm_shuffle_epi8(v1[1], v2[0]),
+                simde_mm_shuffle_epi8(v1[0], v2[0]), v2[0] < 16),
+            simde_mm_blendv_epi8(
+                simde_mm_shuffle_epi8(v1[1], v2[1]),
+                simde_mm_shuffle_epi8(v1[0], v2[1]), v2[1] < 16)});
 }
 
 inline xpu8 permuted_avx2_unsafe(xpu8 x1, xpu8 x2) noexcept {
     /// TODO
-    return permuted_unsafe(x1, x2)
+    return permuted_unsafe(x1, x2);
 }
 
 inline xpu8 permuted_ref(xpu8 a, xpu8 b) noexcept {
