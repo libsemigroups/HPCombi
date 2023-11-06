@@ -38,15 +38,15 @@ set(test_src
 foreach(f ${test_src})
   get_filename_component(testName ${f} NAME_WE)
   add_executable (${testName} ${f} test_main.cpp)
-  append_coverage_compiler_flags_to_target(${testName})
-  target_link_libraries(${testName} PRIVATE Catch2::Catch2WithMain gcov)
-  setup_target_for_coverage_lcov(
-            NAME coverage-${testName}
-            EXECUTABLE ${testName})
+  target_link_libraries(${testName} PRIVATE Catch2::Catch2WithMain)
 endforeach(f)
 
 add_executable(test_all ${test_src} test_main.cpp)
-target_link_libraries(test_all PRIVATE Catch2::Catch2WithMain)
+append_coverage_compiler_flags_to_target(test_all)
+target_link_libraries(test_all PRIVATE Catch2::Catch2WithMain gcov)
+setup_target_for_coverage_lcov(
+            NAME coverage-test_all
+            EXECUTABLE test_all)
 
 add_test (TestEPU8 test_epu8)
 add_test (TestPerm16 test_perm16)
