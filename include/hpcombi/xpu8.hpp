@@ -52,8 +52,13 @@ inline const epu8x2 &to_epu8x2(const xpu8 &p) {
 // __m256d to_m256d(epu8x2 p) { return reinterpret_cast<__m256d &>(p); }
 // epu8x2 from_m256d(__m256d p) { return reinterpret_cast<epu8x2 &>(p); }
 
+#ifdef SIMDE_X86_AVX_NATIVE
 static_assert(alignof(xpu8) == 32,
               "xpu8 type is not properly aligned by the compiler !");
+#else
+static_assert(alignof(xpu8) == 16,
+              "xpu8 type is not properly aligned by the compiler !");
+#endif
 
 /** Factory object acting as a class constructor for type #HPCombi::xpu8.
  * see #HPCombi::TPUBuild for usage and capability
