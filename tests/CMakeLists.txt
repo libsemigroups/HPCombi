@@ -40,6 +40,9 @@ foreach(f ${test_src})
   add_executable (${testName} ${f} test_main.cpp)
   append_coverage_compiler_flags_to_target(${testName})
   target_link_libraries(${testName} PRIVATE Catch2::Catch2WithMain gcov)
+  setup_target_for_coverage_lcov(
+            NAME coverage-${testName}
+            EXECUTABLE ${testName})
 endforeach(f)
 
 add_executable(test_all ${test_src} test_main.cpp)
