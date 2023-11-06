@@ -36,6 +36,11 @@ inline xpu8 permuted_unsafe(xpu8 x1, xpu8 x2) noexcept {
                             _mm_shuffle_epi8(v1[0], v2[1]), v2[1] < 16)});
 }
 
+inline xpu8 permuted_avx2_unsafe(xpu8 x1, xpu8 x2) noexcept {
+    /// TODO
+    return permuted_unsafe(x1, x2)
+}
+
 inline xpu8 permuted_ref(xpu8 a, xpu8 b) noexcept {
     xpu8 res;
     for (uint64_t i = 0; i < 32; i++)
