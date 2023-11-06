@@ -82,9 +82,26 @@ inline xpu8 min(xpu8 a, xpu8 b) noexcept { return simde_mm256_min_epu8(a, b); }
 /** Vector max between two #HPCombi::xpu8 0 */
 inline xpu8 max(xpu8 a, xpu8 b) noexcept { return simde_mm256_max_epu8(a, b); }
 
-/// Undefined results if x2[i] >= 32
+/** Permuting a #HPCombi::xpu8
+ * @details reference version using array indexing
+ */
 inline xpu8 permuted_ref(xpu8 a, xpu8 b) noexcept;
+/** Permuting a #HPCombi::xpu8
+ * @details
+ *     unsafe version giving undefined results if x2[i] >= 32 for some i
+ * @par Algorithm: uses SSE4.1 shuffle instruction
+ */
 inline xpu8 permuted_unsafe(xpu8 x1, xpu8 x2) noexcept;
+/** Permuting a #HPCombi::xpu8
+ * @details
+ *     unsafe version giving undefined results if x2[i] >= 32 for some i
+ * @par Algorithm: uses AVX2 permute instruction
+ */
+inline xpu8 permuted_avx2_unsafe(xpu8 x1, xpu8 x2) noexcept;
+/** Permuting a #HPCombi::xpu8
+ * @details
+  * Algorithm: call #HPCombi::permuted_unsafe after cleaning up the input
+ */
 inline xpu8 permuted(xpu8 x1, xpu8 x2) noexcept {
     return permuted_unsafe(x1, x2 & Xpu8(0x1f));
 }
