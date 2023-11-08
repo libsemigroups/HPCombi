@@ -105,34 +105,37 @@ if (BUILD_TESTING)
   add_subdirectory(benchmark)
 endif(BUILD_TESTING)
 
-#####################
 
-configure_file(${CMAKE_SOURCE_DIR}/.VERSION.in ${CMAKE_BINARY_DIR}/.VERSION)
+###################
+# pkgconfig stuff
+configure_file(${CMAKE_SOURCE_DIR}/VERSION.in
+               ${CMAKE_BINARY_DIR}/VERSION)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/hpcombi.pc.in
+               ${CMAKE_CURRENT_BINARY_DIR}/hpcombi.pc @ONLY)
 
 ####################
 # Installation
 
-set(install_misc README.md LICENSE list_intrin.txt)
+set(install_misc README.md LICENSE)
 foreach(f ${install_misc})
   install (FILES ${CMAKE_SOURCE_DIR}/${f}
-    DESTINATION share/${CMAKE_PROJECT_NAME})
+  DESTINATION share/${CMAKE_PROJECT_NAME})
 endforeach(f)
 
-install (FILES ${CMAKE_CURRENT_BINARY_DIR}/.VERSION DESTINATION ".")
-
 install (
-  DIRECTORY ${CMAKE_SOURCE_DIR}/include/
-  DESTINATION include/${CMAKE_PROJECT_NAME}
+  FILES ${CMAKE_CURRENT_BINARY_DIR}/VERSION
+  DESTINATION share/${CMAKE_PROJECT_NAME})
+install (
+  DIRECTORY ${CMAKE_SOURCE_DIR}/include/hpcombi
+  DESTINATION include
   FILES_MATCHING PATTERN "*.hpp")
 install (
-  DIRECTORY ${CMAKE_SOURCE_DIR}/third_party/
-  DESTINATION third_party/${CMAKE_PROJECT_NAME}
-  FILES_MATCHING PATTERN "*.hpp")
+  DIRECTORY ${CMAKE_SOURCE_DIR}/third_party/simde
+  DESTINATION include/${CMAKE_PROJECT_NAME})
 
-###################
-# pkgconfig stuff
-# configure_file(${CMAKE_CURRENT_SOURCE_DIR}/hpcombi.pc.in
-#                ${CMAKE_CURRENT_BINARY_DIR}/hpcombi.pc @ONLY)
+install (
+  FILES ${CMAKE_CURRENT_BINARY_DIR}/hpcombi.pc
+  DESTINATION pkg-config)
 
 #################
 # Packing stuff

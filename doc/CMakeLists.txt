@@ -28,7 +28,7 @@ else()
      COMMAND ${CMAKE_COMMAND} -E echo "Done."
      )
 
-  install(DIRECTORY ${CMAKE_BINARY_DIR}/doc/html
-          DESTINATION doc/${CMAKE_PROJECT_NAME})
+#  install(DIRECTORY ${CMAKE_BINARY_DIR}/doc/html
+#          DESTINATION doc/${CMAKE_PROJECT_NAME})
 
 endif()
