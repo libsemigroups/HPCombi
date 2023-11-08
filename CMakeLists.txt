@@ -48,20 +48,42 @@ include(CheckCXXSymbolExists)
 include(CheckIncludeFileCXX)
 include(CheckCXXSourceCompiles)
 include(CheckCXXCompilerFlag)
+include(CheckCXXSourceRuns)
 
-check_cxx_compiler_flag('-march=native' HPCOMBI_HAVE_FLAG_ARCH_NATIVE)
-check_cxx_compiler_flag('-mtune=native' HPCOMBI_HAVE_FLAG_TUNE_NATIVE)
-# TODO check for -funroll-loops + -flax-vector-constexpr
-# TODO only check for and set the flags required to make HPCombi work
+check_cxx_compiler_flag('-funroll-loops' HPCOMBI_HAVE_REQUIRED_COMPILER_FLAGS)
+check_cxx_compiler_flag('-flax-vector-conversions' HPCOMBI_HAVE_REQUIRED_COMPILER_FLAGS)
+
+if (NOT HPCOMBI_HAVE_REQUIRED_COMPILER_FLAGS)
+  message(FATAL_ERROR "HPCombi requires a C++ compiler accepting the flags: -funroll-loops + -flax-vector-conversions")
+endif()
 
 add_compile_options(-funroll-loops -flax-vector-conversions)
-if (HPCOMBI_HAVE_FLAG_ARCH_NATIVE)
-    add_compile_options(-march=native)
-endif()
-if (HPCOMBI_HAVE_FLAG_TUNE_NATIVE)
-    add_compile_options(-mtune=native)
-endif()
 
+file(READ ${CMAKE_SOURCE_DIR}/list_builtin.txt hpcombi_compiler_builtins)
+string(REPLACE ";" "|" hpcombi_compiler_builtins "${hpcombi_compiler_builtins}")
+string(REPLACE "\n" ";" hpcombi_compiler_builtins "${hpcombi_compiler_builtins}")
+foreach (builtin ${hpcombi_compiler_builtins})
+  if ("${builtin}" MATCHES "^#" ) # Comment
+    continue()
+  endif()
+  string(REPLACE "|" ";" builtin "${builtin}")
+  list(GET builtin 0 builtin_name)
+  list(GET builtin 1 builtin_params)
+  list(GET builtin 2 builtin_return_value)
+  check_cxx_source_runs("
+  #include <iostream>
+    int main() {
+      std::cout << \"<paramater;return value> from list_builtin.txt: \" << ${builtin_params} << \";\" << ${builtin_return_value} << std::endl;
+      std::cout << \"Actual return value: \" << ${builtin_name}(${builtin_params}) << std::endl;
+      return ${builtin_name}(${builtin_params}) != ${builtin_return_value};
+    }
+  "
+  "HPCOMBI_HAVE_${builtin_name}"
+  )
+  if (NOT "${HPCOMBI_HAVE_${builtin_name}}")
+    message(FATAL_ERROR "HPCombi requires a C++ compiler supporting ${builtin_name}")
+  endif()
+endforeach()
 
 ###################
 # Project Structure
