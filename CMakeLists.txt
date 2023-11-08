@@ -73,7 +73,7 @@ foreach (builtin ${hpcombi_compiler_builtins})
   check_cxx_source_runs("
   #include <iostream>
     int main() {
-      std::cout << \"<paramater;return value> from list_builtin.txt: \" << ${builtin_params} << \";\" << ${builtin_return_value} << std::endl;
+      std::cout << \"<parameter;return value> from list_builtin.txt: \" << ${builtin_params} << \";\" << ${builtin_return_value} << std::endl;
       std::cout << \"Actual return value: \" << ${builtin_name}(${builtin_params}) << std::endl;
       return ${builtin_name}(${builtin_params}) != ${builtin_return_value};
     }
