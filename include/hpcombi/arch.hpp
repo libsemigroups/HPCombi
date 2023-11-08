@@ -13,8 +13,8 @@
 //                  http://www.gnu.org/licenses/                              //
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef HPCOMBI_ARCH_HPP_INCLUDED
-#define HPCOMBI_ARCH_HPP_INCLUDED
+#ifndef HPCOMBI_ARCH_HPP_
+#define HPCOMBI_ARCH_HPP_
 
 #if defined(SIMDE_ARCH_AMD64) && !defined(SIMDE_ARCH_X86_SSE4_1)
 char const msg[] =
@@ -24,4 +24,4 @@ char const msg[] =
 #error(msg)
 #endif
 
-#endif  // HPCOMBI_ARCH_HPP_INCLUDED
+#endif  // HPCOMBI_ARCH_HPP_

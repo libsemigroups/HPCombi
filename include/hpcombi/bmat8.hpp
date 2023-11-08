@@ -17,8 +17,8 @@
 
 // This file contains a declaration of fast boolean matrices up to dimension 8.
 
-#ifndef HPCOMBI_BMAT8_HPP_INCLUDED
-#define HPCOMBI_BMAT8_HPP_INCLUDED
+#ifndef HPCOMBI_BMAT8_HPP_
+#define HPCOMBI_BMAT8_HPP_
 
 #include <array>       // for array
 #include <bitset>      // for bitset
@@ -31,7 +31,7 @@
 #include <vector>      // for vector
 
 #include "debug.hpp"   // for HPCOMBI_ASSERT
-#include "epu8.hpp"     // for epu8
+#include "epu8.hpp"    // for epu8
 #include "perm16.hpp"  // for Perm16
 
 namespace HPCombi {
