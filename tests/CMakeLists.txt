@@ -38,7 +38,8 @@ set(test_src
 foreach(f ${test_src})
   get_filename_component(testName ${f} NAME_WE)
   add_executable (${testName} ${f} test_main.cpp)
-  target_link_libraries(${testName} PRIVATE Catch2::Catch2WithMain)
+  append_coverage_compiler_flags_to_target(${testName})
+  target_link_libraries(${testName} PRIVATE Catch2::Catch2WithMain gcov)
 endforeach(f)
 
 add_executable(test_all ${test_src} test_main.cpp)

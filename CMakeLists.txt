@@ -57,6 +57,13 @@ if (NOT HPCOMBI_HAVE_REQUIRED_COMPILER_FLAGS)
   message(FATAL_ERROR "HPCombi requires a C++ compiler accepting the flags: -funroll-loops + -flax-vector-conversions")
 endif()
 
+# Code coverage stuff
+include(CheckCCompilerFlag)
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_SOURCE_DIR})
+include(CodeCoverage)
+# Code coverage stuff ends
+
+
 add_compile_options(-funroll-loops -flax-vector-conversions)
 
 file(READ ${CMAKE_SOURCE_DIR}/list_builtin.txt hpcombi_compiler_builtins)
