@@ -42,11 +42,20 @@ foreach(f ${test_src})
 endforeach(f)
 
 add_executable(test_all ${test_src} test_main.cpp)
-append_coverage_compiler_flags_to_target(test_all)
-target_link_libraries(test_all PRIVATE Catch2::Catch2WithMain gcov)
-setup_target_for_coverage_lcov(
-            NAME coverage-test_all
-            EXECUTABLE test_all)
+
+target_link_libraries(test_all PRIVATE Catch2::Catch2WithMain)
+
+if(CODE_COVERAGE)
+  # FIXME the next line fails on JDM's M1 Mac with gcov not found (even though
+  # it's installed)
+  find_library(GCOV gcov REQUIRED)
+  # FIXME the next line fails on JDM's M1 Mac with "ld: library not found for -lgcov"
+  target_link_libraries(test_all PRIVATE gcov) 
+  append_coverage_compiler_flags_to_target(test_all)
+  setup_target_for_coverage_lcov(
+              NAME coverage-test_all
+              EXECUTABLE test_all)
+endif(CODE_COVERAGE)
 
 add_test (TestEPU8 test_epu8)
 add_test (TestPerm16 test_perm16)

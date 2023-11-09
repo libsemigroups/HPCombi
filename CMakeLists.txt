@@ -57,12 +57,11 @@ if (NOT HPCOMBI_HAVE_REQUIRED_COMPILER_FLAGS)
   message(FATAL_ERROR "HPCombi requires a C++ compiler accepting the flags: -funroll-loops + -flax-vector-conversions")
 endif()
 
-# Code coverage stuff
-include(CheckCCompilerFlag)
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_SOURCE_DIR})
-include(CodeCoverage)
-# Code coverage stuff ends
-
+if(CODE_COVERAGE)
+  include(CheckCCompilerFlag)
+  set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_SOURCE_DIR})
+  include(CodeCoverage)
+endif(CODE_COVERAGE)
 
 add_compile_options(-funroll-loops -flax-vector-conversions)
 
@@ -115,8 +114,8 @@ endif(BUILD_TESTING)
 
 ###################
 # pkgconfig stuff
-configure_file(${CMAKE_SOURCE_DIR}/VERSION.in
-               ${CMAKE_BINARY_DIR}/VERSION)
+configure_file(${CMAKE_SOURCE_DIR}/HPCOMBI_VERSION.in
+               ${CMAKE_BINARY_DIR}/HPCOMBI_VERSION)
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/hpcombi.pc.in
                ${CMAKE_CURRENT_BINARY_DIR}/hpcombi.pc @ONLY)
 
@@ -130,7 +129,7 @@ foreach(f ${install_misc})
 endforeach(f)
 
 install (
-  FILES ${CMAKE_CURRENT_BINARY_DIR}/VERSION
+  FILES ${CMAKE_CURRENT_BINARY_DIR}/HPCOMBI_VERSION
   DESTINATION share/${CMAKE_PROJECT_NAME})
 install (
   DIRECTORY ${CMAKE_SOURCE_DIR}/include/hpcombi
