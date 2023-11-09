@@ -141,7 +141,7 @@ install (
 
 install (
   FILES ${CMAKE_CURRENT_BINARY_DIR}/hpcombi.pc
-  DESTINATION pkg-config)
+  DESTINATION lib/pkgconfig)
 
 #################
 # Packing stuff
