@@ -63,7 +63,7 @@ if(CODE_COVERAGE)
   include(CodeCoverage)
 endif(CODE_COVERAGE)
 
-add_compile_options(-funroll-loops -flax-vector-conversions)
+add_compile_options(-funroll-loops -flax-vector-conversions -march=native)
 
 file(READ ${CMAKE_SOURCE_DIR}/list_builtin.txt hpcombi_compiler_builtins)
 string(REPLACE ";" "|" hpcombi_compiler_builtins "${hpcombi_compiler_builtins}")
