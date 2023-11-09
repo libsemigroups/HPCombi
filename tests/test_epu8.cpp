@@ -24,8 +24,13 @@
 
 namespace HPCombi {
 
-auto IsSorted =
-    Catch::Matchers::Predicate<epu8>(is_sorted, "is_sorted");
+#define Epu8Match(F) Catch::Matchers::Predicate<epu8>(F, #F)
+
+#define Epu8MatchNot(F)                                                        \
+    Catch::Matchers::Predicate<epu8>([](epu8 x) { return !F(x); }, #F)
+
+auto IsSorted = Epu8Match(is_sorted);
+
 
 struct Fix {
     Fix()
@@ -133,9 +138,9 @@ TEST_CASE_METHOD(Fix, "Epu8::last_diff_mask", "[Epu8][005]") {
 }
 
 TEST_CASE_METHOD(Fix, "Epu8::is_all_zero", "[Epu8][006]") {
-    CHECK(is_all_zero(zero));
+    CHECK_THAT(zero, Epu8Match(is_all_zero));
     for (size_t i = 1; i < v.size(); i++) {
-        CHECK(!is_all_zero(v[i]));
+        CHECK_THAT(v[i], Epu8MatchNot(is_all_zero));
     }
 }
 
