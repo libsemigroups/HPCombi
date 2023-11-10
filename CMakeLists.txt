@@ -126,30 +126,30 @@ endif(BUILD_TESTING)
 ###################
 # pkgconfig stuff
 configure_file(${CMAKE_SOURCE_DIR}/HPCOMBI_VERSION.in
-               ${CMAKE_BINARY_DIR}/HPCOMBI_VERSION)
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/hpcombi.pc.in
+               ${CMAKE_CURRENT_BINARY_DIR}/HPCOMBI_VERSION)
+configure_file(${CMAKE_SOURCE_DIR}/hpcombi.pc.in
                ${CMAKE_CURRENT_BINARY_DIR}/hpcombi.pc @ONLY)
 
 ####################
 # Installation
 
+string(TOLOWER CMAKE_PROJECT_NAME HPCOMBI_INSTALL_DIR)
 set(install_misc README.md LICENSE)
 foreach(f ${install_misc})
   install (FILES ${CMAKE_SOURCE_DIR}/${f}
-  DESTINATION share/${CMAKE_PROJECT_NAME})
+  DESTINATION share/${HPCOMBI_INSTALL_DIR})
 endforeach(f)
 
 install (
   FILES ${CMAKE_CURRENT_BINARY_DIR}/HPCOMBI_VERSION
-  DESTINATION share/${CMAKE_PROJECT_NAME})
+  DESTINATION share/${HPCOMBI_INSTALL_DIR})
 install (
   DIRECTORY ${CMAKE_SOURCE_DIR}/include/hpcombi
   DESTINATION include
   FILES_MATCHING PATTERN "*.hpp")
 install (
   DIRECTORY ${CMAKE_SOURCE_DIR}/third_party/simde
-  DESTINATION include/${CMAKE_PROJECT_NAME})
-
+  DESTINATION include/${HPCOMBI_INSTALL_DIR})
 install (
   FILES ${CMAKE_CURRENT_BINARY_DIR}/hpcombi.pc
   DESTINATION lib/pkgconfig)
