@@ -57,13 +57,24 @@ if (NOT HPCOMBI_HAVE_REQUIRED_COMPILER_FLAGS)
   message(FATAL_ERROR "HPCombi requires a C++ compiler accepting the flags: -funroll-loops + -flax-vector-conversions")
 endif()
 
+add_compile_options(-funroll-loops -flax-vector-conversions)
+
+if (NOT HPCOMBI_DISABLE_MARCH_NATIVE)
+  check_cxx_compiler_flag('-march=native' HPCOMBI_HAVE_MARCH_NATIVE)
+
+  if (HPCOMBI_HAVE_MARCH_NATIVE)
+    add_compile_options(-march=native)
+  else()
+    message(STATUS "The C++ compiler does not accept the flag -march-native")
+  endif()
+endif()
+
+# Currently the code coverage fails to link on Mac OSX, not sure why
 if(CODE_COVERAGE)
   include(CheckCCompilerFlag)
   set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_SOURCE_DIR})
   include(CodeCoverage)
 endif(CODE_COVERAGE)
-
-add_compile_options(-funroll-loops -flax-vector-conversions -march=native)
 
 file(READ ${CMAKE_SOURCE_DIR}/list_builtin.txt hpcombi_compiler_builtins)
 string(REPLACE ";" "|" hpcombi_compiler_builtins "${hpcombi_compiler_builtins}")
