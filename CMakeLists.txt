@@ -133,7 +133,7 @@ configure_file(${CMAKE_SOURCE_DIR}/hpcombi.pc.in
 ####################
 # Installation
 
-string(TOLOWER CMAKE_PROJECT_NAME HPCOMBI_INSTALL_DIR)
+string(TOLOWER ${CMAKE_PROJECT_NAME} HPCOMBI_INSTALL_DIR)
 set(install_misc README.md LICENSE)
 foreach(f ${install_misc})
   install (FILES ${CMAKE_SOURCE_DIR}/${f}
