@@ -1,23 +1,24 @@
 # Building HPCombi
 
-## Build Prerequisites:
+Note that HPCombi is a C++17 header-only library, and as such does not need to
+be built. The instructions below are only for those who wish to either run the
+tests, experiments, examples, or benchmarks.
 
-- CMake 2.8 or later
+## Build prerequisites:
 
-- A recent c++ compiler. I have tested the code on
-  * g++ 5.3.1, 6.2.1 and 7.1.1.
-  * clang 5.0.0
-  * g++ 4.8 and 4.9 are known to be broken (I can fix it if needed at the price
-  of some uglification of the code).
+- CMake 3.8 or later
 
-- [optional] : Google sparsehash/dense_hash_map, sparsehash/dense_hash_set.
-  if not the less efficient standard containers will be used.
+- A recent C++ compiler implementing the C++17 standard. We routinely test
+  HPCombi using:
+  * gcc 9 to 12; and
+  * clang 11 to 15
+  on both x86 and arm processors.
 
-- BOOST.test (shared library version) : needed for testing.
+- Your machine must support a small number of builtin functions such as `__builtin_popcnt`.
 
-- Your machine must support AVX instructions.
+- [optional] : Google `sparsehash/dense_hash_map` and/or `sparsehash/dense_hash_set`.
 
-- Doxygen for generating the API documentation (in progress).
+- [optional] Doxygen for generating the API documentation (in progress).
 
 ## Building
 

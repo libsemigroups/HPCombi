@@ -13,7 +13,7 @@ jobs:
       - image: reiniscirpons/hpcombi-env-arm64v8:v1
     resource_class: arm.medium
     steps:
-      - run: 
+      - run:
           name: "Set up compiler"
           environment:
             COMPILER_NAME: << parameters.compiler >>
