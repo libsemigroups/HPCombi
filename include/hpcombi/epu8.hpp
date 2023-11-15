@@ -128,7 +128,6 @@ inline epu8 sort8_perm(epu8 &a) noexcept;
  * @brief Merge two sorted epu8
  * @details
  * @param a, b: two #HPCombi::epu8
- * @returns void
  * after executing merge, \c a and \c are sorted \c a[15] <= \c b[0]
  */
 /** @copydoc common_merge
