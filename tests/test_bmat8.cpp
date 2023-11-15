@@ -105,7 +105,6 @@ TEST_CASE_METHOD(BMat8Fixture, "BMat8::one", "[BMat8][000]") {
 }
 
 TEST_CASE_METHOD(BMat8Fixture, "BMat8::transpose", "[BMat8][001]") {
-
     CHECK(zero.transpose() == zero);
     CHECK(bm2.transpose() == bm2t);
     CHECK(bm3.transpose() == bm3t);

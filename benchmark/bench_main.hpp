@@ -13,6 +13,9 @@
 //                  http://www.gnu.org/licenses/                              //
 ////////////////////////////////////////////////////////////////////////////////
 
+#ifndef HPCOMBI_BENCHMARK_BENCH_MAIN_HPP_
+#define HPCOMBI_BENCHMARK_BENCH_MAIN_HPP_
+
 #define BENCHMARK_MEM_FN(mem_fn, sample)                                       \
     BENCHMARK(#mem_fn) {                                                       \
         for (auto &elem : sample) {                                            \
@@ -74,3 +77,4 @@
         }                                                                      \
         return true;                                                           \
     };
+#endif  // HPCOMBI_BENCHMARK_BENCH_MAIN_HPP_

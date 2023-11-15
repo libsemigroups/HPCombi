@@ -13,8 +13,8 @@
 //                  http://www.gnu.org/licenses/                              //
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef HPCOMBI_PERM_GENERIC_HPP
-#define HPCOMBI_PERM_GENERIC_HPP
+#ifndef HPCOMBI_PERM_GENERIC_HPP_
+#define HPCOMBI_PERM_GENERIC_HPP_
 
 #include <algorithm>         // for shuffle
 #include <array>             // for array
@@ -73,4 +73,4 @@ static_assert(std::is_trivial<PermGeneric<12>>(),
 
 #include "perm_generic_impl.hpp"
 
-#endif  // HPCOMBI_PERM_GENERIC_HPP
+#endif  // HPCOMBI_PERM_GENERIC_HPP_

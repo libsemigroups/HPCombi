@@ -34,7 +34,7 @@ struct RoundsMask {
         for (unsigned i = 0; i < sorting_rounds.size(); ++i)
             arr[i] = sorting_rounds[i] < Epu8.id();
     }
-    epu8 arr[sorting_rounds.size()];
+    epu8 arr[sorting_rounds.size()];  // NOLINT(runtime/arrays]
 };
 
 const auto rounds_mask = RoundsMask();
@@ -165,7 +165,6 @@ TEST_CASE_METHOD(Fix_epu8, "hsum", "[Epu8][002]") {
 }
 
 TEST_CASE_METHOD(Fix_epu8, "partial sums", "[Epu8][003]") {
-
     BENCHMARK_FREE_FN("| no lambda", partial_sums_ref, Fix_epu8::perms);
     BENCHMARK_FREE_FN("| no lambda", partial_sums_gen, Fix_epu8::perms);
     BENCHMARK_FREE_FN("| no lambda", partial_sums_round, Fix_epu8::perms);

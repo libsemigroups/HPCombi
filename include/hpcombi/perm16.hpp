@@ -13,8 +13,8 @@
 //                  http://www.gnu.org/licenses/                              //
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef HPCOMBI_PERM16_HPP_INCLUDED
-#define HPCOMBI_PERM16_HPP_INCLUDED
+#ifndef HPCOMBI_PERM16_HPP_
+#define HPCOMBI_PERM16_HPP_
 
 #include <cstddef>           // for size_t
 #include <cstdint>           // for uint8_t, uint64_t, uint32_t
@@ -23,7 +23,7 @@
 #include <type_traits>       // for is_trivial
 #include <vector>            // for vector
 
-#include "epu8.hpp"     // for epu8, permuted, etc
+#include "epu8.hpp"    // for epu8, permuted, etc
 #include "power.hpp"   // for pow
 #include "vect16.hpp"  // for hash, is_partial_permutation
 
@@ -476,4 +476,4 @@ template <> struct hash<HPCombi::Perm16> {
 
 }  // namespace std
 
-#endif  // HPCOMBI_PERM16_HPP_INCLUDED
+#endif  // HPCOMBI_PERM16_HPP_

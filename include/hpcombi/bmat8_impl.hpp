@@ -18,6 +18,8 @@
 // This file contains an implementation of fast boolean matrices up to
 // dimension 8 x 8.
 
+// NOLINT(build/header_guard)
+
 namespace HPCombi {
 static_assert(std::is_trivial<BMat8>(), "BMat8 is not a trivial class!");
 
@@ -239,12 +241,12 @@ inline BMat8 BMat8::row_space_basis() const noexcept {
 #endif  // FF
 #define FF 0xff
 
-constexpr std::array<epu8, 4> masks{
-    {// clang-format off
-        {FF, 0,FF, 0,FF, 0,FF, 0,FF, 0,FF, 0,FF, 0,FF, 0},
-        {FF,FF, 1, 1,FF,FF, 1, 1,FF,FF, 1, 1,FF,FF, 1, 1},
-        {FF,FF,FF,FF, 2, 2, 2, 2,FF,FF,FF,FF, 2, 2, 2, 2},
-        {FF,FF,FF,FF,FF,FF,FF,FF, 3, 3, 3, 3, 3, 3, 3, 3}
+constexpr std::array<epu8, 4> masks{{
+    // clang-format off
+      {FF, 0,FF, 0,FF, 0,FF, 0,FF, 0,FF, 0,FF, 0,FF, 0}, // NOLINT()
+      {FF,FF, 1, 1,FF,FF, 1, 1,FF,FF, 1, 1,FF,FF, 1, 1}, // NOLINT()
+      {FF,FF,FF,FF, 2, 2, 2, 2,FF,FF,FF,FF, 2, 2, 2, 2}, // NOLINT()
+      {FF,FF,FF,FF,FF,FF,FF,FF, 3, 3, 3, 3, 3, 3, 3, 3}  // NOLINT()
     }};
 #undef FF
 
@@ -252,7 +254,8 @@ static const epu8 shiftres{1, 2, 4, 8, 0x10, 0x20, 0x40, 0x80};
 
 namespace detail {
 
-inline void row_space_update_bitset(epu8 block, epu8 &set0, epu8 &set1) noexcept {
+inline void row_space_update_bitset(epu8 block, epu8 &set0, epu8 &set1)
+noexcept {
     static const epu8 bound08 = simde_mm_slli_epi32(
         static_cast<simde__m128i>(Epu8.id()), 3);  // shift for *8
     static const epu8 bound18 = bound08 + Epu8(0x80);
@@ -264,7 +267,7 @@ inline void row_space_update_bitset(epu8 block, epu8 &set0, epu8 &set1) noexcept
         block = simde_mm_shuffle_epi8(block, Epu8.right_cycle());
     }
 }
-}
+}  // namespace detail
 
 inline void BMat8::row_space_bitset(epu8 &res0, epu8 &res1) const noexcept {
     epu8 in = simde_mm_set_epi64x(0, _data);
@@ -467,7 +470,8 @@ inline Perm16 BMat8::right_perm_action_on_basis_ref(BMat8 bm) const {
 
 inline Perm16 BMat8::right_perm_action_on_basis(BMat8 other) const noexcept {
     epu8 x = permuted(simde_mm_set_epi64x(_data, 0), Epu8.rev());
-    epu8 y = permuted(simde_mm_set_epi64x((*this * other)._data, 0), Epu8.rev());
+    epu8 y = permuted(simde_mm_set_epi64x((*this * other)._data, 0),
+                      Epu8.rev());
     // Vector ternary operator is not supported by clang.
     // return (x != (epu8 {})) ? permutation_of(y, x) : Epu8.id();
     return simde_mm_blendv_epi8(Epu8.id(), permutation_of(y, x), x != epu8{});

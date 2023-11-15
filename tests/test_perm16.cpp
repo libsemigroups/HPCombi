@@ -38,7 +38,7 @@ std::vector<Perm16> all_perms(uint8_t sz) {
         res.push_back(x);
     }
     return res;
-};
+}
 
 std::vector<PPerm16> all_pperms(std::vector<Perm16> perms,
                                 std::vector<epu8> masks) {
@@ -428,7 +428,7 @@ TEST_CASE_METHOD(Perm16Fixture, "Perm16::smallest_fix_point", "[Perm16][024]") {
 
 TEST_CASE_METHOD(Perm16Fixture, "Perm16::smallest_moved_point",
                  "[Perm16][025]") {
-    CHECK(Perm16::one().smallest_moved_point() == int(FF));
+    CHECK(Perm16::one().smallest_moved_point() == static_cast<int>(FF));
     CHECK(PPa.smallest_moved_point() == 0);
     CHECK(PPb.smallest_moved_point() == 0);
     CHECK(RandPerm.smallest_moved_point() == 0);
@@ -437,7 +437,7 @@ TEST_CASE_METHOD(Perm16Fixture, "Perm16::smallest_moved_point",
 
 TEST_CASE_METHOD(Perm16Fixture, "Perm16::largest_fix_point", "[Perm16][026]") {
     CHECK(Perm16::one().largest_fix_point() == 15);
-    CHECK(int(PPa.largest_fix_point()) == 15);
+    CHECK(static_cast<int>(PPa.largest_fix_point()) == 15);
     CHECK(PPb.largest_fix_point() == 14);
     CHECK(RandPerm.largest_fix_point() == 1);
     CHECK(PTransf16(Epu8({0, 2, 2, 0xf, 2, 2, 2, 2, 5, 2}, 2))

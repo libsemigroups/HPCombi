@@ -46,7 +46,7 @@ namespace HPCombi {
 //!
 //! BMat8 is a trivial class.
 class BMat8 {
-  public:
+ public:
     //! A default constructor.
     //!
     //! This constructor gives no guarantees on what the matrix will contain.
@@ -347,7 +347,7 @@ class BMat8 {
     BMat8 empty_key() const noexcept { return BMat8(0xFF7FBFDFEFF7FBFE); }
 #endif
 
-  private:
+ private:
     uint64_t _data;
 
     epu8 row_space_basis_internal() const noexcept;
@@ -364,4 +364,4 @@ template <> struct hash<HPCombi::BMat8> {
     }
 };
 }  // namespace std
-#endif  // HPCOMBI_BMAT8_HPP_INCLUDED
+#endif  // HPCOMBI_BMAT8_HPP_

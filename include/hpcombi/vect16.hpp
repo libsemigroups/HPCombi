@@ -13,8 +13,8 @@
 //                  http://www.gnu.org/licenses/                              //
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef HPCOMBI_VECT16_HPP_INCLUDED
-#define HPCOMBI_VECT16_HPP_INCLUDED
+#ifndef HPCOMBI_VECT16_HPP_
+#define HPCOMBI_VECT16_HPP_
 
 #include <cstddef>           // for size_t
 #include <cstdint>           // for uint8_t, uint64_t, int8_t
@@ -117,4 +117,4 @@ template <> struct hash<HPCombi::Vect16> {
 
 }  // namespace std
 
-#endif  // HPCOMBI_VECT16_HPP_INCLUDED
+#endif  // HPCOMBI_VECT16_HPP_

@@ -32,8 +32,8 @@
  * This is an example of how to use pow with a non numerical Monoid.
  */
 
-#ifndef HPCOMBI_POWER_HPP_INCLUDED
-#define HPCOMBI_POWER_HPP_INCLUDED
+#ifndef HPCOMBI_POWER_HPP_
+#define HPCOMBI_POWER_HPP_
 
 namespace HPCombi {
 
@@ -112,4 +112,4 @@ template <typename T> struct Monoid {
 
 }  // namespace HPCombi
 
-#endif  // HPCOMBI_POWER_HPP_INCLUDED
+#endif  // HPCOMBI_POWER_HPP_

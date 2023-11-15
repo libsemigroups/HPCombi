@@ -13,8 +13,8 @@
 //                  http://www.gnu.org/licenses/                              //
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef HPCOMBI_HPCOMBI_HPP_INCLUDED
-#define HPCOMBI_HPCOMBI_HPP_INCLUDED
+#ifndef HPCOMBI_HPCOMBI_HPP_
+#define HPCOMBI_HPCOMBI_HPP_
 
 #include "bmat8.hpp"
 #include "debug.hpp"
@@ -25,4 +25,4 @@
 #include "vect16.hpp"
 #include "vect_generic.hpp"
 
-#endif  // HPCOMBI_HPCOMBI_HPP_INCLUDED
+#endif  // HPCOMBI_HPCOMBI_HPP_

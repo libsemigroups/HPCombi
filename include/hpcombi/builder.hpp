@@ -13,8 +13,8 @@
 //                  http://www.gnu.org/licenses/                              //
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef HPCOMBI_BUILDER_HPP_INCLUDED
-#define HPCOMBI_BUILDER_HPP_INCLUDED
+#ifndef HPCOMBI_BUILDER_HPP_
+#define HPCOMBI_BUILDER_HPP_
 
 #include <array>             // for array
 #include <cstddef>           // for size_t
@@ -37,7 +37,6 @@ namespace HPCombi {
  * - calling a member function such as #id acts as a static member function.
  */
 template <class TPU> struct TPUBuild {
-
     /// Type of the elements
     using type_elem = typename std::remove_reference_t<decltype((TPU{})[0])>;
 
@@ -58,7 +57,7 @@ template <class TPU> struct TPUBuild {
 
     /// Construct a TPU from an \c std::initializer_list and a default value
     inline constexpr TPU operator()(std::initializer_list<type_elem> il,
-                          type_elem def) const {
+                                    type_elem def) const {
         HPCOMBI_ASSERT(il.size() <= size);
         array res;
         std::copy(il.begin(), il.end(), res.begin());
@@ -94,7 +93,9 @@ template <class TPU> struct TPUBuild {
     }
 
     /// Return the identity element of type \c TPU
-    constexpr TPU id() const { return operator()([](type_elem i) { return i; }); }
+    constexpr TPU id() const {
+        return operator()([](type_elem i) { return i; });
+    }
     /// Return the reversed element of type \c TPU
     constexpr TPU rev() const {
         return (*this)([](type_elem i) { return size - 1 - i; });
@@ -164,4 +165,4 @@ inline const VectGeneric<TPUBuild<TPU>::size> &as_VectGeneric(const TPU &v) {
 
 }  // namespace HPCombi
 
-#endif  // HPCOMBI_BUILDER_HPP_INCLUDED
+#endif  // HPCOMBI_BUILDER_HPP_

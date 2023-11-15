@@ -88,7 +88,7 @@
     }
 
 struct Equals : Catch::Matchers::MatcherGenericBase {
-    Equals(HPCombi::epu8 v) : v(v) {}
+    explicit Equals(HPCombi::epu8 v) : v(v) {}
 
     bool match(HPCombi::epu8 w) const { return HPCombi::equal(v, w); }
 
@@ -96,7 +96,7 @@ struct Equals : Catch::Matchers::MatcherGenericBase {
         return "\n!=\n" + std::to_string(v);
     }
 
-  private:
+ private:
     const HPCombi::epu8 v;
 };
 

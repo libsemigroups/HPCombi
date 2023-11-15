@@ -31,7 +31,6 @@ namespace HPCombi {
 
 auto IsSorted = Epu8Match(is_sorted);
 
-
 struct Fix {
     Fix()
         : zero(Epu8({}, 0)), P01(Epu8({0, 1}, 0)), P10(Epu8({1, 0}, 0)),
@@ -45,8 +44,8 @@ struct Fix {
           Pw(epu8{5, 5, 2, 9, 1, 6, 12, 4, 0, 4, 4, 4, 12, 13, 14, 15}),
           P5(Epu8({}, 5)), Pc(Epu8({23, 5, 21, 5, 43, 36}, 7)),
           // Elements should be sorted in alphabetic order here
-          v({zero, P01, Epu8.id(), P10, P11, P1, P112, Pa, Pb, RP, Pa1, Pa2, P51,
-             Pv, Pw, P5, Epu8.rev(), Pc}),
+          v({zero, P01, Epu8.id(), P10, P11, P1, P112, Pa, Pb, RP, Pa1, Pa2,
+             P51, Pv, Pw, P5, Epu8.rev(), Pc}),
           av({{5, 5, 2, 5, 1, 6, 12, 4, 0, 3, 2, 11, 12, 13, 14, 15}}) {}
     ~Fix() = default;
 
@@ -392,11 +391,9 @@ TEST_CASE_METHOD(Fix, "Epu8::permutation_of_ref", "[Epu8][024]") {
 }
 
 TEST_CASE_METHOD(Fix, "Epu8::merge", "[Epu8][025]") {
-    std::vector<std::pair<epu8, epu8>> sample_pairs {{
-            { epu8 {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-              epu8 {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1}
-            }
-        }};
+    std::vector<std::pair<epu8, epu8>> sample_pairs{
+        {{epu8{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
+          epu8{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1}}}};
     for (auto x : v)
         for (auto y : v)
             sample_pairs.emplace_back(x, y);

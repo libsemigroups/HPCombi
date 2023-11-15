@@ -12,8 +12,8 @@
 //                                                                            //
 //                  http://www.gnu.org/licenses/                              //
 //****************************************************************************//
-#ifndef BENCH_FIXTURE
-#define BENCH_FIXTURE
+#ifndef HPCOMBI_BENCHMARK_BENCH_FIXTURE_HPP_
+#define HPCOMBI_BENCHMARK_BENCH_FIXTURE_HPP_
 
 #include <random>
 #include <vector>
@@ -66,7 +66,7 @@ std::vector<std::pair<epu8, epu8>> make_pair_sample(size_t sz) {
 }
 
 class Fix_epu8 {
-  public:
+ public:
     Fix_epu8()
         : vects(rand_epu8(size)), transf(rand_transf(size)),
           perms(rand_perms(size)), pairs(make_pair_sample(size)) {}
@@ -77,4 +77,4 @@ class Fix_epu8 {
     const std::vector<std::pair<epu8, epu8>> pairs;
 };
 
-#endif  // BENCH_FIXTURE
+#endif  // HPCOMBI_BENCHMARK_BENCH_FIXTURE_HPP_

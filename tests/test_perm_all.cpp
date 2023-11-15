@@ -28,7 +28,6 @@ namespace HPCombi {
 namespace {
 
 template <class Perm_> struct Fixture1 {
-
     using VectType = typename Perm_::vect;
     using PermType = Perm_;
 

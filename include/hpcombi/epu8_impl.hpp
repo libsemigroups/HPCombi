@@ -13,6 +13,8 @@
 //                  http://www.gnu.org/licenses/                              //
 ////////////////////////////////////////////////////////////////////////////////
 
+// NOLINT(build/header_guard)
+
 // This is the implementation part of epu8.hpp this should be seen as
 // implementation details and should not be included directly.
 
@@ -46,7 +48,7 @@
 namespace HPCombi {
 
 ///////////////////////////////////////////////////////////////////////////////
-/// Implementation part for inline functions //////////////////////////////////
+// Implementation part for inline functions
 ///////////////////////////////////////////////////////////////////////////////
 
 /** Permuting a #HPCombi::epu8 */
@@ -57,7 +59,8 @@ inline epu8 permuted_ref(epu8 a, epu8 b) noexcept {
     return res;
 }
 
-// Msk is supposed to be a boolean mask (i.e. each entry is either 0 or 255)
+// Msk is supposed to be a boolean mask (i.e. each entry is either 0 or
+// 255)
 inline uint64_t first_mask(epu8 msk, size_t bound) {
     uint64_t res = simde_mm_movemask_epi8(msk & (Epu8.id() < Epu8(bound)));
     return res == 0 ? 16 : (__builtin_ffsll(res) - 1);
@@ -174,8 +177,8 @@ constexpr std::array<epu8, 9> sorting_rounds
  * used by the #sorted function
  *
  * [Batcher odd-Even mergesort]:
- * https://en.wikipedia.org/wiki/Batcher_odd%E2%80%93even_mergesort "Batcher
- * odd–even mergesort"
+ * https://en.wikipedia.org/wiki/Batcher_odd%E2%80%93even_mergesort
+ * "Batcher odd–even mergesort"
  */
 constexpr std::array<epu8, 6> sorting_rounds8
     // clang-format off
@@ -235,7 +238,8 @@ inline void merge(epu8 &a, epu8 &b) noexcept {
     merge_rev(a, b);
 }
 // TODO : AVX2 version.
-// TODO : compute merge_rounds on the fly instead of loading those from memory
+// TODO : compute merge_rounds on the fly instead of loading those from
+// memory
 
 inline epu8 random_epu8(uint16_t bnd) {
     epu8 res;

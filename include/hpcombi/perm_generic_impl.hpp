@@ -13,6 +13,8 @@
 //                  http://www.gnu.org/licenses/                              //
 ////////////////////////////////////////////////////////////////////////////////
 
+// NOLINT(build/header_guard)
+
 namespace HPCombi {
 
 template <size_t Size, typename Expo>

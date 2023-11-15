@@ -13,17 +13,17 @@
 //                  http://www.gnu.org/licenses/                              //
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef HPCOMBI_EPU8_HPP_INCLUDED
-#define HPCOMBI_EPU8_HPP_INCLUDED
+#ifndef HPCOMBI_EPU8_HPP_
+#define HPCOMBI_EPU8_HPP_
 
-#include <array>             // for array
-#include <cstddef>           // for size_t
-#include <cstdint>           // for uint8_t, uint64_t, int8_t
-#include <ostream>           // for ostream
-#include <string>            // for string
+#include <array>    // for array
+#include <cstddef>  // for size_t
+#include <cstdint>  // for uint8_t, uint64_t, int8_t
+#include <ostream>  // for ostream
+#include <string>   // for string
 
-#include "debug.hpp"         // for HPCOMBI_ASSERT
 #include "builder.hpp"       // for TPUBuild
+#include "debug.hpp"         // for HPCOMBI_ASSERT
 #include "vect_generic.hpp"  // for VectGeneric
 
 #include "simde/x86/sse4.1.h"  // for simde_mm_max_epu8, simde...
@@ -43,12 +43,10 @@ using epu8 = uint8_t __attribute__((vector_size(16)));
 static_assert(alignof(epu8) == 16,
               "epu8 type is not properly aligned by the compiler !");
 
-
 /** Factory object acting as a class constructor for type #HPCombi::epu8.
  * see #HPCombi::TPUBuild for usage and capability
  */
-constexpr TPUBuild<epu8> Epu8 {};
-
+constexpr TPUBuild<epu8> Epu8{};
 
 /** Test whether all the entries of a #HPCombi::epu8 are zero */
 inline bool is_all_zero(epu8 a) noexcept { return simde_mm_testz_si128(a, a); }
@@ -619,4 +617,4 @@ inline std::string to_string(HPCombi::epu8 const &a);
 
 #include "epu8_impl.hpp"
 
-#endif  // HPCOMBI_EPU8_HPP_INCLUDED
+#endif  // HPCOMBI_EPU8_HPP_

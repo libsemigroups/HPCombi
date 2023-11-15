@@ -13,8 +13,8 @@
 //                  http://www.gnu.org/licenses/                              //
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef HPCOMBI_VECT_GENERIC_HPP
-#define HPCOMBI_VECT_GENERIC_HPP
+#ifndef HPCOMBI_VECT_GENERIC_HPP_
+#define HPCOMBI_VECT_GENERIC_HPP_
 
 #include <algorithm>         // for max, min, shuffle, sort
 #include <array>             // for array
@@ -244,4 +244,4 @@ struct hash<HPCombi::VectGeneric<Size, Expo>> {
 
 }  // namespace std
 
-#endif  // HPCOMBI_VECT_GENERIC_HPP
+#endif  // HPCOMBI_VECT_GENERIC_HPP_

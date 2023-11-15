@@ -14,8 +14,6 @@
 //****************************************************************************//
 
 #include <cstdlib>
-#include <iostream>
-#include <string>
 
 #include <catch2/benchmark/catch_benchmark.hpp>
 #include <catch2/catch_test_macros.hpp>
@@ -26,7 +24,6 @@
 #include "hpcombi/perm16.hpp"
 #include "hpcombi/perm_generic.hpp"
 
-using namespace std;
 using HPCombi::epu8;
 using HPCombi::Perm16;
 using HPCombi::PTransf16;
@@ -34,7 +31,6 @@ using HPCombi::Transf16;
 using HPCombi::Vect16;
 
 // using namespace FeatureDetector;
-const std::string PROCID = "TODO";
 // const std::string SIMDSET = cpu_x86::get_highest_SIMD();
 
 std::vector<Perm16> make_Perm16(size_t n) {
@@ -64,7 +60,7 @@ std::vector<Transf16> make_Transf16(size_t n) {
 }
 
 class Fix_Perm16 {
-  public:
+ public:
     Fix_Perm16()
         : sample_Perm16(make_Perm16(1000)),
           sample_Transf16(make_Transf16(1000)),
