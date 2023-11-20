@@ -69,6 +69,12 @@ if (NOT HPCOMBI_DISABLE_MARCH_NATIVE)
   endif()
 endif()
 
+check_cxx_compiler_flag('-fopenmp-simd', HPCOMBI_HAVE_OPENMP_SIMD_FLAG)
+
+if (HPCOMBI_HAVE_OPENMP_SIMD_FLAG) 
+  add_compile_options(-fopenmp-simd -DSIMDE_ENABLE_OPENMP)
+endif()
+
 # Currently the code coverage fails to link on Mac OSX, not sure why
 if(CODE_COVERAGE)
   include(CheckCCompilerFlag)
@@ -121,7 +127,6 @@ if (BUILD_TESTING)
   add_subdirectory(tests)
   add_subdirectory(benchmark)
 endif(BUILD_TESTING)
-
 
 ###################
 # pkgconfig stuff
