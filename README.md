@@ -10,6 +10,10 @@ and benchmark them on various compiler and architecture.
 
 Florent Hivert <florent.hivert@lri.fr>
 
+## Documentation
+
+The Doxygen auto generated [API](https://libsemigroups.github.io/HPCombi/)
+
 ## Contributors
 
 - James Mitchell : discussions + test cases + Travis CI + BMat8 reference code
