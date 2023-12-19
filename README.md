@@ -27,6 +27,10 @@ other processors too.
 - Viviane Pons : discussions about algorithms
 - Finn Smith : discussions + `BMat8` reference code
 
+## Documentation
+
+- The Doxygen auto generated [API](https://libsemigroups.github.io/HPCombi/)
+
 ## Thanks
 
 - The development of HPCombi was partly funded by the [OpenDreamKit][] Horizon
