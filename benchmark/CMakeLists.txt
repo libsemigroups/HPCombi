@@ -13,23 +13,30 @@
 #                  http://www.gnu.org/licenses/                              #
 #****************************************************************************#
 
-find_package(PkgConfig REQUIRED)
-pkg_check_modules(BENCHMARK REQUIRED IMPORTED_TARGET benchmark)
+find_package(Catch2 3 QUIET)
 
-include_directories(
-  ${CMAKE_SOURCE_DIR}/include
-  ${PROJECT_BINARY_DIR})
+if(NOT Catch2_FOUND)
+  message(STATUS "Cloning Catch2 from GIT_REPOSITORY https://github.com/catchorg/Catch2.git")
+  Include(FetchContent)
+
+  FetchContent_Declare(
+    Catch2
+    GIT_REPOSITORY https://github.com/catchorg/Catch2.git
+    GIT_TAG        v3.4.0 # or a later release
+  )
+
+  FetchContent_MakeAvailable(Catch2)
+else()
+  message(STATUS "Using system Catch2")
+endif()
+
+message(STATUS "Building benchmark")
 
 set(benchmark_src
-  bench_epu8.cpp bench_perm16.cpp bench_bmat8.cpp sort.cpp inverse.cpp)
+  bench_epu8.cpp bench_perm16.cpp bench_bmat8.cpp)
 
 foreach(f ${benchmark_src})
   get_filename_component(benchName ${f} NAME_WE)
   add_executable (${benchName} ${f})
-  target_include_directories(${benchName} PUBLIC ${BENCHMARK_INCLUDE_DIRS})
-  target_compile_options(${benchName} PUBLIC ${BENCHMARK_CFLAGS_OTHER})
-  target_link_libraries(${benchName} benchmark pthread)
-  # install(PROGRAMS ${CMAKE_CURRENT_BINARY_DIR}/${benchName}
-  #   DESTINATION bin
-  #   RENAME ${CMAKE_PROJECT_NAME}-${benchName})
+  target_link_libraries(${benchName} PRIVATE Catch2::Catch2WithMain)
 endforeach(f)

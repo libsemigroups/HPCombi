@@ -17,9 +17,10 @@
  * #HPCombi::power_helper::Monoid
  */
 
-#include "power.hpp"
 #include <cassert>
 #include <string>
+
+#include "hpcombi/power.hpp"
 
 namespace HPCombi {
 namespace power_helper {
@@ -27,23 +28,22 @@ namespace power_helper {
 // Algebraic monoid for string with concatenation
 template <> struct Monoid<std::string> {
 
-  // The one of the string monoid
-  static std::string one() { return {}; };
+    // The one of the string monoid
+    static std::string one() { return {}; };
 
-  /* The product of two strings that is their concatenation
-   * @param a the first string to be concatenated
-   * @param b the second string to be concatenated
-   * @return the concatenation of \a a and \a b
-   */
-  static std::string prod(std::string a, std::string b) { return a + b; }
+    /* The product of two strings that is their concatenation
+     * @param a the first string to be concatenated
+     * @param b the second string to be concatenated
+     * @return the concatenation of \a a and \a b
+     */
+    static std::string prod(std::string a, std::string b) { return a + b; }
 };
 
 }  // namespace power_helper
 }  // namespace HPCombi
 
-
 int main() {
-  assert(HPCombi::pow<0>(std::string("ab")) == "");
-  assert(HPCombi::pow<4>(std::string("ab")) == "abababab");
-  assert(HPCombi::pow<5>(std::string("abc")) == "abcabcabcabcabc");
+    assert(HPCombi::pow<0>(std::string("ab")) == "");
+    assert(HPCombi::pow<4>(std::string("ab")) == "abababab");
+    assert(HPCombi::pow<5>(std::string("abc")) == "abcabcabcabcabc");
 }
