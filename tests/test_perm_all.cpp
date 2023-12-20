@@ -1,56 +1,43 @@
-/******************************************************************************/
-/*       Copyright (C) 2014 Florent Hivert <Florent.Hivert@lri.fr>,           */
-/*                                                                            */
-/*  Distributed under the terms of the GNU General Public License (GPL)       */
-/*                                                                            */
-/*    This code is distributed in the hope that it will be useful,            */
-/*    but WITHOUT ANY WARRANTY; without even the implied warranty of          */
-/*    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU       */
-/*   General Public License for more details.                                 */
-/*                                                                            */
-/*  The full text of the GPL is available at:                                 */
-/*                                                                            */
-/*                  http://www.gnu.org/licenses/                              */
-/******************************************************************************/
-
-#define BOOST_TEST_MODULE perm_generic
+////////////////////////////////////////////////////////////////////////////////
+//       Copyright (C) 2014 Florent Hivert <Florent.Hivert@lri.fr>,           //
+//                                                                            //
+//  Distributed under the terms of the GNU General Public License (GPL)       //
+//                                                                            //
+//    This code is distributed in the hope that it will be useful,            //
+//    but WITHOUT ANY WARRANTY; without even the implied warranty of          //
+//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU       //
+//   General Public License for more details.                                 //
+//                                                                            //
+//  The full text of the GPL is available at:                                 //
+//                                                                            //
+//                  http://www.gnu.org/licenses/                              //
+////////////////////////////////////////////////////////////////////////////////
 
 #include <iomanip>
+#include <sstream>
+#include <tuple>
 #include <vector>
 
-#include <boost/functional.hpp>
-#include <boost/mpl/list.hpp>
-#include <boost/test/unit_test.hpp>
+#include "hpcombi/perm16.hpp"
+#include "hpcombi/perm_generic.hpp"
 
-//____________________________________________________________________________//
+#include "test_main.hpp"
+#include <catch2/catch_template_test_macros.hpp>
 
-template <class VectType> struct IsPermFunctions {
-    static bool is_perm(const VectType a) { return a.is_permutation(); };
-    static bool is_perm2(const VectType a, size_t i) {
-        return a.is_permutation(i);
-    };
-};
+namespace HPCombi {
+namespace {
 
-#include "perm16.hpp"
-#include "perm_generic.hpp"
+template <class Perm_> struct Fixture1 {
+    using VectType = typename Perm_::vect;
+    using PermType = Perm_;
 
-//____________________________________________________________________________//
-
-template <class _PermType>
-struct Fixture : public IsPermFunctions<typename _PermType::vect> {
-
-    using VectType = typename _PermType::vect;
-    using PermType = _PermType;
-
-    Fixture()
+    Fixture1()
         : zero({0}), V01({0, 1}), V10({1, 0}), V11({1, 1}), V1({}, 1),
           PPa({1, 2, 3, 4, 0, 5}), PPb({1, 2, 3, 6, 0, 5}), czero(zero),
           cV01(V01), RandPerm({3, 1, 0, 5, 10, 2, 6, 7, 4, 8, 9}),
           Plist({PPa, PPb, RandPerm}),
-          Vlist({zero, V01, V10, V11, V1, PPa, PPb, RandPerm}) {
-        BOOST_TEST_MESSAGE("setup fixture");
-    }
-    ~Fixture() { BOOST_TEST_MESSAGE("teardown fixture"); }
+          Vlist({zero, V01, V10, V11, V1, PPa, PPb, RandPerm}) {}
+    ~Fixture1() {}
 
     VectType zero, V01, V10, V11, V1;
     PermType PPa, PPb;
@@ -59,314 +46,347 @@ struct Fixture : public IsPermFunctions<typename _PermType::vect> {
     const std::vector<PermType> Plist;
     const std::vector<VectType> Vlist;
 
-    static bool less(const VectType a, const VectType b) { return a < b; };
-    static bool not_less(const VectType a, const VectType b) {
-        return not(a < b);
-    };
-
     // some tests assume that the size is at least 6
-    static_assert(VectType::Size() >= 6, "Minimum size for tests");
+    static_assert(VectType::size() >= 6, "Minimum size for tests");
 };
 
-//____________________________________________________________________________//
+}  // namespace
 
-typedef boost::mpl::list<
-    Fixture<HPCombi::Perm16>, Fixture<HPCombi::PermGeneric<12>>,
-    Fixture<HPCombi::PermGeneric<16>>, Fixture<HPCombi::PermGeneric<32>>,
-    Fixture<HPCombi::PermGeneric<42>>, Fixture<HPCombi::PermGeneric<49>>,
-    Fixture<HPCombi::PermGeneric<350, uint32_t>>>
-    Fixtures;
+// Better than std::tuple because we can see the actual types in the output
+// with a macro but not with the tuple.
+#define PermTypes                                                              \
+    Perm16, PermGeneric<12>, PermGeneric<16>, PermGeneric<32>,                 \
+        PermGeneric<42>, PermGeneric<49>, (PermGeneric<350, uint32_t>)
 
-//____________________________________________________________________________//
-
-BOOST_AUTO_TEST_SUITE(VectType_test)
-//____________________________________________________________________________//
-
-BOOST_FIXTURE_TEST_CASE_TEMPLATE(sizeof_test, F, Fixtures, F) {
-    BOOST_TEST(sizeof(F::zero) == F::VectType::Size() * sizeof(F::zero[0]));
+TEMPLATE_TEST_CASE_METHOD(Fixture1, "sizeof", "[PermAll][000]", PermTypes) {
+    CHECK(sizeof(Fixture1<TestType>::zero) ==
+          Fixture1<TestType>::VectType::size() *
+              sizeof(Fixture1<TestType>::zero[0]));
 }
 
-BOOST_FIXTURE_TEST_CASE_TEMPLATE(equal_test, F, Fixtures, F) {
-    BOOST_TEST(F::zero == F::zero);
-    BOOST_TEST(F::zero != F::V01);
-    for (unsigned i = 0; i < F::Plist.size(); i++)
-        for (unsigned j = 0; j < F::Plist.size(); j++)
-            if (i == j)
-                BOOST_TEST(F::Plist[i] == F::Plist[j]);
-            else
-                BOOST_TEST(F::Plist[i] != F::Plist[j]);
+TEMPLATE_TEST_CASE_METHOD(Fixture1, "operator==", "[PermAll][001]", PermTypes) {
+    CHECK(Fixture1<TestType>::zero == Fixture1<TestType>::zero);
+    CHECK(Fixture1<TestType>::zero != Fixture1<TestType>::V01);
+    for (unsigned i = 0; i < Fixture1<TestType>::Plist.size(); i++) {
+        for (unsigned j = 0; j < Fixture1<TestType>::Plist.size(); j++) {
+            if (i == j) {
+                CHECK(Fixture1<TestType>::Plist[i] ==
+                      Fixture1<TestType>::Plist[j]);
+            } else {
+                CHECK(Fixture1<TestType>::Plist[i] !=
+                      Fixture1<TestType>::Plist[j]);
+            }
+        }
+    }
 }
 
-BOOST_FIXTURE_TEST_CASE_TEMPLATE(operator_bracket_const_test, F, Fixtures, F) {
-    BOOST_TEST(F::czero[0] == 0u);
-    BOOST_TEST(F::czero[1] == 0u);
-    if (F::czero.Size() > 12)
-      BOOST_TEST(F::czero[12] == 0u);
-    if (F::czero.Size() > 15)
-      BOOST_TEST(F::czero[15] == 0u);
-    BOOST_TEST(F::cV01[0] == 0u);
-    BOOST_TEST(F::cV01[1] == 1u);
-    BOOST_TEST(F::cV01[2] == 0u);
+TEMPLATE_TEST_CASE_METHOD(Fixture1, "operator[] const", "[PermAll][002]",
+                          PermTypes) {
+    CHECK(Fixture1<TestType>::czero[0] == 0u);
+    CHECK(Fixture1<TestType>::czero[1] == 0u);
+    if (Fixture1<TestType>::czero.size() > 12) {
+        CHECK(Fixture1<TestType>::czero[12] == 0u);
+    }
+    if (Fixture1<TestType>::czero.size() > 15) {
+        CHECK(Fixture1<TestType>::czero[15] == 0u);
+    }
+    CHECK(Fixture1<TestType>::cV01[0] == 0u);
+    CHECK(Fixture1<TestType>::cV01[1] == 1u);
+    CHECK(Fixture1<TestType>::cV01[2] == 0u);
 }
 
-BOOST_FIXTURE_TEST_CASE_TEMPLATE(operator_bracket_test, F, Fixtures, F) {
-    BOOST_TEST(F::zero[0] == 0u);
-    BOOST_TEST(F::zero[1] == 0u);
-    if (F::czero.Size() > 12)
-      BOOST_TEST(F::zero[12] == 0u);
-    if (F::czero.Size() > 15)
-      BOOST_TEST(F::zero[15] == 0u);
-    BOOST_TEST(F::V01[0] == 0u);
-    BOOST_TEST(F::V01[1] == 1u);
-    BOOST_TEST(F::V01[2] == 0u);
-    BOOST_TEST(F::PPa[4] == 0u);
-    BOOST_TEST(F::PPa[5] == 5u);
-    F::zero[0] = 3;
-    BOOST_TEST(F::zero[0] == 3u);
-    BOOST_TEST(F::zero[1] == 0u);
-    if (F::czero.Size() > 12)
-      BOOST_TEST(F::zero[12] == 0u);
-    if (F::czero.Size() > 15)
-      BOOST_TEST(F::zero[15] == 0u);
-    F::PPa[2] = 0;
-    BOOST_TEST(F::PPa[1] == 2u);
-    BOOST_TEST(F::PPa[2] == 0u);
-    BOOST_TEST(F::PPa[3] == 4u);
+TEMPLATE_TEST_CASE_METHOD(Fixture1, "operator[]", "[PermAll][003]", PermTypes) {
+    CHECK(Fixture1<TestType>::zero[0] == 0u);
+    CHECK(Fixture1<TestType>::zero[1] == 0u);
+    if (Fixture1<TestType>::czero.size() > 12) {
+        CHECK(Fixture1<TestType>::zero[12] == 0u);
+    }
+    if (Fixture1<TestType>::czero.size() > 15) {
+        CHECK(Fixture1<TestType>::zero[15] == 0u);
+    }
+    CHECK(Fixture1<TestType>::V01[0] == 0u);
+    CHECK(Fixture1<TestType>::V01[1] == 1u);
+    CHECK(Fixture1<TestType>::V01[2] == 0u);
+    CHECK(Fixture1<TestType>::PPa[4] == 0u);
+    CHECK(Fixture1<TestType>::PPa[5] == 5u);
+    Fixture1<TestType>::zero[0] = 3;
+    CHECK(Fixture1<TestType>::zero[0] == 3u);
+    CHECK(Fixture1<TestType>::zero[1] == 0u);
+    if (Fixture1<TestType>::czero.size() > 12) {
+        CHECK(Fixture1<TestType>::zero[12] == 0u);
+    }
+    if (Fixture1<TestType>::czero.size() > 15) {
+        CHECK(Fixture1<TestType>::zero[15] == 0u);
+    }
+    Fixture1<TestType>::PPa[2] = 0;
+    CHECK(Fixture1<TestType>::PPa[1] == 2u);
+    CHECK(Fixture1<TestType>::PPa[2] == 0u);
+    CHECK(Fixture1<TestType>::PPa[3] == 4u);
 }
 
-BOOST_FIXTURE_TEST_CASE_TEMPLATE(operator_less_test, F, Fixtures, F) {
-    for (unsigned i = 0; i < F::Plist.size(); i++)
-        for (unsigned j = 0; j < F::Plist.size(); j++)
-            if (i < j)
-                BOOST_CHECK_PREDICATE(F::less, (F::Plist[i])(F::Plist[j]));
-            else
-                BOOST_CHECK_PREDICATE(F::not_less, (F::Plist[i])(F::Plist[j]));
+TEMPLATE_TEST_CASE_METHOD(Fixture1, "operator<", "[AllPerm][004]", PermTypes) {
+    for (unsigned i = 0; i < Fixture1<TestType>::Plist.size(); i++) {
+        for (unsigned j = 0; j < Fixture1<TestType>::Plist.size(); j++) {
+            if (i < j) {
+                CHECK(Fixture1<TestType>::Plist[i] <
+                      Fixture1<TestType>::Plist[j]);
+            } else {
+                CHECK(!(Fixture1<TestType>::Plist[i] <
+                        Fixture1<TestType>::Plist[j]));
+            }
+        }
+    }
 }
 
-BOOST_FIXTURE_TEST_CASE_TEMPLATE(operator_less_partial_test, F, Fixtures, F) {
-    for (auto p : F::Plist)
-        for (unsigned k = 0; k < F::PermType::size(); k++)
-            BOOST_TEST(p.less_partial(p, k) == 0);
-    for (auto p : F::Plist)
-        for (auto q : F::Plist)
-            BOOST_TEST(p.less_partial(q, 0) == 0);
+TEMPLATE_TEST_CASE_METHOD(Fixture1, "less_partial", "[AllPerm][005]",
+                          PermTypes) {
+    for (auto p : Fixture1<TestType>::Plist) {
+        for (unsigned k = 0; k < Fixture1<TestType>::PermType::size(); k++) {
+            CHECK(p.less_partial(p, k) == 0);
+        }
+    }
+    for (auto p : Fixture1<TestType>::Plist) {
+        for (auto q : Fixture1<TestType>::Plist) {
+            CHECK(p.less_partial(q, 0) == 0);
+        }
+    }
 
-    BOOST_TEST(F::zero.less_partial(F::V01, 1) == 0);
-    BOOST_TEST(F::V01.less_partial(F::zero, 1) == 0);
-    BOOST_TEST(F::zero.less_partial(F::V01, 2) < 0);
-    BOOST_TEST(F::V01.less_partial(F::zero, 2) > 0);
+    CHECK(Fixture1<TestType>::zero.less_partial(Fixture1<TestType>::V01, 1) ==
+          0);
+    CHECK(Fixture1<TestType>::V01.less_partial(Fixture1<TestType>::zero, 1) ==
+          0);
+    CHECK(Fixture1<TestType>::zero.less_partial(Fixture1<TestType>::V01, 2) <
+          0);
+    CHECK(Fixture1<TestType>::V01.less_partial(Fixture1<TestType>::zero, 2) >
+          0);
 
-    BOOST_TEST(F::zero.less_partial(F::V10, 1) < 0);
-    BOOST_TEST(F::zero.less_partial(F::V10, 2) < 0);
-    BOOST_TEST(F::V10.less_partial(F::zero, 1) > 0);
-    BOOST_TEST(F::V10.less_partial(F::zero, 2) > 0);
+    CHECK(Fixture1<TestType>::zero.less_partial(Fixture1<TestType>::V10, 1) <
+          0);
+    CHECK(Fixture1<TestType>::zero.less_partial(Fixture1<TestType>::V10, 2) <
+          0);
+    CHECK(Fixture1<TestType>::V10.less_partial(Fixture1<TestType>::zero, 1) >
+          0);
+    CHECK(Fixture1<TestType>::V10.less_partial(Fixture1<TestType>::zero, 2) >
+          0);
 
-    BOOST_TEST(F::PPa.less_partial(F::PPb, 1) == 0);
-    BOOST_TEST(F::PPa.less_partial(F::PPb, 2) == 0);
-    BOOST_TEST(F::PPa.less_partial(F::PPb, 3) == 0);
-    BOOST_TEST(F::PPa.less_partial(F::PPb, 4) < 0);
-    BOOST_TEST(F::PPa.less_partial(F::PPb, 5) < 0);
-    BOOST_TEST(F::PPb.less_partial(F::PPa, 4) > 0);
-    BOOST_TEST(F::PPb.less_partial(F::PPa, 5) > 0);
+    CHECK(Fixture1<TestType>::PPa.less_partial(Fixture1<TestType>::PPb, 1) ==
+          0);
+    CHECK(Fixture1<TestType>::PPa.less_partial(Fixture1<TestType>::PPb, 2) ==
+          0);
+    CHECK(Fixture1<TestType>::PPa.less_partial(Fixture1<TestType>::PPb, 3) ==
+          0);
+    CHECK(Fixture1<TestType>::PPa.less_partial(Fixture1<TestType>::PPb, 4) < 0);
+    CHECK(Fixture1<TestType>::PPa.less_partial(Fixture1<TestType>::PPb, 5) < 0);
+    CHECK(Fixture1<TestType>::PPb.less_partial(Fixture1<TestType>::PPa, 4) > 0);
+    CHECK(Fixture1<TestType>::PPb.less_partial(Fixture1<TestType>::PPa, 5) > 0);
 }
 
-BOOST_FIXTURE_TEST_CASE_TEMPLATE(first_zero_test, F, Fixtures, F) {
-    BOOST_TEST(F::zero.first_zero() == 0u);
-    BOOST_TEST(F::V01.first_zero() == 0u);
-    BOOST_TEST(F::PPa.first_zero() == 4u);
-    BOOST_TEST(F::V10.first_zero() == 1u);
-    BOOST_TEST(F::V1.first_zero() == F::VectType::Size());
-    BOOST_TEST(F::V10.first_zero(1) == F::VectType::Size());
-    BOOST_TEST(F::PPa.first_zero(5) == 4u);
-    BOOST_TEST(F::PPa.first_zero(3) == F::VectType::Size());
+TEMPLATE_TEST_CASE_METHOD(Fixture1, "first_zero", "[AllPerm][006]", PermTypes) {
+    CHECK(Fixture1<TestType>::zero.first_zero() == 0u);
+    CHECK(Fixture1<TestType>::V01.first_zero() == 0u);
+    CHECK(Fixture1<TestType>::PPa.first_zero() == 4u);
+    CHECK(Fixture1<TestType>::V10.first_zero() == 1u);
+    CHECK(Fixture1<TestType>::V1.first_zero() ==
+          Fixture1<TestType>::VectType::size());
+    CHECK(Fixture1<TestType>::V10.first_zero(1) ==
+          Fixture1<TestType>::VectType::size());
+    CHECK(Fixture1<TestType>::PPa.first_zero(5) == 4u);
+    CHECK(Fixture1<TestType>::PPa.first_zero(3) ==
+          Fixture1<TestType>::VectType::size());
 }
 
-BOOST_FIXTURE_TEST_CASE_TEMPLATE(last_zero_test, F, Fixtures, F) {
-    BOOST_TEST(F::zero.last_zero() == F::VectType::Size() - 1);
-    BOOST_TEST(F::V01.last_zero() == F::VectType::Size() - 1);
-    BOOST_TEST(F::PPa.last_zero() == 4u);
-    BOOST_TEST(F::V1.last_zero() == F::VectType::Size());
-    BOOST_TEST(F::V01.last_zero(1) == 0u);
-    BOOST_TEST(F::V10.last_zero(1) == F::VectType::Size());
-    BOOST_TEST(F::PPa.last_zero(5) == 4u);
-    BOOST_TEST(F::PPa.last_zero(3) == F::VectType::Size());
+TEMPLATE_TEST_CASE_METHOD(Fixture1, "last_zero", "[AllPerm][007]", PermTypes) {
+    CHECK(Fixture1<TestType>::zero.last_zero() ==
+          Fixture1<TestType>::VectType::size() - 1);
+    CHECK(Fixture1<TestType>::V01.last_zero() ==
+          Fixture1<TestType>::VectType::size() - 1);
+    CHECK(Fixture1<TestType>::PPa.last_zero() == 4u);
+    CHECK(Fixture1<TestType>::V1.last_zero() ==
+          Fixture1<TestType>::VectType::size());
+    CHECK(Fixture1<TestType>::V01.last_zero(1) == 0u);
+    CHECK(Fixture1<TestType>::V10.last_zero(1) ==
+          Fixture1<TestType>::VectType::size());
+    CHECK(Fixture1<TestType>::PPa.last_zero(5) == 4u);
+    CHECK(Fixture1<TestType>::PPa.last_zero(3) ==
+          Fixture1<TestType>::VectType::size());
 }
 
-BOOST_FIXTURE_TEST_CASE_TEMPLATE(first_non_zero_test, F, Fixtures, F) {
-    BOOST_TEST(F::zero.first_non_zero() == F::VectType::Size());
-    BOOST_TEST(F::V01.first_non_zero() == 1u);
-    BOOST_TEST(F::PPa.first_non_zero() == 0u);
-    BOOST_TEST(F::V01.first_non_zero() == 1u);
-    BOOST_TEST(F::V01.first_non_zero(1) == F::VectType::Size());
-    BOOST_TEST(F::PPa.first_non_zero(5) == 0u);
-    BOOST_TEST(F::PPa.first_non_zero(3) == 0u);
+TEMPLATE_TEST_CASE_METHOD(Fixture1, "first_non_zero", "[AllPerm][008]",
+                          PermTypes) {
+    CHECK(Fixture1<TestType>::zero.first_non_zero() ==
+          Fixture1<TestType>::VectType::size());
+    CHECK(Fixture1<TestType>::V01.first_non_zero() == 1u);
+    CHECK(Fixture1<TestType>::PPa.first_non_zero() == 0u);
+    CHECK(Fixture1<TestType>::V01.first_non_zero() == 1u);
+    CHECK(Fixture1<TestType>::V01.first_non_zero(1) ==
+          Fixture1<TestType>::VectType::size());
+    CHECK(Fixture1<TestType>::PPa.first_non_zero(5) == 0u);
+    CHECK(Fixture1<TestType>::PPa.first_non_zero(3) == 0u);
 }
 
-BOOST_FIXTURE_TEST_CASE_TEMPLATE(last_non_zero_test, F, Fixtures, F) {
-    BOOST_TEST(F::zero.last_non_zero() == F::VectType::Size());
-    BOOST_TEST(F::V01.last_non_zero() == 1u);
-    BOOST_TEST(F::PPa.last_non_zero() == F::VectType::Size() - 1);
-    BOOST_TEST(F::V01.last_non_zero() == 1u);
-    BOOST_TEST(F::V01.last_non_zero(1) == F::VectType::Size());
-    BOOST_TEST(F::PPa.last_non_zero(5) == 3u);
-    BOOST_TEST(F::PPa.last_non_zero(3) == 2u);
+TEMPLATE_TEST_CASE_METHOD(Fixture1, "last_non_zero", "[AllPerm][009]",
+                          PermTypes) {
+    CHECK(Fixture1<TestType>::zero.last_non_zero() ==
+          Fixture1<TestType>::VectType::size());
+    CHECK(Fixture1<TestType>::V01.last_non_zero() == 1u);
+    CHECK(Fixture1<TestType>::PPa.last_non_zero() ==
+          Fixture1<TestType>::VectType::size() - 1);
+    CHECK(Fixture1<TestType>::V01.last_non_zero() == 1u);
+    CHECK(Fixture1<TestType>::V01.last_non_zero(1) ==
+          Fixture1<TestType>::VectType::size());
+    CHECK(Fixture1<TestType>::PPa.last_non_zero(5) == 3u);
+    CHECK(Fixture1<TestType>::PPa.last_non_zero(3) == 2u);
 }
 
-BOOST_FIXTURE_TEST_CASE_TEMPLATE(permuted_test, F, Fixtures, F) {
-    BOOST_TEST(F::zero.permuted(F::zero) == F::zero);
-    BOOST_TEST(F::V01.permuted(F::V01) == F::V01);
-    BOOST_TEST(F::V10.permuted(F::V10) == typename F::VectType({0, 1}, 1));
-    BOOST_TEST(F::V10.permuted(F::V01) == typename F::VectType({1, 0}, 1));
-    BOOST_TEST(F::V01.permuted(F::V10) == F::V10);
+TEMPLATE_TEST_CASE_METHOD(Fixture1, "permuted", "[AllPerm][010]", PermTypes) {
+    CHECK(Fixture1<TestType>::zero.permuted(Fixture1<TestType>::zero) ==
+          Fixture1<TestType>::zero);
+    CHECK(Fixture1<TestType>::V01.permuted(Fixture1<TestType>::V01) ==
+          Fixture1<TestType>::V01);
+    CHECK(Fixture1<TestType>::V10.permuted(Fixture1<TestType>::V10) ==
+          typename Fixture1<TestType>::VectType({0, 1}, 1));
+    CHECK(Fixture1<TestType>::V10.permuted(Fixture1<TestType>::V01) ==
+          typename Fixture1<TestType>::VectType({1, 0}, 1));
+    CHECK(Fixture1<TestType>::V01.permuted(Fixture1<TestType>::V10) ==
+          Fixture1<TestType>::V10);
 }
 
-BOOST_FIXTURE_TEST_CASE_TEMPLATE(operator_insert_test, F, Fixtures, F) {
+TEMPLATE_TEST_CASE_METHOD(Fixture1, "operator_insert", "[AllPerm][011]",
+                          PermTypes) {
     std::ostringstream out, out2;
-    out << F::zero;
-    out2 << "[ 0";
-    for (size_t i = 1; i < F::VectType::Size(); i++)
+    out << Fixture1<TestType>::zero;
+    out2 << "{ 0";
+    for (size_t i = 1; i < Fixture1<TestType>::VectType::size(); i++)
         out2 << ", 0";
-    out2 << "]";
-    BOOST_TEST(out.str() == out2.str());
+    out2 << "}";
+    CHECK(out.str() == out2.str());
 
     out.str("");
     out2.str("");
-    out << F::V01;
-    out2 << "[ 0, 1";
-    for (size_t i = 2; i < F::VectType::Size(); i++)
+    out << Fixture1<TestType>::V01;
+    out2 << "{ 0, 1";
+    for (size_t i = 2; i < Fixture1<TestType>::VectType::size(); i++)
         out2 << ", 0";
-    out2 << "]";
-    BOOST_TEST(out.str() == out2.str());
+    out2 << "}";
+    CHECK(out.str() == out2.str());
 
     out.str("");
     out2.str("");
-    out << F::PPa;
-    out2 << "[ 1, 2, 3, 4, 0";
-    for (size_t i = 5; i < F::VectType::Size(); i++)
+    out << Fixture1<TestType>::PPa;
+    out2 << "{ 1, 2, 3, 4, 0";
+    for (size_t i = 5; i < Fixture1<TestType>::VectType::size(); i++)
         out2 << "," << std::setw(2) << i;
-    out2 << "]";
-    BOOST_TEST(out.str() == out2.str());
+    out2 << "}";
+    CHECK(out.str() == out2.str());
 }
 
-BOOST_FIXTURE_TEST_CASE_TEMPLATE(is_permutation_test, F, Fixtures, F) {
-    BOOST_CHECK_PREDICATE(boost::not1(F::is_perm), (F::zero));
-    BOOST_CHECK_PREDICATE(F::is_perm, (F::PPa));
-    BOOST_CHECK_PREDICATE(boost::not1(F::is_perm), (F::PPb));
-    BOOST_CHECK_PREDICATE(F::is_perm, (F::RandPerm));
-    BOOST_CHECK_PREDICATE(
-        boost::not1(F::is_perm),
-        (typename F::VectType({3, 1, 0, 9, 3, 10, 2, 11, 6, 7, 4, 8})));
-    BOOST_CHECK_PREDICATE(F::is_perm2, (F::PPa)(16));
-    BOOST_CHECK_PREDICATE(boost::not2(F::is_perm2), (F::RandPerm)(4));
-    BOOST_CHECK_PREDICATE(F::is_perm2, (F::PPa)(5));
-    BOOST_CHECK_PREDICATE(boost::not2(F::is_perm2), (F::PPa)(4));
+TEMPLATE_TEST_CASE_METHOD(Fixture1, "is_permutation", "[AllPerm][012]",
+                          PermTypes) {
+    CHECK(!Fixture1<TestType>::zero.is_permutation());
+    CHECK(Fixture1<TestType>::PPa.is_permutation());
+    CHECK(!Fixture1<TestType>::PPb.is_permutation());
+    CHECK(Fixture1<TestType>::RandPerm.is_permutation());
+    CHECK(!typename Fixture1<TestType>::VectType(
+               {3, 1, 0, 9, 3, 10, 2, 11, 6, 7, 4, 8})
+               .is_permutation());
+    CHECK(Fixture1<TestType>::PPa.is_permutation(16));
+    CHECK(!Fixture1<TestType>::RandPerm.is_permutation(4));
+    CHECK(Fixture1<TestType>::PPa.is_permutation(5));
+    CHECK(!Fixture1<TestType>::PPa.is_permutation(4));
 }
 
-BOOST_AUTO_TEST_SUITE_END()
-
-//____________________________________________________________________________//
-//____________________________________________________________________________//
-
-template <class _Perm> struct PermFixture : public IsPermFunctions<_Perm> {
-    using PermType = _Perm;
-    PermFixture()
+template <class Perm_> struct Fixture2 {
+    using PermType = Perm_;
+    Fixture2()
         : id(PermType::one()), RandPerm({3, 1, 0, 5, 10, 2, 11, 6, 7, 4, 8, 9}),
           Plist({id, RandPerm}) {
         for (uint64_t i = 0; i < std::min<size_t>(PermType::size(), 30) - 1;
-             i++)
+             i++) {
             Plist.push_back(PermType::elementary_transposition(i));
+        }
         for (uint64_t i = std::max<size_t>(30, PermType::size() - 20);
-             i < PermType::size() - 1; i++)
+             i < PermType::size() - 1; i++) {
             Plist.push_back(PermType::elementary_transposition(i));
-        for (uint64_t i = 0; i < 10; i++)
+        }
+        for (uint64_t i = 0; i < 10; i++) {
             Plist.push_back(PermType::random());
-        BOOST_TEST_MESSAGE("setup fixture");
+        }
     }
 
-    ~PermFixture() { BOOST_TEST_MESSAGE("teardown fixture"); }
+    ~Fixture2() = default;
 
     PermType id, s1, s2, s3;
     const PermType RandPerm;
     std::vector<PermType> Plist;
 };
 
-//____________________________________________________________________________//
-
-typedef boost::mpl::list<PermFixture<HPCombi::Perm16>,
-                         PermFixture<HPCombi::PermGeneric<12>>,
-                         PermFixture<HPCombi::PermGeneric<16>>,
-                         PermFixture<HPCombi::PermGeneric<32>>,
-                         PermFixture<HPCombi::PermGeneric<42>>,
-                         PermFixture<HPCombi::PermGeneric<49>>,
-                         PermFixture<HPCombi::PermGeneric<350, uint32_t>>>
-    PermFixtures;
-
-//____________________________________________________________________________//
-
-BOOST_AUTO_TEST_SUITE(PermType_test)
-//____________________________________________________________________________//
-
-BOOST_FIXTURE_TEST_CASE_TEMPLATE(constructor_is_permutation_test, F,
-                                 PermFixtures, F) {
-    for (auto x : F::Plist)
-        BOOST_CHECK_PREDICATE(F::is_perm, (x));
-
-    // Default constructor doesn't initialize
-    // BOOST_CHECK_PREDICATE(F::is_perm, (typename F::PermType()));
-    BOOST_CHECK_PREDICATE(F::is_perm, (typename F::PermType({})));
-    BOOST_CHECK_PREDICATE(F::is_perm, (typename F::PermType({1, 0})));
-    BOOST_CHECK_PREDICATE(F::is_perm, (typename F::PermType({1, 2, 0})));
-    BOOST_CHECK_PREDICATE(boost::not1(F::is_perm),
-                          (typename F::PermType({1, 2})));
+TEMPLATE_TEST_CASE_METHOD(Fixture2,
+                          "is_permutation for freshly constructed perms",
+                          "[AllPerm][013]", PermTypes) {
+    using Perm = typename Fixture2<TestType>::PermType;
+    for (auto x : Fixture2<TestType>::Plist) {
+        CHECK(Perm(x).is_permutation());
+    }
+    CHECK(Perm({}).is_permutation());
+    CHECK(Perm({1, 0}).is_permutation());
+    CHECK(Perm({1, 2, 0}).is_permutation());
+    CHECK(!Perm({1, 2}).is_permutation());
 }
 
-BOOST_FIXTURE_TEST_CASE_TEMPLATE(std_hash_test, F, PermFixtures, F) {
-    for (auto x : F::Plist)
-        BOOST_TEST(std::hash<typename F::PermType>()(x) != 0);
+TEMPLATE_TEST_CASE_METHOD(Fixture2, "std::hash", "[AllPerm][014]", PermTypes) {
+    for (auto x : Fixture2<TestType>::Plist) {
+        CHECK(std::hash<typename Fixture2<TestType>::PermType>()(x) != 0);
+    }
 }
 
-BOOST_FIXTURE_TEST_CASE_TEMPLATE(mult_coxeter_test, F, PermFixtures, F) {
-    for (uint64_t i = 0; i < F::PermType::Size() - 1; i++) {
-        auto si = F::PermType::elementary_transposition(i);
-        BOOST_TEST(si != F::id);
-        BOOST_TEST(si * si == F::id);
-        if (i + 1 < F::PermType::Size() - 1) {
-            auto si1 = F::PermType::elementary_transposition(i + 1);
-            BOOST_TEST(si * si1 * si == si1 * si * si1);
+TEMPLATE_TEST_CASE_METHOD(Fixture2, "mult_coxeter", "[AllPerm][015]",
+                          PermTypes) {
+    const size_t n = TestType::size() - 1;
+
+    for (uint64_t i = 0; i < n; i++) {
+        auto si = TestType::elementary_transposition(i);
+        CHECK(si != Fixture2<TestType>::id);
+        CHECK(si * si == Fixture2<TestType>::id);
+        if (i + 1 < n) {
+            auto si1 = TestType::elementary_transposition(i + 1);
+            CHECK(si * si1 * si == si1 * si * si1);
         }
-        for (uint64_t j = i + 2; j < F::PermType::Size() - 1; j++) {
-            auto sj = F::PermType::elementary_transposition(j);
-            BOOST_TEST(sj * si == si * sj);
+        for (uint64_t j = i + 2; j < n; j++) {
+            auto sj = TestType::elementary_transposition(j);
+            CHECK(sj * si == si * sj);
         }
     }
 }
 
-BOOST_FIXTURE_TEST_CASE_TEMPLATE(mult_test, F, PermFixtures, F) {
-    for (auto x : F::Plist) {
-        BOOST_TEST(F::id * x == x);
-        BOOST_TEST(x * F::id == x);
+TEMPLATE_TEST_CASE_METHOD(Fixture2, "mult", "[AllPerm][016]", PermTypes) {
+    for (auto x : Fixture2<TestType>::Plist) {
+        CHECK(Fixture2<TestType>::id * x == x);
+        CHECK(x * Fixture2<TestType>::id == x);
     }
-    BOOST_TEST(F::RandPerm * F::RandPerm ==
-               typename F::PermType({5, 1, 3, 2, 8, 0, 9, 11, 6, 10, 7, 4}));
+    CHECK(Fixture2<TestType>::RandPerm * Fixture2<TestType>::RandPerm ==
+          TestType({5, 1, 3, 2, 8, 0, 9, 11, 6, 10, 7, 4}));
 
-    for (auto x : F::Plist)
-        for (auto y : F::Plist)
-            for (auto z : F::Plist)
-                BOOST_TEST((x * y) * z == x * (y * z));
-}
-
-BOOST_FIXTURE_TEST_CASE_TEMPLATE(inverse_test, F, PermFixtures, F) {
-    for (auto x : F::Plist) {
-        BOOST_TEST(x.inverse() * x == F::id);
-        BOOST_TEST(x * x.inverse() == F::id);
-        BOOST_TEST(x.inverse().inverse() == x);
+    for (auto x : Fixture2<TestType>::Plist) {
+        for (auto y : Fixture2<TestType>::Plist) {
+            for (auto z : Fixture2<TestType>::Plist) {
+                CHECK((x * y) * z == x * (y * z));
+            }
+        }
     }
 }
 
-BOOST_FIXTURE_TEST_CASE_TEMPLATE(random_test, F, PermFixtures, F) {
+TEMPLATE_TEST_CASE_METHOD(Fixture2, "inverse", "[AllPerm][017]", PermTypes) {
+    for (auto x : Fixture2<TestType>::Plist) {
+        CHECK(x.inverse() * x == Fixture2<TestType>::id);
+        CHECK(x * x.inverse() == Fixture2<TestType>::id);
+        CHECK(x.inverse().inverse() == x);
+    }
+}
+
+TEMPLATE_TEST_CASE_METHOD(Fixture2, "random", "[AllPerm][018]", PermTypes) {
     for (int i = 0; i < 100; i++) {
-        BOOST_CHECK_PREDICATE(F::is_perm, (F::PermType::random()));
+        CHECK(Fixture2<TestType>::PermType::random().is_permutation());
     }
 }
 
-BOOST_AUTO_TEST_SUITE_END()
+}  // namespace HPCombi

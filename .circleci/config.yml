@@ -1,0 +1,106 @@
+# .circleci/config.yml
+
+version: 2.1
+
+jobs:
+  test:
+    parameters:
+      compiler:
+        type: string
+      version:
+        type: string
+    docker:
+      - image: reiniscirpons/hpcombi-env-arm64v8:v1
+    resource_class: arm.medium
+    steps:
+      - run:
+          name: "Set up compiler"
+          environment:
+            COMPILER_NAME: << parameters.compiler >>
+            COMPILER_VERSION: << parameters.version >>
+          command: |
+            apt-get --yes update
+            mkdir -p workspace
+            if [ $COMPILER_NAME = "gcc" ]; then
+              apt-get install --yes gcc-$COMPILER_VERSION
+              apt-get install --yes g++-$COMPILER_VERSION
+              echo "export CC=gcc-$COMPILER_VERSION" >> workspace/new-env-vars
+              echo "export CXX=g++-$COMPILER_VERSION" >> workspace/new-env-vars
+            else
+              apt-get install --yes clang++-$COMPILER_VERSION
+              echo "export CC=clang-$COMPILER_VERSION" >> workspace/new-env-vars
+              echo "export CXX=clang++-$COMPILER_VERSION" >> workspace/new-env-vars
+            fi
+      - run:
+          name: Check compiler version
+          command: |
+            cat workspace/new-env-vars >> $BASH_ENV
+            source $BASH_ENV
+            echo "CC"
+            echo $CC
+            echo "CXX"
+            echo $CXX
+      - checkout:
+          path: "./HPCombi"
+      - run:
+          name: Run cmake
+          command: |
+            cat workspace/new-env-vars >> $BASH_ENV
+            source $BASH_ENV
+            mkdir -p ./HPCombi/build
+            cd ./HPCombi/build
+            cmake -DBUILD_TESTING=1 -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=$CC -DCMAKE_CXX_COMPILER=$CXX ..
+      - run:
+          name: Run make in tests folder
+          command: |
+            cat workspace/new-env-vars >> $BASH_ENV
+            source $BASH_ENV
+            cd ./HPCombi/build/tests
+            make -j2
+      - run:
+          name: Run tests
+          command: |
+            cat workspace/new-env-vars >> $BASH_ENV
+            source $BASH_ENV
+            cd ./HPCombi/build/tests
+            ./test_all
+
+workflows:
+  test:
+    jobs:
+      - test:
+          name: "test-gcc-9"
+          compiler: "gcc"
+          version: "9"
+      # - test:
+      #    name: "test-gcc-10"
+      #    compiler: "gcc"
+      #    version: "10"
+      # - test:
+      #    name: "test-gcc-11"
+      #    compiler: "gcc"
+      #    version: "11"
+      - test:
+          name: "test-gcc-12"
+          compiler: "gcc"
+          version: "12"
+      - test:
+          name: "test-clang-11"
+          compiler: "clang"
+          version: "11"
+      # - test:
+      #     name: "test-clang-12"
+      #     compiler: "clang"
+      #     version: "12"
+      # - test:
+      #     name: "test-clang-13"
+      #     compiler: "clang"
+      #     version: "13"
+      # - test:
+      #     name: "test-clang-14"
+      #     compiler: "clang"
+      #     version: "14"
+      - test:
+          name: "test-clang-15"
+          compiler: "clang"
+          version: "15"

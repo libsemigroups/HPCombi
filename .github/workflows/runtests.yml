@@ -1,5 +1,5 @@
 name: CI
-on: [pull_request, push, workflow_dispatch]
+on: [pull_request, workflow_dispatch]
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -7,34 +7,61 @@ concurrency:
 
 jobs:
    tests:
-      name: "ubuntu-latest | g++"
+      name: "ubuntu-latest"
       timeout-minutes: 60
       runs-on: ubuntu-latest
-      env:
-         CXX: "ccache g++"
-         CXXFLAGS: "-fdiagnostics-color"
-         CMAKE_CXX_COMPILER: "ccache g++"
+      strategy:
+        fail-fast: false
+        matrix:
+          sys:
+            - { compiler: 'gcc', version: '9'}
+            - { compiler: 'gcc', version: '10'}
+            - { compiler: 'gcc', version: '11'}
+            - { compiler: 'gcc', version: '12'}
+            - { compiler: 'clang', version: '11'}
+            - { compiler: 'clang', version: '12'}
+            - { compiler: 'clang', version: '13'}
+            - { compiler: 'clang', version: '14'}
+            - { compiler: 'clang', version: '15'}
       steps:
          - name: "Checkout HPCombi repo . . ."
            uses: actions/checkout@v3
-         - name: "Setup ccache . . ."
-           uses: Chocobo1/setup-ccache-action@v1
-           with:
-             update_packager_index: false
-             override_cache_key: ${{ runner.os }}-${{ github.ref }}
-             override_cache_key_fallback: ${{ runner.os }}
+         - name: "Setup compiler . . ."
+           if: ${{ matrix.sys.compiler == 'gcc' }}
+           run: |
+             GCC_VERSION=${{ matrix.sys.version }}
+             sudo apt-get --yes update
+             sudo apt-get install gcc-$GCC_VERSION
+             CC=gcc-$GCC_VERSION
+             echo "CC=$CC" >> $GITHUB_ENV
+             CXX=g++-$GCC_VERSION
+             echo "CXX=$CXX" >> $GITHUB_ENV
+         - name: "Setup compiler . . ."
+           if: ${{ matrix.sys.compiler == 'clang' }}
+           run: |
+             LLVM_VERSION=${{ matrix.sys.version }}
+             sudo apt-get --yes update
+             sudo apt-get install --yes clang++-$LLVM_VERSION
+             CC=clang-$LLVM_VERSION
+             echo "CC=$CC" >> $GITHUB_ENV
+             CXX=clang++-$LLVM_VERSION
+             echo "CXX=$CXX" >> $GITHUB_ENV
          - name: "Install dependencies . . ."
            run: |
-                sudo apt-get --yes update
-                sudo apt-get install --yes ccache
-                sudo apt-get install --yes libbenchmark-dev
-                sudo apt-get install --yes libgtest-dev
-                sudo apt-get install --yes libboost-all-dev
-         - name: "Build + run HPCombi tests . . ."
+             sudo apt-get install --yes ccache
+         - name: "Configure the HPCombi build . . ."
+           env:
+             CC: ${{ env.CC }}
+             CXX: ${{ env.CXX }}
            run: |
-              mkdir build
-              cd build
-              cmake -DBUILD_TESTING=1 -DCMAKE_BUILD_TYPE=Release ..
-              make
-              make test
-
+             mkdir build
+             cd build
+             cmake -DBUILD_TESTING=1 -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=$CC -DCMAKE_CXX_COMPILER=$CXX ..
+         - name: "Build HPCombi . . ."
+           run: |
+             cd build/tests
+             make -j4
+         - name: "Run HPCombi tests . . ."
+           run: |
+             cd build/tests
+             ./test_all
