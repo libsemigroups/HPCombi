@@ -21,16 +21,12 @@ other processors too.
 - Florent Hivert <florent.hivert@lisn.fr>
 - James Mitchell <jdm3@st-andrews.ac.uk>
 
-## Documentation
-
-The Doxygen auto generated [API](https://libsemigroups.github.io/HPCombi/)
-
 ## Contributors
 
 - Reinis Cirpons <rc234@st-andrews.ac.uk> : CI
 - Finn Smith <fls3@st-andrews.ac.uk> : discussions + BMat8 reference code
 - Viviane Pons : algorithms discussions
-- Daniel Vanzo <daniel.vanzo@lri.fr> : GPU experiments  
+- Daniel Vanzo <daniel.vanzo@lri.fr> : GPU experiments
 
 ## Documentation
 
@@ -43,7 +39,7 @@ The Doxygen auto generated [API](https://libsemigroups.github.io/HPCombi/)
   acknowledge with thanks.
 - Thanks also to the [SIMD everywhere][] and [catch2][] authors and
   contributors for their excellent libraries!
-  
+
 [SIMD everywhere]: https://github.com/simd-everywhere/simde
 [OpenDreamKit]: https://opendreamkit.org/
 [catch2]: https://github.com/catchorg/Catch2
