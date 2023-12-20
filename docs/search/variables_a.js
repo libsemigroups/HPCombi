@@ -1,0 +1,20 @@
+var searchData=
+[
+  ['s_657',['s',['../Trans_8cpp.html#ab62b64c99cb299e4a311da638e053937',1,'Trans.cpp']]],
+  ['s0_658',['s0',['../RD_8cpp.html#a1bf244058b6a2691cf1728552ce737fd',1,'s0():&#160;RD.cpp'],['../Renner_8cpp.html#a1bf244058b6a2691cf1728552ce737fd',1,'s0():&#160;Renner.cpp']]],
+  ['s1e_659',['s1e',['../RD_8cpp.html#aa08ff492f3f96749ec7f73eacc769f13',1,'s1e():&#160;RD.cpp'],['../Renner_8cpp.html#aa08ff492f3f96749ec7f73eacc769f13',1,'s1e():&#160;Renner.cpp']]],
+  ['s1f_660',['s1f',['../RD_8cpp.html#a8eda73a9906d0131b7868c6924f4dbe6',1,'s1f():&#160;RD.cpp'],['../Renner_8cpp.html#a8eda73a9906d0131b7868c6924f4dbe6',1,'s1f():&#160;Renner.cpp']]],
+  ['s2_661',['s2',['../RD_8cpp.html#a5a3c0f7a7f6a8cbf47abb4fec07bbd54',1,'s2():&#160;RD.cpp'],['../Renner_8cpp.html#a5a3c0f7a7f6a8cbf47abb4fec07bbd54',1,'s2():&#160;Renner.cpp']]],
+  ['s3_662',['s3',['../RD_8cpp.html#ab8232360f3f3ac57ba64edb85681da84',1,'s3():&#160;RD.cpp'],['../Renner_8cpp.html#ab8232360f3f3ac57ba64edb85681da84',1,'s3():&#160;Renner.cpp']]],
+  ['s4_663',['s4',['../RD_8cpp.html#a76b41e049796761d13864beaac111222',1,'s4():&#160;RD.cpp'],['../Renner_8cpp.html#a76b41e049796761d13864beaac111222',1,'s4():&#160;Renner.cpp']]],
+  ['s5_664',['s5',['../Renner_8cpp.html#a401ac167d35facdbdfe4a7a5b99be6ea',1,'s5():&#160;Renner.cpp'],['../RD_8cpp.html#a401ac167d35facdbdfe4a7a5b99be6ea',1,'s5():&#160;RD.cpp']]],
+  ['s6_665',['s6',['../RD_8cpp.html#ac3764b20394357c6e6d81fa98b83feb9',1,'s6():&#160;RD.cpp'],['../Renner_8cpp.html#ac3764b20394357c6e6d81fa98b83feb9',1,'s6():&#160;Renner.cpp']]],
+  ['s7_666',['s7',['../RD_8cpp.html#afee30f9098a333c32c5e094f47ded3f5',1,'s7():&#160;RD.cpp'],['../Renner_8cpp.html#afee30f9098a333c32c5e094f47ded3f5',1,'s7():&#160;Renner.cpp']]],
+  ['size_667',['size',['../structHPCombi_1_1TPUBuild.html#afe4f9341e1e1d6838c33aaa628025046',1,'HPCombi::TPUBuild']]],
+  ['size_5felem_668',['size_elem',['../structHPCombi_1_1TPUBuild.html#a2f6c25300e88243cff3f1c1e160e0fdc',1,'HPCombi::TPUBuild']]],
+  ['sorting_5frounds_669',['sorting_rounds',['../namespaceHPCombi.html#a9b3378bbc42d19454d3f3c517f052a98',1,'HPCombi']]],
+  ['sorting_5frounds8_670',['sorting_rounds8',['../namespaceHPCombi.html#a8b2203c677370cd26a28ffd73cbc59cf',1,'HPCombi']]],
+  ['subperm_671',['subperm',['../pattern_8cpp.html#a7c2b4982a09e109835ab8ae125eace66',1,'pattern.cpp']]],
+  ['subsets_672',['subsets',['../pattern_8cpp.html#ab4ce0f0f017ac2394098404c54645458',1,'pattern.cpp']]],
+  ['summing_5frounds_673',['summing_rounds',['../namespaceHPCombi.html#a48bf424600461a580daf0576711fcd69',1,'HPCombi']]]
+];
