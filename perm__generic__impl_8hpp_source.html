@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.9.7"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>HPCombi: /Users/jdm/git/HPCombi/include/hpcombi/perm_generic_impl.hpp Source File</title>
+<title>HPCombi: /Users/jdm/hpcombi/include/hpcombi/perm_generic_impl.hpp Source File</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -30,7 +30,7 @@ MathJax.Hub.Config({
   <td id="projectalign">
    <div id="projectname">HPCombi
    </div>
-   <div id="projectbrief">High Performance Combinatorics in C++ using vector instructions v0.0.6</div>
+   <div id="projectbrief">High Performance Combinatorics in C++ using vector instructions v1.0.0</div>
   </td>
  </tr>
  </tbody>
@@ -77,147 +77,154 @@ $(function() {
 
 <div id="nav-path" class="navpath">
   <ul>
-<li class="navelem"><a class="el" href="dir_d44c64559bbebec7f509842c48db8b23.html">include</a></li><li class="navelem"><a class="el" href="dir_0a22e5c2a89343e7af7981e1b76abb37.html">hpcombi</a></li>  </ul>
+<li class="navelem"><a class="el" href="dir_384e75f8b06a376843465567c38c75c4.html">hpcombi</a></li><li class="navelem"><a class="el" href="dir_5af38e3415514f8d00d4fc9dd225e04d.html">include</a></li><li class="navelem"><a class="el" href="dir_0416da406782336a6fd9e39376a872e4.html">hpcombi</a></li>  </ul>
 </div>
 </div><!-- top -->
 <div class="header">
   <div class="headertitle"><div class="title">perm_generic_impl.hpp</div></div>
 </div><!--header-->
 <div class="contents">
-<a href="perm__generic__impl_8hpp.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span> </div>
-<div class="line"><a id="l00002" name="l00002"></a><span class="lineno">    2</span><span class="comment">//       Copyright (C) 2016 Florent Hivert &lt;Florent.Hivert@lri.fr&gt;,           //</span></div>
+<a href="perm__generic__impl_8hpp.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span><span class="comment">//****************************************************************************//</span></div>
+<div class="line"><a id="l00002" name="l00002"></a><span class="lineno">    2</span><span class="comment">//     Copyright (C) 2016-2024 Florent Hivert &lt;Florent.Hivert@lisn.fr&gt;,       //</span></div>
 <div class="line"><a id="l00003" name="l00003"></a><span class="lineno">    3</span><span class="comment">//                                                                            //</span></div>
-<div class="line"><a id="l00004" name="l00004"></a><span class="lineno">    4</span><span class="comment">//  Distributed under the terms of the GNU General Public License (GPL)       //</span></div>
+<div class="line"><a id="l00004" name="l00004"></a><span class="lineno">    4</span><span class="comment">//  This file is part of HP-Combi &lt;https://github.com/libsemigroups/HPCombi&gt;  //</span></div>
 <div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span><span class="comment">//                                                                            //</span></div>
-<div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span><span class="comment">//    This code is distributed in the hope that it will be useful,            //</span></div>
-<div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span><span class="comment">//    but WITHOUT ANY WARRANTY; without even the implied warranty of          //</span></div>
-<div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span><span class="comment">//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU       //</span></div>
-<div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span><span class="comment">//   General Public License for more details.                                 //</span></div>
+<div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span><span class="comment">//  HP-Combi is free software: you can redistribute it and/or modify it       //</span></div>
+<div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span><span class="comment">//  under the terms of the GNU General Public License as published by the     //</span></div>
+<div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span><span class="comment">//  Free Software Foundation, either version 3 of the License, or             //</span></div>
+<div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span><span class="comment">//  (at your option) any later version.                                       //</span></div>
 <div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span><span class="comment">//                                                                            //</span></div>
-<div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span><span class="comment">//  The full text of the GPL is available at:                                 //</span></div>
-<div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span><span class="comment">//                                                                            //</span></div>
-<div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span><span class="comment">//                  http://www.gnu.org/licenses/                              //</span></div>
-<div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span><span class="comment"></span> </div>
-<div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span><span class="keyword">namespace </span><a class="code hl_namespace" href="namespaceHPCombi.html">HPCombi</a> {</div>
-<div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span> </div>
-<div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span><span class="keyword">template</span> &lt;<span class="keywordtype">size_t</span> Size, <span class="keyword">typename</span> Expo&gt;</div>
-<div class="line"><a id="l00019" name="l00019"></a><span class="lineno"><a class="line" href="structHPCombi_1_1PermGeneric.html#ac5138b09b1aba0eb325e8f9ea6eda1bd">   19</a></span><a class="code hl_function" href="structHPCombi_1_1PermGeneric.html#a5349dacff5ac377bbe47b6e36d385021">PermGeneric&lt;Size, Expo&gt;::PermGeneric</a>(std::initializer_list&lt;Expo&gt; il) {</div>
-<div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span>    <a class="code hl_define" href="debug_8hpp.html#a35656321588a81b81a5f2d2c1afceba0">HPCOMBI_ASSERT</a>(il.size() &lt;= Size);</div>
-<div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span>    std::copy(il.begin(), il.end(), this-&gt;v.begin());</div>
-<div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span>    <span class="keywordflow">for</span> (Expo i = il.size(); i &lt; Size; i++)</div>
-<div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span>        this-&gt;v[i] = i;</div>
-<div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span>}</div>
-<div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span> </div>
-<div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span><span class="keyword">template</span> &lt;<span class="keywordtype">size_t</span> Size, <span class="keyword">typename</span> Expo&gt;</div>
-<div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span><a class="code hl_struct" href="structHPCombi_1_1PermGeneric.html">PermGeneric&lt;Size, Expo&gt;</a></div>
-<div class="line"><a id="l00028" name="l00028"></a><span class="lineno"><a class="line" href="structHPCombi_1_1PermGeneric.html#a73bf07d40f7f7626044444fc172e7e22">   28</a></span><a class="code hl_function" href="structHPCombi_1_1PermGeneric.html#a73bf07d40f7f7626044444fc172e7e22">PermGeneric&lt;Size, Expo&gt;::elementary_transposition</a>(uint64_t i) {</div>
-<div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span>    <a class="code hl_define" href="debug_8hpp.html#a35656321588a81b81a5f2d2c1afceba0">HPCOMBI_ASSERT</a>(i &lt; Size);</div>
-<div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span>    <a class="code hl_struct" href="structHPCombi_1_1PermGeneric.html">PermGeneric</a> <a class="code hl_variable" href="image_8cpp.html#af4858e3800fddfba3132594e83e83a8d">res</a>{{}};</div>
-<div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span>    <a class="code hl_variable" href="image_8cpp.html#af4858e3800fddfba3132594e83e83a8d">res</a>[i] = i + 1;</div>
-<div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span>    <a class="code hl_variable" href="image_8cpp.html#af4858e3800fddfba3132594e83e83a8d">res</a>[i + 1] = i;</div>
-<div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span>    <span class="keywordflow">return</span> <a class="code hl_variable" href="image_8cpp.html#af4858e3800fddfba3132594e83e83a8d">res</a>;</div>
-<div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span>}</div>
-<div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span> </div>
-<div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span><span class="keyword">template</span> &lt;<span class="keywordtype">size_t</span> Size, <span class="keyword">typename</span> Expo&gt;</div>
-<div class="line"><a id="l00037" name="l00037"></a><span class="lineno"><a class="line" href="structHPCombi_1_1PermGeneric.html#a9a426ab06b8967c48160b927f11002af">   37</a></span><a class="code hl_struct" href="structHPCombi_1_1PermGeneric.html">PermGeneric&lt;Size, Expo&gt;</a> <a class="code hl_function" href="structHPCombi_1_1PermGeneric.html#a9a426ab06b8967c48160b927f11002af">PermGeneric&lt;Size, Expo&gt;::inverse</a>()<span class="keyword"> const </span>{</div>
-<div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span>    <a class="code hl_struct" href="structHPCombi_1_1PermGeneric.html">PermGeneric</a> <a class="code hl_variable" href="image_8cpp.html#af4858e3800fddfba3132594e83e83a8d">res</a>;</div>
-<div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span>    <span class="keywordflow">for</span> (uint64_t i = 0; i &lt; Size; i++)</div>
-<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span>        <a class="code hl_variable" href="image_8cpp.html#af4858e3800fddfba3132594e83e83a8d">res</a>[this-&gt;v[i]] = i;</div>
-<div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span>    <span class="keywordflow">return</span> <a class="code hl_variable" href="image_8cpp.html#af4858e3800fddfba3132594e83e83a8d">res</a>;</div>
-<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span>}</div>
-<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span> </div>
-<div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span><span class="keyword">template</span> &lt;<span class="keywordtype">size_t</span> Size, <span class="keyword">typename</span> Expo&gt;</div>
-<div class="line"><a id="l00045" name="l00045"></a><span class="lineno"><a class="line" href="structHPCombi_1_1PermGeneric.html#a89830884599dda631b4a1c32185b5948">   45</a></span><a class="code hl_struct" href="structHPCombi_1_1PermGeneric.html">PermGeneric&lt;Size, Expo&gt;</a> <a class="code hl_function" href="structHPCombi_1_1PermGeneric.html#a89830884599dda631b4a1c32185b5948">PermGeneric&lt;Size, Expo&gt;::random</a>() {</div>
-<div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span>    <span class="keyword">static</span> std::random_device rd;</div>
-<div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span>    <span class="keyword">static</span> std::mt19937 g(rd());</div>
-<div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span> </div>
-<div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span>    <a class="code hl_struct" href="structHPCombi_1_1PermGeneric.html">PermGeneric</a> <a class="code hl_variable" href="image_8cpp.html#af4858e3800fddfba3132594e83e83a8d">res</a>{{}};</div>
-<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span>    std::shuffle(<a class="code hl_variable" href="image_8cpp.html#af4858e3800fddfba3132594e83e83a8d">res</a>.v.begin(), <a class="code hl_variable" href="image_8cpp.html#af4858e3800fddfba3132594e83e83a8d">res</a>.v.end(), g);</div>
-<div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span>    <span class="keywordflow">return</span> <a class="code hl_variable" href="image_8cpp.html#af4858e3800fddfba3132594e83e83a8d">res</a>;</div>
-<div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span>}</div>
-<div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span> </div>
-<div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span><span class="keyword">template</span> &lt;<span class="keywordtype">size_t</span> Size, <span class="keyword">typename</span> Expo&gt;</div>
-<div class="line"><a id="l00055" name="l00055"></a><span class="lineno"><a class="line" href="structHPCombi_1_1PermGeneric.html#aa1cc32d6ad16e0288a3ed53114ab5d88">   55</a></span><span class="keyword">typename</span> <a class="code hl_struct" href="structHPCombi_1_1VectGeneric.html">PermGeneric&lt;Size, Expo&gt;::vect</a> <a class="code hl_function" href="structHPCombi_1_1PermGeneric.html#aa1cc32d6ad16e0288a3ed53114ab5d88">PermGeneric&lt;Size, Expo&gt;::lehmer</a>()<span class="keyword"> const </span>{</div>
-<div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span>    <a class="code hl_struct" href="structHPCombi_1_1VectGeneric.html">vect</a> <a class="code hl_variable" href="image_8cpp.html#af4858e3800fddfba3132594e83e83a8d">res</a>{};</div>
-<div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span>    <span class="keywordflow">for</span> (<span class="keywordtype">size_t</span> i = 0; i &lt; Size; i++)</div>
-<div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span>        <span class="keywordflow">for</span> (<span class="keywordtype">size_t</span> j = i + 1; j &lt; Size; j++)</div>
-<div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span>            <span class="keywordflow">if</span> (this-&gt;v[i] &gt; this-&gt;v[j])</div>
-<div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span>                <a class="code hl_variable" href="image_8cpp.html#af4858e3800fddfba3132594e83e83a8d">res</a>[i]++;</div>
-<div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span>    <span class="keywordflow">return</span> <a class="code hl_variable" href="image_8cpp.html#af4858e3800fddfba3132594e83e83a8d">res</a>;</div>
-<div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span>}</div>
-<div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span> </div>
-<div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span><span class="keyword">template</span> &lt;<span class="keywordtype">size_t</span> Size, <span class="keyword">typename</span> Expo&gt;</div>
-<div class="line"><a id="l00065" name="l00065"></a><span class="lineno"><a class="line" href="structHPCombi_1_1PermGeneric.html#a0260047ce8685bad02ea84babc2bb634">   65</a></span>uint64_t <a class="code hl_function" href="structHPCombi_1_1PermGeneric.html#a0260047ce8685bad02ea84babc2bb634">PermGeneric&lt;Size, Expo&gt;::length</a>()<span class="keyword"> const </span>{</div>
-<div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span>    uint64_t <a class="code hl_variable" href="image_8cpp.html#af4858e3800fddfba3132594e83e83a8d">res</a> = 0;</div>
-<div class="line"><a id="l00067" name="l00067"></a><span class="lineno">   67</span>    <span class="keywordflow">for</span> (<span class="keywordtype">size_t</span> i = 0; i &lt; Size; i++)</div>
-<div class="line"><a id="l00068" name="l00068"></a><span class="lineno">   68</span>        <span class="keywordflow">for</span> (<span class="keywordtype">size_t</span> j = i + 1; j &lt; Size; j++)</div>
-<div class="line"><a id="l00069" name="l00069"></a><span class="lineno">   69</span>            <span class="keywordflow">if</span> (this-&gt;v[i] &gt; this-&gt;v[j])</div>
-<div class="line"><a id="l00070" name="l00070"></a><span class="lineno">   70</span>                <a class="code hl_variable" href="image_8cpp.html#af4858e3800fddfba3132594e83e83a8d">res</a>++;</div>
-<div class="line"><a id="l00071" name="l00071"></a><span class="lineno">   71</span>    <span class="keywordflow">return</span> <a class="code hl_variable" href="image_8cpp.html#af4858e3800fddfba3132594e83e83a8d">res</a>;</div>
-<div class="line"><a id="l00072" name="l00072"></a><span class="lineno">   72</span>}</div>
-<div class="line"><a id="l00073" name="l00073"></a><span class="lineno">   73</span> </div>
-<div class="line"><a id="l00074" name="l00074"></a><span class="lineno">   74</span><span class="keyword">template</span> &lt;<span class="keywordtype">size_t</span> Size, <span class="keyword">typename</span> Expo&gt;</div>
-<div class="line"><a id="l00075" name="l00075"></a><span class="lineno"><a class="line" href="structHPCombi_1_1PermGeneric.html#ac22db541f350a935dc1d4251e16396ea">   75</a></span>uint64_t <a class="code hl_function" href="structHPCombi_1_1PermGeneric.html#ac22db541f350a935dc1d4251e16396ea">PermGeneric&lt;Size, Expo&gt;::nb_descents</a>()<span class="keyword"> const </span>{</div>
-<div class="line"><a id="l00076" name="l00076"></a><span class="lineno">   76</span>    uint64_t <a class="code hl_variable" href="image_8cpp.html#af4858e3800fddfba3132594e83e83a8d">res</a> = 0;</div>
-<div class="line"><a id="l00077" name="l00077"></a><span class="lineno">   77</span>    <span class="keywordflow">for</span> (<span class="keywordtype">size_t</span> i = 0; i &lt; Size - 1; i++)</div>
-<div class="line"><a id="l00078" name="l00078"></a><span class="lineno">   78</span>        <span class="keywordflow">if</span> (this-&gt;v[i] &gt; this-&gt;v[i + 1])</div>
-<div class="line"><a id="l00079" name="l00079"></a><span class="lineno">   79</span>            <a class="code hl_variable" href="image_8cpp.html#af4858e3800fddfba3132594e83e83a8d">res</a>++;</div>
-<div class="line"><a id="l00080" name="l00080"></a><span class="lineno">   80</span>    <span class="keywordflow">return</span> <a class="code hl_variable" href="image_8cpp.html#af4858e3800fddfba3132594e83e83a8d">res</a>;</div>
-<div class="line"><a id="l00081" name="l00081"></a><span class="lineno">   81</span>}</div>
-<div class="line"><a id="l00082" name="l00082"></a><span class="lineno">   82</span> </div>
-<div class="line"><a id="l00083" name="l00083"></a><span class="lineno">   83</span><span class="keyword">template</span> &lt;<span class="keywordtype">size_t</span> Size, <span class="keyword">typename</span> Expo&gt;</div>
-<div class="line"><a id="l00084" name="l00084"></a><span class="lineno"><a class="line" href="structHPCombi_1_1PermGeneric.html#a9b459b328e72baf66183aa4d0fb74d19">   84</a></span>uint64_t <a class="code hl_function" href="structHPCombi_1_1PermGeneric.html#a9b459b328e72baf66183aa4d0fb74d19">PermGeneric&lt;Size, Expo&gt;::nb_cycles</a>()<span class="keyword"> const </span>{</div>
-<div class="line"><a id="l00085" name="l00085"></a><span class="lineno">   85</span>    std::array&lt;bool, Size&gt; b{};</div>
-<div class="line"><a id="l00086" name="l00086"></a><span class="lineno">   86</span>    uint64_t c = 0;</div>
-<div class="line"><a id="l00087" name="l00087"></a><span class="lineno">   87</span>    <span class="keywordflow">for</span> (<span class="keywordtype">size_t</span> i = 0; i &lt; Size; i++) {</div>
-<div class="line"><a id="l00088" name="l00088"></a><span class="lineno">   88</span>        <span class="keywordflow">if</span> (!b[i]) {</div>
-<div class="line"><a id="l00089" name="l00089"></a><span class="lineno">   89</span>            <span class="keywordflow">for</span> (<span class="keywordtype">size_t</span> j = i; !b[j]; j = this-&gt;v[j])</div>
-<div class="line"><a id="l00090" name="l00090"></a><span class="lineno">   90</span>                b[j] = <span class="keyword">true</span>;</div>
-<div class="line"><a id="l00091" name="l00091"></a><span class="lineno">   91</span>            c++;</div>
-<div class="line"><a id="l00092" name="l00092"></a><span class="lineno">   92</span>        }</div>
-<div class="line"><a id="l00093" name="l00093"></a><span class="lineno">   93</span>    }</div>
-<div class="line"><a id="l00094" name="l00094"></a><span class="lineno">   94</span>    <span class="keywordflow">return</span> c;</div>
-<div class="line"><a id="l00095" name="l00095"></a><span class="lineno">   95</span>}</div>
-<div class="line"><a id="l00096" name="l00096"></a><span class="lineno">   96</span> </div>
-<div class="line"><a id="l00097" name="l00097"></a><span class="lineno">   97</span><span class="keyword">template</span> &lt;<span class="keywordtype">size_t</span> Size, <span class="keyword">typename</span> Expo&gt;</div>
-<div class="line"><a id="l00098" name="l00098"></a><span class="lineno"><a class="line" href="structHPCombi_1_1PermGeneric.html#a306ae8219524cbc29a85b121905f32cd">   98</a></span><span class="keywordtype">bool</span> <a class="code hl_function" href="structHPCombi_1_1PermGeneric.html#a306ae8219524cbc29a85b121905f32cd">PermGeneric&lt;Size, Expo&gt;::left_weak_leq</a>(<a class="code hl_struct" href="structHPCombi_1_1PermGeneric.html">PermGeneric</a> other)<span class="keyword"> const </span>{</div>
-<div class="line"><a id="l00099" name="l00099"></a><span class="lineno">   99</span>    <span class="keywordflow">for</span> (<span class="keywordtype">size_t</span> i = 0; i &lt; Size; i++) {</div>
-<div class="line"><a id="l00100" name="l00100"></a><span class="lineno">  100</span>        <span class="keywordflow">for</span> (<span class="keywordtype">size_t</span> j = i + 1; j &lt; Size; j++) {</div>
-<div class="line"><a id="l00101" name="l00101"></a><span class="lineno">  101</span>            <span class="keywordflow">if</span> ((this-&gt;v[i] &gt; this-&gt;v[j]) &amp;&amp; (other[i] &lt; other[j]))</div>
-<div class="line"><a id="l00102" name="l00102"></a><span class="lineno">  102</span>                <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
-<div class="line"><a id="l00103" name="l00103"></a><span class="lineno">  103</span>        }</div>
-<div class="line"><a id="l00104" name="l00104"></a><span class="lineno">  104</span>    }</div>
-<div class="line"><a id="l00105" name="l00105"></a><span class="lineno">  105</span>    <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
-<div class="line"><a id="l00106" name="l00106"></a><span class="lineno">  106</span>}</div>
-<div class="line"><a id="l00107" name="l00107"></a><span class="lineno">  107</span> </div>
-<div class="line"><a id="l00108" name="l00108"></a><span class="lineno">  108</span>};  <span class="comment">//  namespace HPCombi</span></div>
-<div class="line"><a id="l00109" name="l00109"></a><span class="lineno">  109</span> </div>
-<div class="line"><a id="l00110" name="l00110"></a><span class="lineno">  110</span><span class="keyword">namespace </span><a class="code hl_namespace" href="namespacestd.html">std</a> {</div>
-<div class="line"><a id="l00111" name="l00111"></a><span class="lineno">  111</span> </div>
-<div class="line"><a id="l00112" name="l00112"></a><span class="lineno">  112</span><span class="keyword">template</span> &lt;<span class="keywordtype">size_t</span> Size, <span class="keyword">typename</span> Expo&gt;</div>
-<div class="line"><a id="l00113" name="l00113"></a><span class="lineno"><a class="line" href="structstd_1_1hash_3_01HPCombi_1_1PermGeneric_3_01Size_00_01Expo_01_4_01_4.html">  113</a></span><span class="keyword">struct </span>hash&lt;<a class="code hl_namespace" href="namespaceHPCombi.html">HPCombi</a>::PermGeneric&lt;Size, Expo&gt;&gt; {</div>
-<div class="line"><a id="l00114" name="l00114"></a><span class="lineno"><a class="line" href="structstd_1_1hash_3_01HPCombi_1_1PermGeneric_3_01Size_00_01Expo_01_4_01_4.html#a64048804317848cf915f9243a6ecb2b4">  114</a></span>    <span class="keywordtype">size_t</span> <a class="code hl_function" href="structstd_1_1hash_3_01HPCombi_1_1PermGeneric_3_01Size_00_01Expo_01_4_01_4.html#a64048804317848cf915f9243a6ecb2b4">operator()</a>(<span class="keyword">const</span> <a class="code hl_struct" href="structHPCombi_1_1PermGeneric.html">HPCombi::PermGeneric&lt;Size, Expo&gt;</a> &amp;ar)<span class="keyword"> const </span>{</div>
-<div class="line"><a id="l00115" name="l00115"></a><span class="lineno">  115</span>        <span class="keywordflow">return</span> hash&lt;HPCombi::VectGeneric&lt;Size, Expo&gt;&gt;()(ar);</div>
-<div class="line"><a id="l00116" name="l00116"></a><span class="lineno">  116</span>    }</div>
-<div class="line"><a id="l00117" name="l00117"></a><span class="lineno">  117</span>};</div>
-<div class="line"><a id="l00118" name="l00118"></a><span class="lineno">  118</span> </div>
-<div class="line"><a id="l00119" name="l00119"></a><span class="lineno">  119</span>}  <span class="comment">// namespace std</span></div>
-<div class="ttc" id="adebug_8hpp_html_a35656321588a81b81a5f2d2c1afceba0"><div class="ttname"><a href="debug_8hpp.html#a35656321588a81b81a5f2d2c1afceba0">HPCOMBI_ASSERT</a></div><div class="ttdeci">#define HPCOMBI_ASSERT(x)</div><div class="ttdef"><b>Definition</b> debug.hpp:23</div></div>
-<div class="ttc" id="aimage_8cpp_html_af4858e3800fddfba3132594e83e83a8d"><div class="ttname"><a href="image_8cpp.html#af4858e3800fddfba3132594e83e83a8d">res</a></div><div class="ttdeci">std::array&lt; std::tuple&lt; uint16_t, uint16_t, std::array&lt; uint16_t, gens.size()&gt; &gt;, 65536 &gt; res</div><div class="ttdef"><b>Definition</b> image.cpp:62</div></div>
-<div class="ttc" id="anamespaceHPCombi_html"><div class="ttname"><a href="namespaceHPCombi.html">HPCombi</a></div><div class="ttdef"><b>Definition</b> bmat8.hpp:37</div></div>
-<div class="ttc" id="anamespacestd_html"><div class="ttname"><a href="namespacestd.html">std</a></div><div class="ttdef"><b>Definition</b> bmat8.hpp:360</div></div>
-<div class="ttc" id="astructHPCombi_1_1PermGeneric_html"><div class="ttname"><a href="structHPCombi_1_1PermGeneric.html">HPCombi::PermGeneric</a></div><div class="ttdef"><b>Definition</b> perm_generic.hpp:35</div></div>
-<div class="ttc" id="astructHPCombi_1_1PermGeneric_html_a0260047ce8685bad02ea84babc2bb634"><div class="ttname"><a href="structHPCombi_1_1PermGeneric.html#a0260047ce8685bad02ea84babc2bb634">HPCombi::PermGeneric::length</a></div><div class="ttdeci">uint64_t length() const</div><div class="ttdef"><b>Definition</b> perm_generic_impl.hpp:65</div></div>
-<div class="ttc" id="astructHPCombi_1_1PermGeneric_html_a306ae8219524cbc29a85b121905f32cd"><div class="ttname"><a href="structHPCombi_1_1PermGeneric.html#a306ae8219524cbc29a85b121905f32cd">HPCombi::PermGeneric::left_weak_leq</a></div><div class="ttdeci">bool left_weak_leq(PermGeneric other) const</div><div class="ttdef"><b>Definition</b> perm_generic_impl.hpp:98</div></div>
+<div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span><span class="comment">//  HP-Combi is distributed in the hope that it will be useful, but WITHOUT   //</span></div>
+<div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span><span class="comment">//  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or     //</span></div>
+<div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span><span class="comment">//  FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License      //</span></div>
+<div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span><span class="comment">//  for  more details.                                                        //</span></div>
+<div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span><span class="comment">//                                                                            //</span></div>
+<div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span><span class="comment">//  You should have received a copy of the GNU General Public License along   //</span></div>
+<div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span><span class="comment">//  with HP-Combi. If not, see &lt;https://www.gnu.org/licenses/&gt;.               //</span></div>
+<div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span><span class="comment">//****************************************************************************//</span></div>
+<div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span> </div>
+<div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span><span class="comment">// NOLINT(build/header_guard)</span></div>
+<div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span> </div>
+<div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span><span class="keyword">namespace </span><a class="code hl_namespace" href="namespaceHPCombi.html">HPCombi</a> {</div>
+<div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span> </div>
+<div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span><span class="keyword">template</span> &lt;<span class="keywordtype">size_t</span> Size, <span class="keyword">typename</span> Expo&gt;</div>
+<div class="line"><a id="l00025" name="l00025"></a><span class="lineno"><a class="line" href="structHPCombi_1_1PermGeneric.html#ac5138b09b1aba0eb325e8f9ea6eda1bd">   25</a></span><a class="code hl_function" href="structHPCombi_1_1PermGeneric.html#a5349dacff5ac377bbe47b6e36d385021">PermGeneric&lt;Size, Expo&gt;::PermGeneric</a>(std::initializer_list&lt;Expo&gt; il) {</div>
+<div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span>    <a class="code hl_define" href="debug_8hpp.html#a35656321588a81b81a5f2d2c1afceba0">HPCOMBI_ASSERT</a>(il.size() &lt;= Size);</div>
+<div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span>    std::copy(il.begin(), il.end(), this-&gt;v.begin());</div>
+<div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span>    <span class="keywordflow">for</span> (Expo i = il.size(); i &lt; Size; i++)</div>
+<div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span>        this-&gt;v[i] = i;</div>
+<div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span>}</div>
+<div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span> </div>
+<div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span><span class="keyword">template</span> &lt;<span class="keywordtype">size_t</span> Size, <span class="keyword">typename</span> Expo&gt;</div>
+<div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span><a class="code hl_struct" href="structHPCombi_1_1PermGeneric.html">PermGeneric&lt;Size, Expo&gt;</a></div>
+<div class="line"><a id="l00034" name="l00034"></a><span class="lineno"><a class="line" href="structHPCombi_1_1PermGeneric.html#a73bf07d40f7f7626044444fc172e7e22">   34</a></span><a class="code hl_function" href="structHPCombi_1_1PermGeneric.html#a73bf07d40f7f7626044444fc172e7e22">PermGeneric&lt;Size, Expo&gt;::elementary_transposition</a>(uint64_t i) {</div>
+<div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span>    <a class="code hl_define" href="debug_8hpp.html#a35656321588a81b81a5f2d2c1afceba0">HPCOMBI_ASSERT</a>(i &lt; Size);</div>
+<div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span>    <a class="code hl_struct" href="structHPCombi_1_1PermGeneric.html">PermGeneric</a> <a class="code hl_variable" href="image_8cpp.html#af4858e3800fddfba3132594e83e83a8d">res</a>{{}};</div>
+<div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span>    <a class="code hl_variable" href="image_8cpp.html#af4858e3800fddfba3132594e83e83a8d">res</a>[i] = i + 1;</div>
+<div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span>    <a class="code hl_variable" href="image_8cpp.html#af4858e3800fddfba3132594e83e83a8d">res</a>[i + 1] = i;</div>
+<div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span>    <span class="keywordflow">return</span> <a class="code hl_variable" href="image_8cpp.html#af4858e3800fddfba3132594e83e83a8d">res</a>;</div>
+<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span>}</div>
+<div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span> </div>
+<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span><span class="keyword">template</span> &lt;<span class="keywordtype">size_t</span> Size, <span class="keyword">typename</span> Expo&gt;</div>
+<div class="line"><a id="l00043" name="l00043"></a><span class="lineno"><a class="line" href="structHPCombi_1_1PermGeneric.html#a9a426ab06b8967c48160b927f11002af">   43</a></span><a class="code hl_struct" href="structHPCombi_1_1PermGeneric.html">PermGeneric&lt;Size, Expo&gt;</a> <a class="code hl_function" href="structHPCombi_1_1PermGeneric.html#a9a426ab06b8967c48160b927f11002af">PermGeneric&lt;Size, Expo&gt;::inverse</a>()<span class="keyword"> const </span>{</div>
+<div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span>    <a class="code hl_struct" href="structHPCombi_1_1PermGeneric.html">PermGeneric</a> <a class="code hl_variable" href="image_8cpp.html#af4858e3800fddfba3132594e83e83a8d">res</a>;</div>
+<div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span>    <span class="keywordflow">for</span> (uint64_t i = 0; i &lt; Size; i++)</div>
+<div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span>        <a class="code hl_variable" href="image_8cpp.html#af4858e3800fddfba3132594e83e83a8d">res</a>[this-&gt;v[i]] = i;</div>
+<div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span>    <span class="keywordflow">return</span> <a class="code hl_variable" href="image_8cpp.html#af4858e3800fddfba3132594e83e83a8d">res</a>;</div>
+<div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span>}</div>
+<div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span> </div>
+<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span><span class="keyword">template</span> &lt;<span class="keywordtype">size_t</span> Size, <span class="keyword">typename</span> Expo&gt;</div>
+<div class="line"><a id="l00051" name="l00051"></a><span class="lineno"><a class="line" href="structHPCombi_1_1PermGeneric.html#a89830884599dda631b4a1c32185b5948">   51</a></span><a class="code hl_struct" href="structHPCombi_1_1PermGeneric.html">PermGeneric&lt;Size, Expo&gt;</a> <a class="code hl_function" href="structHPCombi_1_1PermGeneric.html#a89830884599dda631b4a1c32185b5948">PermGeneric&lt;Size, Expo&gt;::random</a>() {</div>
+<div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span>    <span class="keyword">static</span> std::random_device rd;</div>
+<div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span>    <span class="keyword">static</span> std::mt19937 g(rd());</div>
+<div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span> </div>
+<div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span>    <a class="code hl_struct" href="structHPCombi_1_1PermGeneric.html">PermGeneric</a> <a class="code hl_variable" href="image_8cpp.html#af4858e3800fddfba3132594e83e83a8d">res</a>{{}};</div>
+<div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span>    std::shuffle(<a class="code hl_variable" href="image_8cpp.html#af4858e3800fddfba3132594e83e83a8d">res</a>.v.begin(), <a class="code hl_variable" href="image_8cpp.html#af4858e3800fddfba3132594e83e83a8d">res</a>.v.end(), g);</div>
+<div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span>    <span class="keywordflow">return</span> <a class="code hl_variable" href="image_8cpp.html#af4858e3800fddfba3132594e83e83a8d">res</a>;</div>
+<div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span>}</div>
+<div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span> </div>
+<div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span><span class="keyword">template</span> &lt;<span class="keywordtype">size_t</span> Size, <span class="keyword">typename</span> Expo&gt;</div>
+<div class="line"><a id="l00061" name="l00061"></a><span class="lineno"><a class="line" href="structHPCombi_1_1PermGeneric.html#aa1cc32d6ad16e0288a3ed53114ab5d88">   61</a></span><span class="keyword">typename</span> <a class="code hl_struct" href="structHPCombi_1_1VectGeneric.html">PermGeneric&lt;Size, Expo&gt;::vect</a> <a class="code hl_function" href="structHPCombi_1_1PermGeneric.html#aa1cc32d6ad16e0288a3ed53114ab5d88">PermGeneric&lt;Size, Expo&gt;::lehmer</a>()<span class="keyword"> const </span>{</div>
+<div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span>    <a class="code hl_struct" href="structHPCombi_1_1VectGeneric.html">vect</a> <a class="code hl_variable" href="image_8cpp.html#af4858e3800fddfba3132594e83e83a8d">res</a>{};</div>
+<div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span>    <span class="keywordflow">for</span> (<span class="keywordtype">size_t</span> i = 0; i &lt; Size; i++)</div>
+<div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span>        <span class="keywordflow">for</span> (<span class="keywordtype">size_t</span> j = i + 1; j &lt; Size; j++)</div>
+<div class="line"><a id="l00065" name="l00065"></a><span class="lineno">   65</span>            <span class="keywordflow">if</span> (this-&gt;v[i] &gt; this-&gt;v[j])</div>
+<div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span>                <a class="code hl_variable" href="image_8cpp.html#af4858e3800fddfba3132594e83e83a8d">res</a>[i]++;</div>
+<div class="line"><a id="l00067" name="l00067"></a><span class="lineno">   67</span>    <span class="keywordflow">return</span> <a class="code hl_variable" href="image_8cpp.html#af4858e3800fddfba3132594e83e83a8d">res</a>;</div>
+<div class="line"><a id="l00068" name="l00068"></a><span class="lineno">   68</span>}</div>
+<div class="line"><a id="l00069" name="l00069"></a><span class="lineno">   69</span> </div>
+<div class="line"><a id="l00070" name="l00070"></a><span class="lineno">   70</span><span class="keyword">template</span> &lt;<span class="keywordtype">size_t</span> Size, <span class="keyword">typename</span> Expo&gt;</div>
+<div class="line"><a id="l00071" name="l00071"></a><span class="lineno"><a class="line" href="structHPCombi_1_1PermGeneric.html#a0260047ce8685bad02ea84babc2bb634">   71</a></span>uint64_t <a class="code hl_function" href="structHPCombi_1_1PermGeneric.html#a0260047ce8685bad02ea84babc2bb634">PermGeneric&lt;Size, Expo&gt;::length</a>()<span class="keyword"> const </span>{</div>
+<div class="line"><a id="l00072" name="l00072"></a><span class="lineno">   72</span>    uint64_t <a class="code hl_variable" href="image_8cpp.html#af4858e3800fddfba3132594e83e83a8d">res</a> = 0;</div>
+<div class="line"><a id="l00073" name="l00073"></a><span class="lineno">   73</span>    <span class="keywordflow">for</span> (<span class="keywordtype">size_t</span> i = 0; i &lt; Size; i++)</div>
+<div class="line"><a id="l00074" name="l00074"></a><span class="lineno">   74</span>        <span class="keywordflow">for</span> (<span class="keywordtype">size_t</span> j = i + 1; j &lt; Size; j++)</div>
+<div class="line"><a id="l00075" name="l00075"></a><span class="lineno">   75</span>            <span class="keywordflow">if</span> (this-&gt;v[i] &gt; this-&gt;v[j])</div>
+<div class="line"><a id="l00076" name="l00076"></a><span class="lineno">   76</span>                <a class="code hl_variable" href="image_8cpp.html#af4858e3800fddfba3132594e83e83a8d">res</a>++;</div>
+<div class="line"><a id="l00077" name="l00077"></a><span class="lineno">   77</span>    <span class="keywordflow">return</span> <a class="code hl_variable" href="image_8cpp.html#af4858e3800fddfba3132594e83e83a8d">res</a>;</div>
+<div class="line"><a id="l00078" name="l00078"></a><span class="lineno">   78</span>}</div>
+<div class="line"><a id="l00079" name="l00079"></a><span class="lineno">   79</span> </div>
+<div class="line"><a id="l00080" name="l00080"></a><span class="lineno">   80</span><span class="keyword">template</span> &lt;<span class="keywordtype">size_t</span> Size, <span class="keyword">typename</span> Expo&gt;</div>
+<div class="line"><a id="l00081" name="l00081"></a><span class="lineno"><a class="line" href="structHPCombi_1_1PermGeneric.html#ac22db541f350a935dc1d4251e16396ea">   81</a></span>uint64_t <a class="code hl_function" href="structHPCombi_1_1PermGeneric.html#ac22db541f350a935dc1d4251e16396ea">PermGeneric&lt;Size, Expo&gt;::nb_descents</a>()<span class="keyword"> const </span>{</div>
+<div class="line"><a id="l00082" name="l00082"></a><span class="lineno">   82</span>    uint64_t <a class="code hl_variable" href="image_8cpp.html#af4858e3800fddfba3132594e83e83a8d">res</a> = 0;</div>
+<div class="line"><a id="l00083" name="l00083"></a><span class="lineno">   83</span>    <span class="keywordflow">for</span> (<span class="keywordtype">size_t</span> i = 0; i &lt; Size - 1; i++)</div>
+<div class="line"><a id="l00084" name="l00084"></a><span class="lineno">   84</span>        <span class="keywordflow">if</span> (this-&gt;v[i] &gt; this-&gt;v[i + 1])</div>
+<div class="line"><a id="l00085" name="l00085"></a><span class="lineno">   85</span>            <a class="code hl_variable" href="image_8cpp.html#af4858e3800fddfba3132594e83e83a8d">res</a>++;</div>
+<div class="line"><a id="l00086" name="l00086"></a><span class="lineno">   86</span>    <span class="keywordflow">return</span> <a class="code hl_variable" href="image_8cpp.html#af4858e3800fddfba3132594e83e83a8d">res</a>;</div>
+<div class="line"><a id="l00087" name="l00087"></a><span class="lineno">   87</span>}</div>
+<div class="line"><a id="l00088" name="l00088"></a><span class="lineno">   88</span> </div>
+<div class="line"><a id="l00089" name="l00089"></a><span class="lineno">   89</span><span class="keyword">template</span> &lt;<span class="keywordtype">size_t</span> Size, <span class="keyword">typename</span> Expo&gt;</div>
+<div class="line"><a id="l00090" name="l00090"></a><span class="lineno"><a class="line" href="structHPCombi_1_1PermGeneric.html#a9b459b328e72baf66183aa4d0fb74d19">   90</a></span>uint64_t <a class="code hl_function" href="structHPCombi_1_1PermGeneric.html#a9b459b328e72baf66183aa4d0fb74d19">PermGeneric&lt;Size, Expo&gt;::nb_cycles</a>()<span class="keyword"> const </span>{</div>
+<div class="line"><a id="l00091" name="l00091"></a><span class="lineno">   91</span>    std::array&lt;bool, Size&gt; b{};</div>
+<div class="line"><a id="l00092" name="l00092"></a><span class="lineno">   92</span>    uint64_t c = 0;</div>
+<div class="line"><a id="l00093" name="l00093"></a><span class="lineno">   93</span>    <span class="keywordflow">for</span> (<span class="keywordtype">size_t</span> i = 0; i &lt; Size; i++) {</div>
+<div class="line"><a id="l00094" name="l00094"></a><span class="lineno">   94</span>        <span class="keywordflow">if</span> (!b[i]) {</div>
+<div class="line"><a id="l00095" name="l00095"></a><span class="lineno">   95</span>            <span class="keywordflow">for</span> (<span class="keywordtype">size_t</span> j = i; !b[j]; j = this-&gt;v[j])</div>
+<div class="line"><a id="l00096" name="l00096"></a><span class="lineno">   96</span>                b[j] = <span class="keyword">true</span>;</div>
+<div class="line"><a id="l00097" name="l00097"></a><span class="lineno">   97</span>            c++;</div>
+<div class="line"><a id="l00098" name="l00098"></a><span class="lineno">   98</span>        }</div>
+<div class="line"><a id="l00099" name="l00099"></a><span class="lineno">   99</span>    }</div>
+<div class="line"><a id="l00100" name="l00100"></a><span class="lineno">  100</span>    <span class="keywordflow">return</span> c;</div>
+<div class="line"><a id="l00101" name="l00101"></a><span class="lineno">  101</span>}</div>
+<div class="line"><a id="l00102" name="l00102"></a><span class="lineno">  102</span> </div>
+<div class="line"><a id="l00103" name="l00103"></a><span class="lineno">  103</span><span class="keyword">template</span> &lt;<span class="keywordtype">size_t</span> Size, <span class="keyword">typename</span> Expo&gt;</div>
+<div class="line"><a id="l00104" name="l00104"></a><span class="lineno"><a class="line" href="structHPCombi_1_1PermGeneric.html#a306ae8219524cbc29a85b121905f32cd">  104</a></span><span class="keywordtype">bool</span> <a class="code hl_function" href="structHPCombi_1_1PermGeneric.html#a306ae8219524cbc29a85b121905f32cd">PermGeneric&lt;Size, Expo&gt;::left_weak_leq</a>(<a class="code hl_struct" href="structHPCombi_1_1PermGeneric.html">PermGeneric</a> other)<span class="keyword"> const </span>{</div>
+<div class="line"><a id="l00105" name="l00105"></a><span class="lineno">  105</span>    <span class="keywordflow">for</span> (<span class="keywordtype">size_t</span> i = 0; i &lt; Size; i++) {</div>
+<div class="line"><a id="l00106" name="l00106"></a><span class="lineno">  106</span>        <span class="keywordflow">for</span> (<span class="keywordtype">size_t</span> j = i + 1; j &lt; Size; j++) {</div>
+<div class="line"><a id="l00107" name="l00107"></a><span class="lineno">  107</span>            <span class="keywordflow">if</span> ((this-&gt;v[i] &gt; this-&gt;v[j]) &amp;&amp; (other[i] &lt; other[j]))</div>
+<div class="line"><a id="l00108" name="l00108"></a><span class="lineno">  108</span>                <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
+<div class="line"><a id="l00109" name="l00109"></a><span class="lineno">  109</span>        }</div>
+<div class="line"><a id="l00110" name="l00110"></a><span class="lineno">  110</span>    }</div>
+<div class="line"><a id="l00111" name="l00111"></a><span class="lineno">  111</span>    <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
+<div class="line"><a id="l00112" name="l00112"></a><span class="lineno">  112</span>}</div>
+<div class="line"><a id="l00113" name="l00113"></a><span class="lineno">  113</span> </div>
+<div class="line"><a id="l00114" name="l00114"></a><span class="lineno">  114</span>};  <span class="comment">//  namespace HPCombi</span></div>
+<div class="line"><a id="l00115" name="l00115"></a><span class="lineno">  115</span> </div>
+<div class="line"><a id="l00116" name="l00116"></a><span class="lineno">  116</span><span class="keyword">namespace </span><a class="code hl_namespace" href="namespacestd.html">std</a> {</div>
+<div class="line"><a id="l00117" name="l00117"></a><span class="lineno">  117</span> </div>
+<div class="line"><a id="l00118" name="l00118"></a><span class="lineno">  118</span><span class="keyword">template</span> &lt;<span class="keywordtype">size_t</span> Size, <span class="keyword">typename</span> Expo&gt;</div>
+<div class="line"><a id="l00119" name="l00119"></a><span class="lineno"><a class="line" href="structstd_1_1hash_3_01HPCombi_1_1PermGeneric_3_01Size_00_01Expo_01_4_01_4.html">  119</a></span><span class="keyword">struct </span>hash&lt;<a class="code hl_namespace" href="namespaceHPCombi.html">HPCombi</a>::PermGeneric&lt;Size, Expo&gt;&gt; {</div>
+<div class="line"><a id="l00120" name="l00120"></a><span class="lineno"><a class="line" href="structstd_1_1hash_3_01HPCombi_1_1PermGeneric_3_01Size_00_01Expo_01_4_01_4.html#a64048804317848cf915f9243a6ecb2b4">  120</a></span>    <span class="keywordtype">size_t</span> <a class="code hl_function" href="structstd_1_1hash_3_01HPCombi_1_1PermGeneric_3_01Size_00_01Expo_01_4_01_4.html#a64048804317848cf915f9243a6ecb2b4">operator()</a>(<span class="keyword">const</span> <a class="code hl_struct" href="structHPCombi_1_1PermGeneric.html">HPCombi::PermGeneric&lt;Size, Expo&gt;</a> &amp;ar)<span class="keyword"> const </span>{</div>
+<div class="line"><a id="l00121" name="l00121"></a><span class="lineno">  121</span>        <span class="keywordflow">return</span> hash&lt;HPCombi::VectGeneric&lt;Size, Expo&gt;&gt;()(ar);</div>
+<div class="line"><a id="l00122" name="l00122"></a><span class="lineno">  122</span>    }</div>
+<div class="line"><a id="l00123" name="l00123"></a><span class="lineno">  123</span>};</div>
+<div class="line"><a id="l00124" name="l00124"></a><span class="lineno">  124</span> </div>
+<div class="line"><a id="l00125" name="l00125"></a><span class="lineno">  125</span>}  <span class="comment">// namespace std</span></div>
+<div class="ttc" id="adebug_8hpp_html_a35656321588a81b81a5f2d2c1afceba0"><div class="ttname"><a href="debug_8hpp.html#a35656321588a81b81a5f2d2c1afceba0">HPCOMBI_ASSERT</a></div><div class="ttdeci">#define HPCOMBI_ASSERT(x)</div><div class="ttdef"><b>Definition</b> debug.hpp:28</div></div>
+<div class="ttc" id="aimage_8cpp_html_af4858e3800fddfba3132594e83e83a8d"><div class="ttname"><a href="image_8cpp.html#af4858e3800fddfba3132594e83e83a8d">res</a></div><div class="ttdeci">std::array&lt; std::tuple&lt; uint16_t, uint16_t, std::array&lt; uint16_t, gens.size()&gt; &gt;, 65536 &gt; res</div><div class="ttdef"><b>Definition</b> image.cpp:66</div></div>
+<div class="ttc" id="anamespaceHPCombi_html"><div class="ttname"><a href="namespaceHPCombi.html">HPCombi</a></div><div class="ttdef"><b>Definition</b> bmat8.hpp:41</div></div>
+<div class="ttc" id="anamespacestd_html"><div class="ttname"><a href="namespacestd.html">std</a></div><div class="ttdef"><b>Definition</b> bmat8.hpp:364</div></div>
+<div class="ttc" id="astructHPCombi_1_1PermGeneric_html"><div class="ttname"><a href="structHPCombi_1_1PermGeneric.html">HPCombi::PermGeneric</a></div><div class="ttdef"><b>Definition</b> perm_generic.hpp:39</div></div>
+<div class="ttc" id="astructHPCombi_1_1PermGeneric_html_a0260047ce8685bad02ea84babc2bb634"><div class="ttname"><a href="structHPCombi_1_1PermGeneric.html#a0260047ce8685bad02ea84babc2bb634">HPCombi::PermGeneric::length</a></div><div class="ttdeci">uint64_t length() const</div><div class="ttdef"><b>Definition</b> perm_generic_impl.hpp:71</div></div>
+<div class="ttc" id="astructHPCombi_1_1PermGeneric_html_a306ae8219524cbc29a85b121905f32cd"><div class="ttname"><a href="structHPCombi_1_1PermGeneric.html#a306ae8219524cbc29a85b121905f32cd">HPCombi::PermGeneric::left_weak_leq</a></div><div class="ttdeci">bool left_weak_leq(PermGeneric other) const</div><div class="ttdef"><b>Definition</b> perm_generic_impl.hpp:104</div></div>
 <div class="ttc" id="astructHPCombi_1_1PermGeneric_html_a5349dacff5ac377bbe47b6e36d385021"><div class="ttname"><a href="structHPCombi_1_1PermGeneric.html#a5349dacff5ac377bbe47b6e36d385021">HPCombi::PermGeneric::PermGeneric</a></div><div class="ttdeci">PermGeneric()=default</div></div>
-<div class="ttc" id="astructHPCombi_1_1PermGeneric_html_a73bf07d40f7f7626044444fc172e7e22"><div class="ttname"><a href="structHPCombi_1_1PermGeneric.html#a73bf07d40f7f7626044444fc172e7e22">HPCombi::PermGeneric::elementary_transposition</a></div><div class="ttdeci">static PermGeneric elementary_transposition(uint64_t i)</div><div class="ttdef"><b>Definition</b> perm_generic_impl.hpp:28</div></div>
-<div class="ttc" id="astructHPCombi_1_1PermGeneric_html_a89830884599dda631b4a1c32185b5948"><div class="ttname"><a href="structHPCombi_1_1PermGeneric.html#a89830884599dda631b4a1c32185b5948">HPCombi::PermGeneric::random</a></div><div class="ttdeci">static PermGeneric random()</div><div class="ttdef"><b>Definition</b> perm_generic_impl.hpp:45</div></div>
-<div class="ttc" id="astructHPCombi_1_1PermGeneric_html_a9a426ab06b8967c48160b927f11002af"><div class="ttname"><a href="structHPCombi_1_1PermGeneric.html#a9a426ab06b8967c48160b927f11002af">HPCombi::PermGeneric::inverse</a></div><div class="ttdeci">PermGeneric inverse() const</div><div class="ttdef"><b>Definition</b> perm_generic_impl.hpp:37</div></div>
-<div class="ttc" id="astructHPCombi_1_1PermGeneric_html_a9b459b328e72baf66183aa4d0fb74d19"><div class="ttname"><a href="structHPCombi_1_1PermGeneric.html#a9b459b328e72baf66183aa4d0fb74d19">HPCombi::PermGeneric::nb_cycles</a></div><div class="ttdeci">uint64_t nb_cycles() const</div><div class="ttdef"><b>Definition</b> perm_generic_impl.hpp:84</div></div>
-<div class="ttc" id="astructHPCombi_1_1PermGeneric_html_aa1cc32d6ad16e0288a3ed53114ab5d88"><div class="ttname"><a href="structHPCombi_1_1PermGeneric.html#aa1cc32d6ad16e0288a3ed53114ab5d88">HPCombi::PermGeneric::lehmer</a></div><div class="ttdeci">vect lehmer() const</div><div class="ttdef"><b>Definition</b> perm_generic_impl.hpp:55</div></div>
-<div class="ttc" id="astructHPCombi_1_1PermGeneric_html_ac22db541f350a935dc1d4251e16396ea"><div class="ttname"><a href="structHPCombi_1_1PermGeneric.html#ac22db541f350a935dc1d4251e16396ea">HPCombi::PermGeneric::nb_descents</a></div><div class="ttdeci">uint64_t nb_descents() const</div><div class="ttdef"><b>Definition</b> perm_generic_impl.hpp:75</div></div>
-<div class="ttc" id="astructHPCombi_1_1VectGeneric_html"><div class="ttname"><a href="structHPCombi_1_1VectGeneric.html">HPCombi::VectGeneric</a></div><div class="ttdoc">A generic class for combinatorial integer vectors.</div><div class="ttdef"><b>Definition</b> vect_generic.hpp:44</div></div>
-<div class="ttc" id="astructstd_1_1hash_3_01HPCombi_1_1PermGeneric_3_01Size_00_01Expo_01_4_01_4_html_a64048804317848cf915f9243a6ecb2b4"><div class="ttname"><a href="structstd_1_1hash_3_01HPCombi_1_1PermGeneric_3_01Size_00_01Expo_01_4_01_4.html#a64048804317848cf915f9243a6ecb2b4">std::hash&lt; HPCombi::PermGeneric&lt; Size, Expo &gt; &gt;::operator()</a></div><div class="ttdeci">size_t operator()(const HPCombi::PermGeneric&lt; Size, Expo &gt; &amp;ar) const</div><div class="ttdef"><b>Definition</b> perm_generic_impl.hpp:114</div></div>
+<div class="ttc" id="astructHPCombi_1_1PermGeneric_html_a73bf07d40f7f7626044444fc172e7e22"><div class="ttname"><a href="structHPCombi_1_1PermGeneric.html#a73bf07d40f7f7626044444fc172e7e22">HPCombi::PermGeneric::elementary_transposition</a></div><div class="ttdeci">static PermGeneric elementary_transposition(uint64_t i)</div><div class="ttdef"><b>Definition</b> perm_generic_impl.hpp:34</div></div>
+<div class="ttc" id="astructHPCombi_1_1PermGeneric_html_a89830884599dda631b4a1c32185b5948"><div class="ttname"><a href="structHPCombi_1_1PermGeneric.html#a89830884599dda631b4a1c32185b5948">HPCombi::PermGeneric::random</a></div><div class="ttdeci">static PermGeneric random()</div><div class="ttdef"><b>Definition</b> perm_generic_impl.hpp:51</div></div>
+<div class="ttc" id="astructHPCombi_1_1PermGeneric_html_a9a426ab06b8967c48160b927f11002af"><div class="ttname"><a href="structHPCombi_1_1PermGeneric.html#a9a426ab06b8967c48160b927f11002af">HPCombi::PermGeneric::inverse</a></div><div class="ttdeci">PermGeneric inverse() const</div><div class="ttdef"><b>Definition</b> perm_generic_impl.hpp:43</div></div>
+<div class="ttc" id="astructHPCombi_1_1PermGeneric_html_a9b459b328e72baf66183aa4d0fb74d19"><div class="ttname"><a href="structHPCombi_1_1PermGeneric.html#a9b459b328e72baf66183aa4d0fb74d19">HPCombi::PermGeneric::nb_cycles</a></div><div class="ttdeci">uint64_t nb_cycles() const</div><div class="ttdef"><b>Definition</b> perm_generic_impl.hpp:90</div></div>
+<div class="ttc" id="astructHPCombi_1_1PermGeneric_html_aa1cc32d6ad16e0288a3ed53114ab5d88"><div class="ttname"><a href="structHPCombi_1_1PermGeneric.html#aa1cc32d6ad16e0288a3ed53114ab5d88">HPCombi::PermGeneric::lehmer</a></div><div class="ttdeci">vect lehmer() const</div><div class="ttdef"><b>Definition</b> perm_generic_impl.hpp:61</div></div>
+<div class="ttc" id="astructHPCombi_1_1PermGeneric_html_ac22db541f350a935dc1d4251e16396ea"><div class="ttname"><a href="structHPCombi_1_1PermGeneric.html#ac22db541f350a935dc1d4251e16396ea">HPCombi::PermGeneric::nb_descents</a></div><div class="ttdeci">uint64_t nb_descents() const</div><div class="ttdef"><b>Definition</b> perm_generic_impl.hpp:81</div></div>
+<div class="ttc" id="astructHPCombi_1_1VectGeneric_html"><div class="ttname"><a href="structHPCombi_1_1VectGeneric.html">HPCombi::VectGeneric</a></div><div class="ttdoc">A generic class for combinatorial integer vectors.</div><div class="ttdef"><b>Definition</b> vect_generic.hpp:48</div></div>
+<div class="ttc" id="astructstd_1_1hash_3_01HPCombi_1_1PermGeneric_3_01Size_00_01Expo_01_4_01_4_html_a64048804317848cf915f9243a6ecb2b4"><div class="ttname"><a href="structstd_1_1hash_3_01HPCombi_1_1PermGeneric_3_01Size_00_01Expo_01_4_01_4.html#a64048804317848cf915f9243a6ecb2b4">std::hash&lt; HPCombi::PermGeneric&lt; Size, Expo &gt; &gt;::operator()</a></div><div class="ttdeci">size_t operator()(const HPCombi::PermGeneric&lt; Size, Expo &gt; &amp;ar) const</div><div class="ttdef"><b>Definition</b> perm_generic_impl.hpp:120</div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

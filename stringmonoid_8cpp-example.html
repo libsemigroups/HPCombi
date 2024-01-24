@@ -30,7 +30,7 @@ MathJax.Hub.Config({
   <td id="projectalign">
    <div id="projectname">HPCombi
    </div>
-   <div id="projectbrief">High Performance Combinatorics in C++ using vector instructions v0.0.6</div>
+   <div id="projectbrief">High Performance Combinatorics in C++ using vector instructions v1.0.0</div>
   </td>
  </tr>
  </tbody>
@@ -83,20 +83,25 @@ $(function() {
 <p>This is an example of how to use pow with a non numerical Monoid.</p>
 <p>This is an example of how to use pow with a non numerical Monoid.</p>
 <div class="fragment"><div class="line"><span class="comment">//****************************************************************************//</span></div>
-<div class="line"><span class="comment">//       Copyright (C) 2016 Florent Hivert &lt;Florent.Hivert@lri.fr&gt;,           //</span></div>
+<div class="line"><span class="comment">//     Copyright (C) 2016-2024 Florent Hivert &lt;Florent.Hivert@lisn.fr&gt;,       //</span></div>
 <div class="line"><span class="comment">//                                                                            //</span></div>
-<div class="line"><span class="comment">//  Distributed under the terms of the GNU General Public License (GPL)       //</span></div>
+<div class="line"><span class="comment">//  This file is part of HP-Combi &lt;https://github.com/libsemigroups/HPCombi&gt;  //</span></div>
 <div class="line"><span class="comment">//                                                                            //</span></div>
-<div class="line"><span class="comment">//    This code is distributed in the hope that it will be useful,            //</span></div>
-<div class="line"><span class="comment">//    but WITHOUT ANY WARRANTY; without even the implied warranty of          //</span></div>
-<div class="line"><span class="comment">//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU       //</span></div>
-<div class="line"><span class="comment">//   General Public License for more details.                                 //</span></div>
+<div class="line"><span class="comment">//  HP-Combi is free software: you can redistribute it and/or modify it       //</span></div>
+<div class="line"><span class="comment">//  under the terms of the GNU General Public License as published by the     //</span></div>
+<div class="line"><span class="comment">//  Free Software Foundation, either version 3 of the License, or             //</span></div>
+<div class="line"><span class="comment">//  (at your option) any later version.                                       //</span></div>
 <div class="line"><span class="comment">//                                                                            //</span></div>
-<div class="line"><span class="comment">//  The full text of the GPL is available at:                                 //</span></div>
+<div class="line"><span class="comment">//  HP-Combi is distributed in the hope that it will be useful, but WITHOUT   //</span></div>
+<div class="line"><span class="comment">//  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or     //</span></div>
+<div class="line"><span class="comment">//  FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License      //</span></div>
+<div class="line"><span class="comment">//  for  more details.                                                        //</span></div>
 <div class="line"><span class="comment">//                                                                            //</span></div>
-<div class="line"><span class="comment">//                  http://www.gnu.org/licenses/                              //</span></div>
+<div class="line"><span class="comment">//  You should have received a copy of the GNU General Public License along   //</span></div>
+<div class="line"><span class="comment">//  with HP-Combi. If not, see &lt;https://www.gnu.org/licenses/&gt;.               //</span></div>
 <div class="line"><span class="comment">//****************************************************************************//</span></div>
-<div class="line"><span class="comment"></span><span class="preprocessor">#include &lt;cassert&gt;</span></div>
+<div class="line"> </div>
+<div class="line"><span class="preprocessor">#include &lt;cassert&gt;</span></div>
 <div class="line"><span class="preprocessor">#include &lt;string&gt;</span></div>
 <div class="line"> </div>
 <div class="line"><span class="preprocessor">#include &quot;<a class="code" href="power_8hpp.html">hpcombi/power.hpp</a>&quot;</span></div>
@@ -126,12 +131,12 @@ $(function() {
 <div class="line">    assert(HPCombi::pow&lt;4&gt;(std::string(<span class="stringliteral">&quot;ab&quot;</span>)) == <span class="stringliteral">&quot;abababab&quot;</span>);</div>
 <div class="line">    assert(HPCombi::pow&lt;5&gt;(std::string(<span class="stringliteral">&quot;abc&quot;</span>)) == <span class="stringliteral">&quot;abcabcabcabcabc&quot;</span>);</div>
 <div class="line">}</div>
-<div class="ttc" id="aCF_8cpp_html_ae66f6b31b5ad750f1fe042a706a4e3d4"><div class="ttname"><a href="CF_8cpp.html#ae66f6b31b5ad750f1fe042a706a4e3d4">main</a></div><div class="ttdeci">int main()</div><div class="ttdef"><b>Definition</b> CF.cpp:71</div></div>
-<div class="ttc" id="anamespaceHPCombi_html"><div class="ttname"><a href="namespaceHPCombi.html">HPCombi</a></div><div class="ttdef"><b>Definition</b> bmat8.hpp:37</div></div>
-<div class="ttc" id="anamespacestd_html"><div class="ttname"><a href="namespacestd.html">std</a></div><div class="ttdef"><b>Definition</b> bmat8.hpp:360</div></div>
+<div class="ttc" id="aCF_8cpp_html_ae66f6b31b5ad750f1fe042a706a4e3d4"><div class="ttname"><a href="CF_8cpp.html#ae66f6b31b5ad750f1fe042a706a4e3d4">main</a></div><div class="ttdeci">int main()</div><div class="ttdef"><b>Definition</b> CF.cpp:75</div></div>
+<div class="ttc" id="anamespaceHPCombi_html"><div class="ttname"><a href="namespaceHPCombi.html">HPCombi</a></div><div class="ttdef"><b>Definition</b> bmat8.hpp:41</div></div>
+<div class="ttc" id="anamespacestd_html"><div class="ttname"><a href="namespacestd.html">std</a></div><div class="ttdef"><b>Definition</b> bmat8.hpp:364</div></div>
 <div class="ttc" id="apower_8hpp_html"><div class="ttname"><a href="power_8hpp.html">power.hpp</a></div><div class="ttdoc">Generic compile time power.</div></div>
-<div class="ttc" id="astructHPCombi_1_1power__helper_1_1Monoid_html_a0312ff434c0c6e5ffc7a0b31fd414c21"><div class="ttname"><a href="structHPCombi_1_1power__helper_1_1Monoid.html#a0312ff434c0c6e5ffc7a0b31fd414c21">HPCombi::power_helper::Monoid::prod</a></div><div class="ttdeci">static const T prod(T a, T b)</div><div class="ttdoc">the product of two elements of type T</div><div class="ttdef"><b>Definition</b> power.hpp:108</div></div>
-<div class="ttc" id="astructHPCombi_1_1power__helper_1_1Monoid_html_a77b1edca3343d14c5c635aa8466ae54a"><div class="ttname"><a href="structHPCombi_1_1power__helper_1_1Monoid.html#a77b1edca3343d14c5c635aa8466ae54a">HPCombi::power_helper::Monoid::one</a></div><div class="ttdeci">static const T one()</div><div class="ttdoc">The one of type T.</div><div class="ttdef"><b>Definition</b> power.hpp:101</div></div>
+<div class="ttc" id="astructHPCombi_1_1power__helper_1_1Monoid_html_a0312ff434c0c6e5ffc7a0b31fd414c21"><div class="ttname"><a href="structHPCombi_1_1power__helper_1_1Monoid.html#a0312ff434c0c6e5ffc7a0b31fd414c21">HPCombi::power_helper::Monoid::prod</a></div><div class="ttdeci">static const T prod(T a, T b)</div><div class="ttdoc">the product of two elements of type T</div><div class="ttdef"><b>Definition</b> power.hpp:112</div></div>
+<div class="ttc" id="astructHPCombi_1_1power__helper_1_1Monoid_html_a77b1edca3343d14c5c635aa8466ae54a"><div class="ttname"><a href="structHPCombi_1_1power__helper_1_1Monoid.html#a77b1edca3343d14c5c635aa8466ae54a">HPCombi::power_helper::Monoid::one</a></div><div class="ttdeci">static const T one()</div><div class="ttdoc">The one of type T.</div><div class="ttdef"><b>Definition</b> power.hpp:105</div></div>
 </div><!-- fragment --> </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

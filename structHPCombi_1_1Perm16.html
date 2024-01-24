@@ -30,7 +30,7 @@ MathJax.Hub.Config({
   <td id="projectalign">
    <div id="projectname">HPCombi
    </div>
-   <div id="projectbrief">High Performance Combinatorics in C++ using vector instructions v0.0.6</div>
+   <div id="projectbrief">High Performance Combinatorics in C++ using vector instructions v1.0.0</div>
   </td>
  </tr>
  </tbody>
@@ -587,8 +587,8 @@ Additional Inherited Members</h2></td></tr>
 <dl class="section return"><dt>Returns</dt><dd>the a vector \(v\) where $fv[i]$f contains the smallest element in the cycle of $i$ in <code>*this</code> </dd></dl>
 <dl class="section user"><dt>Example:</dt><dd><div class="fragment"><div class="line"><a class="code hl_struct" href="structHPCombi_1_1Perm16.html">Perm16</a> x {1,2,3,6,0,5,4,7,8,9,10,11,12,15,14,13}</div>
 <div class="line">x.<a class="code hl_function" href="structHPCombi_1_1Perm16.html#a38eda8cf653fcb46166e651af9f76b80">cycles_partition</a>()</div>
-<div class="ttc" id="astructHPCombi_1_1Perm16_html"><div class="ttname"><a href="structHPCombi_1_1Perm16.html">HPCombi::Perm16</a></div><div class="ttdoc">Permutations of .</div><div class="ttdef"><b>Definition</b> perm16.hpp:204</div></div>
-<div class="ttc" id="astructHPCombi_1_1Perm16_html_a38eda8cf653fcb46166e651af9f76b80"><div class="ttname"><a href="structHPCombi_1_1Perm16.html#a38eda8cf653fcb46166e651af9f76b80">HPCombi::Perm16::cycles_partition</a></div><div class="ttdeci">epu8 cycles_partition() const</div><div class="ttdoc">The set partition of the cycles of a permutation.</div><div class="ttdef"><b>Definition</b> perm16_impl.hpp:338</div></div>
+<div class="ttc" id="astructHPCombi_1_1Perm16_html"><div class="ttname"><a href="structHPCombi_1_1Perm16.html">HPCombi::Perm16</a></div><div class="ttdoc">Permutations of .</div><div class="ttdef"><b>Definition</b> perm16.hpp:208</div></div>
+<div class="ttc" id="astructHPCombi_1_1Perm16_html_a38eda8cf653fcb46166e651af9f76b80"><div class="ttname"><a href="structHPCombi_1_1Perm16.html#a38eda8cf653fcb46166e651af9f76b80">HPCombi::Perm16::cycles_partition</a></div><div class="ttdeci">epu8 cycles_partition() const</div><div class="ttdoc">The set partition of the cycles of a permutation.</div><div class="ttdef"><b>Definition</b> perm16_impl.hpp:344</div></div>
 </div><!-- fragment --> Returns <pre class="fragment">[ 0, 0, 0, 0, 0, 5, 0, 7, 8, 9,10,11,12,13,14,13]
 </pre> </dd></dl>
 
@@ -649,7 +649,7 @@ Additional Inherited Members</h2></td></tr>
 <dl class="section return"><dt>Returns</dt><dd>the inverse of <code>*this</code> </dd></dl>
 <dl class="section user"><dt>Example:</dt><dd><div class="fragment"><div class="line"><a class="code hl_struct" href="structHPCombi_1_1Perm16.html">Perm16</a> x = {0,3,2,4,1,5,6,7,8,9,10,11,12,13,14,15};</div>
 <div class="line">x.<a class="code hl_function" href="structHPCombi_1_1Perm16.html#a175f40a78824b7ea838b265475acf3a0">inverse</a>()</div>
-<div class="ttc" id="astructHPCombi_1_1Perm16_html_a175f40a78824b7ea838b265475acf3a0"><div class="ttname"><a href="structHPCombi_1_1Perm16.html#a175f40a78824b7ea838b265475acf3a0">HPCombi::Perm16::inverse</a></div><div class="ttdeci">Perm16 inverse() const</div><div class="ttdoc">The inverse permutation.</div><div class="ttdef"><b>Definition</b> perm16.hpp:279</div></div>
+<div class="ttc" id="astructHPCombi_1_1Perm16_html_a175f40a78824b7ea838b265475acf3a0"><div class="ttname"><a href="structHPCombi_1_1Perm16.html#a175f40a78824b7ea838b265475acf3a0">HPCombi::Perm16::inverse</a></div><div class="ttdeci">Perm16 inverse() const</div><div class="ttdoc">The inverse permutation.</div><div class="ttdef"><b>Definition</b> perm16.hpp:283</div></div>
 </div><!-- fragment --> Returns <pre class="fragment">{0,4,2,1,3,5,6,7,8,9,10,11,12,13,14,15} </pre>  </dd></dl>
 <p>Frontend method: currently aliased to <a class="el" href="structHPCombi_1_1Perm16.html#a09c5a4cb561215987e924993f976b452" title="The inverse permutation.">inverse_cycl</a> </p>
 
@@ -875,7 +875,7 @@ Additional Inherited Members</h2></td></tr>
 <p>Compare two permutations for the left weak order.   </p>
 <dl class="section user"><dt>Example:</dt><dd><div class="fragment"><div class="line"><a class="code hl_struct" href="structHPCombi_1_1Perm16.html">Perm16</a> x{2,0,3,1}, y{3,0,2,1};</div>
 <div class="line">x.<a class="code hl_function" href="structHPCombi_1_1Perm16.html#ac7ae022d0bc677bc601c372303e05f14">left_weak_leq</a>(y)</div>
-<div class="ttc" id="astructHPCombi_1_1Perm16_html_ac7ae022d0bc677bc601c372303e05f14"><div class="ttname"><a href="structHPCombi_1_1Perm16.html#ac7ae022d0bc677bc601c372303e05f14">HPCombi::Perm16::left_weak_leq</a></div><div class="ttdeci">bool left_weak_leq(Perm16 other) const</div><div class="ttdoc">Compare two permutations for the left weak order.</div><div class="ttdef"><b>Definition</b> perm16_impl.hpp:366</div></div>
+<div class="ttc" id="astructHPCombi_1_1Perm16_html_ac7ae022d0bc677bc601c372303e05f14"><div class="ttname"><a href="structHPCombi_1_1Perm16.html#ac7ae022d0bc677bc601c372303e05f14">HPCombi::Perm16::left_weak_leq</a></div><div class="ttdeci">bool left_weak_leq(Perm16 other) const</div><div class="ttdoc">Compare two permutations for the left weak order.</div><div class="ttdef"><b>Definition</b> perm16_impl.hpp:372</div></div>
 </div><!-- fragment --> Returns <pre class="fragment">true </pre>   </dd></dl>
 <dl class="section user"><dt>Algorithm:</dt><dd>\(O(n)\) algorithm using length </dd></dl>
 
@@ -972,7 +972,7 @@ Additional Inherited Members</h2></td></tr>
 <dl class="section return"><dt>Returns</dt><dd>the Lehmer code of <code>*this</code> </dd></dl>
 <dl class="section user"><dt>Example:</dt><dd><div class="fragment"><div class="line"><a class="code hl_struct" href="structHPCombi_1_1Perm16.html">Perm16</a> x = {0,3,2,4,1,5,6,7,8,9,10,11,12,13,14,15};</div>
 <div class="line">x.<a class="code hl_function" href="structHPCombi_1_1Perm16.html#a2304bd009f63be8ab28154ec6774c546">lehmer</a>()</div>
-<div class="ttc" id="astructHPCombi_1_1Perm16_html_a2304bd009f63be8ab28154ec6774c546"><div class="ttname"><a href="structHPCombi_1_1Perm16.html#a2304bd009f63be8ab28154ec6774c546">HPCombi::Perm16::lehmer</a></div><div class="ttdeci">epu8 lehmer() const</div><div class="ttdoc">The Lehmer code of a permutation.</div><div class="ttdef"><b>Definition</b> perm16_impl.hpp:284</div></div>
+<div class="ttc" id="astructHPCombi_1_1Perm16_html_a2304bd009f63be8ab28154ec6774c546"><div class="ttname"><a href="structHPCombi_1_1Perm16.html#a2304bd009f63be8ab28154ec6774c546">HPCombi::Perm16::lehmer</a></div><div class="ttdeci">epu8 lehmer() const</div><div class="ttdoc">The Lehmer code of a permutation.</div><div class="ttdef"><b>Definition</b> perm16_impl.hpp:290</div></div>
 </div><!-- fragment --> Returns <pre class="fragment">{0,2,1,1,0,0,0,0,0,0,0,0,0,0,0,0} </pre>   </dd></dl>
 <dl class="section user"><dt>Algorithm:</dt><dd>Fast \(O(n)\) algorithm using vector comparison </dd></dl>
 
@@ -1069,7 +1069,7 @@ Additional Inherited Members</h2></td></tr>
 <dl class="section return"><dt>Returns</dt><dd>the number of inversions of <code>*this</code> </dd></dl>
 <dl class="section user"><dt>Example:</dt><dd><div class="fragment"><div class="line"><a class="code hl_struct" href="structHPCombi_1_1Perm16.html">Perm16</a> x = {0,3,2,4,1,5,6,7,8,9,10,11,12,13,14,15};</div>
 <div class="line">x.<a class="code hl_function" href="structHPCombi_1_1Perm16.html#a84b7d749ffebabf06adb3e73b1e3f0b0">length</a>()</div>
-<div class="ttc" id="astructHPCombi_1_1Perm16_html_a84b7d749ffebabf06adb3e73b1e3f0b0"><div class="ttname"><a href="structHPCombi_1_1Perm16.html#a84b7d749ffebabf06adb3e73b1e3f0b0">HPCombi::Perm16::length</a></div><div class="ttdeci">uint8_t length() const</div><div class="ttdoc">The Coxeter length (ie: number of inversion) of a permutation.</div><div class="ttdef"><b>Definition</b> perm16_impl.hpp:312</div></div>
+<div class="ttc" id="astructHPCombi_1_1Perm16_html_a84b7d749ffebabf06adb3e73b1e3f0b0"><div class="ttname"><a href="structHPCombi_1_1Perm16.html#a84b7d749ffebabf06adb3e73b1e3f0b0">HPCombi::Perm16::length</a></div><div class="ttdeci">uint8_t length() const</div><div class="ttdoc">The Coxeter length (ie: number of inversion) of a permutation.</div><div class="ttdef"><b>Definition</b> perm16_impl.hpp:318</div></div>
 </div><!-- fragment --> Returns <pre class="fragment">4 </pre>   </dd></dl>
 <dl class="section user"><dt>Algorithm:</dt><dd>\(O(n)\) using vector lehmer and fast horizontal sum </dd></dl>
 
@@ -1166,7 +1166,7 @@ Additional Inherited Members</h2></td></tr>
 <dl class="section return"><dt>Returns</dt><dd>the number of cycles of <code>*this</code> </dd></dl>
 <dl class="section user"><dt>Example:</dt><dd><div class="fragment"><div class="line"><a class="code hl_struct" href="structHPCombi_1_1Perm16.html">Perm16</a> x {1,2,3,6,0,5,4,7,8,9,10,11,12,15,14,13}</div>
 <div class="line">x.<a class="code hl_function" href="structHPCombi_1_1Perm16.html#aa8419e1bd0baa579230662ec330d4b59">nb_cycles</a>()</div>
-<div class="ttc" id="astructHPCombi_1_1Perm16_html_aa8419e1bd0baa579230662ec330d4b59"><div class="ttname"><a href="structHPCombi_1_1Perm16.html#aa8419e1bd0baa579230662ec330d4b59">HPCombi::Perm16::nb_cycles</a></div><div class="ttdeci">uint8_t nb_cycles() const</div><div class="ttdoc">The number of cycles of a permutation.</div><div class="ttdef"><b>Definition</b> perm16.hpp:408</div></div>
+<div class="ttc" id="astructHPCombi_1_1Perm16_html_aa8419e1bd0baa579230662ec330d4b59"><div class="ttname"><a href="structHPCombi_1_1Perm16.html#aa8419e1bd0baa579230662ec330d4b59">HPCombi::Perm16::nb_cycles</a></div><div class="ttdeci">uint8_t nb_cycles() const</div><div class="ttdoc">The number of cycles of a permutation.</div><div class="ttdef"><b>Definition</b> perm16.hpp:412</div></div>
 </div><!-- fragment --> Returns <pre class="fragment">10 </pre>   </dd></dl>
 <dl class="section user"><dt>Algorithm: aliased to #nb_cycles_unroll</dt><dd></dd></dl>
 
@@ -1476,8 +1476,8 @@ Additional Inherited Members</h2></td></tr>
 </div>
 </div>
 <hr/>The documentation for this struct was generated from the following files:<ul>
-<li>/Users/jdm/git/HPCombi/include/hpcombi/<a class="el" href="perm16_8hpp_source.html">perm16.hpp</a></li>
-<li>/Users/jdm/git/HPCombi/include/hpcombi/<a class="el" href="perm16__impl_8hpp_source.html">perm16_impl.hpp</a></li>
+<li>/Users/jdm/hpcombi/include/hpcombi/<a class="el" href="perm16_8hpp_source.html">perm16.hpp</a></li>
+<li>/Users/jdm/hpcombi/include/hpcombi/<a class="el" href="perm16__impl_8hpp_source.html">perm16_impl.hpp</a></li>
 </ul>
 </div><!-- contents -->
 <!-- start footer part -->

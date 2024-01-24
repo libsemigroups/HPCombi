@@ -30,7 +30,7 @@ MathJax.Hub.Config({
   <td id="projectalign">
    <div id="projectname">HPCombi
    </div>
-   <div id="projectbrief">High Performance Combinatorics in C++ using vector instructions v0.0.6</div>
+   <div id="projectbrief">High Performance Combinatorics in C++ using vector instructions v1.0.0</div>
   </td>
  </tr>
  </tbody>
@@ -651,8 +651,8 @@ template&lt;class TPU &gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>the evaluation, that is the <a class="el" href="namespaceHPCombi.html#ac87988810bfcec65d51fe86a9707963a" title="SIMD vector of 16 unsigned bytes.">HPCombi::epu8</a> <code>r</code> such that <code>r</code>[i] is the number of occurrence of <code>i</code> in the input <code>v</code> </dd></dl>
 <dl class="section user"><dt>Example:</dt><dd><div class="fragment"><div class="line"><a class="code hl_function" href="namespaceHPCombi.html#a7f639b83ee205ad8d243957a03989308">eval16</a>(<a class="code hl_typedef" href="namespaceHPCombi.html#ac87988810bfcec65d51fe86a9707963a">epu8</a> { 5, 5, 2, 5, 1, 6,12, 4, 0, 3, 2,11,12,13,14,15});</div>
-<div class="ttc" id="anamespaceHPCombi_html_a7f639b83ee205ad8d243957a03989308"><div class="ttname"><a href="namespaceHPCombi.html#a7f639b83ee205ad8d243957a03989308">HPCombi::eval16</a></div><div class="ttdeci">epu8 eval16(epu8 v) noexcept</div><div class="ttdoc">Evaluation of a HPCombi::epu8.</div><div class="ttdef"><b>Definition</b> epu8.hpp:406</div></div>
-<div class="ttc" id="anamespaceHPCombi_html_ac87988810bfcec65d51fe86a9707963a"><div class="ttname"><a href="namespaceHPCombi.html#ac87988810bfcec65d51fe86a9707963a">HPCombi::epu8</a></div><div class="ttdeci">uint8_t __attribute__((vector_size(16))) epu8</div><div class="ttdoc">SIMD vector of 16 unsigned bytes.</div><div class="ttdef"><b>Definition</b> epu8.hpp:41</div></div>
+<div class="ttc" id="anamespaceHPCombi_html_a7f639b83ee205ad8d243957a03989308"><div class="ttname"><a href="namespaceHPCombi.html#a7f639b83ee205ad8d243957a03989308">HPCombi::eval16</a></div><div class="ttdeci">epu8 eval16(epu8 v) noexcept</div><div class="ttdoc">Evaluation of a HPCombi::epu8.</div><div class="ttdef"><b>Definition</b> epu8.hpp:408</div></div>
+<div class="ttc" id="anamespaceHPCombi_html_ac87988810bfcec65d51fe86a9707963a"><div class="ttname"><a href="namespaceHPCombi.html#ac87988810bfcec65d51fe86a9707963a">HPCombi::epu8</a></div><div class="ttdeci">uint8_t __attribute__((vector_size(16))) epu8</div><div class="ttdoc">SIMD vector of 16 unsigned bytes.</div><div class="ttdef"><b>Definition</b> epu8.hpp:45</div></div>
 </div><!-- fragment --> Returns <code>{ 1, 1, 2, 1, 1, 3, 1, 0, 0, 0, 0, 1, 2, 1, 1, 1}</code> </dd></dl>
 <dl class="section warning"><dt>Warning</dt><dd>The entries larger than 15 are ignored   </dd></dl>
 
@@ -1149,7 +1149,7 @@ template&lt;class TPU &gt; </div>
 <p>Horizontal sum of a <a class="el" href="namespaceHPCombi.html#ac87988810bfcec65d51fe86a9707963a" title="SIMD vector of 16 unsigned bytes.">HPCombi::epu8</a>.   </p>
 <dl class="section return"><dt>Returns</dt><dd>the horizontal sum of the input </dd></dl>
 <dl class="section user"><dt>Example:</dt><dd><div class="fragment"><div class="line"><a class="code hl_function" href="namespaceHPCombi.html#a87adf727d561fa11a7b9214cc137d649">horiz_max</a>(<a class="code hl_typedef" href="namespaceHPCombi.html#ac87988810bfcec65d51fe86a9707963a">epu8</a> { 5, 5, 2, 5, 1, 6,12, 4, 0, 3, 2, 0,12, 0, 0, 0});</div>
-<div class="ttc" id="anamespaceHPCombi_html_a87adf727d561fa11a7b9214cc137d649"><div class="ttname"><a href="namespaceHPCombi.html#a87adf727d561fa11a7b9214cc137d649">HPCombi::horiz_max</a></div><div class="ttdeci">uint8_t horiz_max(epu8 v) noexcept</div><div class="ttdoc">Horizontal sum of a HPCombi::epu8.</div><div class="ttdef"><b>Definition</b> epu8.hpp:278</div></div>
+<div class="ttc" id="anamespaceHPCombi_html_a87adf727d561fa11a7b9214cc137d649"><div class="ttname"><a href="namespaceHPCombi.html#a87adf727d561fa11a7b9214cc137d649">HPCombi::horiz_max</a></div><div class="ttdeci">uint8_t horiz_max(epu8 v) noexcept</div><div class="ttdoc">Horizontal sum of a HPCombi::epu8.</div><div class="ttdef"><b>Definition</b> epu8.hpp:280</div></div>
 </div><!-- fragment --> Returns <code>12</code>   </dd></dl>
 
 </div>
@@ -1309,7 +1309,7 @@ template&lt;class TPU &gt; </div>
 <p>Horizontal sum of a <a class="el" href="namespaceHPCombi.html#ac87988810bfcec65d51fe86a9707963a" title="SIMD vector of 16 unsigned bytes.">HPCombi::epu8</a>.   </p>
 <dl class="section return"><dt>Returns</dt><dd>the horizontal sum of the input </dd></dl>
 <dl class="section user"><dt>Example:</dt><dd><div class="fragment"><div class="line"><a class="code hl_function" href="namespaceHPCombi.html#a2b8a25566daa66f51043fa6038e5d967">horiz_min</a>(<a class="code hl_typedef" href="namespaceHPCombi.html#ac87988810bfcec65d51fe86a9707963a">epu8</a> { 5, 5, 2, 5, 1, 6,12, 4, 1, 3, 2, 2,12, 3, 4, 4});</div>
-<div class="ttc" id="anamespaceHPCombi_html_a2b8a25566daa66f51043fa6038e5d967"><div class="ttname"><a href="namespaceHPCombi.html#a2b8a25566daa66f51043fa6038e5d967">HPCombi::horiz_min</a></div><div class="ttdeci">uint8_t horiz_min(epu8 v) noexcept</div><div class="ttdoc">Horizontal sum of a HPCombi::epu8.</div><div class="ttdef"><b>Definition</b> epu8.hpp:341</div></div>
+<div class="ttc" id="anamespaceHPCombi_html_a2b8a25566daa66f51043fa6038e5d967"><div class="ttname"><a href="namespaceHPCombi.html#a2b8a25566daa66f51043fa6038e5d967">HPCombi::horiz_min</a></div><div class="ttdeci">uint8_t horiz_min(epu8 v) noexcept</div><div class="ttdoc">Horizontal sum of a HPCombi::epu8.</div><div class="ttdef"><b>Definition</b> epu8.hpp:343</div></div>
 </div><!-- fragment --> Returns <code>1</code>   </dd></dl>
 
 </div>
@@ -1469,7 +1469,7 @@ template&lt;class TPU &gt; </div>
 <p>Horizontal sum of a <a class="el" href="namespaceHPCombi.html#ac87988810bfcec65d51fe86a9707963a" title="SIMD vector of 16 unsigned bytes.">HPCombi::epu8</a>.   </p>
 <dl class="section return"><dt>Returns</dt><dd>the horizontal sum of the input </dd></dl>
 <dl class="section user"><dt>Example:</dt><dd><div class="fragment"><div class="line"><a class="code hl_function" href="namespaceHPCombi.html#a858065135d453d5a6a39cc90e81f68c0">horiz_sum</a>(<a class="code hl_typedef" href="namespaceHPCombi.html#ac87988810bfcec65d51fe86a9707963a">epu8</a> { 5, 5, 2, 5, 1, 6,12, 4, 0, 3, 2,11,12,13,14,15});</div>
-<div class="ttc" id="anamespaceHPCombi_html_a858065135d453d5a6a39cc90e81f68c0"><div class="ttname"><a href="namespaceHPCombi.html#a858065135d453d5a6a39cc90e81f68c0">HPCombi::horiz_sum</a></div><div class="ttdeci">uint8_t horiz_sum(epu8 v) noexcept</div><div class="ttdoc">Horizontal sum of a HPCombi::epu8.</div><div class="ttdef"><b>Definition</b> epu8.hpp:215</div></div>
+<div class="ttc" id="anamespaceHPCombi_html_a858065135d453d5a6a39cc90e81f68c0"><div class="ttname"><a href="namespaceHPCombi.html#a858065135d453d5a6a39cc90e81f68c0">HPCombi::horiz_sum</a></div><div class="ttdeci">uint8_t horiz_sum(epu8 v) noexcept</div><div class="ttdoc">Horizontal sum of a HPCombi::epu8.</div><div class="ttdef"><b>Definition</b> epu8.hpp:217</div></div>
 </div><!-- fragment --> Returns <code>110</code> </dd></dl>
 <dl class="section warning"><dt>Warning</dt><dd>The result is supposed to fit in a <code>uint8_t</code>   </dd></dl>
 
@@ -2678,7 +2678,7 @@ template&lt;bool Increasing = true, size_t sz&gt; </div>
 <p>Horizontal partial sum of a <a class="el" href="namespaceHPCombi.html#ac87988810bfcec65d51fe86a9707963a" title="SIMD vector of 16 unsigned bytes.">HPCombi::epu8</a>.   </p>
 <dl class="section return"><dt>Returns</dt><dd>the partials max of the input </dd></dl>
 <dl class="section user"><dt>Example:</dt><dd><div class="fragment"><div class="line"><a class="code hl_function" href="namespaceHPCombi.html#aebabe1134b200833d13df297171044ef">partial_max</a>(<a class="code hl_typedef" href="namespaceHPCombi.html#ac87988810bfcec65d51fe86a9707963a">epu8</a> { 5, 5, 2, 5, 1, 6,12, 4, 0, 3, 2,11,12,13,14,15});</div>
-<div class="ttc" id="anamespaceHPCombi_html_aebabe1134b200833d13df297171044ef"><div class="ttname"><a href="namespaceHPCombi.html#aebabe1134b200833d13df297171044ef">HPCombi::partial_max</a></div><div class="ttdeci">epu8 partial_max(epu8 v) noexcept</div><div class="ttdoc">Horizontal partial sum of a HPCombi::epu8.</div><div class="ttdef"><b>Definition</b> epu8.hpp:307</div></div>
+<div class="ttc" id="anamespaceHPCombi_html_aebabe1134b200833d13df297171044ef"><div class="ttname"><a href="namespaceHPCombi.html#aebabe1134b200833d13df297171044ef">HPCombi::partial_max</a></div><div class="ttdeci">epu8 partial_max(epu8 v) noexcept</div><div class="ttdoc">Horizontal partial sum of a HPCombi::epu8.</div><div class="ttdef"><b>Definition</b> epu8.hpp:309</div></div>
 </div><!-- fragment --> Returns <code>{ 5, 5, 5, 5, 5, 6,12,12,12,12,12,12,12,13,14,15}</code>   </dd></dl>
 
 </div>
@@ -2806,7 +2806,7 @@ template&lt;bool Increasing = true, size_t sz&gt; </div>
 <p>Horizontal partial sum of a <a class="el" href="namespaceHPCombi.html#ac87988810bfcec65d51fe86a9707963a" title="SIMD vector of 16 unsigned bytes.">HPCombi::epu8</a>.   </p>
 <dl class="section return"><dt>Returns</dt><dd>the partials min of the input </dd></dl>
 <dl class="section user"><dt>Example:</dt><dd><div class="fragment"><div class="line"><a class="code hl_function" href="namespaceHPCombi.html#abad0634130ca5c6ceb618aeb8288b89d">partial_min</a>(<a class="code hl_typedef" href="namespaceHPCombi.html#ac87988810bfcec65d51fe86a9707963a">epu8</a> { 5, 5, 2, 5, 1, 6,12, 4, 0, 3, 2,11,12,13,14,15});</div>
-<div class="ttc" id="anamespaceHPCombi_html_abad0634130ca5c6ceb618aeb8288b89d"><div class="ttname"><a href="namespaceHPCombi.html#abad0634130ca5c6ceb618aeb8288b89d">HPCombi::partial_min</a></div><div class="ttdeci">epu8 partial_min(epu8 v) noexcept</div><div class="ttdoc">Horizontal partial sum of a HPCombi::epu8.</div><div class="ttdef"><b>Definition</b> epu8.hpp:370</div></div>
+<div class="ttc" id="anamespaceHPCombi_html_abad0634130ca5c6ceb618aeb8288b89d"><div class="ttname"><a href="namespaceHPCombi.html#abad0634130ca5c6ceb618aeb8288b89d">HPCombi::partial_min</a></div><div class="ttdeci">epu8 partial_min(epu8 v) noexcept</div><div class="ttdoc">Horizontal partial sum of a HPCombi::epu8.</div><div class="ttdef"><b>Definition</b> epu8.hpp:372</div></div>
 </div><!-- fragment --> Returns <code>{ 5, 5, 2, 2, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0}</code>   </dd></dl>
 
 </div>
@@ -2934,7 +2934,7 @@ template&lt;bool Increasing = true, size_t sz&gt; </div>
 <p>Horizontal partial sum of a <a class="el" href="namespaceHPCombi.html#ac87988810bfcec65d51fe86a9707963a" title="SIMD vector of 16 unsigned bytes.">HPCombi::epu8</a>.   </p>
 <dl class="section return"><dt>Returns</dt><dd>the partials sums of the input </dd></dl>
 <dl class="section user"><dt>Example:</dt><dd><div class="fragment"><div class="line"><a class="code hl_function" href="namespaceHPCombi.html#a28889b97d949a58fe0a6f512a972448c">partial_sums</a>(<a class="code hl_typedef" href="namespaceHPCombi.html#ac87988810bfcec65d51fe86a9707963a">epu8</a> { 5, 5, 2, 5, 1, 6,12, 4, 0, 3, 2,11,12,13,14,15});</div>
-<div class="ttc" id="anamespaceHPCombi_html_a28889b97d949a58fe0a6f512a972448c"><div class="ttname"><a href="namespaceHPCombi.html#a28889b97d949a58fe0a6f512a972448c">HPCombi::partial_sums</a></div><div class="ttdeci">epu8 partial_sums(epu8 v) noexcept</div><div class="ttdoc">Horizontal partial sum of a HPCombi::epu8.</div><div class="ttdef"><b>Definition</b> epu8.hpp:244</div></div>
+<div class="ttc" id="anamespaceHPCombi_html_a28889b97d949a58fe0a6f512a972448c"><div class="ttname"><a href="namespaceHPCombi.html#a28889b97d949a58fe0a6f512a972448c">HPCombi::partial_sums</a></div><div class="ttdeci">epu8 partial_sums(epu8 v) noexcept</div><div class="ttdoc">Horizontal partial sum of a HPCombi::epu8.</div><div class="ttdef"><b>Definition</b> epu8.hpp:246</div></div>
 </div><!-- fragment --> Returns <code>{ 5,10,12,17,18,24,36,40,40,43,45,56,68,81,95,110}</code>   </dd></dl>
 
 </div>
@@ -3200,8 +3200,6 @@ template&lt;bool Increasing = true, size_t sz&gt; </div>
 </div><div class="memdoc">
 
 <p>Permuting a <a class="el" href="namespaceHPCombi.html#ac87988810bfcec65d51fe86a9707963a" title="SIMD vector of 16 unsigned bytes.">HPCombi::epu8</a>. </p>
-<p>Implementation part for inline functions //////////////////////////////////.</p>
-<p>Permuting a <a class="el" href="namespaceHPCombi.html#ac87988810bfcec65d51fe86a9707963a" title="SIMD vector of 16 unsigned bytes.">HPCombi::epu8</a> </p>
 
 </div>
 </div>
@@ -3736,14 +3734,14 @@ template&lt;typename T , typename M  = power_helper::Monoid&lt;T&gt;&gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
-<b>Initial value:</b><div class="fragment"><div class="line">{</div>
-<div class="line">    {</div>
-<div class="line">        {<a class="code hl_define" href="bmat8__impl_8hpp.html#a201a0d2d698f67adfe3f4ca209a3c7ff">FF</a>, 0,<a class="code hl_define" href="bmat8__impl_8hpp.html#a201a0d2d698f67adfe3f4ca209a3c7ff">FF</a>, 0,<a class="code hl_define" href="bmat8__impl_8hpp.html#a201a0d2d698f67adfe3f4ca209a3c7ff">FF</a>, 0,<a class="code hl_define" href="bmat8__impl_8hpp.html#a201a0d2d698f67adfe3f4ca209a3c7ff">FF</a>, 0,<a class="code hl_define" href="bmat8__impl_8hpp.html#a201a0d2d698f67adfe3f4ca209a3c7ff">FF</a>, 0,<a class="code hl_define" href="bmat8__impl_8hpp.html#a201a0d2d698f67adfe3f4ca209a3c7ff">FF</a>, 0,<a class="code hl_define" href="bmat8__impl_8hpp.html#a201a0d2d698f67adfe3f4ca209a3c7ff">FF</a>, 0,<a class="code hl_define" href="bmat8__impl_8hpp.html#a201a0d2d698f67adfe3f4ca209a3c7ff">FF</a>, 0},</div>
-<div class="line">        {<a class="code hl_define" href="bmat8__impl_8hpp.html#a201a0d2d698f67adfe3f4ca209a3c7ff">FF</a>,<a class="code hl_define" href="bmat8__impl_8hpp.html#a201a0d2d698f67adfe3f4ca209a3c7ff">FF</a>, 1, 1,<a class="code hl_define" href="bmat8__impl_8hpp.html#a201a0d2d698f67adfe3f4ca209a3c7ff">FF</a>,<a class="code hl_define" href="bmat8__impl_8hpp.html#a201a0d2d698f67adfe3f4ca209a3c7ff">FF</a>, 1, 1,<a class="code hl_define" href="bmat8__impl_8hpp.html#a201a0d2d698f67adfe3f4ca209a3c7ff">FF</a>,<a class="code hl_define" href="bmat8__impl_8hpp.html#a201a0d2d698f67adfe3f4ca209a3c7ff">FF</a>, 1, 1,<a class="code hl_define" href="bmat8__impl_8hpp.html#a201a0d2d698f67adfe3f4ca209a3c7ff">FF</a>,<a class="code hl_define" href="bmat8__impl_8hpp.html#a201a0d2d698f67adfe3f4ca209a3c7ff">FF</a>, 1, 1},</div>
-<div class="line">        {<a class="code hl_define" href="bmat8__impl_8hpp.html#a201a0d2d698f67adfe3f4ca209a3c7ff">FF</a>,<a class="code hl_define" href="bmat8__impl_8hpp.html#a201a0d2d698f67adfe3f4ca209a3c7ff">FF</a>,<a class="code hl_define" href="bmat8__impl_8hpp.html#a201a0d2d698f67adfe3f4ca209a3c7ff">FF</a>,<a class="code hl_define" href="bmat8__impl_8hpp.html#a201a0d2d698f67adfe3f4ca209a3c7ff">FF</a>, 2, 2, 2, 2,<a class="code hl_define" href="bmat8__impl_8hpp.html#a201a0d2d698f67adfe3f4ca209a3c7ff">FF</a>,<a class="code hl_define" href="bmat8__impl_8hpp.html#a201a0d2d698f67adfe3f4ca209a3c7ff">FF</a>,<a class="code hl_define" href="bmat8__impl_8hpp.html#a201a0d2d698f67adfe3f4ca209a3c7ff">FF</a>,<a class="code hl_define" href="bmat8__impl_8hpp.html#a201a0d2d698f67adfe3f4ca209a3c7ff">FF</a>, 2, 2, 2, 2},</div>
-<div class="line">        {<a class="code hl_define" href="bmat8__impl_8hpp.html#a201a0d2d698f67adfe3f4ca209a3c7ff">FF</a>,<a class="code hl_define" href="bmat8__impl_8hpp.html#a201a0d2d698f67adfe3f4ca209a3c7ff">FF</a>,<a class="code hl_define" href="bmat8__impl_8hpp.html#a201a0d2d698f67adfe3f4ca209a3c7ff">FF</a>,<a class="code hl_define" href="bmat8__impl_8hpp.html#a201a0d2d698f67adfe3f4ca209a3c7ff">FF</a>,<a class="code hl_define" href="bmat8__impl_8hpp.html#a201a0d2d698f67adfe3f4ca209a3c7ff">FF</a>,<a class="code hl_define" href="bmat8__impl_8hpp.html#a201a0d2d698f67adfe3f4ca209a3c7ff">FF</a>,<a class="code hl_define" href="bmat8__impl_8hpp.html#a201a0d2d698f67adfe3f4ca209a3c7ff">FF</a>,<a class="code hl_define" href="bmat8__impl_8hpp.html#a201a0d2d698f67adfe3f4ca209a3c7ff">FF</a>, 3, 3, 3, 3, 3, 3, 3, 3}</div>
+<b>Initial value:</b><div class="fragment"><div class="line">{{</div>
+<div class="line">    </div>
+<div class="line">      {<a class="code hl_define" href="bmat8__impl_8hpp.html#a201a0d2d698f67adfe3f4ca209a3c7ff">FF</a>, 0,<a class="code hl_define" href="bmat8__impl_8hpp.html#a201a0d2d698f67adfe3f4ca209a3c7ff">FF</a>, 0,<a class="code hl_define" href="bmat8__impl_8hpp.html#a201a0d2d698f67adfe3f4ca209a3c7ff">FF</a>, 0,<a class="code hl_define" href="bmat8__impl_8hpp.html#a201a0d2d698f67adfe3f4ca209a3c7ff">FF</a>, 0,<a class="code hl_define" href="bmat8__impl_8hpp.html#a201a0d2d698f67adfe3f4ca209a3c7ff">FF</a>, 0,<a class="code hl_define" href="bmat8__impl_8hpp.html#a201a0d2d698f67adfe3f4ca209a3c7ff">FF</a>, 0,<a class="code hl_define" href="bmat8__impl_8hpp.html#a201a0d2d698f67adfe3f4ca209a3c7ff">FF</a>, 0,<a class="code hl_define" href="bmat8__impl_8hpp.html#a201a0d2d698f67adfe3f4ca209a3c7ff">FF</a>, 0}, </div>
+<div class="line">      {<a class="code hl_define" href="bmat8__impl_8hpp.html#a201a0d2d698f67adfe3f4ca209a3c7ff">FF</a>,<a class="code hl_define" href="bmat8__impl_8hpp.html#a201a0d2d698f67adfe3f4ca209a3c7ff">FF</a>, 1, 1,<a class="code hl_define" href="bmat8__impl_8hpp.html#a201a0d2d698f67adfe3f4ca209a3c7ff">FF</a>,<a class="code hl_define" href="bmat8__impl_8hpp.html#a201a0d2d698f67adfe3f4ca209a3c7ff">FF</a>, 1, 1,<a class="code hl_define" href="bmat8__impl_8hpp.html#a201a0d2d698f67adfe3f4ca209a3c7ff">FF</a>,<a class="code hl_define" href="bmat8__impl_8hpp.html#a201a0d2d698f67adfe3f4ca209a3c7ff">FF</a>, 1, 1,<a class="code hl_define" href="bmat8__impl_8hpp.html#a201a0d2d698f67adfe3f4ca209a3c7ff">FF</a>,<a class="code hl_define" href="bmat8__impl_8hpp.html#a201a0d2d698f67adfe3f4ca209a3c7ff">FF</a>, 1, 1}, </div>
+<div class="line">      {<a class="code hl_define" href="bmat8__impl_8hpp.html#a201a0d2d698f67adfe3f4ca209a3c7ff">FF</a>,<a class="code hl_define" href="bmat8__impl_8hpp.html#a201a0d2d698f67adfe3f4ca209a3c7ff">FF</a>,<a class="code hl_define" href="bmat8__impl_8hpp.html#a201a0d2d698f67adfe3f4ca209a3c7ff">FF</a>,<a class="code hl_define" href="bmat8__impl_8hpp.html#a201a0d2d698f67adfe3f4ca209a3c7ff">FF</a>, 2, 2, 2, 2,<a class="code hl_define" href="bmat8__impl_8hpp.html#a201a0d2d698f67adfe3f4ca209a3c7ff">FF</a>,<a class="code hl_define" href="bmat8__impl_8hpp.html#a201a0d2d698f67adfe3f4ca209a3c7ff">FF</a>,<a class="code hl_define" href="bmat8__impl_8hpp.html#a201a0d2d698f67adfe3f4ca209a3c7ff">FF</a>,<a class="code hl_define" href="bmat8__impl_8hpp.html#a201a0d2d698f67adfe3f4ca209a3c7ff">FF</a>, 2, 2, 2, 2}, </div>
+<div class="line">      {<a class="code hl_define" href="bmat8__impl_8hpp.html#a201a0d2d698f67adfe3f4ca209a3c7ff">FF</a>,<a class="code hl_define" href="bmat8__impl_8hpp.html#a201a0d2d698f67adfe3f4ca209a3c7ff">FF</a>,<a class="code hl_define" href="bmat8__impl_8hpp.html#a201a0d2d698f67adfe3f4ca209a3c7ff">FF</a>,<a class="code hl_define" href="bmat8__impl_8hpp.html#a201a0d2d698f67adfe3f4ca209a3c7ff">FF</a>,<a class="code hl_define" href="bmat8__impl_8hpp.html#a201a0d2d698f67adfe3f4ca209a3c7ff">FF</a>,<a class="code hl_define" href="bmat8__impl_8hpp.html#a201a0d2d698f67adfe3f4ca209a3c7ff">FF</a>,<a class="code hl_define" href="bmat8__impl_8hpp.html#a201a0d2d698f67adfe3f4ca209a3c7ff">FF</a>,<a class="code hl_define" href="bmat8__impl_8hpp.html#a201a0d2d698f67adfe3f4ca209a3c7ff">FF</a>, 3, 3, 3, 3, 3, 3, 3, 3}  </div>
 <div class="line">    }}</div>
-<div class="ttc" id="abmat8__impl_8hpp_html_a201a0d2d698f67adfe3f4ca209a3c7ff"><div class="ttname"><a href="bmat8__impl_8hpp.html#a201a0d2d698f67adfe3f4ca209a3c7ff">FF</a></div><div class="ttdeci">#define FF</div><div class="ttdef"><b>Definition</b> bmat8_impl.hpp:240</div></div>
+<div class="ttc" id="abmat8__impl_8hpp_html_a201a0d2d698f67adfe3f4ca209a3c7ff"><div class="ttname"><a href="bmat8__impl_8hpp.html#a201a0d2d698f67adfe3f4ca209a3c7ff">FF</a></div><div class="ttdeci">#define FF</div><div class="ttdef"><b>Definition</b> bmat8_impl.hpp:246</div></div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -3894,8 +3892,7 @@ template&lt;typename T , typename M  = power_helper::Monoid&lt;T&gt;&gt; </div>
 <div class="line">}}</div>
 </div><!-- fragment -->
 <p>A duplicated 8-way sorting network. </p>
-<p><a href="https://en.wikipedia.org/wiki/Batcher_odd%E2%80%93even_mergesort">Batcher odd-Even mergesort</a> sorting network used by the <a class="el" href="namespaceHPCombi.html#aac0b8c59858e6dbf4a074ea169b16529" title="Return a sorted HPCombi::epu8.">sorted</a> function</p>
-<p>odd–even mergesort" </p>
+<p><a href="https://en.wikipedia.org/wiki/Batcher_odd%E2%80%93even_mergesort" title="Batcher odd–even mergesort">Batcher odd-Even mergesort</a> sorting network used by the <a class="el" href="namespaceHPCombi.html#aac0b8c59858e6dbf4a074ea169b16529" title="Return a sorted HPCombi::epu8.">sorted</a> function </p>
 
 </div>
 </div>
@@ -3927,7 +3924,7 @@ template&lt;typename T , typename M  = power_helper::Monoid&lt;T&gt;&gt; </div>
 <div class="line">    <a class="code hl_typedef" href="namespaceHPCombi.html#ac87988810bfcec65d51fe86a9707963a">epu8</a> { <a class="code hl_define" href="epu8__impl_8hpp.html#a201a0d2d698f67adfe3f4ca209a3c7ff">FF</a>, <a class="code hl_define" href="epu8__impl_8hpp.html#a201a0d2d698f67adfe3f4ca209a3c7ff">FF</a>, <a class="code hl_define" href="epu8__impl_8hpp.html#a201a0d2d698f67adfe3f4ca209a3c7ff">FF</a>, <a class="code hl_define" href="epu8__impl_8hpp.html#a201a0d2d698f67adfe3f4ca209a3c7ff">FF</a>, <a class="code hl_define" href="epu8__impl_8hpp.html#a201a0d2d698f67adfe3f4ca209a3c7ff">FF</a>, <a class="code hl_define" href="epu8__impl_8hpp.html#a201a0d2d698f67adfe3f4ca209a3c7ff">FF</a>, <a class="code hl_define" href="epu8__impl_8hpp.html#a201a0d2d698f67adfe3f4ca209a3c7ff">FF</a>, <a class="code hl_define" href="epu8__impl_8hpp.html#a201a0d2d698f67adfe3f4ca209a3c7ff">FF</a>,  7,  7,  7,  7,  7,  7,  7,  7}</div>
 <div class="line">    </div>
 <div class="line">}}</div>
-<div class="ttc" id="aepu8__impl_8hpp_html_a201a0d2d698f67adfe3f4ca209a3c7ff"><div class="ttname"><a href="epu8__impl_8hpp.html#a201a0d2d698f67adfe3f4ca209a3c7ff">FF</a></div><div class="ttdeci">#define FF</div><div class="ttdef"><b>Definition</b> epu8_impl.hpp:306</div></div>
+<div class="ttc" id="aepu8__impl_8hpp_html_a201a0d2d698f67adfe3f4ca209a3c7ff"><div class="ttname"><a href="epu8__impl_8hpp.html#a201a0d2d698f67adfe3f4ca209a3c7ff">FF</a></div><div class="ttdeci">#define FF</div><div class="ttdef"><b>Definition</b> epu8_impl.hpp:314</div></div>
 </div><!-- fragment -->
 <p>Permutation Round for partial and horizontal sums. </p>
 

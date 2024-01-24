@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.9.7"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>HPCombi: /Users/jdm/git/HPCombi/include/hpcombi/power.hpp Source File</title>
+<title>HPCombi: /Users/jdm/hpcombi/include/hpcombi/power.hpp Source File</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -30,7 +30,7 @@ MathJax.Hub.Config({
   <td id="projectalign">
    <div id="projectname">HPCombi
    </div>
-   <div id="projectbrief">High Performance Combinatorics in C++ using vector instructions v0.0.6</div>
+   <div id="projectbrief">High Performance Combinatorics in C++ using vector instructions v1.0.0</div>
   </td>
  </tr>
  </tbody>
@@ -77,71 +77,76 @@ $(function() {
 
 <div id="nav-path" class="navpath">
   <ul>
-<li class="navelem"><a class="el" href="dir_d44c64559bbebec7f509842c48db8b23.html">include</a></li><li class="navelem"><a class="el" href="dir_0a22e5c2a89343e7af7981e1b76abb37.html">hpcombi</a></li>  </ul>
+<li class="navelem"><a class="el" href="dir_384e75f8b06a376843465567c38c75c4.html">hpcombi</a></li><li class="navelem"><a class="el" href="dir_5af38e3415514f8d00d4fc9dd225e04d.html">include</a></li><li class="navelem"><a class="el" href="dir_0416da406782336a6fd9e39376a872e4.html">hpcombi</a></li>  </ul>
 </div>
 </div><!-- top -->
 <div class="header">
   <div class="headertitle"><div class="title">power.hpp</div></div>
 </div><!--header-->
 <div class="contents">
-<a href="power_8hpp.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span> </div>
-<div class="line"><a id="l00002" name="l00002"></a><span class="lineno">    2</span><span class="comment">//       Copyright (C) 2016 Florent Hivert &lt;Florent.Hivert@lri.fr&gt;,           //</span></div>
+<a href="power_8hpp.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span><span class="comment">//****************************************************************************//</span></div>
+<div class="line"><a id="l00002" name="l00002"></a><span class="lineno">    2</span><span class="comment">//     Copyright (C) 2016-2024 Florent Hivert &lt;Florent.Hivert@lisn.fr&gt;,       //</span></div>
 <div class="line"><a id="l00003" name="l00003"></a><span class="lineno">    3</span><span class="comment">//                                                                            //</span></div>
-<div class="line"><a id="l00004" name="l00004"></a><span class="lineno">    4</span><span class="comment">//  Distributed under the terms of the GNU General Public License (GPL)       //</span></div>
+<div class="line"><a id="l00004" name="l00004"></a><span class="lineno">    4</span><span class="comment">//  This file is part of HP-Combi &lt;https://github.com/libsemigroups/HPCombi&gt;  //</span></div>
 <div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span><span class="comment">//                                                                            //</span></div>
-<div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span><span class="comment">//    This code is distributed in the hope that it will be useful,            //</span></div>
-<div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span><span class="comment">//    but WITHOUT ANY WARRANTY; without even the implied warranty of          //</span></div>
-<div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span><span class="comment">//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU       //</span></div>
-<div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span><span class="comment">//   General Public License for more details.                                 //</span></div>
+<div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span><span class="comment">//  HP-Combi is free software: you can redistribute it and/or modify it       //</span></div>
+<div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span><span class="comment">//  under the terms of the GNU General Public License as published by the     //</span></div>
+<div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span><span class="comment">//  Free Software Foundation, either version 3 of the License, or             //</span></div>
+<div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span><span class="comment">//  (at your option) any later version.                                       //</span></div>
 <div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span><span class="comment">//                                                                            //</span></div>
-<div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span><span class="comment">//  The full text of the GPL is available at:                                 //</span></div>
-<div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span><span class="comment">//                                                                            //</span></div>
-<div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span><span class="comment">//                  http://www.gnu.org/licenses/                              //</span></div>
-<div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span><span class="comment"></span> </div>
-<div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span><span class="preprocessor">#ifndef HPCOMBI_POWER_HPP_INCLUDED</span></div>
-<div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span><span class="preprocessor">#define HPCOMBI_POWER_HPP_INCLUDED</span></div>
-<div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span> </div>
-<div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span><span class="keyword">namespace </span><a class="code hl_namespace" href="namespaceHPCombi.html">HPCombi</a> {</div>
-<div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span> </div>
-<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span><span class="keyword">namespace </span>power_helper {</div>
+<div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span><span class="comment">//  HP-Combi is distributed in the hope that it will be useful, but WITHOUT   //</span></div>
+<div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span><span class="comment">//  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or     //</span></div>
+<div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span><span class="comment">//  FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License      //</span></div>
+<div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span><span class="comment">//  for  more details.                                                        //</span></div>
+<div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span><span class="comment">//                                                                            //</span></div>
+<div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span><span class="comment">//  You should have received a copy of the GNU General Public License along   //</span></div>
+<div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span><span class="comment">//  with HP-Combi. If not, see &lt;https://www.gnu.org/licenses/&gt;.               //</span></div>
+<div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span><span class="comment">//****************************************************************************//</span></div>
+<div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span> </div>
+<div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span><span class="preprocessor">#ifndef HPCOMBI_POWER_HPP_</span></div>
+<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span><span class="preprocessor">#define HPCOMBI_POWER_HPP_</span></div>
 <div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span> </div>
-<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span><span class="comment">// Forward declaration</span></div>
-<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span><span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt; <span class="keyword">struct </span>Monoid;</div>
-<div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span> </div>
-<div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span>}  <span class="comment">// namespace power_helper</span></div>
-<div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span> </div>
-<div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span><span class="keyword">template</span> &lt;<span class="keyword">typename</span> T, <span class="keyword">typename</span> M = power_helper::Mono<span class="keywordtype">id</span>&lt;T&gt;&gt;</div>
-<div class="line"><a id="l00058" name="l00058"></a><span class="lineno"><a class="line" href="namespaceHPCombi.html#adaad0b0ef93f416f19063c142bcb464d">   58</a></span><span class="keyword">const</span> T <a class="code hl_function" href="namespaceHPCombi.html#adaad0b0ef93f416f19063c142bcb464d">square</a>(<span class="keyword">const</span> T x) {</div>
-<div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span>    <span class="keywordflow">return</span> M::prod(x, x);</div>
-<div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span>}</div>
-<div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span> </div>
-<div class="line"><a id="l00078" name="l00078"></a><span class="lineno">   78</span><span class="keyword">template</span> &lt;<span class="keywordtype">unsigned</span> exp, <span class="keyword">typename</span> T, <span class="keyword">typename</span> M = power_helper::Mono<span class="keywordtype">id</span>&lt;T&gt;&gt;</div>
-<div class="line"><a id="l00079" name="l00079"></a><span class="lineno"><a class="line" href="namespaceHPCombi.html#af015d3fb3769a7b157aef162ced70b2d">   79</a></span><span class="keyword">const</span> T <a class="code hl_function" href="namespaceHPCombi.html#af015d3fb3769a7b157aef162ced70b2d">pow</a>(<span class="keyword">const</span> T x) {</div>
-<div class="line"><a id="l00080" name="l00080"></a><span class="lineno">   80</span>    <span class="keywordflow">return</span> (exp == 0) ? M::one()</div>
-<div class="line"><a id="l00081" name="l00081"></a><span class="lineno">   81</span>           : (exp % 2 == 0)</div>
-<div class="line"><a id="l00082" name="l00082"></a><span class="lineno">   82</span>               ? square&lt;T, M&gt;(<a class="code hl_function" href="namespaceHPCombi.html#af015d3fb3769a7b157aef162ced70b2d">pow</a>&lt;<span class="keywordtype">unsigned</span>(exp / 2), T, M&gt;(x))</div>
-<div class="line"><a id="l00083" name="l00083"></a><span class="lineno">   83</span>               : M::prod(x, square&lt;T, M&gt;(<a class="code hl_function" href="namespaceHPCombi.html#af015d3fb3769a7b157aef162ced70b2d">pow</a>&lt;<span class="keywordtype">unsigned</span>(exp / 2), T, M&gt;(x)));</div>
-<div class="line"><a id="l00084" name="l00084"></a><span class="lineno">   84</span>}</div>
-<div class="line"><a id="l00085" name="l00085"></a><span class="lineno">   85</span> </div>
-<div class="line"><a id="l00086" name="l00086"></a><span class="lineno">   86</span><span class="keyword">namespace </span>power_helper {</div>
-<div class="line"><a id="l00087" name="l00087"></a><span class="lineno">   87</span> </div>
-<div class="line"><a id="l00099" name="l00099"></a><span class="lineno"><a class="line" href="structHPCombi_1_1power__helper_1_1Monoid.html">   99</a></span><span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt; <span class="keyword">struct </span><a class="code hl_struct" href="structHPCombi_1_1power__helper_1_1Monoid.html">Monoid</a> {</div>
-<div class="line"><a id="l00101" name="l00101"></a><span class="lineno"><a class="line" href="structHPCombi_1_1power__helper_1_1Monoid.html#a77b1edca3343d14c5c635aa8466ae54a">  101</a></span>    <span class="keyword">static</span> <span class="keyword">const</span> T <a class="code hl_function" href="structHPCombi_1_1power__helper_1_1Monoid.html#a77b1edca3343d14c5c635aa8466ae54a">one</a>() { <span class="keywordflow">return</span> 1; }</div>
-<div class="line"><a id="l00102" name="l00102"></a><span class="lineno">  102</span> </div>
-<div class="line"><a id="l00108" name="l00108"></a><span class="lineno"><a class="line" href="structHPCombi_1_1power__helper_1_1Monoid.html#a0312ff434c0c6e5ffc7a0b31fd414c21">  108</a></span>    <span class="keyword">static</span> <span class="keyword">const</span> T <a class="code hl_function" href="structHPCombi_1_1power__helper_1_1Monoid.html#a0312ff434c0c6e5ffc7a0b31fd414c21">prod</a>(T a, T b) { <span class="keywordflow">return</span> a * b; }</div>
-<div class="line"><a id="l00109" name="l00109"></a><span class="lineno">  109</span>};</div>
-<div class="line"><a id="l00110" name="l00110"></a><span class="lineno">  110</span> </div>
-<div class="line"><a id="l00111" name="l00111"></a><span class="lineno">  111</span>}  <span class="comment">// namespace power_helper</span></div>
-<div class="line"><a id="l00112" name="l00112"></a><span class="lineno">  112</span> </div>
-<div class="line"><a id="l00113" name="l00113"></a><span class="lineno">  113</span>}  <span class="comment">// namespace HPCombi</span></div>
+<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span><span class="keyword">namespace </span><a class="code hl_namespace" href="namespaceHPCombi.html">HPCombi</a> {</div>
+<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span> </div>
+<div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span><span class="keyword">namespace </span>power_helper {</div>
+<div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span> </div>
+<div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span><span class="comment">// Forward declaration</span></div>
+<div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span><span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt; <span class="keyword">struct </span>Monoid;</div>
+<div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span> </div>
+<div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span>}  <span class="comment">// namespace power_helper</span></div>
+<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span> </div>
+<div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span><span class="keyword">template</span> &lt;<span class="keyword">typename</span> T, <span class="keyword">typename</span> M = power_helper::Mono<span class="keywordtype">id</span>&lt;T&gt;&gt;</div>
+<div class="line"><a id="l00062" name="l00062"></a><span class="lineno"><a class="line" href="namespaceHPCombi.html#adaad0b0ef93f416f19063c142bcb464d">   62</a></span><span class="keyword">const</span> T <a class="code hl_function" href="namespaceHPCombi.html#adaad0b0ef93f416f19063c142bcb464d">square</a>(<span class="keyword">const</span> T x) {</div>
+<div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span>    <span class="keywordflow">return</span> M::prod(x, x);</div>
+<div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span>}</div>
+<div class="line"><a id="l00065" name="l00065"></a><span class="lineno">   65</span> </div>
+<div class="line"><a id="l00082" name="l00082"></a><span class="lineno">   82</span><span class="keyword">template</span> &lt;<span class="keywordtype">unsigned</span> exp, <span class="keyword">typename</span> T, <span class="keyword">typename</span> M = power_helper::Mono<span class="keywordtype">id</span>&lt;T&gt;&gt;</div>
+<div class="line"><a id="l00083" name="l00083"></a><span class="lineno"><a class="line" href="namespaceHPCombi.html#af015d3fb3769a7b157aef162ced70b2d">   83</a></span><span class="keyword">const</span> T <a class="code hl_function" href="namespaceHPCombi.html#af015d3fb3769a7b157aef162ced70b2d">pow</a>(<span class="keyword">const</span> T x) {</div>
+<div class="line"><a id="l00084" name="l00084"></a><span class="lineno">   84</span>    <span class="keywordflow">return</span> (exp == 0) ? M::one()</div>
+<div class="line"><a id="l00085" name="l00085"></a><span class="lineno">   85</span>           : (exp % 2 == 0)</div>
+<div class="line"><a id="l00086" name="l00086"></a><span class="lineno">   86</span>               ? square&lt;T, M&gt;(<a class="code hl_function" href="namespaceHPCombi.html#af015d3fb3769a7b157aef162ced70b2d">pow</a>&lt;<span class="keywordtype">unsigned</span>(exp / 2), T, M&gt;(x))</div>
+<div class="line"><a id="l00087" name="l00087"></a><span class="lineno">   87</span>               : M::prod(x, square&lt;T, M&gt;(<a class="code hl_function" href="namespaceHPCombi.html#af015d3fb3769a7b157aef162ced70b2d">pow</a>&lt;<span class="keywordtype">unsigned</span>(exp / 2), T, M&gt;(x)));</div>
+<div class="line"><a id="l00088" name="l00088"></a><span class="lineno">   88</span>}</div>
+<div class="line"><a id="l00089" name="l00089"></a><span class="lineno">   89</span> </div>
+<div class="line"><a id="l00090" name="l00090"></a><span class="lineno">   90</span><span class="keyword">namespace </span>power_helper {</div>
+<div class="line"><a id="l00091" name="l00091"></a><span class="lineno">   91</span> </div>
+<div class="line"><a id="l00103" name="l00103"></a><span class="lineno"><a class="line" href="structHPCombi_1_1power__helper_1_1Monoid.html">  103</a></span><span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt; <span class="keyword">struct </span><a class="code hl_struct" href="structHPCombi_1_1power__helper_1_1Monoid.html">Monoid</a> {</div>
+<div class="line"><a id="l00105" name="l00105"></a><span class="lineno"><a class="line" href="structHPCombi_1_1power__helper_1_1Monoid.html#a77b1edca3343d14c5c635aa8466ae54a">  105</a></span>    <span class="keyword">static</span> <span class="keyword">const</span> T <a class="code hl_function" href="structHPCombi_1_1power__helper_1_1Monoid.html#a77b1edca3343d14c5c635aa8466ae54a">one</a>() { <span class="keywordflow">return</span> 1; }</div>
+<div class="line"><a id="l00106" name="l00106"></a><span class="lineno">  106</span> </div>
+<div class="line"><a id="l00112" name="l00112"></a><span class="lineno"><a class="line" href="structHPCombi_1_1power__helper_1_1Monoid.html#a0312ff434c0c6e5ffc7a0b31fd414c21">  112</a></span>    <span class="keyword">static</span> <span class="keyword">const</span> T <a class="code hl_function" href="structHPCombi_1_1power__helper_1_1Monoid.html#a0312ff434c0c6e5ffc7a0b31fd414c21">prod</a>(T a, T b) { <span class="keywordflow">return</span> a * b; }</div>
+<div class="line"><a id="l00113" name="l00113"></a><span class="lineno">  113</span>};</div>
 <div class="line"><a id="l00114" name="l00114"></a><span class="lineno">  114</span> </div>
-<div class="line"><a id="l00115" name="l00115"></a><span class="lineno">  115</span><span class="preprocessor">#endif  </span><span class="comment">// HPCOMBI_POWER_HPP_INCLUDED</span></div>
-<div class="ttc" id="anamespaceHPCombi_html"><div class="ttname"><a href="namespaceHPCombi.html">HPCombi</a></div><div class="ttdef"><b>Definition</b> bmat8.hpp:37</div></div>
-<div class="ttc" id="anamespaceHPCombi_html_adaad0b0ef93f416f19063c142bcb464d"><div class="ttname"><a href="namespaceHPCombi.html#adaad0b0ef93f416f19063c142bcb464d">HPCombi::square</a></div><div class="ttdeci">const T square(const T x)</div><div class="ttdoc">A generic compile time squaring function.</div><div class="ttdef"><b>Definition</b> power.hpp:58</div></div>
-<div class="ttc" id="anamespaceHPCombi_html_af015d3fb3769a7b157aef162ced70b2d"><div class="ttname"><a href="namespaceHPCombi.html#af015d3fb3769a7b157aef162ced70b2d">HPCombi::pow</a></div><div class="ttdeci">const T pow(const T x)</div><div class="ttdoc">A generic compile time exponentiation function.</div><div class="ttdef"><b>Definition</b> power.hpp:79</div></div>
-<div class="ttc" id="astructHPCombi_1_1power__helper_1_1Monoid_html"><div class="ttname"><a href="structHPCombi_1_1power__helper_1_1Monoid.html">HPCombi::power_helper::Monoid</a></div><div class="ttdoc">Algebraic monoid structure used by default for type T by the pow function and prod function.</div><div class="ttdef"><b>Definition</b> power.hpp:99</div></div>
-<div class="ttc" id="astructHPCombi_1_1power__helper_1_1Monoid_html_a0312ff434c0c6e5ffc7a0b31fd414c21"><div class="ttname"><a href="structHPCombi_1_1power__helper_1_1Monoid.html#a0312ff434c0c6e5ffc7a0b31fd414c21">HPCombi::power_helper::Monoid::prod</a></div><div class="ttdeci">static const T prod(T a, T b)</div><div class="ttdoc">the product of two elements of type T</div><div class="ttdef"><b>Definition</b> power.hpp:108</div></div>
-<div class="ttc" id="astructHPCombi_1_1power__helper_1_1Monoid_html_a77b1edca3343d14c5c635aa8466ae54a"><div class="ttname"><a href="structHPCombi_1_1power__helper_1_1Monoid.html#a77b1edca3343d14c5c635aa8466ae54a">HPCombi::power_helper::Monoid::one</a></div><div class="ttdeci">static const T one()</div><div class="ttdoc">The one of type T.</div><div class="ttdef"><b>Definition</b> power.hpp:101</div></div>
+<div class="line"><a id="l00115" name="l00115"></a><span class="lineno">  115</span>}  <span class="comment">// namespace power_helper</span></div>
+<div class="line"><a id="l00116" name="l00116"></a><span class="lineno">  116</span> </div>
+<div class="line"><a id="l00117" name="l00117"></a><span class="lineno">  117</span>}  <span class="comment">// namespace HPCombi</span></div>
+<div class="line"><a id="l00118" name="l00118"></a><span class="lineno">  118</span> </div>
+<div class="line"><a id="l00119" name="l00119"></a><span class="lineno">  119</span><span class="preprocessor">#endif  </span><span class="comment">// HPCOMBI_POWER_HPP_</span></div>
+<div class="ttc" id="anamespaceHPCombi_html"><div class="ttname"><a href="namespaceHPCombi.html">HPCombi</a></div><div class="ttdef"><b>Definition</b> bmat8.hpp:41</div></div>
+<div class="ttc" id="anamespaceHPCombi_html_adaad0b0ef93f416f19063c142bcb464d"><div class="ttname"><a href="namespaceHPCombi.html#adaad0b0ef93f416f19063c142bcb464d">HPCombi::square</a></div><div class="ttdeci">const T square(const T x)</div><div class="ttdoc">A generic compile time squaring function.</div><div class="ttdef"><b>Definition</b> power.hpp:62</div></div>
+<div class="ttc" id="anamespaceHPCombi_html_af015d3fb3769a7b157aef162ced70b2d"><div class="ttname"><a href="namespaceHPCombi.html#af015d3fb3769a7b157aef162ced70b2d">HPCombi::pow</a></div><div class="ttdeci">const T pow(const T x)</div><div class="ttdoc">A generic compile time exponentiation function.</div><div class="ttdef"><b>Definition</b> power.hpp:83</div></div>
+<div class="ttc" id="astructHPCombi_1_1power__helper_1_1Monoid_html"><div class="ttname"><a href="structHPCombi_1_1power__helper_1_1Monoid.html">HPCombi::power_helper::Monoid</a></div><div class="ttdoc">Algebraic monoid structure used by default for type T by the pow function and prod function.</div><div class="ttdef"><b>Definition</b> power.hpp:103</div></div>
+<div class="ttc" id="astructHPCombi_1_1power__helper_1_1Monoid_html_a0312ff434c0c6e5ffc7a0b31fd414c21"><div class="ttname"><a href="structHPCombi_1_1power__helper_1_1Monoid.html#a0312ff434c0c6e5ffc7a0b31fd414c21">HPCombi::power_helper::Monoid::prod</a></div><div class="ttdeci">static const T prod(T a, T b)</div><div class="ttdoc">the product of two elements of type T</div><div class="ttdef"><b>Definition</b> power.hpp:112</div></div>
+<div class="ttc" id="astructHPCombi_1_1power__helper_1_1Monoid_html_a77b1edca3343d14c5c635aa8466ae54a"><div class="ttname"><a href="structHPCombi_1_1power__helper_1_1Monoid.html#a77b1edca3343d14c5c635aa8466ae54a">HPCombi::power_helper::Monoid::one</a></div><div class="ttdeci">static const T one()</div><div class="ttdoc">The one of type T.</div><div class="ttdef"><b>Definition</b> power.hpp:105</div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
