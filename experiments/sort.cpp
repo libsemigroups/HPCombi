@@ -42,7 +42,7 @@ std::vector<epu8> rand_sample(size_t sz) {
 }
 
 inline epu8 rand_perm() {
-    epu8 res = epu8id;
+    epu8 res = Epu8.id();
     auto &ar = as_array(res);
     std::random_shuffle(ar.begin(), ar.end());
     return res;
@@ -80,7 +80,7 @@ struct RoundsMask {
     // commented out due to a bug in gcc
     /* constexpr */ RoundsMask() : arr() {
         for (unsigned i = 0; i < HPCombi::sorting_rounds.size(); ++i)
-            arr[i] = HPCombi::sorting_rounds[i] < epu8id;
+            arr[i] = HPCombi::sorting_rounds[i] < Epu8.id();
     }
     epu8 arr[HPCombi::sorting_rounds.size()];
 };
@@ -90,9 +90,9 @@ const auto rounds_mask = RoundsMask();
 inline epu8 sort_pair(epu8 a) {
     for (unsigned i = 0; i < HPCombi::sorting_rounds.size(); ++i) {
         epu8 minab, maxab, b = permuted(a, HPCombi::sorting_rounds[i]);
-        minab = _mm_min_epi8(a, b);
-        maxab = _mm_max_epi8(a, b);
-        a = _mm_blendv_epi8(minab, maxab, rounds_mask.arr[i]);
+        minab = simde_mm_min_epi8(a, b);
+        maxab = simde_mm_max_epi8(a, b);
+        a = simde_mm_blendv_epi8(minab, maxab, rounds_mask.arr[i]);
     }
     return a;
 }
@@ -108,13 +108,13 @@ inline epu8 sort_odd_even(epu8 a) {
     epu8 b, minab, maxab;
     for (unsigned i = 0; i < 8; ++i) {
         b = permuted(a, even);
-        minab = _mm_min_epi8(a, b);
-        maxab = _mm_max_epi8(a, b);
-        a = _mm_blendv_epi8(minab, maxab, mask);
+        minab = simde_mm_min_epi8(a, b);
+        maxab = simde_mm_max_epi8(a, b);
+        a = simde_mm_blendv_epi8(minab, maxab, mask);
         b = permuted(a, odd);
-        minab = _mm_min_epi8(a, b);
-        maxab = _mm_max_epi8(a, b);
-        a = _mm_blendv_epi8(maxab, minab, mask);
+        minab = simde_mm_min_epi8(a, b);
+        maxab = simde_mm_max_epi8(a, b);
+        a = simde_mm_blendv_epi8(maxab, minab, mask);
     }
     return a;
 }
@@ -150,7 +150,7 @@ int main() {
             for (epu8 v : vrand) {
                 auto &ar = as_array(v);
                 std::sort(ar.begin(), ar.end());
-                ASSERT(equal(v, epu8id));  // avoid optimization
+                ASSERT(equal(v, Epu8.id()));  // avoid optimization
             }
         },
         rep);
@@ -158,35 +158,35 @@ int main() {
     timethat(
         [vrand]() {
             for (epu8 v : vrand)
-                ASSERT(equal(sort_odd_even(v), epu8id));
+                ASSERT(equal(sort_odd_even(v), Epu8.id()));
         },
         rep, reftime);
     cout << "Insert : ";
     timethat(
         [vrand]() {
             for (epu8 v : vrand)
-                ASSERT(equal(insertion_sort(v), epu8id));
+                ASSERT(equal(insertion_sort(v), Epu8.id()));
         },
         rep, reftime);
     cout << "Radix16: ";
     timethat(
         [vrand]() {
             for (epu8 v : vrand)
-                ASSERT(equal(radix_sort(v), epu8id));
+                ASSERT(equal(radix_sort(v), Epu8.id()));
         },
         rep, reftime);
     cout << "Pair  : ";
     timethat(
         [vrand]() {
             for (epu8 v : vrand)
-                ASSERT(equal(sort_pair(v), epu8id));
+                ASSERT(equal(sort_pair(v), Epu8.id()));
         },
         rep, reftime);
     cout << "Funct  : ";
     timethat(
         [vrand]() {
             for (epu8 v : vrand)
-                ASSERT(equal(sorted(v), epu8id));
+                ASSERT(equal(sorted(v), Epu8.id()));
         },
         rep, reftime);
 
