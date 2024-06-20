@@ -146,6 +146,25 @@ class BMat8 {
     //! from top to bottom) and then this sequence as an unsigned int.
     uint64_t to_int() const noexcept { return _data; }
 
+    //! Returns the array representation of \c this.
+    //!
+    //! Returns a two dimensional 8 x 8 array representing the matrix.
+    std::array<std::array<bool, 8>, 8> to_array() const noexcept;
+
+    //! Returns the bitwise or between \c this and \p that
+    //!
+    //! This method perform the bitwise operator on the matrices and
+    //! returns the result as a BMat8
+    BMat8 operator|(BMat8 const& that) const noexcept {
+        return BMat8(to_int() | that.to_int());
+    }
+
+    //! Returns the transpose of \c this.
+    //!
+    //! Returns the standard matrix transpose of a BMat8.
+    //! Uses a naive technique, by simply iterating through all entries
+    BMat8 transpose_naive() const noexcept;
+
     //! Returns the transpose of \c this
     //!
     //! Returns the standard matrix transpose of a BMat8.
@@ -186,6 +205,20 @@ class BMat8 {
     BMat8 operator*(BMat8 const &that) const noexcept {
         return mult_transpose(that.transpose());
     }
+
+    //! Returns the matrix product of \c this and \p that
+    //!
+    //! This method returns the standard matrix product (over the
+    //! boolean semiring) of two BMat8 objects. It performs the most naive approch
+    //! by simply iterating through all entries using the acces oeprator of BMat8
+    BMat8 mult_naive(BMat8 const& that) const noexcept;
+
+    //! Returns the matrix product of \c this and \p that
+    //!
+    //! This method returns the standard matrix product (over the
+    //! boolean semiring) of two BMat8 objects. It performs the most naive approch
+    //! by simply iterating through all entries using array conversion.
+    BMat8 mult_naive_array(BMat8 const& that) const noexcept;
 
     //! Returns a canonical basis of the row space of \c this
     //!
