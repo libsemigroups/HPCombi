@@ -70,6 +70,7 @@ TEST_CASE_METHOD(Fix_BMat8, "Transpose", "[BMat8][001]") {
     BENCHMARK_MEM_FN(transpose, sample);
     BENCHMARK_MEM_FN(transpose_mask, sample);
     BENCHMARK_MEM_FN(transpose_maskd, sample);
+    BENCHMARK_MEM_FN(transpose_naive, sample);
 }
 
 TEST_CASE_METHOD(Fix_BMat8, "Transpose pairs", "[BMat8][002]") {
