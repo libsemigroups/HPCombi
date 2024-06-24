@@ -120,8 +120,9 @@ TEST_CASE_METHOD(BMat8Fixture, "BMat8::transpose", "[BMat8][001]") {
 
 TEST_AGREES(BMat8Fixture, transpose, transpose_mask, BMlist, "[BMat8][002]");
 TEST_AGREES(BMat8Fixture, transpose, transpose_maskd, BMlist, "[BMat8][003]");
+TEST_AGREES(BMat8Fixture, transpose, transpose_naive, BMlist, "[BMat8][004]");
 
-TEST_CASE_METHOD(BMat8Fixture, "BMat8::transpose2", "[BMat8][004]") {
+TEST_CASE_METHOD(BMat8Fixture, "BMat8::transpose2", "[BMat8][005]") {
     for (auto a : BMlist) {
         for (auto b : BMlist) {
             BMat8 at = a, bt = b;
@@ -132,7 +133,7 @@ TEST_CASE_METHOD(BMat8Fixture, "BMat8::transpose2", "[BMat8][004]") {
     }
 }
 
-TEST_CASE_METHOD(BMat8Fixture, "BMat8::operator*", "[BMat8][005]") {
+TEST_CASE_METHOD(BMat8Fixture, "BMat8::operator*", "[BMat8][006]") {
     BMat8 tmp = bm * bm1;
     CHECK(tmp == bmm1);
     CHECK(tmp == bm * bm1);
@@ -154,7 +155,10 @@ TEST_CASE_METHOD(BMat8Fixture, "BMat8::operator*", "[BMat8][005]") {
     }
 }
 
-TEST_CASE("BMat8::random", "[BMat8][006]") {
+TEST_AGREES2(BMat8Fixture, BMat8::operator*, mult_naive, BMlist, "[BMat8][007]");
+TEST_AGREES2(BMat8Fixture, BMat8::operator*, mult_naive_array, BMlist, "[BMat8][008]");
+
+TEST_CASE("BMat8::random", "[BMat8][009]") {
     for (size_t d = 1; d < 8; ++d) {
         BMat8 bm = BMat8::random(d);
         for (size_t i = d + 1; i < 8; ++i) {
@@ -166,7 +170,7 @@ TEST_CASE("BMat8::random", "[BMat8][006]") {
     }
 }
 
-TEST_CASE("BMat8::operator()", "[BMat8][007]") {
+TEST_CASE("BMat8::operator()", "[BMat8][010]") {
     std::vector<std::vector<bool>> mat = {
         {0, 0, 0, 1, 0, 0, 1}, {0, 1, 1, 1, 0, 1, 0}, {1, 1, 0, 1, 1, 1, 1},
         {0, 0, 1, 0, 0, 1, 1}, {1, 1, 0, 0, 0, 0, 0}, {0, 1, 0, 0, 0, 0, 1},
@@ -179,7 +183,7 @@ TEST_CASE("BMat8::operator()", "[BMat8][007]") {
     }
 }
 
-TEST_CASE_METHOD(BMat8Fixture, "BMat8::operator<<", "[BMat8][008]") {
+TEST_CASE_METHOD(BMat8Fixture, "BMat8::operator<<", "[BMat8][011]") {
     std::ostringstream oss;
     oss << bm3;
     CHECK(oss.str() == "00010011\n"
@@ -196,7 +200,7 @@ TEST_CASE_METHOD(BMat8Fixture, "BMat8::operator<<", "[BMat8][008]") {
     os << BMat8::random();  // Also does not do anything visible
 }
 
-TEST_CASE_METHOD(BMat8Fixture, "BMat8::set", "[BMat8][009]") {
+TEST_CASE_METHOD(BMat8Fixture, "BMat8::set", "[BMat8][012]") {
     BMat8 bs;
     bs = bm;
     bs.set(0, 0, 1);
@@ -220,7 +224,7 @@ TEST_CASE_METHOD(BMat8Fixture, "BMat8::set", "[BMat8][009]") {
     CHECK(bs == zero);
 }
 
-TEST_CASE("BMat8::row_space_basis", "[BMat8][010]") {
+TEST_CASE("BMat8::row_space_basis", "[BMat8][013]") {
     BMat8 bm({{0, 1, 1, 1, 0, 1, 0, 1},
               {0, 0, 0, 0, 0, 0, 0, 1},
               {1, 1, 1, 1, 1, 1, 0, 1},
@@ -277,7 +281,7 @@ TEST_CASE("BMat8::row_space_basis", "[BMat8][010]") {
     }
 }
 
-TEST_CASE("BMat8::col_space_basis", "[BMat8][011]") {
+TEST_CASE("BMat8::col_space_basis", "[BMat8][014]") {
     BMat8 bm({{0, 1, 1, 1, 0, 1, 0, 1},
               {0, 0, 0, 0, 0, 0, 0, 1},
               {1, 1, 1, 1, 1, 1, 0, 1},
@@ -334,7 +338,7 @@ TEST_CASE("BMat8::col_space_basis", "[BMat8][011]") {
     }
 }
 
-TEST_CASE_METHOD(BMat8Fixture, "BMat8::row_space_size", "[BMat8][012]") {
+TEST_CASE_METHOD(BMat8Fixture, "BMat8::row_space_size", "[BMat8][015]") {
     CHECK(zero.row_space_size() == 1);
     CHECK(one1.row_space_size() == 2);
     CHECK(one2.row_space_size() == 4);
@@ -349,15 +353,15 @@ TEST_CASE_METHOD(BMat8Fixture, "BMat8::row_space_size", "[BMat8][012]") {
 }
 
 TEST_AGREES(BMat8Fixture, row_space_size_ref, row_space_size, BMlist,
-            "[BMat8][013]");
-TEST_AGREES(BMat8Fixture, row_space_size_ref, row_space_size_incl, BMlist,
-            "[BMat8][014]");
-TEST_AGREES(BMat8Fixture, row_space_size_ref, row_space_size_incl1, BMlist,
-            "[BMat8][015]");
-TEST_AGREES(BMat8Fixture, row_space_size_ref, row_space_size_bitset, BMlist,
             "[BMat8][016]");
+TEST_AGREES(BMat8Fixture, row_space_size_ref, row_space_size_incl, BMlist,
+            "[BMat8][017]");
+TEST_AGREES(BMat8Fixture, row_space_size_ref, row_space_size_incl1, BMlist,
+            "[BMat8][018]");
+TEST_AGREES(BMat8Fixture, row_space_size_ref, row_space_size_bitset, BMlist,
+            "[BMat8][019]");
 
-TEST_CASE_METHOD(BMat8Fixture, "BMat8::row_space_included", "[BMat8][017]") {
+TEST_CASE_METHOD(BMat8Fixture, "BMat8::row_space_included", "[BMat8][020]") {
     CHECK(zero.row_space_included(one1));
     CHECK_FALSE(one1.row_space_included(zero));
 
@@ -378,11 +382,11 @@ TEST_CASE_METHOD(BMat8Fixture, "BMat8::row_space_included", "[BMat8][017]") {
 }
 
 TEST_AGREES2(BMat8Fixture, row_space_included, row_space_included_ref, BMlist,
-             "[BMat8][018]");
+             "[BMat8][021]");
 TEST_AGREES2(BMat8Fixture, row_space_included, row_space_included_bitset,
-             BMlist, "[BMat8][019]");
+             BMlist, "[BMat8][022]");
 
-TEST_CASE_METHOD(BMat8Fixture, "BMat8::row_space_included2", "[BMat8][020]") {
+TEST_CASE_METHOD(BMat8Fixture, "BMat8::row_space_included2", "[BMat8][023]") {
     BMat8 a0 = BMat8::one();
     BMat8 b0 = BMat8(0);
     BMat8 a1 = BMat8(0);
@@ -405,7 +409,7 @@ TEST_CASE_METHOD(BMat8Fixture, "BMat8::row_space_included2", "[BMat8][020]") {
     }
 }
 
-TEST_CASE_METHOD(BMat8Fixture, "BMat8::row_permuted", "[BMat8][021]") {
+TEST_CASE_METHOD(BMat8Fixture, "BMat8::row_permuted", "[BMat8][024]") {
     CHECK(bm2.row_permuted(Perm16({1, 0})) == BMat8({{0, 1}, {1, 1}}));
     CHECK(bm2.row_permuted(Perm16({2, 1, 0})) ==
           BMat8({{0, 0, 0}, {0, 1, 0}, {1, 1, 0}}));
@@ -429,7 +433,7 @@ TEST_CASE_METHOD(BMat8Fixture, "BMat8::row_permuted", "[BMat8][021]") {
                  {0, 0, 0, 0, 0, 0, 0, 1}}));
 }
 
-TEST_CASE_METHOD(BMat8Fixture, "BMat8::col_permuted", "[BMat8][022]") {
+TEST_CASE_METHOD(BMat8Fixture, "BMat8::col_permuted", "[BMat8][025]") {
     CHECK(bm2.col_permuted(Perm16({1, 0})) == BMat8({{1, 1}, {1, 0}}));
     CHECK(bm2.col_permuted(Perm16({2, 1, 0})) ==
           BMat8({{0, 1, 1}, {0, 1, 0}, {0, 0, 0}}));
@@ -453,7 +457,7 @@ TEST_CASE_METHOD(BMat8Fixture, "BMat8::col_permuted", "[BMat8][022]") {
                  {0, 0, 0, 0, 0, 0, 0, 1}}));
 }
 
-TEST_CASE("BMat8::row_permutation_matrix", "[BMat8][023]") {
+TEST_CASE("BMat8::row_permutation_matrix", "[BMat8][026]") {
     CHECK(BMat8::row_permutation_matrix(Perm16({1, 0})) ==
           BMat8({{0, 1, 0, 0, 0, 0, 0, 0},
                  {1, 0, 0, 0, 0, 0, 0, 0},
@@ -483,7 +487,7 @@ TEST_CASE("BMat8::row_permutation_matrix", "[BMat8][023]") {
                  {0, 0, 0, 0, 0, 0, 0, 1}}));
 }
 
-TEST_CASE("BMat8::col_permutation_matrix", "[BMat8][024]") {
+TEST_CASE("BMat8::col_permutation_matrix", "[BMat8][027]") {
     CHECK(BMat8::col_permutation_matrix(Perm16({1, 0})) ==
           BMat8({{0, 1, 0, 0, 0, 0, 0, 0},
                  {1, 0, 0, 0, 0, 0, 0, 0},
@@ -513,7 +517,7 @@ TEST_CASE("BMat8::col_permutation_matrix", "[BMat8][024]") {
                  {0, 0, 0, 0, 0, 0, 0, 1}}));
 }
 
-TEST_CASE_METHOD(BMat8Fixture, "BMat8::nr_rows", "[BMat8][025]") {
+TEST_CASE_METHOD(BMat8Fixture, "BMat8::nr_rows", "[BMat8][028]") {
     CHECK(zero.nr_rows() == 0);
     CHECK(one1.nr_rows() == 1);
     CHECK(one2.nr_rows() == 2);
@@ -521,7 +525,7 @@ TEST_CASE_METHOD(BMat8Fixture, "BMat8::nr_rows", "[BMat8][025]") {
     CHECK(BMat8({{1, 0, 1}, {1, 1, 0}, {0, 0, 0}}).nr_rows() == 2);
 }
 
-TEST_CASE("BMat8::right_perm_action_on_basis_ref", "[BMat8][026]") {
+TEST_CASE("BMat8::right_perm_action_on_basis_ref", "[BMat8][029]") {
     BMat8 m1({{1, 1, 0}, {1, 0, 1}, {0, 0, 0}});
     BMat8 m2({{0, 0, 0}, {1, 0, 1}, {1, 1, 0}});
     CHECK(m1.right_perm_action_on_basis_ref(m2) == Perm16({1, 0}));
