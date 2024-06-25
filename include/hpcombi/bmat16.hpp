@@ -71,54 +71,59 @@ class BMat16 {
 
     //! A constructor.
     //!
-    //! This constructor initializes a matrix where the rows of the matrix
-    //! are the vectors in \p mat.
-    // Not sure if this is noexcept or not
-    explicit BMat8(std::vector<std::vector<bool>> const &mat);
+    //! This constructor initializes a matrix with 4 64 bits unsigned int
+    explicit BMat16(uint64_t n0, uint64_t n1, uint64_t n2, uint64_t n3) noexcept : // A changer
+        _data{n0, n1, n2, n3} {}
 
     //! A constructor.
     //!
     //! This is the copy constructor.
-    BMat8(BMat8 const &) noexcept = default;
+    BMat16(BMat16 const &) noexcept = default;
 
     //! A constructor.
     //!
     //! This is the move constructor.
-    BMat8(BMat8 &&) noexcept = default;
+    BMat16(BMat16 &&) noexcept = default;
 
     //! A constructor.
     //!
     //! This is the copy assignment constructor.
-    BMat8 &operator=(BMat8 const &) noexcept = default;
+    BMat16 &operator=(BMat16 const &) noexcept = default;
 
     //! A constructor.
     //!
-    //! This is the move assignment  constructor.
-    BMat8 &operator=(BMat8 &&) noexcept = default;
+    //! This is the move assignment constructor.
+    BMat16 &operator=(BMat16 &&) noexcept = default;
 
     //! A default destructor.
-    ~BMat8() = default;
+    ~BMat16() = default;
 
     //! Returns \c true if \c this equals \p that.
     //!
     //! This method checks the mathematical equality of two BMat8 objects.
-    bool operator==(BMat8 const &that) const noexcept {
+    bool operator==(BMat16 const &that) const noexcept { // A changer
         return _data == that._data;
     }
 
     //! Returns \c true if \c this does not equal \p that
     //!
     //! This method checks the mathematical inequality of two BMat8 objects.
-    bool operator!=(BMat8 const &that) const noexcept {
+    bool operator!=(BMat16 const &that) const noexcept { // A changer
         return _data != that._data;
     }
 
-    //! Returns the entry in the (\p i, \p j)th position.
-    //!
-    //! This method returns the entry in the (\p i, \p j)th position.
-    //! Note that since all matrices are internally represented as 8 x 8, it
-    //! is possible to access entries that you might not believe exist.
-    bool operator()(size_t i, size_t j) const noexcept;
+    // Conversion of type of storage, from blocks to lines
+    BMat16 to_line() const;
+
+    // Conversion of type of storage, from lines to blocks
+    BMat16 to_block() const;
+
+    // //! Returns the entry in the (\p i, \p j)th position.
+    // //!
+    // //! This method returns the entry in the (\p i, \p j)th position.
+    // //! Note that since all matrices are internally represented as 16 x 16, it
+    // //! is possible to access entries that you might not believe exist.
+    // bool operator()(size_t i, size_t j) const noexcept;
 
     // //! Sets the (\p i, \p j)th position to \p val.
     // //!
@@ -136,21 +141,21 @@ class BMat16 {
     //!
     //! This method perform the bitwise operator on the matrices and
     //! returns the result as a BMat8
-    BMat8 operator|(BMat8 const& that) const noexcept {
-        return BMat8(to_int() | that.to_int());
+    BMat16 operator|(BMat16 const& that) const noexcept {
+        return BMat16(_data | that._data);
     }
 
     //! Returns the transpose of \c this.
     //!
     //! Returns the standard matrix transpose of a BMat8.
     //! Uses a naive technique, by simply iterating through all entries
-    BMat8 transpose_naive() const noexcept;
+    BMat16 transpose_naive() const noexcept;
 
     //! Returns the transpose of \c this
     //!
     //! Returns the standard matrix transpose of a BMat8.
     //! Uses the technique found in Knuth AoCP Vol. 4 Fasc. 1a, p. 15.
-    BMat8 transpose() const noexcept;
+    BMat16 transpose() const noexcept;
 
     //! Returns the matrix product of \c this and the transpose of \p that
     //!
@@ -158,14 +163,14 @@ class BMat16 {
     //! boolean semiring) of two BMat8 objects. This is faster than transposing
     //! that and calling the product of \c this with it. Implementation uses
     //! vector instructions.
-    BMat8 mult_transpose(BMat8 const &that) const noexcept;
+    BMat16 mult_transpose(BMat8 const &that) const noexcept;
 
     //! Returns the matrix product of \c this and \p that
     //!
     //! This method returns the standard matrix product (over the
     //! boolean semiring) of two BMat8 objects. This is a fast implementation
     //! using transposition and vector instructions.
-    BMat8 operator*(BMat8 const &that) const noexcept {
+    BMat16 operator*(BMat8 const &that) const noexcept {
         return mult_transpose(that.transpose());
     }
 
@@ -174,14 +179,14 @@ class BMat16 {
     //! This method returns the standard matrix product (over the
     //! boolean semiring) of two BMat8 objects. It performs the most naive approch
     //! by simply iterating through all entries using the acces oeprator of BMat8
-    BMat8 mult_naive(BMat8 const& that) const noexcept;
+    BMat16 mult_naive(BMat8 const& that) const noexcept;
 
     //! Returns the matrix product of \c this and \p that
     //!
     //! This method returns the standard matrix product (over the
     //! boolean semiring) of two BMat8 objects. It performs the most naive approch
     //! by simply iterating through all entries using array conversion.
-    BMat8 mult_naive_array(BMat8 const& that) const noexcept;
+    BMat16 mult_naive_array(BMat8 const& that) const noexcept;
 
     //! Returns the number of non-zero rows of \c this
     size_t nr_rows() const noexcept;
@@ -206,7 +211,7 @@ class BMat16 {
     //!
     //! This method returns a BMat8 chosen at random.
     // Not noexcept because random things aren't
-    static BMat8 random();
+    static BMat16 random();
 
     // //! Returns a random square BMat8 up to dimension \p dim.
     // //!
@@ -215,7 +220,7 @@ class BMat16 {
     // // Not noexcept because BMat8::random above is not
     // static BMat8 random(size_t dim);
 
-    void swap(BMat8 &that) noexcept { std::swap(this->_data, that._data); }
+    void swap(BMat16 &that) noexcept { std::swap(this->_data, that._data); }
 
     //! Write \c this on \c os
     // Not noexcept

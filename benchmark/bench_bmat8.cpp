@@ -112,21 +112,9 @@ TEST_CASE_METHOD(Fix_BMat8, "Pair row space inclusion", "[BMat8][004]") {
 }
 
 TEST_CASE_METHOD(Fix_BMat8, "Multiplication", "[BMat8][005]") {
-    BENCHMARK("mult_transpose") {
-        for (auto &pair : pair_sample) {
-            volatile auto res = pair.first * pair.second;
-        }
-    };
-    BENCHMARK("mult_naive") {
-        for (auto &pair : pair_sample) {
-            volatile auto res = pair.first.mult_naive(pair.second);
-        }
-    };
-    BENCHMARK("mult_naive_array") {
-        for (auto &pair : pair_sample) {
-            volatile auto res = pair.first.mult_naive_array(pair.second);
-        }
-    };
+    BENCHMARK_MEM_FN_PAIR(BMat8::operator*, pair_sample);
+    BENCHMARK_MEM_FN_PAIR(mult_naive, pair_sample);
+    BENCHMARK_MEM_FN_PAIR(mult_naive_array, pair_sample);
 }
 
 }  // namespace HPCombi
