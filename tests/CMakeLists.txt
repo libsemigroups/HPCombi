@@ -37,7 +37,7 @@ endif()
 message(STATUS "Building tests")
 
 set(test_src
-  test_epu8.cpp test_perm16.cpp test_perm_all.cpp test_bmat8.cpp)
+  test_epu8.cpp test_perm16.cpp test_perm_all.cpp test_bmat8.cpp test_bmat16.cpp)
 
 foreach(f ${test_src})
   get_filename_component(testName ${f} NAME_WE)
@@ -65,3 +65,4 @@ add_test (TestEPU8 test_epu8)
 add_test (TestPerm16 test_perm16)
 add_test (TestPermAll test_perm_all)
 add_test (TestBMat8 test_bmat8)
+add_test (TestBMat16 test_bmat16)
