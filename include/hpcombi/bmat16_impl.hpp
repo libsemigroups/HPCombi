@@ -28,9 +28,17 @@ static_assert(std::is_trivial<BMat16>(), "BMat16 is not a trivial class!");
 static constexpr xpu16 line{0x800, 0x901, 0xa02, 0xb03, 0xc04, 0xd05, 0xe06, 0xf07, 0x800, 0x901, 0xa02, 0xb03, 0xc04, 0xd05, 0xe06, 0xf07};
 static constexpr xpu16 block{0x200, 0x604, 0xa08, 0xe0c, 0x301, 0x705, 0xb09, 0xf0d, 0x200, 0x604, 0xa08, 0xe0c, 0x301, 0x705, 0xb09, 0xf0d};
 
-BMat16::BMat16(uint64_t n0, uint64_t n1, uint64_t n2, uint64_t n3) noexcept {
+inline BMat16::BMat16(uint64_t n0, uint64_t n1, uint64_t n2, uint64_t n3) noexcept {
     xpu64 tmp{n0, n1, n2, n3};
     _data = simde_mm256_shuffle_epi8(tmp, line);
+}
+
+inline bool BMat16::operator==(BMat16 const &that) const noexcept {
+    xpu64 tmp = _data ^ that._data;
+    return ((tmp[0] == 0) and 
+           (tmp[1] == 0) and
+           (tmp[2] == 0) and 
+           (tmp[3] == 0));
 }
 
 inline BMat16 BMat16::to_line() const {

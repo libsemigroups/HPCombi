@@ -103,12 +103,12 @@ class BMat16 {
     //! This method checks the mathematical equality of two BMat8 objects.
     bool operator==(BMat16 const &that) const noexcept;
 
-    // //! Returns \c true if \c this does not equal \p that
-    // //!
-    // //! This method checks the mathematical inequality of two BMat8 objects.
-    // bool operator!=(BMat16 const &that) const noexcept { // A changer
-    //     return _data != that._data;
-    // }
+    //! Returns \c true if \c this does not equal \p that
+    //!
+    //! This method checks the mathematical inequality of two BMat8 objects.
+    bool operator!=(BMat16 const &that) const noexcept {
+        return !(_data == that._data);
+    }
 
     // Conversion of type of storage, from blocks to lines
     BMat16 to_line() const;
