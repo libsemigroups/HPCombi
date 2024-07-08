@@ -74,6 +74,10 @@ class BMat16 {
     //!
     //! This constructor initializes a matrix with 4 64 bits unsigned int
     explicit BMat16(uint64_t n0, uint64_t n1, uint64_t n2, uint64_t n3) noexcept;
+    // explicit BMat16(uint64_t n0, uint64_t n1, uint64_t n2, uint64_t n3) noexcept :
+    //     _data{xpu64{n0, n1, n2, n3}} {}
+    
+    explicit BMat16(std::vector<std::vector<bool>> const &mat) noexcept;
 
     //! A constructor.
     //!
@@ -107,7 +111,7 @@ class BMat16 {
     //!
     //! This method checks the mathematical inequality of two BMat8 objects.
     bool operator!=(BMat16 const &that) const noexcept {
-        return !(_data == that._data);
+        return !(*this == that);
     }
 
     // Conversion of type of storage, from blocks to lines
@@ -116,12 +120,12 @@ class BMat16 {
     // Conversion of type of storage, from lines to blocks
     BMat16 to_block() const;
 
-    // //! Returns the entry in the (\p i, \p j)th position.
-    // //!
-    // //! This method returns the entry in the (\p i, \p j)th position.
-    // //! Note that since all matrices are internally represented as 16 x 16, it
-    // //! is possible to access entries that you might not believe exist.
-    // bool operator()(size_t i, size_t j) const noexcept;
+    //! Returns the entry in the (\p i, \p j)th position.
+    //!
+    //! This method returns the entry in the (\p i, \p j)th position.
+    //! Note that since all matrices are internally represented as 16 x 16, it
+    //! is possible to access entries that you might not believe exist.
+    bool operator()(size_t i, size_t j) const noexcept;
 
     // //! Sets the (\p i, \p j)th position to \p val.
     // //!
@@ -130,22 +134,22 @@ class BMat16 {
     // //! <a href=http://graphics.stanford.edu/~seander/bithacks>here</a>.
     // void set(size_t i, size_t j, bool val) noexcept;
 
-    // //! Returns the array representation of \c this.
-    // //!
-    // //! Returns a two dimensional 8 x 8 array representing the matrix.
-    // std::array<std::array<bool, 8>, 8> to_array() const noexcept;
+    //! Returns the array representation of \c this.
+    //!
+    //! Returns a two dimensional 16 x 16 array representing the matrix.
+    std::array<std::array<bool, 16>, 16> to_array() const noexcept;
 
     //! Returns the bitwise or between \c this and \p that
     //!
     //! This method perform the bitwise operator on the matrices and
-    //! returns the result as a BMat8
+    //! returns the result as a BMat16
     BMat16 operator|(BMat16 const& that) const noexcept {
         return BMat16(_data | that._data);
     }
 
     //! Returns the transpose of \c this.
     //!
-    //! Returns the standard matrix transpose of a BMat8.
+    //! Returns the standard matrix transpose of a BMat16.
     //! Uses a naive technique, by simply iterating through all entries
     BMat16 transpose_block() const noexcept;
 
@@ -181,12 +185,12 @@ class BMat16 {
     // //! by simply iterating through all entries using the acces oeprator of BMat8
     // BMat16 mult_naive(BMat16 const& that) const noexcept;
 
-    // //! Returns the matrix product of \c this and \p that
-    // //!
-    // //! This method returns the standard matrix product (over the
-    // //! boolean semiring) of two BMat8 objects. It performs the most naive approch
-    // //! by simply iterating through all entries using array conversion.
-    // BMat16 mult_naive_array(BMat16 const& that) const noexcept;
+    //! Returns the matrix product of \c this and \p that
+    //!
+    //! This method returns the standard matrix product (over the
+    //! boolean semiring) of two BMat8 objects. It performs the most naive approch
+    //! by simply iterating through all entries using array conversion.
+    BMat16 mult_naive_array(BMat16 const& that) const noexcept;
 
     // //! Returns the number of non-zero rows of \c this
     // size_t nr_rows() const noexcept;
@@ -222,9 +226,9 @@ class BMat16 {
 
     // void swap(BMat16 &that) noexcept { std::swap(this->_data, that._data); }
 
-    //! Write \c this on \c os
+    // ! Write \c this on \c os
     // Not noexcept
-    // std::ostream &write(std::ostream &os) const;
+    std::ostream &write(std::ostream &os) const;
 };
 
 }  // namespace HPCombi
