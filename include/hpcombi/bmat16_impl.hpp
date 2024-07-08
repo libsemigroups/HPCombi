@@ -33,12 +33,41 @@ inline BMat16::BMat16(uint64_t n0, uint64_t n1, uint64_t n2, uint64_t n3) noexce
     _data = simde_mm256_shuffle_epi8(tmp, line);
 }
 
+inline BMat16::BMat16(std::vector<std::vector<bool>> const &mat) noexcept {
+    std::array<uint64_t, 4> tmp = {0, 0, 0, 0};
+    for (int i = 0; i < 4; i++) {
+        for (int j = 15; j >= 0; j--) {
+            tmp[0] = (tmp[0] << 1) | mat[3 - i][j];
+            tmp[1] = (tmp[1] << 1) | mat[7 - i][j];
+            tmp[2] = (tmp[2] << 1) | mat[11 - i][j];
+            tmp[3] = (tmp[3] << 1) | mat[15 - i][j];
+        }
+    }
+    _data = xpu64{tmp[0], tmp[1], tmp[2], tmp[3]};
+}
+
+bool BMat16::operator()(size_t i, size_t j) const noexcept {
+    return (_data[i/4] >> (16 * (i%4) + j)) % 2;
+}
+
 inline bool BMat16::operator==(BMat16 const &that) const noexcept {
     xpu64 tmp = _data ^ that._data;
     return ((tmp[0] == 0) and 
            (tmp[1] == 0) and
            (tmp[2] == 0) and 
            (tmp[3] == 0));
+}
+
+std::array<std::array<bool, 16>, 16> BMat16::to_array() const noexcept { // A changer !!!!!!!!!
+    uint64_t a = _data[0], b = _data[1], c = _data[2], d = _data[3];
+    std::array<std::array<bool, 16>, 16> res;
+    for (int i = 0; i < 64; i++) {
+        res[7 - i/8][7 - i%8] = a % 2; a >>= 1;
+        res[7 - i/8][15 - i%8] = b % 2; b >>= 1;
+        res[15 - i/8][7 - i%8] = c % 2; c >>= 1;
+        res[15 - i/8][15 - i%8] = d % 2; d >>= 1;
+    }
+    return res;
 }
 
 inline BMat16 BMat16::to_line() const {
@@ -82,6 +111,23 @@ inline BMat16 BMat16::mult_transpose(BMat16 const &that) const noexcept {
     return BMat16(data);
 }
 
+BMat16 BMat16::mult_naive_array(BMat16 const &that) const noexcept {
+    std::array<std::array<bool, 16>, 16> tab1 = to_array(), tab2 = that.to_array();
+    uint64_t a = 0, b = 0, c = 0, d = 0;
+    for (int i = 0; i < 8; i++) {
+        for (int j = 0; j < 8; j++) {
+            a <<= 1; b <<= 1; c <<= 1; d <<= 1;
+            for (int k = 0; k < 16; k++) {
+                a |= tab1[i][k] & tab2[k][j];
+                b |= tab1[i][k] & tab2[k][j + 8];
+                c |= tab1[i + 8][k] & tab2[k][j];
+                d |= tab1[i + 8][k] & tab2[k][j + 8];
+            }
+        }
+    }
+    return BMat16(a, b, c, d);
+}
+
 inline BMat16 BMat16::random() {
     static std::random_device _rd;
     static std::mt19937 _gen(_rd());
@@ -89,5 +135,16 @@ inline BMat16 BMat16::random() {
 
     return BMat16(_dist(_gen), _dist(_gen), _dist(_gen), _dist(_gen));
 }
+
+inline std::ostream &BMat16::write(std::ostream &os) const {
+    for (size_t i = 0; i < 16; ++i) {
+        for (size_t j = 0; j < 16; ++j) {
+            os << (*this)(i, j);
+        }
+        os << "\n";
+    }
+    return os;
+}
+
 
 }
