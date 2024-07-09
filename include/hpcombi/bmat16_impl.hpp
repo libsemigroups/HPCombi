@@ -58,14 +58,15 @@ inline bool BMat16::operator==(BMat16 const &that) const noexcept {
            (tmp[3] == 0));
 }
 
-std::array<std::array<bool, 16>, 16> BMat16::to_array() const noexcept { // A changer !!!!!!!!!
-    uint64_t a = _data[0], b = _data[1], c = _data[2], d = _data[3];
+std::array<std::array<bool, 16>, 16> BMat16::to_array() const noexcept {
+    xpu64 tmp = simde_mm256_shuffle_epi8(_data, block);
+    uint64_t a = tmp[0], b = tmp[1], c = tmp[2], d = tmp[3];
     std::array<std::array<bool, 16>, 16> res;
     for (int i = 0; i < 64; i++) {
-        res[7 - i/8][7 - i%8] = a % 2; a >>= 1;
-        res[7 - i/8][15 - i%8] = b % 2; b >>= 1;
-        res[15 - i/8][7 - i%8] = c % 2; c >>= 1;
-        res[15 - i/8][15 - i%8] = d % 2; d >>= 1;
+        res[i/8][i%8] = a % 2; a >>= 1;
+        res[i/8][8 + i%8] = b % 2; b >>= 1;
+        res[8 + i/8][i%8] = c % 2; c >>= 1;
+        res[8 + i/8][8 + i%8] = d % 2; d >>= 1;
     }
     return res;
 }
@@ -111,11 +112,46 @@ inline BMat16 BMat16::mult_transpose(BMat16 const &that) const noexcept {
     return BMat16(data);
 }
 
+BMat16 BMat16::mult_bmat8(BMat16 const &that) const noexcept {
+    xpu64 tmp1 = simde_mm256_shuffle_epi8(_data, block),
+          tmp2 = simde_mm256_shuffle_epi8(that._data, block);
+    BMat8 t1_0(tmp1[0]), 
+          t1_1(tmp1[1]), 
+          t1_2(tmp1[2]), 
+          t1_3(tmp1[3]), 
+          t2_0 = BMat8(tmp2[0]).transpose(), 
+          t2_1 = BMat8(tmp2[1]).transpose(), 
+          t2_2 = BMat8(tmp2[2]).transpose(), 
+          t2_3 = BMat8(tmp2[3]).transpose();
+    return BMat16(
+        (t1_0.mult_transpose(t2_0) | t1_1.mult_transpose(t2_2)).to_int(), 
+        (t1_0.mult_transpose(t2_1) | t1_1.mult_transpose(t2_3)).to_int(), 
+        (t1_2.mult_transpose(t2_0) | t1_3.mult_transpose(t2_2)).to_int(),
+        (t1_2.mult_transpose(t2_1) | t1_3.mult_transpose(t2_3)).to_int()
+    );
+}
+
+BMat16 BMat16::mult_naive(BMat16 const &that) const noexcept {
+    uint64_t a = 0, b = 0, c = 0, d = 0;
+    for (int i = 7; i >= 0; i--) {
+        for (int j = 7; j >= 0; j--) {
+            a <<= 1; b <<= 1; c <<= 1; d <<= 1;
+            for (int k = 0; k < 8; k++) {
+                a |= ((*this)(i, k) & that(k, j)) | ((*this)(i, k + 8) & that(k + 8, j));
+                b |= ((*this)(i, k) & that(k, j + 8)) | ((*this)(i, k + 8) & that(k + 8, j + 8));
+                c |= ((*this)(i + 8, k) & that(k, j)) | ((*this)(i + 8, k + 8) & that(k + 8, j));
+                d |= ((*this)(i + 8, k) & that(k, j + 8)) | ((*this)(i + 8, k + 8) & that(k + 8, j + 8));
+            }
+        }
+    }
+    return BMat16(a, b, c, d);
+}
+
 BMat16 BMat16::mult_naive_array(BMat16 const &that) const noexcept {
     std::array<std::array<bool, 16>, 16> tab1 = to_array(), tab2 = that.to_array();
     uint64_t a = 0, b = 0, c = 0, d = 0;
-    for (int i = 0; i < 8; i++) {
-        for (int j = 0; j < 8; j++) {
+    for (int i = 7; i >= 0; i--) {
+        for (int j = 7; j >= 0; j--) {
             a <<= 1; b <<= 1; c <<= 1; d <<= 1;
             for (int k = 0; k < 16; k++) {
                 a |= tab1[i][k] & tab2[k][j];
@@ -134,6 +170,54 @@ inline BMat16 BMat16::random() {
     static std::uniform_int_distribution<uint64_t> _dist(0, 0xffffffffffffffff);
 
     return BMat16(_dist(_gen), _dist(_gen), _dist(_gen), _dist(_gen));
+}
+
+static const constexpr std::array<xpu64, 16> ROW_MASK16 = {
+    xpu16{0xffff, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, 
+    xpu16{0, 0xffff, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, 
+    xpu16{0, 0, 0xffff, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, 
+    xpu16{0, 0, 0, 0xffff, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, 
+    xpu16{0, 0, 0, 0, 0xffff, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, 
+    xpu16{0, 0, 0, 0, 0, 0xffff, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, 
+    xpu16{0, 0, 0, 0, 0, 0, 0xffff, 0, 0, 0, 0, 0, 0, 0, 0, 0}, 
+    xpu16{0, 0, 0, 0, 0, 0, 0, 0xffff, 0, 0, 0, 0, 0, 0, 0, 0}, 
+    xpu16{0, 0, 0, 0, 0, 0, 0, 0, 0xffff, 0, 0, 0, 0, 0, 0, 0}, 
+    xpu16{0, 0, 0, 0, 0, 0, 0, 0, 0, 0xffff, 0, 0, 0, 0, 0, 0}, 
+    xpu16{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0xffff, 0, 0, 0, 0, 0}, 
+    xpu16{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0xffff, 0, 0, 0, 0}, 
+    xpu16{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0xffff, 0, 0, 0}, 
+    xpu16{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0xffff, 0, 0}, 
+    xpu16{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0xffff, 0},
+    xpu16{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0xffff}
+};
+
+static const constexpr std::array<xpu64, 16> COL_MASK16 = { // A changer !!!!
+    xpu16{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, 
+    xpu16{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}, 
+    xpu16{2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2}, 
+    xpu16{3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3}, 
+    xpu16{4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4}, 
+    xpu16{5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5}, 
+    xpu16{6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6}, 
+    xpu16{7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7}, 
+    xpu16{8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8}, 
+    xpu16{9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9}, 
+    xpu16{0xa, 0xa, 0xa, 0xa, 0xa, 0xa, 0xa, 0xa, 0xa, 0xa, 0xa, 0xa, 0xa, 0xa, 0xa, 0xa}, 
+    xpu16{0xb, 0xb, 0xb, 0xb, 0xb, 0xb, 0xb, 0xb, 0xb, 0xb, 0xb, 0xb, 0xb, 0xb, 0xb, 0xb}, 
+    xpu16{0xc, 0xc, 0xc, 0xc, 0xc, 0xc, 0xc, 0xc, 0xc, 0xc, 0xc, 0xc, 0xc, 0xc, 0xc, 0xc}, 
+    xpu16{0xd, 0xd, 0xd, 0xd, 0xd, 0xd, 0xd, 0xd, 0xd, 0xd, 0xd, 0xd, 0xd, 0xd, 0xd, 0xd}, 
+    xpu16{0xe, 0xe, 0xe, 0xe, 0xe, 0xe, 0xe, 0xe, 0xe, 0xe, 0xe, 0xe, 0xe, 0xe, 0xe, 0xe},
+    xpu16{0xf, 0xf, 0xf, 0xf, 0xf, 0xf, 0xf, 0xf, 0xf, 0xf, 0xf, 0xf, 0xf, 0xf, 0xf, 0xf}
+};
+
+inline BMat16 BMat16::random(size_t const dim) {
+    HPCOMBI_ASSERT(0 < dim && dim <= 16);
+    BMat16 bm = BMat16::random();
+    for (size_t i = dim; i < 16; ++i) {
+        bm._data &= ~ROW_MASK16[i];
+        bm._data &= ~COL_MASK16[i];
+    }
+    return bm;
 }
 
 inline std::ostream &BMat16::write(std::ostream &os) const {

@@ -37,6 +37,7 @@
 #include "debug.hpp"   // for HPCOMBI_ASSERT
 #include "epu8.hpp"    // for epu8
 #include "perm16.hpp"  // for Perm16
+#include "bmat8.hpp"
 
 #include "simde/x86/avx2.h"
 
@@ -169,6 +170,8 @@ class BMat16 {
     //! vector instructions.
     BMat16 mult_transpose(BMat16 const &that) const noexcept;
 
+    BMat16 mult_bmat8(BMat16 const &that) const noexcept;
+
     //! Returns the matrix product of \c this and \p that
     //!
     //! This method returns the standard matrix product (over the
@@ -178,12 +181,12 @@ class BMat16 {
         return mult_transpose(that.transpose());
     }
 
-    // //! Returns the matrix product of \c this and \p that
-    // //!
-    // //! This method returns the standard matrix product (over the
-    // //! boolean semiring) of two BMat8 objects. It performs the most naive approch
-    // //! by simply iterating through all entries using the acces oeprator of BMat8
-    // BMat16 mult_naive(BMat16 const& that) const noexcept;
+    //! Returns the matrix product of \c this and \p that
+    //!
+    //! This method returns the standard matrix product (over the
+    //! boolean semiring) of two BMat8 objects. It performs the most naive approch
+    //! by simply iterating through all entries using the acces oeprator of BMat8
+    BMat16 mult_naive(BMat16 const& that) const noexcept;
 
     //! Returns the matrix product of \c this and \p that
     //!
@@ -217,12 +220,12 @@ class BMat16 {
     // Not noexcept because random things aren't
     static BMat16 random();
 
-    // //! Returns a random square BMat8 up to dimension \p dim.
-    // //!
-    // //! This method returns a BMat8 chosen at random, where only the
-    // //! top-left \p dim x \p dim entries may be non-zero.
-    // // Not noexcept because BMat8::random above is not
-    // static BMat8 random(size_t dim);
+    //! Returns a random square BMat8 up to dimension \p dim.
+    //!
+    //! This method returns a BMat8 chosen at random, where only the
+    //! top-left \p dim x \p dim entries may be non-zero.
+    // Not noexcept because BMat8::random above is not
+    static BMat16 random(size_t dim);
 
     // void swap(BMat16 &that) noexcept { std::swap(this->_data, that._data); }
 
