@@ -184,14 +184,14 @@ class BMat16 {
     //! Returns the matrix product of \c this and \p that
     //!
     //! This method returns the standard matrix product (over the
-    //! boolean semiring) of two BMat8 objects. It performs the most naive approch
-    //! by simply iterating through all entries using the acces oeprator of BMat8
+    //! boolean semiring) of two BMat8 objects. It performs the most naive approach
+    //! by simply iterating through all entries using the access operator of BMat8
     BMat16 mult_naive(BMat16 const& that) const noexcept;
 
     //! Returns the matrix product of \c this and \p that
     //!
     //! This method returns the standard matrix product (over the
-    //! boolean semiring) of two BMat8 objects. It performs the most naive approch
+    //! boolean semiring) of two BMat8 objects. It performs the most naive approach
     //! by simply iterating through all entries using array conversion.
     BMat16 mult_naive_array(BMat16 const& that) const noexcept;
 

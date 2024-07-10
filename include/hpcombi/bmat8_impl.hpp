@@ -150,6 +150,7 @@ inline BMat8 BMat8::random() {
 }
 
 inline BMat8 BMat8::random(size_t const dim) {
+    // TO DO : Instead of nulling all the cols/rows one by one, one could do that at once with the proper mask
     HPCOMBI_ASSERT(0 < dim && dim <= 8);
     BMat8 bm = BMat8::random();
     for (size_t i = dim; i < 8; ++i) {
