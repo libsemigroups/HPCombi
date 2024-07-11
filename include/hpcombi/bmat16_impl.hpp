@@ -34,13 +34,14 @@ inline BMat16::BMat16(uint64_t n0, uint64_t n1, uint64_t n2, uint64_t n3) noexce
 }
 
 inline BMat16::BMat16(std::vector<std::vector<bool>> const &mat) noexcept {
+    HPCOMBI_ASSERT(mat.size() <= 16);
+    HPCOMBI_ASSERT(0 < mat.size());
     std::array<uint64_t, 4> tmp = {0, 0, 0, 0};
-    for (int i = 0; i < 4; i++) {
-        for (int j = 15; j >= 0; j--) {
-            tmp[0] = (tmp[0] << 1) | mat[3 - i][j];
-            tmp[1] = (tmp[1] << 1) | mat[7 - i][j];
-            tmp[2] = (tmp[2] << 1) | mat[11 - i][j];
-            tmp[3] = (tmp[3] << 1) | mat[15 - i][j];
+    for (int i = mat.size() - 1; i >= 0; i--) {
+        HPCOMBI_ASSERT(mat.size() == mat[i].size());
+        tmp[i/4] <<= 16 - mat.size();
+        for (int j = mat[i].size() - 1; j >= 0; j--) {
+            tmp[i/4] = (tmp[i/4] << 1) | mat[i][j];
         }
     }
     _data = xpu64{tmp[0], tmp[1], tmp[2], tmp[3]};
