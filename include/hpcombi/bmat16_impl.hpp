@@ -54,10 +54,14 @@ bool BMat16::operator()(size_t i, size_t j) const noexcept {
 inline bool BMat16::operator==(BMat16 const &that) const noexcept {
     xpu64 tmp = _data ^ that._data;
     return simde_mm256_testz_si256(tmp, tmp);
-    // return ((tmp[0] == 0) and 
-    //        (tmp[1] == 0) and
-    //        (tmp[2] == 0) and 
-    //        (tmp[3] == 0));
+}
+
+bool BMat16::operator<(BMat16 const &that) const noexcept {
+    return _data[0] < that._data[0] || (_data[0] == that._data[0] && (
+           _data[1] < that._data[1] || (_data[1] == that._data[1] && (
+           _data[2] < that._data[2] || (_data[2] == that._data[2] && (
+           _data[3] < that._data[3]
+           ))))));
 }
 
 std::array<std::array<bool, 16>, 16> BMat16::to_array() const noexcept {
@@ -79,6 +83,19 @@ inline BMat16 BMat16::to_line() const {
 
 inline BMat16 BMat16::to_block() const {
     return BMat16(simde_mm256_shuffle_epi8(_data, block));
+}
+
+inline BMat16 BMat16::transpose_naive() const noexcept {
+    uint64_t a = 0, b = 0, c = 0, d = 0;
+    for (int i = 7; i >= 0; i--) {
+        for (int j = 7; j >= 0; j--) {
+            a = (a << 1) | (*this)(j, i); 
+            b = (b << 1) | (*this)(j+8, i); 
+            c = (c << 1) | (*this)(j, i+8); 
+            d = (d << 1) | (*this)(j+8, i+8);
+        }
+    }
+    return BMat16(a, b, c, d);
 }
 
 inline BMat16 BMat16::transpose_block() const noexcept {
@@ -139,9 +156,9 @@ BMat16 BMat16::mult_naive(BMat16 const &that) const noexcept {
         for (int j = 7; j >= 0; j--) {
             a <<= 1; b <<= 1; c <<= 1; d <<= 1;
             for (int k = 0; k < 8; k++) {
-                a |= ((*this)(i, k) & that(k, j)) | ((*this)(i, k + 8) & that(k + 8, j));
-                b |= ((*this)(i, k) & that(k, j + 8)) | ((*this)(i, k + 8) & that(k + 8, j + 8));
-                c |= ((*this)(i + 8, k) & that(k, j)) | ((*this)(i + 8, k + 8) & that(k + 8, j));
+                a |= ((*this)(i, k)     & that(k, j))     | ((*this)(i, k + 8)     & that(k + 8, j));
+                b |= ((*this)(i, k)     & that(k, j + 8)) | ((*this)(i, k + 8)     & that(k + 8, j + 8));
+                c |= ((*this)(i + 8, k) & that(k, j))     | ((*this)(i + 8, k + 8) & that(k + 8, j));
                 d |= ((*this)(i + 8, k) & that(k, j + 8)) | ((*this)(i + 8, k + 8) & that(k + 8, j + 8));
             }
         }
@@ -164,6 +181,15 @@ BMat16 BMat16::mult_naive_array(BMat16 const &that) const noexcept {
         }
     }
     return BMat16(a, b, c, d);
+}
+
+inline std::vector<uint16_t> BMat16::rows() const { // A changer
+    std::vector<uint16_t> rows;
+    for (size_t i = 0; i < 16; ++i) {
+        uint16_t row = static_cast<uint16_t>(_data[i/4] << (8 * i) >> 56);
+        rows.push_back(row);
+    }
+    return rows;
 }
 
 inline BMat16 BMat16::random() {
