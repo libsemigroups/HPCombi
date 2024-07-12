@@ -115,6 +115,20 @@ class BMat16 {
         return !(*this == that);
     }
 
+    //! Returns \c true if \c this is less than \p that.
+    //!
+    //! This method checks whether a BMat16 objects is less than another.
+    //! We order by the results of to_int() for each matrix.
+    bool operator<(BMat16 const &that) const noexcept;
+
+    //! Returns \c true if \c this is greater than \p that.
+    //!
+    //! This method checks whether a BMat16 objects is greater than another.
+    //! We order by the results of to_int() for each matrix.
+    // bool operator>(BMat8 const &that) const noexcept {
+    //     return _data > that._data;
+    // }
+
     // Conversion of type of storage, from blocks to lines
     BMat16 to_line() const;
 
@@ -147,6 +161,12 @@ class BMat16 {
     BMat16 operator|(BMat16 const& that) const noexcept {
         return BMat16(_data | that._data);
     }
+
+    //! Returns the transpose of \c this.
+    //!
+    //! Returns the standard matrix transpose of a BMat8.
+    //! Uses a naive technique, by simply iterating through all entries
+    BMat16 transpose_naive() const noexcept;
 
     //! Returns the transpose of \c this.
     //!
@@ -198,21 +218,19 @@ class BMat16 {
     // //! Returns the number of non-zero rows of \c this
     // size_t nr_rows() const noexcept;
 
-    // //! Returns a \c std::vector for rows of \c this
-    // // Not noexcept because it constructs a vector
-    // std::vector<uint8_t> rows() const;
+    //! Returns a \c std::vector for rows of \c this
+    // Not noexcept because it constructs a vector
+    std::vector<uint16_t> rows() const;
 
-    // //! Returns the identity BMat8
-    // //!
-    // //! This method returns the 8 x 8 BMat8 with 1s on the main diagonal.
-    // static BMat8 one(size_t dim = 8) noexcept {
-    //     HPCOMBI_ASSERT(dim <= 8);
-    //     static std::array<uint64_t, 9> const ones = {
-    //         0x0000000000000000, 0x8000000000000000, 0x8040000000000000,
-    //         0x8040200000000000, 0x8040201000000000, 0x8040201008000000,
-    //         0x8040201008040000, 0x8040201008040200, 0x8040201008040201};
-    //     return BMat8(ones[dim]);
-    // }
+    //! Returns the identity BMat16
+    //!
+    //! This method returns the 16 x 16 BMat16 with 1s on the main diagonal.
+    static BMat16 one(size_t dim = 16) noexcept {
+        HPCOMBI_ASSERT(dim <= 16);
+        static std::array<uint64_t, 9> const ones = {
+            0, 1, 0x201, 0x40201, 0x8040201, 0x1008040201, 0x201008040201,  0x40201008040201, 0x8040201008040201};
+        return BMat16(ones[dim >= 8 ? 8 : dim], 0, 0, ones[dim >= 8 ? dim - 8 : 0]);
+    }
 
     //! Returns a random BMat8
     //!

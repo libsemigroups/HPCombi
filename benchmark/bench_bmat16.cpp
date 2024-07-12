@@ -60,6 +60,7 @@ class Fix_BMat16 {
 
 TEST_CASE_METHOD(Fix_BMat16, "Transpose", "[BMat16][000]") {
     BENCHMARK_MEM_FN(transpose, sample);
+    BENCHMARK_MEM_FN(transpose_naive, sample);
 }
 
 TEST_CASE_METHOD(Fix_BMat16, "Multiplication", "[BMat16][001]") {

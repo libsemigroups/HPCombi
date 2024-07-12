@@ -138,7 +138,7 @@ TEST_CASE_METHOD(BMat16Fixture, "BMat16::transpose", "[BMat16][000]") {
     }
 }
 
-// TEST_AGREES(BMat16Fixture, transpose, transpose_naive, BMlist, "[BMat16][001]");
+TEST_AGREES(BMat16Fixture, transpose, transpose_naive, BMlist, "[BMat16][001]");
 
 TEST_CASE_METHOD(BMat16Fixture, "BMat16::operator*", "[BMat16][002]") {
     BMat16 tmp = bm * bm1;
@@ -148,8 +148,8 @@ TEST_CASE_METHOD(BMat16Fixture, "BMat16::operator*", "[BMat16][002]") {
     for (auto b : BMlist) {
         CHECK(zero * b == zero);
         CHECK(b * zero == zero);
-        // CHECK(b * b.one() == b);
-        // CHECK(b.one() * b == b);
+        CHECK(b * b.one() == b);
+        CHECK(b.one() * b == b);
         CHECK((b * b) * (b * b) == b * b * b * b);
     }
 
