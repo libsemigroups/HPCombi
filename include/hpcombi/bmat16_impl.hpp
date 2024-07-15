@@ -28,9 +28,17 @@ static_assert(std::is_trivial<BMat16>(), "BMat16 is not a trivial class!");
 static constexpr xpu16 line{0x800, 0x901, 0xa02, 0xb03, 0xc04, 0xd05, 0xe06, 0xf07, 0x800, 0x901, 0xa02, 0xb03, 0xc04, 0xd05, 0xe06, 0xf07};
 static constexpr xpu16 block{0x200, 0x604, 0xa08, 0xe0c, 0x301, 0x705, 0xb09, 0xf0d, 0x200, 0x604, 0xa08, 0xe0c, 0x301, 0x705, 0xb09, 0xf0d};
 
+inline xpu64 to_line(xpu64 vect) {
+    return simde_mm256_shuffle_epi8(vect, line);
+}
+
+inline xpu64 to_block(xpu64 vect) {
+    return simde_mm256_shuffle_epi8(vect, block);
+}
+
 inline BMat16::BMat16(uint64_t n0, uint64_t n1, uint64_t n2, uint64_t n3) noexcept {
     xpu64 tmp{n0, n1, n2, n3};
-    _data = simde_mm256_shuffle_epi8(tmp, line);
+    _data = to_line(tmp);
 }
 
 inline BMat16::BMat16(std::vector<std::vector<bool>> const &mat) noexcept {
@@ -57,15 +65,21 @@ inline bool BMat16::operator==(BMat16 const &that) const noexcept {
 }
 
 bool BMat16::operator<(BMat16 const &that) const noexcept {
-    return _data[0] < that._data[0] || (_data[0] == that._data[0] && (
-           _data[1] < that._data[1] || (_data[1] == that._data[1] && (
-           _data[2] < that._data[2] || (_data[2] == that._data[2] && (
-           _data[3] < that._data[3]
-           ))))));
+    return _data[0] < that._data[0] || 
+            (_data[0] == that._data[0] && (_data[1] < that._data[1] || 
+            (_data[1] == that._data[1] && (_data[2] < that._data[2] || 
+            (_data[2] == that._data[2] && (_data[3] < that._data[3]))))));
+}
+
+bool BMat16::operator>(BMat16 const &that) const noexcept {
+    return _data[0] > that._data[0] || 
+            (_data[0] == that._data[0] && (_data[1] > that._data[1] || 
+            (_data[1] == that._data[1] && (_data[2] > that._data[2] || 
+            (_data[2] == that._data[2] && (_data[3] > that._data[3]))))));
 }
 
 std::array<std::array<bool, 16>, 16> BMat16::to_array() const noexcept {
-    xpu64 tmp = simde_mm256_shuffle_epi8(_data, block);
+    xpu64 tmp = to_block(_data);
     uint64_t a = tmp[0], b = tmp[1], c = tmp[2], d = tmp[3];
     std::array<std::array<bool, 16>, 16> res;
     for (int i = 0; i < 64; i++) {
@@ -75,14 +89,6 @@ std::array<std::array<bool, 16>, 16> BMat16::to_array() const noexcept {
         res[8 + i/8][8 + i%8] = d % 2; d >>= 1;
     }
     return res;
-}
-
-inline BMat16 BMat16::to_line() const {
-    return BMat16(simde_mm256_shuffle_epi8(_data, line));
-}
-
-inline BMat16 BMat16::to_block() const {
-    return BMat16(simde_mm256_shuffle_epi8(_data, block));
 }
 
 inline BMat16 BMat16::transpose_naive() const noexcept {
@@ -98,15 +104,16 @@ inline BMat16 BMat16::transpose_naive() const noexcept {
     return BMat16(a, b, c, d);
 }
 
-inline BMat16 BMat16::transpose_block() const noexcept {
-    xpu64 x = simde_mm256_set_epi64x(_data[3], _data[1], _data[2], _data[0]);
+inline BMat16 BMat16::transpose() const noexcept {
+    xpu64 tmp = to_block(_data);
+    xpu64 x = simde_mm256_set_epi64x(tmp[3], tmp[1], tmp[2], tmp[0]);
     xpu64 y = (x ^ (x >> 7)) & (xpu64{0xAA00AA00AA00AA, 0xAA00AA00AA00AA, 0xAA00AA00AA00AA, 0xAA00AA00AA00AA});
     x = x ^ y ^ (y << 7);
     y = (x ^ (x >> 14)) & (xpu64{0xCCCC0000CCCC, 0xCCCC0000CCCC, 0xCCCC0000CCCC, 0xCCCC0000CCCC});
     x = x ^ y ^ (y << 14);
     y = (x ^ (x >> 28)) & (xpu64{0xF0F0F0F0, 0xF0F0F0F0, 0xF0F0F0F0, 0xF0F0F0F0});
     x = x ^ y ^ (y << 28);
-    return BMat16(x);
+    return BMat16(to_line(x));
 }
 
 static constexpr xpu16 rot{0x302, 0x504, 0x706, 0x908, 0xb0a, 0xd0c, 0xf0e, 0x100, 0x302, 0x504, 0x706, 0x908, 0xb0a, 0xd0c, 0xf0e, 0x100};
@@ -131,23 +138,16 @@ inline BMat16 BMat16::mult_transpose(BMat16 const &that) const noexcept {
     return BMat16(data);
 }
 
-BMat16 BMat16::mult_bmat8(BMat16 const &that) const noexcept {
-    xpu64 tmp1 = simde_mm256_shuffle_epi8(_data, block),
-          tmp2 = simde_mm256_shuffle_epi8(that._data, block);
-    BMat8 t1_0(tmp1[0]), 
-          t1_1(tmp1[1]), 
-          t1_2(tmp1[2]), 
-          t1_3(tmp1[3]), 
-          t2_0 = BMat8(tmp2[0]).transpose(), 
-          t2_1 = BMat8(tmp2[1]).transpose(), 
-          t2_2 = BMat8(tmp2[2]).transpose(), 
-          t2_3 = BMat8(tmp2[3]).transpose();
-    return BMat16(
-        (t1_0.mult_transpose(t2_0) | t1_1.mult_transpose(t2_2)).to_int(), 
-        (t1_0.mult_transpose(t2_1) | t1_1.mult_transpose(t2_3)).to_int(), 
-        (t1_2.mult_transpose(t2_0) | t1_3.mult_transpose(t2_2)).to_int(),
-        (t1_2.mult_transpose(t2_1) | t1_3.mult_transpose(t2_3)).to_int()
-    );
+BMat16 BMat16::mult_4bmat8(BMat16 const &that) const noexcept {
+    BMat16 tmp = that.transpose();
+    xpu64 t1 = to_block(_data), 
+          t2 = to_block(tmp._data);
+    BMat8 a1(t1[0]), b1(t1[1]), c1(t1[2]), d1(t1[3]),
+          a2(t2[0]), b2(t2[1]), c2(t2[2]), d2(t2[3]);
+    return BMat16((a1.mult_transpose(a2) | b1.mult_transpose(b2)).to_int(), 
+                  (a1.mult_transpose(c2) | b1.mult_transpose(d2)).to_int(), 
+                  (c1.mult_transpose(a2) | d1.mult_transpose(b2)).to_int(), 
+                  (c1.mult_transpose(c2) | d1.mult_transpose(d2)).to_int());
 }
 
 BMat16 BMat16::mult_naive(BMat16 const &that) const noexcept {
@@ -183,10 +183,17 @@ BMat16 BMat16::mult_naive_array(BMat16 const &that) const noexcept {
     return BMat16(a, b, c, d);
 }
 
-inline std::vector<uint16_t> BMat16::rows() const { // A changer
+inline size_t BMat16::nr_rows() const noexcept{
+    xpu16 tmp = _data, zero = simde_mm256_setzero_si256();
+    xpu16 x = (tmp != zero);
+    return 0;
+    // return simde_mm256_popcnt_epi16(x); // To change
+}
+
+inline std::vector<uint16_t> BMat16::rows() const { // To change
     std::vector<uint16_t> rows;
     for (size_t i = 0; i < 16; ++i) {
-        uint16_t row = static_cast<uint16_t>(_data[i/4] << (8 * i) >> 56);
+        uint16_t row = static_cast<uint16_t>(_data[i/4] << (16 * (i%4)) >> 48);
         rows.push_back(row);
     }
     return rows;

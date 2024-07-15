@@ -162,10 +162,11 @@ TEST_CASE_METHOD(BMat16Fixture, "BMat16::operator*", "[BMat16][002]") {
     }
 }
 
-TEST_AGREES2(BMat16Fixture, BMat16::operator*, mult_naive, BMlist, "[BMat16][003]");
-TEST_AGREES2(BMat16Fixture, BMat16::operator*, mult_naive_array, BMlist, "[BMat16][004]");
+TEST_AGREES2(BMat16Fixture, BMat16::operator*, mult_4bmat8, BMlist, "[BMat16][003]");
+TEST_AGREES2(BMat16Fixture, BMat16::operator*, mult_naive, BMlist, "[BMat16][004]");
+TEST_AGREES2(BMat16Fixture, BMat16::operator*, mult_naive_array, BMlist, "[BMat16][005]");
 
-TEST_CASE("BMat16::random", "[BMat16][005]") {
+TEST_CASE("BMat16::random", "[BMat16][006]") {
     for (size_t d = 1; d < 8; ++d) {
         BMat16 bm = BMat16::random(d);
         for (size_t i = d + 1; i < 16; ++i) {
@@ -177,7 +178,7 @@ TEST_CASE("BMat16::random", "[BMat16][005]") {
     }
 }
 
-TEST_CASE("BMat8::operator()", "[BMat8][006]") {
+TEST_CASE("BMat16::operator()", "[BMat16][007]") {
     std::vector<std::vector<bool>> mat = {
         {0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0},
         {0, 0, 1, 0, 0, 1, 0, 1, 1, 1, 1, 0, 0, 0, 0},
@@ -202,7 +203,7 @@ TEST_CASE("BMat8::operator()", "[BMat8][006]") {
     }
 }
 
-TEST_CASE_METHOD(BMat16Fixture, "BMa16::operator<<", "[BMat16][007]") {
+TEST_CASE_METHOD(BMat16Fixture, "BMat16::operator<<", "[BMat16][008]") {
     std::ostringstream oss;
     oss << bm3;
     CHECK(oss.str() == "0001010001011011\n"
@@ -225,6 +226,14 @@ TEST_CASE_METHOD(BMat16Fixture, "BMa16::operator<<", "[BMat16][007]") {
     std::stringbuf buff;
     std::ostream os(&buff);
     os << BMat8::random();  // Also does not do anything visible
+}
+
+TEST_CASE_METHOD(BMat16Fixture, "BMat16::nr_rows", "[BMat16][009]") {
+    CHECK(zero.nr_rows() == 0);
+    CHECK(one1.nr_rows() == 1);
+    CHECK(one2.nr_rows() == 2);
+    CHECK(bm.nr_rows() == 16);
+    CHECK(BMat16({{1, 0, 1}, {1, 1, 0}, {0, 0, 0}}).nr_rows() == 2);
 }
 
 }  // namespace HPCombi
