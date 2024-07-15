@@ -65,6 +65,7 @@ TEST_CASE_METHOD(Fix_BMat16, "Transpose", "[BMat16][000]") {
 
 TEST_CASE_METHOD(Fix_BMat16, "Multiplication", "[BMat16][001]") {
     BENCHMARK_MEM_FN_PAIR(BMat16::operator*, pair_sample);
+    BENCHMARK_MEM_FN_PAIR(mult_4bmat8, pair_sample);
     BENCHMARK_MEM_FN_PAIR(mult_naive, pair_sample);
     BENCHMARK_MEM_FN_PAIR(mult_naive_array, pair_sample);
 }
