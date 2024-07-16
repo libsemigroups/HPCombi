@@ -133,7 +133,7 @@ class BMat8 {
     //!
     //! This method sets the (\p i, \p j)th entry of \c this to \p val.
     //! Uses the bit twiddle for setting bits found
-    //! <a href=http://graphics.stanford.edu/~seander/bithacks>here</a>.
+    //! <a href=http://graphics.stanford.edu/~seander/bithacks.html>here</a>.
     void set(size_t i, size_t j, bool val) noexcept;
 
     //! Returns the integer representation of \c this.
