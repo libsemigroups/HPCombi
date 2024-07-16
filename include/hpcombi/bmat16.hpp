@@ -78,6 +78,7 @@ class BMat16 {
     //! A constructor.
     //!
     //! This constructor initializes a matrix with 4 64 bits unsigned int
+    //! Each uint represents one of the four quarter (8x8 matrix).
     explicit BMat16(uint64_t n0, uint64_t n1, uint64_t n2, uint64_t n3) noexcept;
     
     //! A constructor.
@@ -138,12 +139,12 @@ class BMat16 {
     //! is possible to access entries that you might not believe exist.
     bool operator()(size_t i, size_t j) const noexcept;
 
-    // //! Sets the (\p i, \p j)th position to \p val.
-    // //!
-    // //! This method sets the (\p i, \p j)th entry of \c this to \p val.
-    // //! Uses the bit twiddle for setting bits found
-    // //! <a href=http://graphics.stanford.edu/~seander/bithacks>here</a>.
-    // void set(size_t i, size_t j, bool val) noexcept;
+    //! Sets the (\p i, \p j)th position to \p val.
+    //!
+    //! This method sets the (\p i, \p j)th entry of \c this to \p val.
+    //! Uses the bit twiddle for setting bits found
+    //! <a href=http://graphics.stanford.edu/~seander/bithacks.html>here</a>.
+    void set(size_t i, size_t j, bool val) noexcept;
 
     //! Returns the array representation of \c this.
     //!
