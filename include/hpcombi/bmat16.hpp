@@ -35,19 +35,28 @@
 #include <vector>      // for vector
 
 #include "debug.hpp"   // for HPCOMBI_ASSERT
-#include "epu8.hpp"    // for epu8
-#include "perm16.hpp"  // for Perm16
 #include "bmat8.hpp"
 
 #include "simde/x86/avx2.h"
-// #include "simde/x86/avx512/popcnt.h"
 
 namespace HPCombi {
 using xpu16 = uint16_t __attribute__((vector_size(32)));
 using xpu64 = uint64_t __attribute__((vector_size(32)));
 
+//! Converting storage type from blocks to rows of a xpu64
+//! representing a 16x16 matrix (used in BMat16).
+//!
+//! Each 64 bit unsigned int represents 4 lines of the matrix.
 xpu64 to_line(xpu64 vect);
+
+//! Converting storage type from rows to blocks of a xpu64
+//! representing a 16x16 matrix (used in BMat16).
+//! 
+//! Each 64 bit unsigned int represents one of the four 
+//! 8x8 matrix that make up a 16x16 when quartered.
 xpu64 to_block(xpu64 vect);
+
+
 
 //! Class for fast boolean matrices of dimension up to 16 x 16
 //!
@@ -60,8 +69,6 @@ xpu64 to_block(xpu64 vect);
 //! BMat16 is a trivial class.
 class BMat16 {
  public:
-    xpu64 _data;
-
     //! A default constructor.
     //!
     //! This constructor gives no guarantees on what the matrix will contain.
@@ -71,7 +78,7 @@ class BMat16 {
     //!
     //! This constructor initializes a matrix with a 256-bit register
     //! The rows are equal to the 16 chunks, of 16 bits each, 
-    //! of the binary representation of the matrix
+    //! of the binary representation of the matrix.
     explicit BMat16(xpu64 mat) noexcept : 
         _data{mat} {}
 
@@ -242,9 +249,14 @@ class BMat16 {
 
     void swap(BMat16 &that) noexcept { std::swap(this->_data, that._data); }
 
-    // ! Write \c this on \c os
+    //! Write \c this on \c os
     // Not noexcept
     std::ostream &write(std::ostream &os) const;
+
+
+ private:
+    xpu64 _data;
+
 };
 
 }  // namespace HPCombi

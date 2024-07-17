@@ -95,9 +95,9 @@ inline std::array<std::array<bool, 16>, 16> BMat16::to_array() const noexcept {
     uint64_t a = tmp[0], b = tmp[1], c = tmp[2], d = tmp[3];
     std::array<std::array<bool, 16>, 16> res;
     for (size_t i = 0; i < 64; ++i) {
-        res[i/8][i%8] = a & 1; a >>= 1;
-        res[i/8][8 + i%8] = b & 1; b >>= 1;
-        res[8 + i/8][i%8] = c & 1; c >>= 1;
+        res[i/8][i%8]         = a & 1; a >>= 1;
+        res[i/8][8 + i%8]     = b & 1; b >>= 1;
+        res[8 + i/8][i%8]     = c & 1; c >>= 1;
         res[8 + i/8][8 + i%8] = d & 1; d >>= 1;
     }
     return res;
@@ -129,7 +129,6 @@ inline BMat16 BMat16::transpose() const noexcept {
 }
 
 static constexpr xpu16 rot{0x302, 0x504, 0x706, 0x908, 0xb0a, 0xd0c, 0xf0e, 0x100, 0x302, 0x504, 0x706, 0x908, 0xb0a, 0xd0c, 0xf0e, 0x100};
-static constexpr xpu16 alt{0x200, 0x604, 0xa08, 0xe0c, 0x301, 0x705, 0xb09, 0xf0d, 0x200, 0x604, 0xa08, 0xe0c, 0x301, 0x705, 0xb09, 0xf0d};
 
 inline BMat16 BMat16::mult_transpose(BMat16 const &that) const noexcept {
     xpu16 x = _data;
@@ -185,8 +184,8 @@ inline BMat16 BMat16::mult_naive_array(BMat16 const &that) const noexcept {
         for (int j = 7; j >= 0; --j) {
             a <<= 1; b <<= 1; c <<= 1; d <<= 1;
             for (size_t k = 0; k < 16; ++k) {
-                a |= tab1[i][k] & tab2[k][j];
-                b |= tab1[i][k] & tab2[k][j + 8];
+                a |= tab1[i][k]     & tab2[k][j];
+                b |= tab1[i][k]     & tab2[k][j + 8];
                 c |= tab1[i + 8][k] & tab2[k][j];
                 d |= tab1[i + 8][k] & tab2[k][j + 8];
             }
@@ -202,7 +201,7 @@ inline size_t BMat16::nr_rows() const noexcept{
             ++res;
     return res;
 
-    //// Vectorized version that doesn't work due to the absence of popcnt in simde
+    //// Vectorized version which doesn't work due to the absence of popcnt in simde
     // xpu16 tmp = _data, zero = simde_mm256_setzero_si256();
     // xpu16 x = (tmp != zero);
     // return simde_mm256_popcnt_epi16(x);
@@ -212,6 +211,8 @@ inline std::vector<uint16_t> BMat16::rows() const {
     std::vector<uint16_t> rows;
     for (size_t i = 0; i < 16; ++i) {
         uint16_t row_rev = (_data[i/4] << (16 * (3 - i%4)) >> 48);
+
+        // The row needs to be reversed
         uint16_t row = 0;
         for (size_t j = 0; j < 16; ++j) {
             row = (row << 1) | (row_rev & 1);
@@ -294,7 +295,7 @@ inline std::ostream &BMat16::write(std::ostream &os) const {
 
 namespace std {
 
-// Not noexcept because BMat8::write isn't
+// Not noexcept because BMat16::write isn't
 inline std::ostream &operator<<(std::ostream &os, HPCombi::BMat16 const &bm) {
     return bm.write(os);
 }
