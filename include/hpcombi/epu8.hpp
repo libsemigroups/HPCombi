@@ -147,7 +147,7 @@ inline void merge(epu8 &a, epu8 &b) noexcept;
  */
 #ifdef SIMDE_X86_SSE4_2_NATIVE
 /** @copydoc common_permutation_of
-    @par Algorithm: uses string matching cpmestrm intrisics
+    @par Algorithm: uses string matching cpmestrm intrinsics
  */
 inline epu8 permutation_of_cmpestrm(epu8 a, epu8 b) noexcept;
 #endif
@@ -586,7 +586,7 @@ inline bool is_partial_permutation(epu8 v, const size_t k = 16) noexcept;
  */
 #ifdef SIMDE_X86_SSE4_2_NATIVE
 /** @copydoc common_is_permutation
-    @par Algorithm: uses string matching cpmestri intrisics
+    @par Algorithm: uses string matching cpmestri intrinsics
  */
 inline bool is_permutation_cpmestri(epu8 v, const size_t k = 16) noexcept;
 #endif
