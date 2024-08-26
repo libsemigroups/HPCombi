@@ -1,4 +1,4 @@
-# List of intrisics used in HPCombi
+# List of intrinsics used in HPCombi
 # Format: <name>;<list of parameters>;<return value>
 # line starting with # are comments
 __builtin_ffs;0;0
