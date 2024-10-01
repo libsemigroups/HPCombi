@@ -25,7 +25,7 @@ other processors too.
 
 - Reinis Cirpons <rc234@st-andrews.ac.uk> : CI
 - Finn Smith <fls3@st-andrews.ac.uk> : discussions + BMat8 reference code
-- Viviane Pons : algorithms discussions
+- Viviane Pons <viviane.pons@lri.fr> : algorithms discussions
 - Daniel Vanzo <daniel.vanzo@lri.fr> : GPU experiments
 
 ## Documentation
