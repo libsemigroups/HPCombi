@@ -30,3 +30,10 @@
 #include "vect_generic.hpp"
 
 #endif  // HPCOMBI_HPCOMBI_HPP_
+
+/*! \mainpage HPCombi
+ *
+ * \section readme_sec Readme
+ *
+ * You might want to have a look at [the Readme in the sources](https://github.com/libsemigroups/HPCombi/blob/main/README.md).
+ */

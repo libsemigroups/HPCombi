@@ -2,8 +2,8 @@
 High Performance Combinatorics in C++ using vector instructions v1.0.1
 
 HPCombi is a C++17 header-only library using the SSE and AVX instruction sets,
-and some equivalents, for very fast manipulation of combinatorial objects such
-as transformations, permutations, and boolean matrices of small size. The goal
+and some equivalents, for very fast manipulation of small combinatorial objects such
+as transformations, permutations, and boolean matrices. The goal
 of this project is to implement various new algorithms and benchmark them on
 various compiler and architectures.
 
@@ -30,7 +30,7 @@ other processors too.
 
 ## Documentation
 
-- The Doxygen auto generated [API](https://libsemigroups.github.io/HPCombi/)
+- See the [Doxygen generated doc](https://libsemigroups.github.io/HPCombi/)
 
 ## Thanks
 
