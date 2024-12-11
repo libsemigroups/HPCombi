@@ -116,7 +116,11 @@ struct alignas(16) PTransf16 : public Vect16 {
     uint8_t nb_fix_points() const;
 };
 
-/** Full transformation of @f$\{0\dots 15\}@f$
+/** Full transformation of @f$\{0\dots 15\}@f$.
+ *
+ * A transformation is a mapping of a set of n elements *into* itself.
+ * I.e. as opposed to a permutation, it is not necessarily injective.
+ * Here n=16.
  *
  */
 struct Transf16 : public PTransf16 {
@@ -204,6 +208,7 @@ struct PPerm16 : public PTransf16 {
 
 /** Permutations of @f$\{0\dots 15\}@f$
  *
+ * A permutation is a bijective mapping of a set of n elements onto itself. Here n=16.
  */
 struct Perm16 : public Transf16 /* public PPerm : diamond problem */ {
     Perm16() = default;

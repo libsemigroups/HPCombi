@@ -98,7 +98,7 @@ inline bool is_sorted(epu8 a) noexcept;
  * Uses the 9 stages sorting network #sorting_rounds
  */
 inline epu8 sorted(epu8 a) noexcept;
-/** Return a #HPCombi::epu8 with the two half sorted
+/** Return a #HPCombi::epu8 with both halves sorted
  * @details
  * @par Algorithm: Uses a 6 stages sorting network #sorting_rounds8
  */
@@ -109,7 +109,7 @@ inline epu8 sorted8(epu8 a) noexcept;
  * Uses the 9 stages sorting network #sorting_rounds
  */
 inline epu8 revsorted(epu8 a) noexcept;
-/** Return a #HPCombi::epu8 with the two half reverse sorted
+/** Return a #HPCombi::epu8 with both halves reverse sorted
  * @details
  * @par Algorithm: Uses a 6 stages sorting network #sorting_rounds8
  */
@@ -372,7 +372,7 @@ inline epu8 partial_min_round(epu8) noexcept;
 inline epu8 partial_min(epu8 v) noexcept { return partial_min_round(v); }
 
 /** @class common_eval16
- * @brief Evaluation of a #HPCombi::epu8
+ * @brief Evaluation of a #HPCombi::epu8: count how many times each int of 0..15 appears in the input.
  * @details
  * @param v : a #HPCombi::epu8
  * @returns the evaluation, that is the #HPCombi::epu8 \c r such that
@@ -450,7 +450,7 @@ inline uint64_t first_diff(epu8 a, epu8 b, size_t bound = 16) noexcept {
 /** @class common_last_diff
  * @brief The last difference between two #HPCombi::epu8
  * @details
- * @param a, b : two #HPCombi::epu8
+ * @param a, b : #HPCombi::epu8
  * @param bound : a \c size_t
  * @returns the largest index @f$i<bound@f$ such that \c a[i] and \c b[i]
  * differ, 16 if there is no differences before bound.
