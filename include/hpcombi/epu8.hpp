@@ -17,6 +17,9 @@
 //  with HP-Combi. If not, see <https://www.gnu.org/licenses/>.               //
 //****************************************************************************//
 
+/** @file
+@brief declaration of HPCombi::epu8 */
+
 #ifndef HPCOMBI_EPU8_HPP_
 #define HPCOMBI_EPU8_HPP_
 

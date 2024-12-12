@@ -17,6 +17,9 @@
 //  with HP-Combi. If not, see <https://www.gnu.org/licenses/>.               //
 //****************************************************************************//
 
+/** @file
+@brief HPCombi::Vect16 */
+
 #ifndef HPCOMBI_VECT16_HPP_
 #define HPCOMBI_VECT16_HPP_
 

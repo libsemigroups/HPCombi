@@ -17,6 +17,9 @@
 //  with HP-Combi. If not, see <https://www.gnu.org/licenses/>.               //
 //****************************************************************************//
 
+/** @file
+@brief declaration of HPCombi::PermGeneric */
+
 #ifndef HPCOMBI_PERM_GENERIC_HPP_
 #define HPCOMBI_PERM_GENERIC_HPP_
 

@@ -19,7 +19,8 @@
 //  with HP-Combi. If not, see <https://www.gnu.org/licenses/>.               //
 //****************************************************************************//
 
-// This file contains a declaration of fast boolean matrices up to dimension 8.
+/** @file
+@brief declaration of HPCombi::BMat8 */
 
 #ifndef HPCOMBI_BMAT8_HPP_
 #define HPCOMBI_BMAT8_HPP_

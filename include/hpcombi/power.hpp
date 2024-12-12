@@ -18,23 +18,23 @@
 //****************************************************************************//
 
 /** @file
- * @brief Generic compile time power
- *
- * The goal of this file is to be able to write expressions such as @c
- * pow<23>(2.5) or @c pow<n>(x) where the first expression is entirely
- * computed as compile time and the second one is expanded also as compile
- * time to a O(log n) long sequence of multiplication. Furthermore such
- * expression not only works for numbers for for any type where there is a
- * neutral element and an associative (non necessarily commutative) product,
- * namely what mathematicians call \e monoids. These include for example,
- * strings where the neutral element is the empty string and the product is
- * the concatenation.
- *
- * see HPCombi::power_helper::Monoid<std::string>
- *
- * @example stringmonoid.cpp
- * This is an example of how to use pow with a non numerical Monoid.
- */
+@brief Generic compile-time exponentiation algorithm.
+
+The goal of this file is to be able to write expressions such as @c
+pow<23>(2.5) or @c pow<n>(x) where the first expression is entirely
+computed as compile time and the second one is expanded also as compile
+time to a O(log n) long sequence of multiplication. Furthermore such
+expression not only works for numbers for for any type where there is a
+neutral element and an associative (non necessarily commutative) product,
+namely what mathematicians call \e monoids. These include for example,
+strings where the neutral element is the empty string and the product is
+the concatenation.
+
+see HPCombi::power_helper::Monoid<std::string>
+
+@example stringmonoid.cpp
+This is an example of how to use pow with a non numerical Monoid.
+*/
 
 #ifndef HPCOMBI_POWER_HPP_
 #define HPCOMBI_POWER_HPP_

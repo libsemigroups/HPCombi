@@ -19,6 +19,10 @@
 
 // NOLINT(build/header_guard)
 
+/** @file
+@brief implementation of perm_generic.hpp ;
+this file should not be included directly. */
+
 namespace HPCombi {
 
 template <size_t Size, typename Expo>

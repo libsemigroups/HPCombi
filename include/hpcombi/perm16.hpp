@@ -17,6 +17,9 @@
 //  with HP-Combi. If not, see <https://www.gnu.org/licenses/>.               //
 //****************************************************************************//
 
+/** @file
+@brief declaration of HPCombi::PTransf16, HPCombi::Transf16, HPCombi::PPerm16 and HPCombi::Perm16. */
+
 #ifndef HPCOMBI_PERM16_HPP_
 #define HPCOMBI_PERM16_HPP_
 

@@ -17,6 +17,9 @@
 //  with HP-Combi. If not, see <https://www.gnu.org/licenses/>.               //
 //****************************************************************************//
 
+/** @file
+@brief HPCombi::TPUBuild and casts from HPCombi::TPU */
+
 #ifndef HPCOMBI_BUILDER_HPP_
 #define HPCOMBI_BUILDER_HPP_
 

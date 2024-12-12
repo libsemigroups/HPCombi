@@ -17,6 +17,10 @@
 //  with HP-Combi. If not, see <https://www.gnu.org/licenses/>.               //
 //****************************************************************************//
 
+/** @file
+@brief Main entry point; includes the API files: bmat8.hpp, perm16.hpp, etc
+and also debug.hpp, epu8.hpp, etc.*/
+
 #ifndef HPCOMBI_HPCOMBI_HPP_
 #define HPCOMBI_HPCOMBI_HPP_
 

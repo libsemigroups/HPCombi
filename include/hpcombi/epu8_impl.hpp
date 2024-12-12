@@ -19,8 +19,8 @@
 
 // NOLINT(build/header_guard)
 
-// This is the implementation part of epu8.hpp this should be seen as
-// implementation details and should not be included directly.
+/** @file
+@brief implementation of epu8.hpp ; this file should not be included directly. */
 
 #include <initializer_list>
 #include <iostream>

@@ -17,6 +17,9 @@
 //  with HP-Combi. If not, see <https://www.gnu.org/licenses/>.               //
 //****************************************************************************//
 
+/** @file
+@brief HPCombi::VectGeneric */
+
 #ifndef HPCOMBI_VECT_GENERIC_HPP_
 #define HPCOMBI_VECT_GENERIC_HPP_
 

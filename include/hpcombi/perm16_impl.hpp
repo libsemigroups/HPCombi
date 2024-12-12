@@ -19,12 +19,10 @@
 
 // NOLINT(build/header_guard)
 
+/** @file
+@brief implementation of perm16.hpp ; this file should not be included directly. */
+
 namespace HPCombi {
-
-///////////////////////////////////////////////////////////////////////////////
-// Implementation part for inline functions  //////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////
-
 inline PTransf16::PTransf16(std::initializer_list<uint8_t> il)
     : Vect16(Epu8.id()) {
     HPCOMBI_ASSERT(il.size() <= 16);
