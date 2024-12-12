@@ -553,6 +553,7 @@ inline std::string to_string(HPCombi::epu8 const &a) {
     return ss.str();
 }
 
+//! This type appears in the doc because we provide an equal operator for HPCombi::epu8.
 template <> struct equal_to<HPCombi::epu8> {
     bool operator()(const HPCombi::epu8 &lhs,
                     const HPCombi::epu8 &rhs) const noexcept {
@@ -560,6 +561,7 @@ template <> struct equal_to<HPCombi::epu8> {
     }
 };
 
+//! This type appears in the doc because we provide a not_equal operator for HPCombi::epu8.
 template <> struct not_equal_to<HPCombi::epu8> {
     bool operator()(const HPCombi::epu8 &lhs,
                     const HPCombi::epu8 &rhs) const noexcept {
@@ -567,6 +569,7 @@ template <> struct not_equal_to<HPCombi::epu8> {
     }
 };
 
+//! This type appears in the doc because we provide a hash function for HPCombi::epu8.
 template <> struct hash<HPCombi::epu8> {
     inline size_t operator()(HPCombi::epu8 a) const noexcept {
         unsigned __int128 v0 = simde_mm_extract_epi64(a, 0);
@@ -583,10 +586,11 @@ template <> struct hash<HPCombi::epu8> {
     }
 };
 
+//! This type appears in the doc because we provide a less operator for HPCombi::epu8.
 template <> struct less<HPCombi::epu8> {
     // WARNING: due to endianness this is not lexicographic comparison,
     //          but we don't care when using in std::set.
-    // 10% faster than calling the lexicographic comparison operator !
+    // 10% faster than calling the lexicographic comparison operator!
     inline size_t operator()(const HPCombi::epu8 &v1,
                              const HPCombi::epu8 &v2) const noexcept {
         simde__m128 v1v = simde__m128(v1), v2v = simde__m128(v2);

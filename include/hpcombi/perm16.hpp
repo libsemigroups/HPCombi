@@ -459,7 +459,9 @@ static_assert(std::is_trivial<Perm16>(), "Perm16 is not a trivial class !");
 #include "perm16_impl.hpp"
 
 namespace std {
+// Hash operators for Transf and Perm:
 
+//! This type appears in the doc because we provide a hash function for HPCombi::PTransf16.
 template <> struct hash<HPCombi::PTransf16> {
     //! A hash operator for #HPCombi::PTransf16
     size_t operator()(const HPCombi::PTransf16 &ar) const {
@@ -467,6 +469,7 @@ template <> struct hash<HPCombi::PTransf16> {
     }
 };
 
+//! This type appears in the doc because we provide a hash function for HPCombi::Transf16.
 template <> struct hash<HPCombi::Transf16> {
     //! A hash operator for #HPCombi::Transf16
     size_t operator()(const HPCombi::Transf16 &ar) const {
@@ -474,6 +477,7 @@ template <> struct hash<HPCombi::Transf16> {
     }
 };
 
+//! This type appears in the doc because we provide a hash function for HPCombi::PPerm16.
 template <> struct hash<HPCombi::PPerm16> {
     //! A hash operator for #HPCombi::PPerm16
     size_t operator()(const HPCombi::PPerm16 &ar) const {
@@ -481,6 +485,7 @@ template <> struct hash<HPCombi::PPerm16> {
     }
 };
 
+//! This type appears in the doc because we provide a hash function for HPCombi::Perm16.
 template <> struct hash<HPCombi::Perm16> {
     //! A hash operator for #HPCombi::Perm16
     size_t operator()(const HPCombi::Perm16 &ar) const { return uint64_t(ar); }

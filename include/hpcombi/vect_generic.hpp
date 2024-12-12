@@ -239,6 +239,7 @@ std::ostream &operator<<(std::ostream &stream,
     return stream;
 }
 
+//! This type appears in the doc because we provide a hash function for HPCombi::VectGeneric.
 template <size_t Size, typename Expo>
 struct hash<HPCombi::VectGeneric<Size, Expo>> {
     size_t operator()(const HPCombi::VectGeneric<Size, Expo> &ar) const {

@@ -116,6 +116,7 @@ inline std::ostream &operator<<(std::ostream &stream,
     return operator<<(stream, ar.v);
 }
 
+//! This type appears in the doc because we provide a hash function for HPCombi::Vect16.
 template <> struct hash<HPCombi::Vect16> {
     size_t operator()(const HPCombi::Vect16 &ar) const {
         return std::hash<HPCombi::epu8>{}(ar.v);
