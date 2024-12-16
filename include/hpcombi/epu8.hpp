@@ -79,22 +79,27 @@ inline bool equal(epu8 a, epu8 b) noexcept {
 /** Non equality of #HPCombi::epu8 */
 inline bool not_equal(epu8 a, epu8 b) noexcept { return !equal(a, b); }
 
-/** Permuting a #HPCombi::epu8 */
+/** Apply a permutation \c b on the vector \c a: for i=0..16 {result[i] = a[b[i]} */
 inline epu8 permuted_ref(epu8 a, epu8 b) noexcept;
-/** Permuting a #HPCombi::epu8 */
+
+/** Same as \ref HPCombi::permuted_ref "permuted_ref"
+but with an optimized implementation using intrinsics. */
 inline epu8 permuted(epu8 a, epu8 b) noexcept {
     return simde_mm_shuffle_epi8(a, b);
 }
+
 /** Left shifted of a #HPCombi::epu8 inserting a 0
  * @warning we use the convention that the 0 entry is on the left !
  */
 inline epu8 shifted_right(epu8 a) noexcept {
     return simde_mm_bslli_si128(a, 1);
 }
+
 /** Right shifted of a #HPCombi::epu8 inserting a 0
  * @warning we use the convention that the 0 entry is on the left !
  */
 inline epu8 shifted_left(epu8 a) noexcept { return simde_mm_bsrli_si128(a, 1); }
+
 /** Reverting a #HPCombi::epu8 */
 inline epu8 reverted(epu8 a) noexcept { return permuted(a, Epu8.rev()); }
 
@@ -161,7 +166,7 @@ inline epu8 permutation_of_cmpestrm(epu8 a, epu8 b) noexcept;
 inline epu8 permutation_of_ref(epu8 a, epu8 b) noexcept;
 
 /**
- * @brief Find if a vector is a permutation of one other
+ * @brief Find if a vector is a permutation of another one
  * @details
  * @param a, b: two #HPCombi::epu8
  * @returns a #HPCombi::epu8
