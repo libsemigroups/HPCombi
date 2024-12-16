@@ -83,5 +83,6 @@ Data structure should preserve locality. You might want to compute some stats on
 This lib is implemented with speed in mind, not code safety.
 Eg. there are no checks when building a permutation, which could be invalid (like non injective).
 
-We now suggest to have a look, in the menus above, at Classes → [Class list](annotated.html).
+We now suggest to have a look, in the menus above, at Classes → [Class list](annotated.html),
+esp. at classes are HPCombi::Perm16 and HPCombi::BMat8.
 */

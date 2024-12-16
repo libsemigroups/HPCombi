@@ -51,7 +51,7 @@ operator"" _u8(unsigned long long arg) noexcept {  // NOLINT
 epu8 stands for *Extended Packed Unsigned, grouped by 8 bits*;
 this is the low level type chosen by Intel for their API to intrinsics,
 ie a SIMD vector of 16 unsigned bytes (16×8 = 128bits).
-Functions using this type uses semantically equivalent types,
+Functions using this type use semantically equivalent types,
 eg a _m128 which is 2 vect of 64bits.
 a flag tells the compiler to silently consider those types equivalent.
  */

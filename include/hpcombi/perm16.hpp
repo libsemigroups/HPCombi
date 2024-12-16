@@ -195,6 +195,7 @@ struct PPerm16 : public PTransf16 {
      * @verbatim {0,0xFF,2,1,3,5,6,0xFF,8,9,0xFF,10,12,0xFF,0xFF,0xFF}
      * @endverbatim
      */
+
     /** @copydoc common_inverse_pperm
      *  @par Algorithm:
      *  @f$O(n)@f$ algorithm using reference cast to arrays
@@ -253,42 +254,50 @@ struct Perm16 : public Transf16 /* public PPerm : diamond problem */ {
      * Returns
      * @verbatim {0,4,2,1,3,5,6,7,8,9,10,11,12,13,14,15} @endverbatim
      */
+
     /** @copydoc common_inverse
      *  @par Algorithm:
      *  Reference @f$O(n)@f$ algorithm using loop and indexed access
      */
     Perm16 inverse_ref() const;
+
     /** @copydoc common_inverse
      *  @par Algorithm:
      *  @f$O(n)@f$ algorithm using reference cast to arrays
      */
     Perm16 inverse_arr() const;
+
     /** @copydoc common_inverse
      *  @par Algorithm:
      *  Insert the identity in the least significant bits and sort using a
-     *  sorting network. The number of round of the optimal sorting network is
+     *  sorting network. The number of rounds of the optimal sorting network is
      *  open as far as I know, therefore the complexity is unknown.
      */
     Perm16 inverse_sort() const;
+
     /** @copydoc common_inverse
      *  @par Algorithm:
      *  @f$O(\log n)@f$ algorithm using some kind of vectorized dichotomic
      * search.
      */
     Perm16 inverse_find() const { return permutation_of(v, one()); }
+
     /** @copydoc common_inverse
      *  @par Algorithm:
      *
-     * Raise \e *this to power @f$\text{LCM}(1, 2, ..., n) - 1@f$ so complexity
-     * is in @f$O(log (\text{LCM}(1, 2, ..., n) - 1)) = O(n)@f$
+     * Use HPCombi::pow to
+     * raise \e *this to power @f$\text{LCM}(1, 2, ..., n) - 1@f$ so complexity
+     * is @f$O(log (\text{LCM}(1, 2, ..., n) - 1)) = O(n)@f$
      */
     Perm16 inverse_pow() const;
+
     /** @copydoc common_inverse
      *  @par Algorithm:
      *  Compute power from @f$n/2@f$ to @f$n@f$, when @f$\sigma^k(i)=i@f$ then
      *  @f$\sigma^{-1}(i)=\sigma^{k-1}(i)@f$. Complexity @f$O(n)@f$
      */
     Perm16 inverse_cycl() const;
+
     /** @copydoc common_inverse
      *
      *  Frontend method: currently aliased to #inverse_cycl */
