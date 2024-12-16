@@ -33,8 +33,11 @@
 
 namespace HPCombi {
 
-/** Class for factory object associated to a SIMD packed unsigned integers.
+/** Given a transformation from 0..15 → 0..15,
+ * build at compile-time the array representing the transformation.
+ *
  * @details
+ * Class for factory object associated to a SIMD packed unsigned integers.
  * The main purpose of this class is to be able to construct in a \c constexpr
  * way various instances of the \c TPU SIMD vector type. The behavior of
  * an instance of \c TPUBuild<TPU> is designed to mimic the behavior of \c TPU

@@ -34,6 +34,7 @@
 
 namespace HPCombi {
 
+/** Vector of 16 bytes, with some optimized methods, superclass of HPCombi::Transf16. */
 struct alignas(16) Vect16 {
     static constexpr size_t size() { return 16; }
     using array = typename decltype(Epu8)::array;

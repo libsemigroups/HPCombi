@@ -18,7 +18,10 @@
 //****************************************************************************//
 
 /** @file
-@brief declaration of HPCombi::epu8 */
+@brief declaration of HPCombi::epu8.
+
+Contains renaming of some low level functions,
+eg simde_mm_testz_si128(a,a) → is_all_zero(a) */
 
 #ifndef HPCOMBI_EPU8_HPP_
 #define HPCOMBI_EPU8_HPP_
@@ -44,7 +47,14 @@ operator"" _u8(unsigned long long arg) noexcept {  // NOLINT
     return static_cast<uint8_t>(arg);
 }
 
-/// SIMD vector of 16 unsigned bytes
+/**
+epu8 stands for *Extended Packed Unsigned, grouped by 8 bits*;
+this is the low level type chosen by Intel for their API to intrinsics,
+ie a SIMD vector of 16 unsigned bytes (16×8 = 128bits).
+Functions using this type uses semantically equivalent types,
+eg a _m128 which is 2 vect of 64bits.
+a flag tells the compiler to silently consider those types equivalent.
+ */
 using epu8 = uint8_t __attribute__((vector_size(16)));
 
 static_assert(alignof(epu8) == 16,

@@ -46,7 +46,12 @@ std::array<Expo, Size> sorted_vect(std::array<Expo, Size> v) {
     return v;
 }
 
-/** A generic class for combinatorial integer vectors.
+/** \ref HPCombi::VectGeneric "VectGeneric" is to \ref HPCombi::Vect16 "Vect16"
+what \ref HPCombi::PermGeneric "PermGeneric" is to \ref HPCombi::Perm16 "Perm16";
+see \ref HPCombi::PermGeneric "PermGeneric".
+
+HPCombi started as a library to manipulate monomials on several variables,
+ie a tuple of *expo*nents. The elements of arrays were thus named Expo.
  */
 template <size_t Size, typename Expo = uint8_t> struct VectGeneric {
     static constexpr size_t size() { return Size; }

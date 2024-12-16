@@ -17,23 +17,31 @@
 //  with HP-Combi. If not, see <https://www.gnu.org/licenses/>.               //
 //****************************************************************************//
 
-/** @file
-@brief Generic compile-time exponentiation algorithm.
 
-The goal of this file is to be able to write expressions such as @c
-pow<23>(2.5) or @c pow<n>(x) where the first expression is entirely
-computed as compile time and the second one is expanded also as compile
-time to a O(log n) long sequence of multiplication. Furthermore such
-expression not only works for numbers for for any type where there is a
+/** @file
+@brief  Generic compile-time unrolling of the fast exponentiation algorithm.
+
+Allows to write expressions such as
+- @c pow<23>(2.5) : entirely computed at compile time
+- @c pow<n>(x) expanded at compile time to a O(log n) long sequence of multiplications.
+
+Such expressions work for numbers but also for any type where there is a
 neutral element and an associative (non necessarily commutative) product,
-namely what mathematicians call \e monoids. These include for example,
+ie what mathematicians call \e monoids.
+These include for example
 strings where the neutral element is the empty string and the product is
 the concatenation.
 
-see HPCombi::power_helper::Monoid<std::string>
+See HPCombi::power_helper::Monoid<std::string>
+
+The algorithm used here is based on the base-2 representation of n,
+it is a 2-approximation of the optimum number of multiplications.
+The general problem is called *addition chain* and one can sometimes do better,
+eg on fibonaci numbers, use rather the fibonacci recurrence relation
+to choose which products to compute.
 
 @example stringmonoid.cpp
-This is an example of how to use pow with a non numerical Monoid.
+how to use pow with a non numerical Monoid.
 */
 
 #ifndef HPCOMBI_POWER_HPP_

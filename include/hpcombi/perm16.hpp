@@ -18,7 +18,12 @@
 //****************************************************************************//
 
 /** @file
-@brief declaration of HPCombi::PTransf16, HPCombi::Transf16, HPCombi::PPerm16 and HPCombi::Perm16. */
+@brief declaration of
+\ref HPCombi::PTransf16 "PTransf16",
+\ref HPCombi::Transf16  "Transf16",
+\ref HPCombi::PPerm16   "PPerm16" and
+\ref HPCombi::Perm16    "Perm16"
+*/
 
 #ifndef HPCOMBI_PERM16_HPP_
 #define HPCOMBI_PERM16_HPP_
@@ -44,9 +49,9 @@ struct Perm16;
 struct PTransf16;
 struct Transf16;
 
-/** Partial transformation of @f$\{0\dots 15\}@f$
- *
- */
+/** Partial transformation of @f$\{0\dots 15\}@f$; see HPCombi::Transf16;
+partial means it might not be defined everywhere.
+Undefined images are encoded as 0xFF. */
 struct alignas(16) PTransf16 : public Vect16 {
     static constexpr size_t size() { return 16; }
 
@@ -119,13 +124,10 @@ struct alignas(16) PTransf16 : public Vect16 {
     uint8_t nb_fix_points() const;
 };
 
-/** Full transformation of @f$\{0\dots 15\}@f$.
- *
- * A transformation is a mapping of a set of n elements *into* itself.
- * I.e. as opposed to a permutation, it is not necessarily injective.
- * Here n=16.
- *
- */
+/** Full transformation of @f$\{0\dots 15\}@f$:
+a transformation is a mapping of a set of n elements *into* itself;
+ie as opposed to a permutation, it is not necessarily injective.
+Here n is hard-coded to 16. */
 struct Transf16 : public PTransf16 {
     Transf16() = default;
     constexpr Transf16(const Transf16 &v) = default;
@@ -152,7 +154,9 @@ struct Transf16 : public PTransf16 {
     explicit operator uint64_t() const;
 };
 
-//! Partial permutation of @f$\{0, \dots, 15\}@f$
+/** Partial permutation of @f$\{0\dots 15\}@f$; see HPCombi::Perm16;
+partial means it might not be defined everywhere (but where it's defined, it's injective).
+Undefined images are encoded as 0xFF. */
 struct PPerm16 : public PTransf16 {
     PPerm16() = default;
     constexpr PPerm16(const PPerm16 &v) = default;
@@ -209,9 +213,9 @@ struct PPerm16 : public PTransf16 {
     PPerm16 left_one() const { return PTransf16::left_one(); }
 };
 
-/** Permutations of @f$\{0\dots 15\}@f$
- *
- * A permutation is a bijective mapping of a set of n elements onto itself. Here n=16.
+/** Permutations of @f$\{0\dots 15\}@f$:
+ * A permutation is a bijective mapping of a set of n elements onto itself.
+ * Here n is hard-coded to 16.
  */
 struct Perm16 : public Transf16 /* public PPerm : diamond problem */ {
     Perm16() = default;
