@@ -180,7 +180,7 @@ struct PPerm16 : public PTransf16 {
         return this->PTransf16::operator*(p);
     }
 
-    /** @class common_inverse_pperm
+    /**
      * @brief The inverse of a partial permutation
      * @details
      * @returns the inverse of \c *this. The inverse of @f$p@f$ is the unique
@@ -194,15 +194,13 @@ struct PPerm16 : public PTransf16 {
      * Returns
      * @verbatim {0,0xFF,2,1,3,5,6,0xFF,8,9,0xFF,10,12,0xFF,0xFF,0xFF}
      * @endverbatim
-     */
-
-    /** @copydoc common_inverse_pperm
-     *  @par Algorithm:
-     *  @f$O(n)@f$ algorithm using reference cast to arrays
+     * @par Algorithm:
+     * @f$O(n)@f$ algorithm using reference cast to arrays
      */
     PPerm16 inverse_ref() const;
+
 #ifdef SIMDE_X86_SSE4_2_NATIVE
-    /** @copydoc common_inverse_pperm
+    /** Same as \ref HPCombi::PPerm16::inverse_ref "inverse_ref" but with a different algorithm.
      *  @par Algorithm:
      *  @f$O(\log n)@f$ algorithm using some kind of vectorized dichotomic
      * search.
@@ -242,8 +240,8 @@ struct Perm16 : public Transf16 /* public PPerm : diamond problem */ {
     //! Construct a permutations from its 64 bits compressed.
     explicit Perm16(uint64_t compressed) : Transf16(compressed) {}
 
-    /** @class common_inverse
-     * @brief The inverse permutation
+    /** @brief The inverse permutation
+     *
      * @details
      * @returns the inverse of \c *this
      * @par Example:
@@ -253,21 +251,24 @@ struct Perm16 : public Transf16 /* public PPerm : diamond problem */ {
      * @endcode
      * Returns
      * @verbatim {0,4,2,1,3,5,6,7,8,9,10,11,12,13,14,15} @endverbatim
-     */
 
-    /** @copydoc common_inverse
+     * Frontend method: currently aliased to #inverse_cycl */
+    Perm16 inverse() const { return inverse_cycl(); }
+
+
+    /** Same as \ref HPCombi::Perm16::inverse "inverse" but with a different algorithm.
      *  @par Algorithm:
      *  Reference @f$O(n)@f$ algorithm using loop and indexed access
      */
     Perm16 inverse_ref() const;
 
-    /** @copydoc common_inverse
+    /** Same as \ref HPCombi::Perm16::inverse "inverse" but with a different algorithm.
      *  @par Algorithm:
      *  @f$O(n)@f$ algorithm using reference cast to arrays
      */
     Perm16 inverse_arr() const;
 
-    /** @copydoc common_inverse
+    /** Same as \ref HPCombi::Perm16::inverse "inverse" but with a different algorithm.
      *  @par Algorithm:
      *  Insert the identity in the least significant bits and sort using a
      *  sorting network. The number of rounds of the optimal sorting network is
@@ -275,14 +276,14 @@ struct Perm16 : public Transf16 /* public PPerm : diamond problem */ {
      */
     Perm16 inverse_sort() const;
 
-    /** @copydoc common_inverse
+    /** Same as \ref HPCombi::Perm16::inverse "inverse" but with a different algorithm.
      *  @par Algorithm:
      *  @f$O(\log n)@f$ algorithm using some kind of vectorized dichotomic
      * search.
      */
     Perm16 inverse_find() const { return permutation_of(v, one()); }
 
-    /** @copydoc common_inverse
+    /** Same as \ref HPCombi::Perm16::inverse "inverse" but with a different algorithm.
      *  @par Algorithm:
      *
      * Use HPCombi::pow to
@@ -291,17 +292,12 @@ struct Perm16 : public Transf16 /* public PPerm : diamond problem */ {
      */
     Perm16 inverse_pow() const;
 
-    /** @copydoc common_inverse
+    /** Same as \ref HPCombi::Perm16::inverse "inverse" but with a different algorithm.
      *  @par Algorithm:
      *  Compute power from @f$n/2@f$ to @f$n@f$, when @f$\sigma^k(i)=i@f$ then
      *  @f$\sigma^{-1}(i)=\sigma^{k-1}(i)@f$. Complexity @f$O(n)@f$
      */
     Perm16 inverse_cycl() const;
-
-    /** @copydoc common_inverse
-     *
-     *  Frontend method: currently aliased to #inverse_cycl */
-    Perm16 inverse() const { return inverse_cycl(); }
 
     /** The elementary transposition exchanging @f$i@f$ and @f$i+1@f$ */
     static Perm16 elementary_transposition(uint64_t i);
@@ -312,7 +308,8 @@ struct Perm16 : public Transf16 /* public PPerm : diamond problem */ {
      */
     static Perm16 unrankSJT(int n, int r);
 
-    /** @class common_lehmer
+
+    /**
      * @brief The Lehmer code of a permutation
      * @details
      * @returns the Lehmer code of \c *this
@@ -323,24 +320,24 @@ struct Perm16 : public Transf16 /* public PPerm : diamond problem */ {
      * @endcode
      * Returns
      * @verbatim {0,2,1,1,0,0,0,0,0,0,0,0,0,0,0,0} @endverbatim
-     */
-    /** @copydoc common_lehmer
-     *  @par Algorithm:
-     *  Reference @f$O(n^2)@f$ algorithm using loop and indexed access
-     */
-    epu8 lehmer_ref() const;
-    /** @copydoc common_lehmer
-     *  @par Algorithm:
-     *  Reference @f$O(n^2)@f$ algorithm using array, loop and indexed access
-     */
-    epu8 lehmer_arr() const;
-    /** @copydoc common_lehmer
-     *  @par Algorithm:
-     *  Fast @f$O(n)@f$ algorithm using vector comparison
+     * @par Algorithm:
+     * Fast @f$O(n)@f$ algorithm using vector comparison
      */
     epu8 lehmer() const;
 
-    /** @class common_length
+    /** Same interface as \ref HPCombi::Perm16::lehmer "lehmer" but with a different implementation.
+     * @par Algorithm:
+     * Reference @f$O(n^2)@f$ algorithm using loop and indexed access
+     */
+    epu8 lehmer_ref() const;
+
+    /** Same interface as \ref HPCombi::Perm16::lehmer "lehmer" but with a different implementation.
+     * @par Algorithm:
+     * Reference @f$O(n^2)@f$ algorithm using array, loop and indexed access
+     */
+    epu8 lehmer_arr() const;
+
+    /** 
      * @brief The Coxeter length (ie: number of inversion) of a permutation
      * @details
      * @returns the number of inversions of \c *this
@@ -350,25 +347,25 @@ struct Perm16 : public Transf16 /* public PPerm : diamond problem */ {
      * x.length()
      * @endcode
      * Returns @verbatim 4 @endverbatim
-     */
-    /** @copydoc common_length
-     *  @par Algorithm:
-     *  Reference @f$O(n^2)@f$ algorithm using loop and indexed access
-     */
-    uint8_t length_ref() const;
-    /** @copydoc common_length
-     *  @par Algorithm:
-     *  Reference @f$O(n^2)@f$ algorithm using loop and indexed access after
-     *     a cast to \c std::array
-     */
-    uint8_t length_arr() const;
-    /** @copydoc common_length
      *  @par Algorithm:
      *  @f$O(n)@f$ using vector lehmer and fast horizontal sum
      */
     uint8_t length() const;
 
-    /** @class common_nb_descent
+    /** Same interface as \ref HPCombi::Perm16::length "length", with a different implementation.
+     *  @par Algorithm:
+     *  Reference @f$O(n^2)@f$ algorithm using loop and indexed access
+     */
+    uint8_t length_ref() const;
+
+    /** Same interface as \ref HPCombi::Perm16::length "length", with a different implementation.
+     *  @par Algorithm:
+     *  Reference @f$O(n^2)@f$ algorithm using loop and indexed access after
+     *     a cast to \c std::array
+     */
+    uint8_t length_arr() const;
+
+    /**
      * @brief The number of descent of a permutation
      * @details
      * @returns the number of inversions of \c *this
@@ -378,17 +375,16 @@ struct Perm16 : public Transf16 /* public PPerm : diamond problem */ {
      * x.length()
      * @endcode
      * Returns @verbatim 2 @endverbatim
-     */
-    /** @copydoc common_nb_descent
-     *  @par Algorithm:
-     *  Reference @f$O(n)@f$ using a loop
-     */
-    uint8_t nb_descents_ref() const;
-    /** @copydoc common_nb_descent
      *  @par Algorithm:
      *  Reference @f$O(1)@f$ using vector shift and comparison
      */
     uint8_t nb_descents() const;
+
+    /** Same interface as \ref HPCombi::Perm16::nb_descents "nb_descents", with a different implementation.
+     *  @par Algorithm:
+     *  Reference @f$O(n)@f$ using a loop
+     */
+    uint8_t nb_descents_ref() const;
 
     /** The set partition of the cycles of a permutation
      * @details
@@ -406,7 +402,7 @@ struct Perm16 : public Transf16 /* public PPerm : diamond problem */ {
      */
     epu8 cycles_partition() const;
 
-    /** @class common_nb_cycles
+    /**
      * @brief The number of cycles of a permutation
      * @details
      * @returns the number of cycles of \c *this
@@ -416,23 +412,24 @@ struct Perm16 : public Transf16 /* public PPerm : diamond problem */ {
      * x.nb_cycles()
      * @endcode
      * Returns @verbatim 10 @endverbatim
-     */
-    /** @copydoc common_nb_cycles
-     *  @par Algorithm:
-     *  Reference @f$O(n)@f$ using a boolean vector
-     */
-    uint8_t nb_cycles_ref() const;
-    /** @copydoc common_nb_cycles
-     *  @par Algorithm:
-     *  Reference @f$O(\log(n))@f$ using #cycles_partition
-     */
-    uint8_t nb_cycles_unroll() const;
-    /** @copydoc common_nb_cycles
      *  @par Algorithm: aliased to #nb_cycles_unroll
      */
     uint8_t nb_cycles() const { return nb_cycles_unroll(); }
 
-    /** @class common_left_weak_leq
+    /** Same interface as \ref HPCombi::Perm16::nb_cycles "nb_cycles" but with a different implementation.
+     *  @par Algorithm:
+     *  Reference @f$O(n)@f$ using a boolean vector
+     */
+    uint8_t nb_cycles_ref() const;
+
+    /** Same interface as \ref HPCombi::Perm16::nb_cycles "nb_cycles" but with a different implementation.
+     *  @par Algorithm:
+     *  Reference @f$O(\log(n))@f$ using #cycles_partition
+     */
+    uint8_t nb_cycles_unroll() const;
+
+
+    /**
      * @brief Compare two permutations for the left weak order
      * @par Example:
      * @code
@@ -440,22 +437,22 @@ struct Perm16 : public Transf16 /* public PPerm : diamond problem */ {
      * x.left_weak_leq(y)
      * @endcode
      * Returns @verbatim true @endverbatim
-     */
-    /** @copydoc common_left_weak_leq
-     *  @par Algorithm:
-     *  Reference @f$O(n^2)@f$ testing inclusion of inversions one by one
-     */
-    bool left_weak_leq_ref(Perm16 other) const;
-    /** @copydoc common_left_weak_leq
-     *  @par Algorithm:
-     *  Reference @f$O(n)@f$ with vectorized test of inclusion
-     */
-    bool left_weak_leq_length(Perm16 other) const;
-    /** @copydoc common_left_weak_leq
      *  @par Algorithm:
      *  @f$O(n)@f$ algorithm using length
      */
     bool left_weak_leq(Perm16 other) const;
+
+    /** Same interface as \ref HPCombi::Perm16::left_weak_leq "left_weak_leq" but with a different implementation.
+     *  @par Algorithm:
+     *  Reference @f$O(n^2)@f$ testing inclusion of inversions one by one
+     */
+    bool left_weak_leq_ref(Perm16 other) const;
+
+    /** Same interface as \ref HPCombi::Perm16::left_weak_leq "left_weak_leq" but with a different implementation.
+     *  @par Algorithm:
+     *  Reference @f$O(n)@f$ with vectorized test of inclusion
+     */
+    bool left_weak_leq_length(Perm16 other) const;
 };
 
 ///////////////////////////////////////////////////////////////////////////////
