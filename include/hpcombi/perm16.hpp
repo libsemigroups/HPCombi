@@ -154,7 +154,7 @@ struct Transf16 : public PTransf16 {
     explicit operator uint64_t() const;
 };
 
-/** Partial permutation of @f$\{0\dots 15\}@f$; see HPCombi::Perm16;
+/** Partial permutation of @f$\{0\dots 15\}@f$; see also HPCombi::Perm16;
 partial means it might not be defined everywhere (but where it's defined, it's injective).
 Undefined images are encoded as 0xFF. */
 struct PPerm16 : public PTransf16 {
@@ -255,7 +255,6 @@ struct Perm16 : public Transf16 /* public PPerm : diamond problem */ {
      * Frontend method: currently aliased to #inverse_cycl */
     Perm16 inverse() const { return inverse_cycl(); }
 
-
     /** Same as \ref HPCombi::Perm16::inverse "inverse" but with a different algorithm.
      *  @par Algorithm:
      *  Reference @f$O(n)@f$ algorithm using loop and indexed access
@@ -308,7 +307,6 @@ struct Perm16 : public Transf16 /* public PPerm : diamond problem */ {
      */
     static Perm16 unrankSJT(int n, int r);
 
-
     /**
      * @brief The Lehmer code of a permutation
      * @details
@@ -337,7 +335,7 @@ struct Perm16 : public Transf16 /* public PPerm : diamond problem */ {
      */
     epu8 lehmer_arr() const;
 
-    /** 
+    /**
      * @brief The Coxeter length (ie: number of inversion) of a permutation
      * @details
      * @returns the number of inversions of \c *this
@@ -428,7 +426,6 @@ struct Perm16 : public Transf16 /* public PPerm : diamond problem */ {
      */
     uint8_t nb_cycles_unroll() const;
 
-
     /**
      * @brief Compare two permutations for the left weak order
      * @par Example:
@@ -442,13 +439,15 @@ struct Perm16 : public Transf16 /* public PPerm : diamond problem */ {
      */
     bool left_weak_leq(Perm16 other) const;
 
-    /** Same interface as \ref HPCombi::Perm16::left_weak_leq "left_weak_leq" but with a different implementation.
+    /** Same interface as \ref HPCombi::Perm16::left_weak_leq "left_weak_leq"
+     * but with a different implementation.
      *  @par Algorithm:
      *  Reference @f$O(n^2)@f$ testing inclusion of inversions one by one
      */
     bool left_weak_leq_ref(Perm16 other) const;
 
-    /** Same interface as \ref HPCombi::Perm16::left_weak_leq "left_weak_leq" but with a different implementation.
+    /** Same interface as \ref HPCombi::Perm16::left_weak_leq "left_weak_leq"
+     * but with a different implementation.
      *  @par Algorithm:
      *  Reference @f$O(n)@f$ with vectorized test of inclusion
      */
@@ -471,7 +470,8 @@ static_assert(std::is_trivial<Perm16>(), "Perm16 is not a trivial class !");
 namespace std {
 // Hash operators for Transf and Perm:
 
-//! This type appears in the doc because we provide a hash function for HPCombi::PTransf16.
+//! This type appears in the doc because we provide a hash function for
+//! HPCombi::PTransf16.
 template <> struct hash<HPCombi::PTransf16> {
     //! A hash operator for #HPCombi::PTransf16
     size_t operator()(const HPCombi::PTransf16 &ar) const {
@@ -479,7 +479,8 @@ template <> struct hash<HPCombi::PTransf16> {
     }
 };
 
-//! This type appears in the doc because we provide a hash function for HPCombi::Transf16.
+//! This type appears in the doc because we provide a hash function for
+//! HPCombi::Transf16.
 template <> struct hash<HPCombi::Transf16> {
     //! A hash operator for #HPCombi::Transf16
     size_t operator()(const HPCombi::Transf16 &ar) const {
@@ -487,7 +488,8 @@ template <> struct hash<HPCombi::Transf16> {
     }
 };
 
-//! This type appears in the doc because we provide a hash function for HPCombi::PPerm16.
+//! This type appears in the doc because we provide a hash function for
+//! HPCombi::PPerm16.
 template <> struct hash<HPCombi::PPerm16> {
     //! A hash operator for #HPCombi::PPerm16
     size_t operator()(const HPCombi::PPerm16 &ar) const {
@@ -495,7 +497,8 @@ template <> struct hash<HPCombi::PPerm16> {
     }
 };
 
-//! This type appears in the doc because we provide a hash function for HPCombi::Perm16.
+//! This type appears in the doc because we provide a hash function for
+//! HPCombi::Perm16.
 template <> struct hash<HPCombi::Perm16> {
     //! A hash operator for #HPCombi::Perm16
     size_t operator()(const HPCombi::Perm16 &ar) const { return uint64_t(ar); }

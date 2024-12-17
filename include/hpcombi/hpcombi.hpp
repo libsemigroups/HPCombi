@@ -53,9 +53,9 @@ applying a permutation on a vector only takes a few CPU cycles.
 
 Further ideas are:
 - Vectorization (MMX, SSE, AVX instructions sets) and careful memory alignment,
-- Careful memory management: avoiding all dynamic allocation during the computation,
-- Avoid all unnecessary copies (often needed to rewrite the containers),
-- Due to combinatorial explosion, sets often don’t fit in the computer’s memory or disks and are enumerated on the fly.
+- Careful memory management: avoid all dynamic allocation during the computation,
+- Avoid all unnecessary copies (it is often needed to rewrite the containers),
+- Due to combinatorial explosion, sets often don’t fit in memory or disk and are enumerated on the fly.
 
 Here are some examples,
 the speedup is in comparison to an implementation without vector instructions:
@@ -72,24 +72,29 @@ Cycle type of a permutation | 8.94
 
 \section sec_tips Tips to the user
 
-Note that memory access can become a problem. It you store many things, most of the time will be spent in fetching from RAM, not computing.
-Data structure should preserve locality. You might want to compute some stats on data structure usage and write custom ones.
+Note that memory access can become a problem.
+If your algorithm stores many things, most of the time will be spent in fetching from RAM, not computing.
+The data structures your client code uses should preserve locality.
+You might want to compute some stats on data structure usage
+(eg avg size of buckets used, lengths of lists, lifetime of objects, etc.)
+and write custom data structure optimized for your usage profile.
 
 This lib is implemented with speed in mind, not code safety.
 Eg. there are no checks when building a permutation, which could be invalid (like non injective).
 
-We now suggest to have a look, in the menus above, at Classes → [Class list](annotated.html),
-esp. at classes are HPCombi::Perm16 and HPCombi::BMat8.
+We suggest having a look, in the menus above, at Classes → [Class list](annotated.html),
+esp. at the classes HPCombi::Perm16 and HPCombi::BMat8.
 
 \section Parallelism
 There is no parallelisation here. To use parallelism with this lib, see for instance:
 - Florent Hivert, High Performance Computing Experiments in Enumerative and Algebraic Combinatorics
-([pdf](https://plouffe.fr/OEIS/citations/3115936.3115938.pdf), [DOI](https://dx.doi.org/10.1145/3115936.3115938)).
+([pdf](https://plouffe.fr/OEIS/citations/3115936.3115938.pdf),
+[DOI](https://dx.doi.org/10.1145/3115936.3115938)).
 - [OpenCilk](https://github.com/OpenCilk/) or look for another work stealing framework.
 
 Cilk is based on C++ and essentially adds the keywords `spawn` and `sync` to ease parallelism.
-Intel decided not to maintain it anymore so its deprecated.
-OpencilK is an open source project to continue it.
+Intel decided not to maintain Cilk anymore so it is deprecated.
+[OpencilK](https://github.com/OpenCilk/) is an open source project to continue it.
 
 We tested OpenMP and it was 2 orders of magnitude slower.
 
