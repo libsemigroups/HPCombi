@@ -7,9 +7,9 @@ concurrency:
 
 jobs:
    tests:
-      name: "ubuntu-latest"
+      name: "ubuntu-22.04"
       timeout-minutes: 60
-      runs-on: ubuntu-latest
+      runs-on: ubuntu-22.04
       strategy:
         fail-fast: false
         matrix:
