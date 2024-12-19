@@ -17,6 +17,9 @@
 //  with HP-Combi. If not, see <https://www.gnu.org/licenses/>.               //
 //****************************************************************************//
 
+/** @file
+@brief check the required compiler flags for SSE-4.1 */
+
 #ifndef HPCOMBI_ARCH_HPP_
 #define HPCOMBI_ARCH_HPP_
 

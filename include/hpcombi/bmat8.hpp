@@ -19,7 +19,8 @@
 //  with HP-Combi. If not, see <https://www.gnu.org/licenses/>.               //
 //****************************************************************************//
 
-// This file contains a declaration of fast boolean matrices up to dimension 8.
+/** @file
+@brief declaration of HPCombi::BMat8 */
 
 #ifndef HPCOMBI_BMAT8_HPP_
 #define HPCOMBI_BMAT8_HPP_
@@ -40,15 +41,17 @@
 
 namespace HPCombi {
 
-//! Class for fast boolean matrices of dimension up to 8 x 8
-//!
-//! The methods for these small matrices over the boolean semiring
-//! are more optimised than the generic methods for boolean matrices.
-//! Note that all BMat8 are represented internally as an 8 x 8 matrix;
-//! any entries not defined by the user are taken to be 0. This does
-//! not affect the results of any calculations.
-//!
-//! BMat8 is a trivial class.
+/** Boolean matrices of dimension up to 8×8, stored as a single uint64;
+isomorph to binary relations with methods for composition.
+
+The methods for these small matrices over the boolean semiring
+are more optimised than the generic methods for boolean matrices.
+Note that all BMat8 are represented internally as an 8×8 matrix;
+any entries not defined by the user are taken to be 0. This does
+not affect the results of any calculation.
+
+BMat8 is a trivial class.
+*/
 class BMat8 {
  public:
     //! A default constructor.

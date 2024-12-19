@@ -17,6 +17,9 @@
 //  with HP-Combi. If not, see <https://www.gnu.org/licenses/>.               //
 //****************************************************************************//
 
+/** @file
+@brief declaration of HPCombi::PermGeneric */
+
 #ifndef HPCOMBI_PERM_GENERIC_HPP_
 #define HPCOMBI_PERM_GENERIC_HPP_
 
@@ -35,6 +38,14 @@
 
 namespace HPCombi {
 
+/** Vanilla (ie NOT optimized) implementation of a permutation, used to check
+for test correctness and as baseline to measure speedup. Implemented as an std
+array, so the permutation is not necessarily of size n=16. PermGeneric<16>
+should implement as much as possibles of Perm16 (currently not everything due to
+lack of time/need). No optimisation, so prefer to use Perm16.
+
+About Expo, see comment on HPCombi::VectGeneric.
+*/
 template <size_t Size, typename Expo = uint8_t>
 struct PermGeneric : public VectGeneric<Size, Expo> {
     using vect = VectGeneric<Size, Expo>;

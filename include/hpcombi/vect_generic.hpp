@@ -17,6 +17,9 @@
 //  with HP-Combi. If not, see <https://www.gnu.org/licenses/>.               //
 //****************************************************************************//
 
+/** @file
+@brief HPCombi::VectGeneric */
+
 #ifndef HPCOMBI_VECT_GENERIC_HPP_
 #define HPCOMBI_VECT_GENERIC_HPP_
 
@@ -43,7 +46,12 @@ std::array<Expo, Size> sorted_vect(std::array<Expo, Size> v) {
     return v;
 }
 
-/** A generic class for combinatorial integer vectors.
+/** \ref HPCombi::VectGeneric "VectGeneric" is to \ref HPCombi::Vect16 "Vect16"
+what \ref HPCombi::PermGeneric "PermGeneric" is to \ref HPCombi::Perm16
+"Perm16"; see \ref HPCombi::PermGeneric "PermGeneric".
+
+HPCombi started as a library to manipulate monomials on several variables,
+ie a tuple of *expo*nents. The elements of arrays were thus named Expo.
  */
 template <size_t Size, typename Expo = uint8_t> struct VectGeneric {
     static constexpr size_t size() { return Size; }
@@ -236,6 +244,8 @@ std::ostream &operator<<(std::ostream &stream,
     return stream;
 }
 
+//! This type appears in the doc because we provide a hash function for
+//! HPCombi::VectGeneric.
 template <size_t Size, typename Expo>
 struct hash<HPCombi::VectGeneric<Size, Expo>> {
     size_t operator()(const HPCombi::VectGeneric<Size, Expo> &ar) const {

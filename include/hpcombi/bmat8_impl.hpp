@@ -19,8 +19,9 @@
 //  with HP-Combi. If not, see <https://www.gnu.org/licenses/>.               //
 //****************************************************************************//
 
-// This file contains an implementation of fast boolean matrices up to
-// dimension 8 x 8.
+/** @file
+@brief implementation of bmat8.hpp ; this file should not be included directly.
+*/
 
 // NOLINT(build/header_guard)
 
