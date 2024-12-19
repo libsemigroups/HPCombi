@@ -38,10 +38,11 @@
 
 namespace HPCombi {
 
-/** Vanilla (ie NOT optimized) implementation of a permutation, used to check for test correctness and as baseline to measure speedup.
-Implemented as an std array, so the permutation is not necessarily of size n=16.
-PermGeneric<16> should implement as much as possibles of Perm16 (currently not everything due to lack of time/need).
-No optimisation, so prefer to use Perm16.
+/** Vanilla (ie NOT optimized) implementation of a permutation, used to check
+for test correctness and as baseline to measure speedup. Implemented as an std
+array, so the permutation is not necessarily of size n=16. PermGeneric<16>
+should implement as much as possibles of Perm16 (currently not everything due to
+lack of time/need). No optimisation, so prefer to use Perm16.
 
 About Expo, see comment on HPCombi::VectGeneric.
 */

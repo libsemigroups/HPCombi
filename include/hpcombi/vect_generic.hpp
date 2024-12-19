@@ -47,8 +47,8 @@ std::array<Expo, Size> sorted_vect(std::array<Expo, Size> v) {
 }
 
 /** \ref HPCombi::VectGeneric "VectGeneric" is to \ref HPCombi::Vect16 "Vect16"
-what \ref HPCombi::PermGeneric "PermGeneric" is to \ref HPCombi::Perm16 "Perm16";
-see \ref HPCombi::PermGeneric "PermGeneric".
+what \ref HPCombi::PermGeneric "PermGeneric" is to \ref HPCombi::Perm16
+"Perm16"; see \ref HPCombi::PermGeneric "PermGeneric".
 
 HPCombi started as a library to manipulate monomials on several variables,
 ie a tuple of *expo*nents. The elements of arrays were thus named Expo.
@@ -244,7 +244,8 @@ std::ostream &operator<<(std::ostream &stream,
     return stream;
 }
 
-//! This type appears in the doc because we provide a hash function for HPCombi::VectGeneric.
+//! This type appears in the doc because we provide a hash function for
+//! HPCombi::VectGeneric.
 template <size_t Size, typename Expo>
 struct hash<HPCombi::VectGeneric<Size, Expo>> {
     size_t operator()(const HPCombi::VectGeneric<Size, Expo> &ar) const {

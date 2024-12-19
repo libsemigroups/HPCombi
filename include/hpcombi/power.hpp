@@ -17,13 +17,13 @@
 //  with HP-Combi. If not, see <https://www.gnu.org/licenses/>.               //
 //****************************************************************************//
 
-
 /** @file
 @brief  Generic compile-time unrolling of the fast exponentiation algorithm.
 
 Allows to write expressions such as
 - @c pow<23>(2.5) : entirely computed at compile time
-- @c pow<n>(x) expanded at compile time to a O(log n) long sequence of multiplications.
+- @c pow<n>(x) expanded at compile time to a O(log n) long sequence of
+multiplications.
 
 Such expressions work for numbers but also for any type where there is a
 neutral element and an associative (non necessarily commutative) product,

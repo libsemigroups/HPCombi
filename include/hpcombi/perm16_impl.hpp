@@ -20,7 +20,8 @@
 // NOLINT(build/header_guard)
 
 /** @file
-@brief implementation of perm16.hpp ; this file should not be included directly. */
+@brief implementation of perm16.hpp ; this file should not be included directly.
+*/
 
 namespace HPCombi {
 inline PTransf16::PTransf16(std::initializer_list<uint8_t> il)

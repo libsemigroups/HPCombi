@@ -119,7 +119,8 @@ bool PermGeneric<Size, Expo>::left_weak_leq(PermGeneric other) const {
 
 namespace std {
 
-//! This type appears in the doc because we provide a hash function for HPCombi::PermGeneric.
+//! This type appears in the doc because we provide a hash function for
+//! HPCombi::PermGeneric.
 template <size_t Size, typename Expo>
 struct hash<HPCombi::PermGeneric<Size, Expo>> {
     size_t operator()(const HPCombi::PermGeneric<Size, Expo> &ar) const {

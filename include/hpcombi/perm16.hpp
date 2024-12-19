@@ -155,8 +155,8 @@ struct Transf16 : public PTransf16 {
 };
 
 /** Partial permutation of @f$\{0\dots 15\}@f$; see also HPCombi::Perm16;
-partial means it might not be defined everywhere (but where it's defined, it's injective).
-Undefined images are encoded as 0xFF. */
+partial means it might not be defined everywhere (but where it's defined, it's
+injective). Undefined images are encoded as 0xFF. */
 struct PPerm16 : public PTransf16 {
     PPerm16() = default;
     constexpr PPerm16(const PPerm16 &v) = default;
@@ -200,7 +200,8 @@ struct PPerm16 : public PTransf16 {
     PPerm16 inverse_ref() const;
 
 #ifdef SIMDE_X86_SSE4_2_NATIVE
-    /** Same as \ref HPCombi::PPerm16::inverse_ref "inverse_ref" but with a different algorithm.
+    /** Same as \ref HPCombi::PPerm16::inverse_ref "inverse_ref" but with a
+     * different algorithm.
      *  @par Algorithm:
      *  @f$O(\log n)@f$ algorithm using some kind of vectorized dichotomic
      * search.
@@ -255,19 +256,22 @@ struct Perm16 : public Transf16 /* public PPerm : diamond problem */ {
      * Frontend method: currently aliased to #inverse_cycl */
     Perm16 inverse() const { return inverse_cycl(); }
 
-    /** Same as \ref HPCombi::Perm16::inverse "inverse" but with a different algorithm.
+    /** Same as \ref HPCombi::Perm16::inverse "inverse" but with a different
+     * algorithm.
      *  @par Algorithm:
      *  Reference @f$O(n)@f$ algorithm using loop and indexed access
      */
     Perm16 inverse_ref() const;
 
-    /** Same as \ref HPCombi::Perm16::inverse "inverse" but with a different algorithm.
+    /** Same as \ref HPCombi::Perm16::inverse "inverse" but with a different
+     * algorithm.
      *  @par Algorithm:
      *  @f$O(n)@f$ algorithm using reference cast to arrays
      */
     Perm16 inverse_arr() const;
 
-    /** Same as \ref HPCombi::Perm16::inverse "inverse" but with a different algorithm.
+    /** Same as \ref HPCombi::Perm16::inverse "inverse" but with a different
+     * algorithm.
      *  @par Algorithm:
      *  Insert the identity in the least significant bits and sort using a
      *  sorting network. The number of rounds of the optimal sorting network is
@@ -275,14 +279,16 @@ struct Perm16 : public Transf16 /* public PPerm : diamond problem */ {
      */
     Perm16 inverse_sort() const;
 
-    /** Same as \ref HPCombi::Perm16::inverse "inverse" but with a different algorithm.
+    /** Same as \ref HPCombi::Perm16::inverse "inverse" but with a different
+     * algorithm.
      *  @par Algorithm:
      *  @f$O(\log n)@f$ algorithm using some kind of vectorized dichotomic
      * search.
      */
     Perm16 inverse_find() const { return permutation_of(v, one()); }
 
-    /** Same as \ref HPCombi::Perm16::inverse "inverse" but with a different algorithm.
+    /** Same as \ref HPCombi::Perm16::inverse "inverse" but with a different
+     * algorithm.
      *  @par Algorithm:
      *
      * Use HPCombi::pow to
@@ -291,7 +297,8 @@ struct Perm16 : public Transf16 /* public PPerm : diamond problem */ {
      */
     Perm16 inverse_pow() const;
 
-    /** Same as \ref HPCombi::Perm16::inverse "inverse" but with a different algorithm.
+    /** Same as \ref HPCombi::Perm16::inverse "inverse" but with a different
+     * algorithm.
      *  @par Algorithm:
      *  Compute power from @f$n/2@f$ to @f$n@f$, when @f$\sigma^k(i)=i@f$ then
      *  @f$\sigma^{-1}(i)=\sigma^{k-1}(i)@f$. Complexity @f$O(n)@f$
@@ -323,13 +330,15 @@ struct Perm16 : public Transf16 /* public PPerm : diamond problem */ {
      */
     epu8 lehmer() const;
 
-    /** Same interface as \ref HPCombi::Perm16::lehmer "lehmer" but with a different implementation.
+    /** Same interface as \ref HPCombi::Perm16::lehmer "lehmer" but with a
+     * different implementation.
      * @par Algorithm:
      * Reference @f$O(n^2)@f$ algorithm using loop and indexed access
      */
     epu8 lehmer_ref() const;
 
-    /** Same interface as \ref HPCombi::Perm16::lehmer "lehmer" but with a different implementation.
+    /** Same interface as \ref HPCombi::Perm16::lehmer "lehmer" but with a
+     * different implementation.
      * @par Algorithm:
      * Reference @f$O(n^2)@f$ algorithm using array, loop and indexed access
      */
@@ -350,13 +359,15 @@ struct Perm16 : public Transf16 /* public PPerm : diamond problem */ {
      */
     uint8_t length() const;
 
-    /** Same interface as \ref HPCombi::Perm16::length "length", with a different implementation.
+    /** Same interface as \ref HPCombi::Perm16::length "length", with a
+     * different implementation.
      *  @par Algorithm:
      *  Reference @f$O(n^2)@f$ algorithm using loop and indexed access
      */
     uint8_t length_ref() const;
 
-    /** Same interface as \ref HPCombi::Perm16::length "length", with a different implementation.
+    /** Same interface as \ref HPCombi::Perm16::length "length", with a
+     * different implementation.
      *  @par Algorithm:
      *  Reference @f$O(n^2)@f$ algorithm using loop and indexed access after
      *     a cast to \c std::array
@@ -378,7 +389,8 @@ struct Perm16 : public Transf16 /* public PPerm : diamond problem */ {
      */
     uint8_t nb_descents() const;
 
-    /** Same interface as \ref HPCombi::Perm16::nb_descents "nb_descents", with a different implementation.
+    /** Same interface as \ref HPCombi::Perm16::nb_descents "nb_descents", with
+     * a different implementation.
      *  @par Algorithm:
      *  Reference @f$O(n)@f$ using a loop
      */
@@ -414,13 +426,15 @@ struct Perm16 : public Transf16 /* public PPerm : diamond problem */ {
      */
     uint8_t nb_cycles() const { return nb_cycles_unroll(); }
 
-    /** Same interface as \ref HPCombi::Perm16::nb_cycles "nb_cycles" but with a different implementation.
+    /** Same interface as \ref HPCombi::Perm16::nb_cycles "nb_cycles" but with a
+     * different implementation.
      *  @par Algorithm:
      *  Reference @f$O(n)@f$ using a boolean vector
      */
     uint8_t nb_cycles_ref() const;
 
-    /** Same interface as \ref HPCombi::Perm16::nb_cycles "nb_cycles" but with a different implementation.
+    /** Same interface as \ref HPCombi::Perm16::nb_cycles "nb_cycles" but with a
+     * different implementation.
      *  @par Algorithm:
      *  Reference @f$O(\log(n))@f$ using #cycles_partition
      */
