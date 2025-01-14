@@ -18,7 +18,7 @@ tests, experiments, examples, or benchmarks.
 
 - [optional] : Google `sparsehash/dense_hash_map` and/or `sparsehash/dense_hash_set`.
 
-- [optional] Doxygen for generating the API documentation (in progress).
+- [optional] Doxygen for generating the API documentation (in [build/doc/html/index.html](build/doc/html/index.html)).
 
 ## Building
 

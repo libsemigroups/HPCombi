@@ -19,6 +19,10 @@
 
 // NOLINT(build/header_guard)
 
+/** @file
+@brief implementation of perm_generic.hpp ;
+this file should not be included directly. */
+
 namespace HPCombi {
 
 template <size_t Size, typename Expo>
@@ -115,6 +119,8 @@ bool PermGeneric<Size, Expo>::left_weak_leq(PermGeneric other) const {
 
 namespace std {
 
+//! This type appears in the doc because we provide a hash function for
+//! HPCombi::PermGeneric.
 template <size_t Size, typename Expo>
 struct hash<HPCombi::PermGeneric<Size, Expo>> {
     size_t operator()(const HPCombi::PermGeneric<Size, Expo> &ar) const {

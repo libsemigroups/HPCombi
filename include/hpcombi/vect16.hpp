@@ -17,6 +17,9 @@
 //  with HP-Combi. If not, see <https://www.gnu.org/licenses/>.               //
 //****************************************************************************//
 
+/** @file
+@brief HPCombi::Vect16 */
+
 #ifndef HPCOMBI_VECT16_HPP_
 #define HPCOMBI_VECT16_HPP_
 
@@ -31,6 +34,8 @@
 
 namespace HPCombi {
 
+/** Vector of 16 bytes, with some optimized methods, superclass of
+ * HPCombi::Transf16. */
 struct alignas(16) Vect16 {
     static constexpr size_t size() { return 16; }
     using array = typename decltype(Epu8)::array;
@@ -113,6 +118,8 @@ inline std::ostream &operator<<(std::ostream &stream,
     return operator<<(stream, ar.v);
 }
 
+//! This type appears in the doc because we provide a hash function for
+//! HPCombi::Vect16.
 template <> struct hash<HPCombi::Vect16> {
     size_t operator()(const HPCombi::Vect16 &ar) const {
         return std::hash<HPCombi::epu8>{}(ar.v);

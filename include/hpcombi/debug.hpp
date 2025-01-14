@@ -18,6 +18,9 @@
 //  with HP-Combi. If not, see <https://www.gnu.org/licenses/>.               //
 //****************************************************************************//
 
+/** @file
+@brief defines the macro \c HPCOMBI_ASSERT */
+
 #ifndef HPCOMBI_DEBUG_HPP_
 #define HPCOMBI_DEBUG_HPP_
 
