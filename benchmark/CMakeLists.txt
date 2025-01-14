@@ -37,7 +37,7 @@ endif()
 message(STATUS "Building benchmark")
 
 set(benchmark_src
-  bench_epu8.cpp bench_perm16.cpp bench_bmat8.cpp)
+  bench_epu8.cpp bench_perm16.cpp bench_bmat8.cpp bench_bmat16.cpp)
 
 foreach(f ${benchmark_src})
   get_filename_component(benchName ${f} NAME_WE)
