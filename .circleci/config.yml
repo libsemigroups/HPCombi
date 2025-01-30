@@ -80,10 +80,14 @@ workflows:
       #    name: "test-gcc-11"
       #    compiler: "gcc"
       #    version: "11"
+      # - test:
+      #     name: "test-gcc-12"
+      #     compiler: "gcc"
+      #     version: "12"
       - test:
-          name: "test-gcc-12"
+          name: "test-gcc-13"
           compiler: "gcc"
-          version: "12"
+          version: "13"
       - test:
           name: "test-clang-11"
           compiler: "clang"
