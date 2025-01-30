@@ -10,9 +10,14 @@ jobs:
       version:
         type: string
     docker:
-      - image: reiniscirpons/hpcombi-env-arm64v8:v1
+      - image: arm64v8/ubuntu:latest
     resource_class: arm.medium
     steps:
+      - run: 
+          name: Install dependencies
+          command: |
+            apt-get --yes update
+            apt-get install --yes build-essential libbenchmark-dev make cmake pkg-config git catch2
       - run:
           name: "Set up compiler"
           environment:
