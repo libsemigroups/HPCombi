@@ -10,9 +10,14 @@ jobs:
       version:
         type: string
     docker:
-      - image: reiniscirpons/hpcombi-env-arm64v8:v1
+      - image: arm64v8/ubuntu:latest
     resource_class: arm.medium
     steps:
+      - run: 
+          name: Install dependencies
+          command: |
+            apt-get --yes update
+            apt-get install --yes build-essential libbenchmark-dev make cmake pkg-config git catch2
       - run:
           name: "Set up compiler"
           environment:
@@ -27,6 +32,7 @@ jobs:
               echo "export CC=gcc-$COMPILER_VERSION" >> workspace/new-env-vars
               echo "export CXX=g++-$COMPILER_VERSION" >> workspace/new-env-vars
             else
+              DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends tzdata
               apt-get install --yes clang++-$COMPILER_VERSION
               echo "export CC=clang-$COMPILER_VERSION" >> workspace/new-env-vars
               echo "export CXX=clang++-$COMPILER_VERSION" >> workspace/new-env-vars
@@ -72,35 +78,15 @@ workflows:
           name: "test-gcc-9"
           compiler: "gcc"
           version: "9"
-      # - test:
-      #    name: "test-gcc-10"
-      #    compiler: "gcc"
-      #    version: "10"
-      # - test:
-      #    name: "test-gcc-11"
-      #    compiler: "gcc"
-      #    version: "11"
       - test:
-          name: "test-gcc-12"
-          compiler: "gcc"
-          version: "12"
+           name: "test-gcc-14"
+           compiler: "gcc"
+           version: "14"
       - test:
-          name: "test-clang-11"
+          name: "test-clang-14"
           compiler: "clang"
-          version: "11"
-      # - test:
-      #     name: "test-clang-12"
-      #     compiler: "clang"
-      #     version: "12"
-      # - test:
-      #     name: "test-clang-13"
-      #     compiler: "clang"
-      #     version: "13"
-      # - test:
-      #     name: "test-clang-14"
-      #     compiler: "clang"
-      #     version: "14"
+          version: "14"
       - test:
-          name: "test-clang-15"
+          name: "test-clang-17"
           compiler: "clang"
-          version: "15"
+          version: "17"
