@@ -32,6 +32,7 @@ jobs:
               echo "export CC=gcc-$COMPILER_VERSION" >> workspace/new-env-vars
               echo "export CXX=g++-$COMPILER_VERSION" >> workspace/new-env-vars
             else
+              DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends tzdata
               apt-get install --yes clang++-$COMPILER_VERSION
               echo "export CC=clang-$COMPILER_VERSION" >> workspace/new-env-vars
               echo "export CXX=clang++-$COMPILER_VERSION" >> workspace/new-env-vars
