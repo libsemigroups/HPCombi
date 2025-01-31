@@ -70,12 +70,14 @@ TEST_CASE_METHOD(Fix_BMat8, "Transpose", "[BMat8][001]") {
     BENCHMARK_MEM_FN(transpose, sample);
     BENCHMARK_MEM_FN(transpose_mask, sample);
     BENCHMARK_MEM_FN(transpose_maskd, sample);
+    BENCHMARK_MEM_FN(transpose_naive, sample);
 }
 
 TEST_CASE_METHOD(Fix_BMat8, "Transpose pairs", "[BMat8][002]") {
     BENCHMARK_MEM_FN_PAIR_EQ(transpose, pair_sample);
     BENCHMARK_MEM_FN_PAIR_EQ(transpose_mask, pair_sample);
     BENCHMARK_MEM_FN_PAIR_EQ(transpose_maskd, pair_sample);
+    BENCHMARK_MEM_FN_PAIR_EQ(transpose_naive, pair_sample);
     BENCHMARK("transpose2") {
         for (auto &pair : pair_sample) {
             BMat8::transpose2(pair.first, pair.second);
@@ -107,6 +109,12 @@ TEST_CASE_METHOD(Fix_BMat8, "Pair row space inclusion", "[BMat8][004]") {
         }
         return true;
     };
+}
+
+TEST_CASE_METHOD(Fix_BMat8, "Multiplication", "[BMat8][005]") {
+    BENCHMARK_MEM_FN_PAIR(BMat8::operator*, pair_sample);
+    BENCHMARK_MEM_FN_PAIR(mult_naive, pair_sample);
+    BENCHMARK_MEM_FN_PAIR(mult_naive_array, pair_sample);
 }
 
 }  // namespace HPCombi
