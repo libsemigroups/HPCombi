@@ -14,4 +14,4 @@ jobs:
       with:
         clang-format-version: '18'
         exclude-regex: '(tests\/catch_*.*pp|benchmarks\/catch_*.*pp)'
-        include-regex: '(include/hpcombi/*.hpp|tests/*.cpp|benchmarks/*.cpp|examples/*.cpp|examples/*.h)'
+        include-regex: '(include\/hpcombi\/*.hpp|tests\/*.cpp|benchmarks\/*.cpp|examples\/*.cpp|examples\/*.h)'
