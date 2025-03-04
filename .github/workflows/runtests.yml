@@ -7,7 +7,7 @@ concurrency:
 
 jobs:
    tests:
-      name: "ubuntu-latest"
+      name: "ubuntu-latest ${{ matrix.sys.c_compiler }}-${{ matrix.sys.version }}"
       timeout-minutes: 60
       runs-on: ubuntu-latest
       strategy:
