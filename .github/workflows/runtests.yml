@@ -7,68 +7,40 @@ concurrency:
 
 jobs:
    tests:
-      name: "ubuntu-latest"
+      name: "ubuntu-latest ${{ matrix.sys.c_compiler }}-${{ matrix.sys.version }}"
       timeout-minutes: 60
       runs-on: ubuntu-latest
       strategy:
         fail-fast: false
         matrix:
           sys:
-            - { compiler: 'gcc', version: '9'}
-            - { compiler: 'gcc', version: '10'}
-            - { compiler: 'gcc', version: '11'}
-            - { compiler: 'gcc', version: '12'}
-            - { compiler: 'gcc', version: '13'}
-            - { compiler: 'gcc', version: '14'}
-            - { compiler: 'clang', version: '14'}
-            - { compiler: 'clang', version: '15'}
-            - { compiler: 'clang', version: '16'}
-            - { compiler: 'clang', version: '17'}
-            - { compiler: 'clang', version: '18'}
+            - { c_compiler: 'gcc', cpp_compiler: 'g++', version: '9'}
+            - { c_compiler: 'gcc', cpp_compiler: 'g++', version: '10'}
+            - { c_compiler: 'gcc', cpp_compiler: 'g++', version: '11'}
+            - { c_compiler: 'gcc', cpp_compiler: 'g++', version: '12'}
+            - { c_compiler: 'gcc', cpp_compiler: 'g++', version: '13'}
+            - { c_compiler: 'gcc', cpp_compiler: 'g++', version: '14'}
+            - { c_compiler: 'clang', cpp_compiler: 'clang++', version: '14'}
+            - { c_compiler: 'clang', cpp_compiler: 'clang++', version: '15'}
+            - { c_compiler: 'clang', cpp_compiler: 'clang++', version: '16'}
+            - { c_compiler: 'clang', cpp_compiler: 'clang++', version: '17'}
+            - { c_compiler: 'clang', cpp_compiler: 'clang++', version: '18'}
       steps:
-         - name: Set up Homebrew
-           id: set-up-homebrew
-           uses: Homebrew/actions/setup-homebrew@master
          - name: "Checkout HPCombi repo . . ."
            uses: actions/checkout@v3
-         - name: "Setup compiler (gcc, version >= 12) . . ."
-           if: ${{ matrix.sys.compiler == 'gcc' && fromJSON(matrix.sys.version) >= fromJSON('12')}}
+         - name: "Setup compiler . . ."
            run: |
-             GCC_VERSION=${{ matrix.sys.version }}
-             sudo apt-get --yes update
-             sudo apt-get install gcc-$GCC_VERSION
-             CC=gcc-$GCC_VERSION
-             echo "CC=$CC" >> $GITHUB_ENV
-             CXX=g++-$GCC_VERSION
-             echo "CXX=$CXX" >> $GITHUB_ENV
-         - name: "Setup compiler (gcc, version < 12) . . ."
-           if: ${{ matrix.sys.compiler == 'gcc' && fromJSON(matrix.sys.version) < fromJSON('12')}}
+            CC=${{ matrix.sys.c_compiler }}-${{ matrix.sys.version }}
+            CXX=${{ matrix.sys.cpp_compiler }}-${{ matrix.sys.version }}
+            sudo add-apt-repository ppa:ubuntu-toolchain-r/ppa -y
+            sudo apt-get --yes update
+            sudo apt-get install $CC $CXX
+            echo "CC=$CC" >> $GITHUB_ENV
+            echo "CXX=$CXX" >> $GITHUB_ENV
+         - name: "Compiler information"
            run: |
-             GCC_VERSION=${{ matrix.sys.version }}
-             brew install gcc@$GCC_VERSION
-             CC=gcc-$GCC_VERSION
-             echo "CC=$CC" >> $GITHUB_ENV
-             CXX=g++-$GCC_VERSION
-             echo "CXX=$CXX" >> $GITHUB_ENV
-         - name: "Setup compiler (clang, version >= 16) . . ."
-           if: ${{ matrix.sys.compiler == 'clang' && fromJSON(matrix.sys.version) >= fromJSON('16')}}
-           run: |
-             LLVM_VERSION=${{ matrix.sys.version }}
-             sudo apt-get --yes update
-             sudo apt-get install --yes clang++-$LLVM_VERSION
-             CC=clang-$LLVM_VERSION
-             echo "CC=$CC" >> $GITHUB_ENV
-             CXX=clang++-$LLVM_VERSION
-             echo "CXX=$CXX" >> $GITHUB_ENV
-         - name: "Setup compiler (clang, version < 16) . . ."
-           if: ${{ matrix.sys.compiler == 'clang' && fromJSON(matrix.sys.version) < fromJSON('16')}}
-           run: |
-             LLVM_VERSION=${{ matrix.sys.version }}
-             brew install llvm@$LLVM_VERSION
-             CC="/home/linuxbrew/.linuxbrew/opt/llvm@$LLVM_VERSION/bin/clang"
-             echo "CC=$CC" >> $GITHUB_ENV
-             CXX="/home/linuxbrew/.linuxbrew/opt/llvm@$LLVM_VERSION/bin/clang++"
-             echo "CXX=$CXX" >> $GITHUB_ENV
+             echo $CXX
+             $CXX --version
          - name: "Configure the HPCombi build . . ."
            env:
              CC: ${{ env.CC }}
