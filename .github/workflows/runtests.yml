@@ -26,9 +26,6 @@ jobs:
             - { c_compiler: 'clang', cpp_compiler: 'clang++', version: '17'}
             - { c_compiler: 'clang', cpp_compiler: 'clang++', version: '18'}
       steps:
-         - name: Set up Homebrew
-           id: set-up-homebrew
-           uses: Homebrew/actions/setup-homebrew@master
          - name: "Checkout HPCombi repo . . ."
            uses: actions/checkout@v3
          - name: "Setup compiler . . ."
