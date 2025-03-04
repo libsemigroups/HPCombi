@@ -39,8 +39,16 @@
 #include "power.hpp"   // for pow
 #include "vect16.hpp"  // for hash, is_partial_permutation
 
+#if defined(__GNUC__) && !defined(__clang__)
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wswitch-default"
+#pragma GCC diagnostic ignored "-Wpacked"
+#endif
 #include "simde/x86/sse4.1.h"
 #include "simde/x86/sse4.2.h"
+#if defined(__GNUC__) && !defined(__clang__)
+#pragma GCC diagnostic pop
+#endif
 
 namespace HPCombi {
 
