@@ -36,8 +36,16 @@ eg simde_mm_testz_si128(a,a) → is_all_zero(a) */
 #include "debug.hpp"         // for HPCOMBI_ASSERT
 #include "vect_generic.hpp"  // for VectGeneric
 
+#if defined(__GNUC__) && !defined(__clang__)
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wswitch-default"
+#pragma GCC diagnostic ignored "-Wpacked"
+#endif
 #include "simde/x86/sse4.1.h"  // for simde_mm_max_epu8, simde...
 #include "simde/x86/sse4.2.h"  // for ???
+#if defined(__GNUC__) && !defined(__clang__)
+#pragma GCC diagnostic pop
+#endif
 
 namespace HPCombi {
 
