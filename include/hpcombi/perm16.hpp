@@ -508,7 +508,7 @@ template <> struct hash<HPCombi::PTransf16> {
 template <> struct hash<HPCombi::Transf16> {
     //! A hash operator for #HPCombi::Transf16
     size_t operator()(const HPCombi::Transf16 &ar) const {
-        return uint64_t(ar);
+        return static_cast<uint64_t>(ar);
     }
 };
 
@@ -525,7 +525,9 @@ template <> struct hash<HPCombi::PPerm16> {
 //! HPCombi::Perm16.
 template <> struct hash<HPCombi::Perm16> {
     //! A hash operator for #HPCombi::Perm16
-    size_t operator()(const HPCombi::Perm16 &ar) const { return uint64_t(ar); }
+    size_t operator()(const HPCombi::Perm16 &ar) const {
+        return static_cast<uint64_t>(ar);
+    }
 };
 
 }  // namespace std
