@@ -13,5 +13,6 @@ var searchData=
   ['arch_2ehpp_10',['arch.hpp',['../arch_8hpp.html',1,'']]],
   ['array_11',['array',['../structHPCombi_1_1TPUBuild.html#affd84f79b18ecbd5a7325e0e857a7360',1,'HPCombi::TPUBuild::array'],['../structHPCombi_1_1PTransf16.html#a74666f4922b11847751de673a2ab66b7',1,'HPCombi::PTransf16::array'],['../structHPCombi_1_1Vect16.html#aa143b15c812c66144dbadc1dbcd034f2',1,'HPCombi::Vect16::array'],['../structHPCombi_1_1VectGeneric.html#ac70e6b1f5af8d49e84383bfe6d320382',1,'HPCombi::VectGeneric::array']]],
   ['as_5farray_12',['as_array',['../structHPCombi_1_1Vect16.html#aa186500b1af108738618591f1eb794bc',1,'HPCombi::Vect16::as_array()'],['../structHPCombi_1_1Vect16.html#aa7e2e47030ac0b0e1362a4f0256b45ba',1,'HPCombi::Vect16::as_array() const'],['../namespaceHPCombi.html#aebc0094d95f9267b87fa93955d792051',1,'HPCombi::as_array(TPU &amp;v) noexcept'],['../namespaceHPCombi.html#ac08f40ac0623a9ba14a43312fa77e165',1,'HPCombi::as_array(const TPU &amp;v) noexcept']]],
-  ['as_5fvectgeneric_13',['as_VectGeneric',['../namespaceHPCombi.html#ab772939383246875d56c304c3ce69649',1,'HPCombi::as_VectGeneric(TPU &amp;v)'],['../namespaceHPCombi.html#a9c7f13c7cab63a95efc08ef11975e4b0',1,'HPCombi::as_VectGeneric(const TPU &amp;v)']]]
+  ['as_5fvectgeneric_13',['as_VectGeneric',['../namespaceHPCombi.html#ab772939383246875d56c304c3ce69649',1,'HPCombi::as_VectGeneric(TPU &amp;v)'],['../namespaceHPCombi.html#a9c7f13c7cab63a95efc08ef11975e4b0',1,'HPCombi::as_VectGeneric(const TPU &amp;v)']]],
+  ['authors_14',['Authors',['../index.html#autotoc_md1',1,'']]]
 ];

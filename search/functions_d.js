@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['random_0',['random',['../classHPCombi_1_1BMat8.html#ae11d5e25f0b00a1bf3fe0b5439857c5f',1,'HPCombi::BMat8::random()'],['../classHPCombi_1_1BMat8.html#a5b78e33ef34b88ebe02a3f044095106e',1,'HPCombi::BMat8::random(size_t dim)'],['../structHPCombi_1_1Perm16.html#affd2e8718806fef529fb61f9896f5bab',1,'HPCombi::Perm16::random()'],['../structHPCombi_1_1PermGeneric.html#a89830884599dda631b4a1c32185b5948',1,'HPCombi::PermGeneric::random()'],['../structHPCombi_1_1VectGeneric.html#a5c40a4e62227138426ff3396b37134d1',1,'HPCombi::VectGeneric::random()']]],
+  ['random_0',['random',['../classHPCombi_1_1BMat16.html#adc92e7a3c13fad74f59a6cee0276cacd',1,'HPCombi::BMat16::random()'],['../classHPCombi_1_1BMat16.html#aa25a14069793f253116d89de66a17a51',1,'HPCombi::BMat16::random(size_t dim)'],['../classHPCombi_1_1BMat8.html#ae11d5e25f0b00a1bf3fe0b5439857c5f',1,'HPCombi::BMat8::random()'],['../classHPCombi_1_1BMat8.html#a5b78e33ef34b88ebe02a3f044095106e',1,'HPCombi::BMat8::random(size_t dim)'],['../structHPCombi_1_1Perm16.html#affd2e8718806fef529fb61f9896f5bab',1,'HPCombi::Perm16::random()'],['../structHPCombi_1_1PermGeneric.html#a89830884599dda631b4a1c32185b5948',1,'HPCombi::PermGeneric::random()'],['../structHPCombi_1_1VectGeneric.html#a5c40a4e62227138426ff3396b37134d1',1,'HPCombi::VectGeneric::random()']]],
   ['random_5fepu8_1',['random_epu8',['../namespaceHPCombi.html#abaad3d89908e243d0b72e1a5cd92a794',1,'HPCombi']]],
   ['rank_2',['rank',['../structHPCombi_1_1PTransf16.html#aca525318dac96287d80b28f96bb79811',1,'HPCombi::PTransf16']]],
   ['rank_5fcmpestrm_3',['rank_cmpestrm',['../structHPCombi_1_1PTransf16.html#abbb81eea4358289059ef89f3fba39352',1,'HPCombi::PTransf16']]],
@@ -33,5 +33,5 @@ var searchData=
   ['row_5fspace_5fsize_5fincl1_30',['row_space_size_incl1',['../classHPCombi_1_1BMat8.html#afb918c64533a5b91848cf195f72bf506',1,'HPCombi::BMat8']]],
   ['row_5fspace_5fsize_5fref_31',['row_space_size_ref',['../classHPCombi_1_1BMat8.html#ab14dd34b536d25fed060639ba4c5373c',1,'HPCombi::BMat8']]],
   ['row_5fspace_5fupdate_5fbitset_32',['row_space_update_bitset',['../namespaceHPCombi_1_1detail.html#a2e37f9ef9892dec87eed0d091b5868db',1,'HPCombi::detail']]],
-  ['rows_33',['rows',['../classHPCombi_1_1BMat8.html#ac82188ebe929ea3bfe8e803b08eab06d',1,'HPCombi::BMat8']]]
+  ['rows_33',['rows',['../classHPCombi_1_1BMat16.html#a3170ff17695aeafdc9965033ada1f392',1,'HPCombi::BMat16::rows()'],['../classHPCombi_1_1BMat8.html#ac82188ebe929ea3bfe8e803b08eab06d',1,'HPCombi::BMat8::rows()']]]
 ];

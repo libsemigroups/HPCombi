@@ -26,6 +26,7 @@ var searchData=
   ['common_5fpartial_5fsums_23',['common_partial_sums',['../classcommon__partial__sums.html',1,'']]],
   ['common_5fpermutation_5fof_24',['common_permutation_of',['../classcommon__permutation__of.html',1,'']]],
   ['const_5fiterator_25',['const_iterator',['../structHPCombi_1_1Vect16.html#a3e6401b1265904d4b16ccbad66af55e3',1,'HPCombi::Vect16::const_iterator'],['../structHPCombi_1_1VectGeneric.html#a974eda5f6379699857d0cb46619a6cea',1,'HPCombi::VectGeneric::const_iterator']]],
-  ['cy_26',['cy',['../Trans_8cpp.html#a010a8c488c9494c4f998737623b71762',1,'Trans.cpp']]],
-  ['cycles_5fpartition_27',['cycles_partition',['../structHPCombi_1_1Perm16.html#a38eda8cf653fcb46166e651af9f76b80',1,'HPCombi::Perm16']]]
+  ['contributors_26',['Contributors',['../index.html#autotoc_md2',1,'']]],
+  ['cy_27',['cy',['../Trans_8cpp.html#a010a8c488c9494c4f998737623b71762',1,'Trans.cpp']]],
+  ['cycles_5fpartition_28',['cycles_partition',['../structHPCombi_1_1Perm16.html#a38eda8cf653fcb46166e651af9f76b80',1,'HPCombi::Perm16']]]
 ];
