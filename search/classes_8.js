@@ -1,6 +1,7 @@
 var searchData=
 [
-  ['timer_0',['Timer',['../classlibsemigroups_1_1Timer.html',1,'libsemigroups']]],
-  ['tpubuild_1',['TPUBuild',['../structHPCombi_1_1TPUBuild.html',1,'HPCombi']]],
-  ['transf16_2',['Transf16',['../structHPCombi_1_1Transf16.html',1,'HPCombi']]]
+  ['vect16_0',['Vect16',['../structHPCombi_1_1Vect16.html',1,'HPCombi']]],
+  ['vectgeneric_1',['VectGeneric',['../structHPCombi_1_1VectGeneric.html',1,'HPCombi']]],
+  ['vectgeneric_3c_20size_2c_20expo_20_3e_2',['VectGeneric&lt; Size, Expo &gt;',['../structHPCombi_1_1VectGeneric.html',1,'HPCombi']]],
+  ['vectgeneric_3c_20size_2c_20uint8_5ft_20_3e_3',['VectGeneric&lt; Size, uint8_t &gt;',['../structHPCombi_1_1VectGeneric.html',1,'HPCombi']]]
 ];

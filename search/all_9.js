@@ -1,7 +1,7 @@
 var searchData=
 [
-  ['largest_5ffix_5fpoint_0',['largest_fix_point',['../structHPCombi_1_1PTransf16.html#ad5720ce9be1366ff916c050e5ece6137',1,'HPCombi::PTransf16']]],
-  ['largest_5fmoved_5fpoint_1',['largest_moved_point',['../structHPCombi_1_1PTransf16.html#a68c50e2963bce023b94ab6d66bfd1d9d',1,'HPCombi::PTransf16']]],
+  ['largest_5ffix_5fpoint_0',['largest_fix_point',['../structHPCombi_1_1PTransf16.html#ad5720ce9be1366ff916c050e5ece6137',1,'HPCombi::PTransf16::largest_fix_point()'],['../structPTransf16.html#ad5720ce9be1366ff916c050e5ece6137',1,'PTransf16::largest_fix_point()']]],
+  ['largest_5fmoved_5fpoint_1',['largest_moved_point',['../structHPCombi_1_1PTransf16.html#a68c50e2963bce023b94ab6d66bfd1d9d',1,'HPCombi::PTransf16::largest_moved_point()'],['../structPTransf16.html#a68c50e2963bce023b94ab6d66bfd1d9d',1,'PTransf16::largest_moved_point()']]],
   ['last_5fdiff_2',['last_diff',['../structHPCombi_1_1Vect16.html#a30efb6b1130f0e075f9dc5eb0d631430',1,'HPCombi::Vect16::last_diff()'],['../structHPCombi_1_1VectGeneric.html#abae25bc3fa4def0f072bccffbb51d7ca',1,'HPCombi::VectGeneric::last_diff()'],['../namespaceHPCombi.html#acc03c8b728fe7757e1afdb5c5ade6d6e',1,'HPCombi::last_diff(epu8 a, epu8 b, size_t bound=16) noexcept']]],
   ['last_5fdiff_5fmask_3',['last_diff_mask',['../namespaceHPCombi.html#a4eb3521f1e6e8d41ab3d29b85a1434e0',1,'HPCombi']]],
   ['last_5fdiff_5fref_4',['last_diff_ref',['../namespaceHPCombi.html#a08f3869d86935e4d673d689100897795',1,'HPCombi']]],
@@ -10,7 +10,7 @@ var searchData=
   ['last_5fzero_7',['last_zero',['../structHPCombi_1_1Vect16.html#a4bd825c889f30ab2f2ffe0e8187d0275',1,'HPCombi::Vect16::last_zero()'],['../structHPCombi_1_1VectGeneric.html#a2e306fc2d5743dca472728ba237f623f',1,'HPCombi::VectGeneric::last_zero()'],['../namespaceHPCombi.html#a53a462687b8e475e593408aae6812a38',1,'HPCombi::last_zero()']]],
   ['left_5fcycle_8',['left_cycle',['../structHPCombi_1_1TPUBuild.html#adfb6832fdd4c5350e747029fee8dccc6',1,'HPCombi::TPUBuild']]],
   ['left_5fdup_9',['left_dup',['../structHPCombi_1_1TPUBuild.html#a3153054b3d221fff16b7c98f55af806c',1,'HPCombi::TPUBuild']]],
-  ['left_5fone_10',['left_one',['../structHPCombi_1_1PTransf16.html#a71b0218d6b7d1c8a55f52c67a068ad51',1,'HPCombi::PTransf16::left_one()'],['../structHPCombi_1_1PPerm16.html#aae92b2ae8a843da11e25f64633a10751',1,'HPCombi::PPerm16::left_one()']]],
+  ['left_5fone_10',['left_one',['../structHPCombi_1_1PTransf16.html#a71b0218d6b7d1c8a55f52c67a068ad51',1,'HPCombi::PTransf16::left_one()'],['../structHPCombi_1_1PPerm16.html#aae92b2ae8a843da11e25f64633a10751',1,'HPCombi::PPerm16::left_one()'],['../structPTransf16.html#a71b0218d6b7d1c8a55f52c67a068ad51',1,'PTransf16::left_one()']]],
   ['left_5fweak_5fleq_11',['left_weak_leq',['../structHPCombi_1_1Perm16.html#ac7ae022d0bc677bc601c372303e05f14',1,'HPCombi::Perm16::left_weak_leq()'],['../structHPCombi_1_1PermGeneric.html#a306ae8219524cbc29a85b121905f32cd',1,'HPCombi::PermGeneric::left_weak_leq()']]],
   ['left_5fweak_5fleq_5flength_12',['left_weak_leq_length',['../structHPCombi_1_1Perm16.html#a8289607c4b881c86f6770f4826cafacc',1,'HPCombi::Perm16']]],
   ['left_5fweak_5fleq_5fref_13',['left_weak_leq_ref',['../structHPCombi_1_1Perm16.html#a3c807d4f8ff80f1ccc967efe95af7b3e',1,'HPCombi::Perm16']]],

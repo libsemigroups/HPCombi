@@ -1,10 +1,10 @@
 var searchData=
 [
   ['id_0',['id',['../structHPCombi_1_1TPUBuild.html#aed9c115d3df8b6d23fe8e6cba53058a4',1,'HPCombi::TPUBuild']]],
-  ['image_5fbitset_1',['image_bitset',['../structHPCombi_1_1PTransf16.html#a94af63b3480e1fd989c796ecf12293b3',1,'HPCombi::PTransf16']]],
-  ['image_5fmask_2',['image_mask',['../structHPCombi_1_1PTransf16.html#ae0757d9adc336545b9a7f78b19e3163e',1,'HPCombi::PTransf16']]],
-  ['image_5fmask_5fcmpestrm_3',['image_mask_cmpestrm',['../structHPCombi_1_1PTransf16.html#aef3cf621e47f9b7f20d613ee5e5781a5',1,'HPCombi::PTransf16']]],
-  ['image_5fmask_5fref_4',['image_mask_ref',['../structHPCombi_1_1PTransf16.html#acfc94618f7b9f6e1de91df1c205458b0',1,'HPCombi::PTransf16']]],
+  ['image_5fbitset_1',['image_bitset',['../structHPCombi_1_1PTransf16.html#a94af63b3480e1fd989c796ecf12293b3',1,'HPCombi::PTransf16::image_bitset()'],['../structPTransf16.html#a94af63b3480e1fd989c796ecf12293b3',1,'PTransf16::image_bitset()']]],
+  ['image_5fmask_2',['image_mask',['../structHPCombi_1_1PTransf16.html#ae0757d9adc336545b9a7f78b19e3163e',1,'HPCombi::PTransf16::image_mask()'],['../structPTransf16.html#ae0757d9adc336545b9a7f78b19e3163e',1,'PTransf16::image_mask()']]],
+  ['image_5fmask_5fcmpestrm_3',['image_mask_cmpestrm',['../structHPCombi_1_1PTransf16.html#aef3cf621e47f9b7f20d613ee5e5781a5',1,'HPCombi::PTransf16::image_mask_cmpestrm()'],['../structPTransf16.html#aef3cf621e47f9b7f20d613ee5e5781a5',1,'PTransf16::image_mask_cmpestrm()']]],
+  ['image_5fmask_5fref_4',['image_mask_ref',['../structHPCombi_1_1PTransf16.html#acfc94618f7b9f6e1de91df1c205458b0',1,'HPCombi::PTransf16::image_mask_ref()'],['../structPTransf16.html#acfc94618f7b9f6e1de91df1c205458b0',1,'PTransf16::image_mask_ref()']]],
   ['inverse_5',['inverse',['../structHPCombi_1_1Perm16.html#a175f40a78824b7ea838b265475acf3a0',1,'HPCombi::Perm16::inverse()'],['../structHPCombi_1_1PermGeneric.html#a9a426ab06b8967c48160b927f11002af',1,'HPCombi::PermGeneric::inverse()']]],
   ['inverse_5farr_6',['inverse_arr',['../structHPCombi_1_1Perm16.html#af8996f8687c0454a2df1e908d65f93e5',1,'HPCombi::Perm16']]],
   ['inverse_5fcycl_7',['inverse_cycl',['../structHPCombi_1_1Perm16.html#a09c5a4cb561215987e924993f976b452',1,'HPCombi::Perm16']]],

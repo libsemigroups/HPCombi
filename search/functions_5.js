@@ -6,6 +6,6 @@ var searchData=
   ['first_5fmask_3',['first_mask',['../namespaceHPCombi.html#a75a9e3ae9476d58ad8aaab915491bb3c',1,'HPCombi']]],
   ['first_5fnon_5fzero_4',['first_non_zero',['../structHPCombi_1_1Vect16.html#a8cb80a40fa55c752414149c38b7db80c',1,'HPCombi::Vect16::first_non_zero()'],['../structHPCombi_1_1VectGeneric.html#a58884049db779208525ff83be6b24769',1,'HPCombi::VectGeneric::first_non_zero()'],['../namespaceHPCombi.html#a0e08a51a53154072c50a3c01ce596d22',1,'HPCombi::first_non_zero()']]],
   ['first_5fzero_5',['first_zero',['../structHPCombi_1_1Vect16.html#a3c30c31892028a0a29d362d558885549',1,'HPCombi::Vect16::first_zero()'],['../structHPCombi_1_1VectGeneric.html#a51c24367006f9fe7304f17dc262a3596',1,'HPCombi::VectGeneric::first_zero()'],['../namespaceHPCombi.html#aba0e87bcbabb680ae7f3b3a44c313bf5',1,'HPCombi::first_zero()']]],
-  ['fix_5fpoints_5fbitset_6',['fix_points_bitset',['../structHPCombi_1_1PTransf16.html#a257c39f09c2de8bdccb8c5dcd414ae60',1,'HPCombi::PTransf16']]],
-  ['fix_5fpoints_5fmask_7',['fix_points_mask',['../structHPCombi_1_1PTransf16.html#aa232bc5ac28fb44599df3e8f824fa813',1,'HPCombi::PTransf16']]]
+  ['fix_5fpoints_5fbitset_6',['fix_points_bitset',['../structHPCombi_1_1PTransf16.html#a257c39f09c2de8bdccb8c5dcd414ae60',1,'HPCombi::PTransf16::fix_points_bitset()'],['../structPTransf16.html#a257c39f09c2de8bdccb8c5dcd414ae60',1,'PTransf16::fix_points_bitset()']]],
+  ['fix_5fpoints_5fmask_7',['fix_points_mask',['../structHPCombi_1_1PTransf16.html#aa232bc5ac28fb44599df3e8f824fa813',1,'HPCombi::PTransf16::fix_points_mask()'],['../structPTransf16.html#aa232bc5ac28fb44599df3e8f824fa813',1,'PTransf16::fix_points_mask()']]]
 ];

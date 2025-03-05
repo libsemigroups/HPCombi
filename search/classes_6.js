@@ -1,4 +1,7 @@
 var searchData=
 [
-  ['not_5fequal_5fto_3c_20hpcombi_3a_3aepu8_20_3e_0',['not_equal_to&lt; HPCombi::epu8 &gt;',['../structstd_1_1not__equal__to_3_01HPCombi_1_1epu8_01_4.html',1,'std']]]
+  ['perm16_0',['Perm16',['../structHPCombi_1_1Perm16.html',1,'HPCombi']]],
+  ['permgeneric_1',['PermGeneric',['../structHPCombi_1_1PermGeneric.html',1,'HPCombi']]],
+  ['pperm16_2',['PPerm16',['../structHPCombi_1_1PPerm16.html',1,'HPCombi']]],
+  ['ptransf16_3',['PTransf16',['../structHPCombi_1_1PTransf16.html',1,'HPCombi::PTransf16'],['../structPTransf16.html',1,'PTransf16']]]
 ];

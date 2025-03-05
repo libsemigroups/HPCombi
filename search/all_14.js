@@ -1,5 +1,4 @@
 var searchData=
 [
-  ['xpu16_0',['xpu16',['../namespaceHPCombi.html#aa8094ec65ffb1d11ec283225d73e7079',1,'HPCombi']]],
-  ['xpu64_1',['xpu64',['../namespaceHPCombi.html#aa4759765b4b00ed49614b424c96fb9a4',1,'HPCombi']]]
+  ['_7ebmat8_0',['~BMat8',['../classHPCombi_1_1BMat8.html#a228c91aa2d3a1a443947d86ba09c95e6',1,'HPCombi::BMat8']]]
 ];

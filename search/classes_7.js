@@ -1,7 +1,6 @@
 var searchData=
 [
-  ['perm16_0',['Perm16',['../structHPCombi_1_1Perm16.html',1,'HPCombi']]],
-  ['permgeneric_1',['PermGeneric',['../structHPCombi_1_1PermGeneric.html',1,'HPCombi']]],
-  ['pperm16_2',['PPerm16',['../structHPCombi_1_1PPerm16.html',1,'HPCombi']]],
-  ['ptransf16_3',['PTransf16',['../structHPCombi_1_1PTransf16.html',1,'HPCombi']]]
+  ['timer_0',['Timer',['../classlibsemigroups_1_1Timer.html',1,'libsemigroups']]],
+  ['tpubuild_1',['TPUBuild',['../structHPCombi_1_1TPUBuild.html',1,'HPCombi']]],
+  ['transf16_2',['Transf16',['../structHPCombi_1_1Transf16.html',1,'HPCombi::Transf16'],['../structTransf16.html',1,'Transf16']]]
 ];
