@@ -659,8 +659,8 @@ template&lt;class TPU&gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>the evaluation, that is the <a class="el" href="#ad8be3ecb3135971b995b8f48337bdc00" title="epu8 stands for Extended Packed Unsigned, grouped by 8 bits; this is the low level type chosen by Int...">HPCombi::epu8</a> <code>r</code> such that <code>r</code>[i] is the number of occurrence of <code>i</code> in the input <code>v</code> </dd></dl>
 <dl class="section user"><dt>Example:</dt><dd><div class="fragment"><div class="line"><a class="code hl_function" href="#a7f639b83ee205ad8d243957a03989308">eval16</a>(<a class="code hl_typedef" href="#ad8be3ecb3135971b995b8f48337bdc00">epu8</a> { 5, 5, 2, 5, 1, 6,12, 4, 0, 3, 2,11,12,13,14,15});</div>
-<div class="ttc" id="anamespaceHPCombi_html_a7f639b83ee205ad8d243957a03989308"><div class="ttname"><a href="#a7f639b83ee205ad8d243957a03989308">HPCombi::eval16</a></div><div class="ttdeci">epu8 eval16(epu8 v) noexcept</div><div class="ttdoc">Evaluation of a HPCombi::epu8: count how many times each int of 0..15 appears in the input.</div><div class="ttdef"><b>Definition</b> epu8.hpp:481</div></div>
-<div class="ttc" id="anamespaceHPCombi_html_ad8be3ecb3135971b995b8f48337bdc00"><div class="ttname"><a href="#ad8be3ecb3135971b995b8f48337bdc00">HPCombi::epu8</a></div><div class="ttdeci">uint8_t __attribute__((vector_size(16))) epu8</div><div class="ttdoc">epu8 stands for Extended Packed Unsigned, grouped by 8 bits; this is the low level type chosen by Int...</div><div class="ttdef"><b>Definition</b> epu8.hpp:66</div></div>
+<div class="ttc" id="anamespaceHPCombi_html_a7f639b83ee205ad8d243957a03989308"><div class="ttname"><a href="#a7f639b83ee205ad8d243957a03989308">HPCombi::eval16</a></div><div class="ttdeci">epu8 eval16(epu8 v) noexcept</div><div class="ttdoc">Evaluation of a HPCombi::epu8: count how many times each int of 0..15 appears in the input.</div><div class="ttdef"><b>Definition</b> epu8.hpp:488</div></div>
+<div class="ttc" id="anamespaceHPCombi_html_ad8be3ecb3135971b995b8f48337bdc00"><div class="ttname"><a href="#ad8be3ecb3135971b995b8f48337bdc00">HPCombi::epu8</a></div><div class="ttdeci">uint8_t __attribute__((vector_size(16))) epu8</div><div class="ttdoc">epu8 stands for Extended Packed Unsigned, grouped by 8 bits; this is the low level type chosen by Int...</div><div class="ttdef"><b>Definition</b> epu8.hpp:73</div></div>
 </div><!-- fragment --> Returns <code>{ 1, 1, 2, 1, 1, 3, 1, 0, 0, 0, 0, 1, 2, 1, 1, 1}</code> </dd></dl>
 <dl class="section warning"><dt>Warning</dt><dd>The entries larger than 15 are ignored </dd></dl>
 
@@ -846,7 +846,7 @@ template&lt;class TPU&gt; </div>
 <dl class="section return"><dt>Returns</dt><dd>the smallest index \(i&lt;bound\) such that <code>a</code>[i] and <code>b</code>[i] differ, 16 if there is no differences before bound. </dd></dl>
 <dl class="section user"><dt>Example:</dt><dd><div class="fragment"><div class="line"><a class="code hl_typedef" href="#ad8be3ecb3135971b995b8f48337bdc00">epu8</a> a { 5, 5, 2, 5, 1, 6,12, 4, 0, 3, 2,11,12,13,14,15};</div>
 <div class="line"><a class="code hl_typedef" href="RD_8cpp.html#ad8be3ecb3135971b995b8f48337bdc00">epu8</a> b { 5, 5, 2, 9, 1, 6,12, 4, 0, 4, 4, 4,12,13,14,15};</div>
-<div class="ttc" id="aRD_8cpp_html_ad8be3ecb3135971b995b8f48337bdc00"><div class="ttname"><a href="RD_8cpp.html#ad8be3ecb3135971b995b8f48337bdc00">epu8</a></div><div class="ttdeci">uint8_t __attribute__((vector_size(16))) epu8</div><div class="ttdoc">epu8 stands for Extended Packed Unsigned, grouped by 8 bits; this is the low level type chosen by Int...</div><div class="ttdef"><b>Definition</b> epu8.hpp:66</div></div>
+<div class="ttc" id="aRD_8cpp_html_ad8be3ecb3135971b995b8f48337bdc00"><div class="ttname"><a href="RD_8cpp.html#ad8be3ecb3135971b995b8f48337bdc00">epu8</a></div><div class="ttdeci">uint8_t __attribute__((vector_size(16))) epu8</div><div class="ttdoc">epu8 stands for Extended Packed Unsigned, grouped by 8 bits; this is the low level type chosen by Int...</div><div class="ttdef"><b>Definition</b> epu8.hpp:73</div></div>
 </div><!-- fragment --> then <code>first_diff(a, b)</code> returns <code>3</code>, <code>first_diff(a, b, 3)</code> returns <code>16</code>, <code>first_diff(a, b, 4)</code> returns <code>3</code>, <code>first_diff(a, b, 7)</code> returns <code>3</code>. </dd></dl>
 <dl class="section warning"><dt>Warning</dt><dd><code>bound</code> is assumed to be smaller or equal than 16 </dd></dl>
 
@@ -1043,7 +1043,7 @@ template&lt;class TPU&gt; </div>
 <p>Horizontal sum of a <a class="el" href="#ad8be3ecb3135971b995b8f48337bdc00" title="epu8 stands for Extended Packed Unsigned, grouped by 8 bits; this is the low level type chosen by Int...">HPCombi::epu8</a>. </p>
 <dl class="section return"><dt>Returns</dt><dd>the horizontal sum of the input </dd></dl>
 <dl class="section user"><dt>Example:</dt><dd><div class="fragment"><div class="line"><a class="code hl_function" href="#a87adf727d561fa11a7b9214cc137d649">horiz_max</a>(<a class="code hl_typedef" href="#ad8be3ecb3135971b995b8f48337bdc00">epu8</a> { 5, 5, 2, 5, 1, 6,12, 4, 0, 3, 2, 0,12, 0, 0, 0});</div>
-<div class="ttc" id="anamespaceHPCombi_html_a87adf727d561fa11a7b9214cc137d649"><div class="ttname"><a href="#a87adf727d561fa11a7b9214cc137d649">HPCombi::horiz_max</a></div><div class="ttdeci">uint8_t horiz_max(epu8 v) noexcept</div><div class="ttdoc">Horizontal sum of a HPCombi::epu8.</div><div class="ttdef"><b>Definition</b> epu8.hpp:328</div></div>
+<div class="ttc" id="anamespaceHPCombi_html_a87adf727d561fa11a7b9214cc137d649"><div class="ttname"><a href="#a87adf727d561fa11a7b9214cc137d649">HPCombi::horiz_max</a></div><div class="ttdeci">uint8_t horiz_max(epu8 v) noexcept</div><div class="ttdoc">Horizontal sum of a HPCombi::epu8.</div><div class="ttdef"><b>Definition</b> epu8.hpp:335</div></div>
 </div><!-- fragment --> Returns <code>12</code> </dd></dl>
 
 </div>
@@ -1186,7 +1186,7 @@ template&lt;class TPU&gt; </div>
 <p>Horizontal sum of a <a class="el" href="#ad8be3ecb3135971b995b8f48337bdc00" title="epu8 stands for Extended Packed Unsigned, grouped by 8 bits; this is the low level type chosen by Int...">HPCombi::epu8</a>. </p>
 <dl class="section return"><dt>Returns</dt><dd>the horizontal sum of the input </dd></dl>
 <dl class="section user"><dt>Example:</dt><dd><div class="fragment"><div class="line"><a class="code hl_function" href="#a2b8a25566daa66f51043fa6038e5d967">horiz_min</a>(<a class="code hl_typedef" href="#ad8be3ecb3135971b995b8f48337bdc00">epu8</a> { 5, 5, 2, 5, 1, 6,12, 4, 1, 3, 2, 2,12, 3, 4, 4});</div>
-<div class="ttc" id="anamespaceHPCombi_html_a2b8a25566daa66f51043fa6038e5d967"><div class="ttname"><a href="#a2b8a25566daa66f51043fa6038e5d967">HPCombi::horiz_min</a></div><div class="ttdeci">uint8_t horiz_min(epu8 v) noexcept</div><div class="ttdoc">Horizontal sum of a HPCombi::epu8.</div><div class="ttdef"><b>Definition</b> epu8.hpp:403</div></div>
+<div class="ttc" id="anamespaceHPCombi_html_a2b8a25566daa66f51043fa6038e5d967"><div class="ttname"><a href="#a2b8a25566daa66f51043fa6038e5d967">HPCombi::horiz_min</a></div><div class="ttdeci">uint8_t horiz_min(epu8 v) noexcept</div><div class="ttdoc">Horizontal sum of a HPCombi::epu8.</div><div class="ttdef"><b>Definition</b> epu8.hpp:410</div></div>
 </div><!-- fragment --> Returns <code>1</code> </dd></dl>
 
 </div>
@@ -1329,7 +1329,7 @@ template&lt;class TPU&gt; </div>
 <p>Horizontal sum of a <a class="el" href="#ad8be3ecb3135971b995b8f48337bdc00" title="epu8 stands for Extended Packed Unsigned, grouped by 8 bits; this is the low level type chosen by Int...">HPCombi::epu8</a>. </p>
 <dl class="section return"><dt>Returns</dt><dd>the horizontal sum of the input </dd></dl>
 <dl class="section user"><dt>Example:</dt><dd><div class="fragment"><div class="line"><a class="code hl_function" href="#a858065135d453d5a6a39cc90e81f68c0">horiz_sum</a>(<a class="code hl_typedef" href="#ad8be3ecb3135971b995b8f48337bdc00">epu8</a> { 5, 5, 2, 5, 1, 6,12, 4, 0, 3, 2,11,12,13,14,15});</div>
-<div class="ttc" id="anamespaceHPCombi_html_a858065135d453d5a6a39cc90e81f68c0"><div class="ttname"><a href="#a858065135d453d5a6a39cc90e81f68c0">HPCombi::horiz_sum</a></div><div class="ttdeci">uint8_t horiz_sum(epu8 v) noexcept</div><div class="ttdoc">Horizontal sum of a HPCombi::epu8.</div><div class="ttdef"><b>Definition</b> epu8.hpp:253</div></div>
+<div class="ttc" id="anamespaceHPCombi_html_a858065135d453d5a6a39cc90e81f68c0"><div class="ttname"><a href="#a858065135d453d5a6a39cc90e81f68c0">HPCombi::horiz_sum</a></div><div class="ttdeci">uint8_t horiz_sum(epu8 v) noexcept</div><div class="ttdoc">Horizontal sum of a HPCombi::epu8.</div><div class="ttdef"><b>Definition</b> epu8.hpp:260</div></div>
 </div><!-- fragment --> Returns <code>110</code> </dd></dl>
 <dl class="section warning"><dt>Warning</dt><dd>The result is supposed to fit in a <code>uint8_t</code> </dd></dl>
 
@@ -2318,7 +2318,7 @@ template&lt;bool Increasing = true, size_t sz&gt; </div>
 <p>Horizontal partial sum of a <a class="el" href="#ad8be3ecb3135971b995b8f48337bdc00" title="epu8 stands for Extended Packed Unsigned, grouped by 8 bits; this is the low level type chosen by Int...">HPCombi::epu8</a>. </p>
 <dl class="section return"><dt>Returns</dt><dd>the partials max of the input </dd></dl>
 <dl class="section user"><dt>Example:</dt><dd><div class="fragment"><div class="line"><a class="code hl_function" href="#aebabe1134b200833d13df297171044ef">partial_max</a>(<a class="code hl_typedef" href="#ad8be3ecb3135971b995b8f48337bdc00">epu8</a> { 5, 5, 2, 5, 1, 6,12, 4, 0, 3, 2,11,12,13,14,15});</div>
-<div class="ttc" id="anamespaceHPCombi_html_aebabe1134b200833d13df297171044ef"><div class="ttname"><a href="#aebabe1134b200833d13df297171044ef">HPCombi::partial_max</a></div><div class="ttdeci">epu8 partial_max(epu8 v) noexcept</div><div class="ttdoc">Horizontal partial sum of a HPCombi::epu8.</div><div class="ttdef"><b>Definition</b> epu8.hpp:362</div></div>
+<div class="ttc" id="anamespaceHPCombi_html_aebabe1134b200833d13df297171044ef"><div class="ttname"><a href="#aebabe1134b200833d13df297171044ef">HPCombi::partial_max</a></div><div class="ttdeci">epu8 partial_max(epu8 v) noexcept</div><div class="ttdoc">Horizontal partial sum of a HPCombi::epu8.</div><div class="ttdef"><b>Definition</b> epu8.hpp:369</div></div>
 </div><!-- fragment --> Returns <code>{ 5, 5, 5, 5, 5, 6,12,12,12,12,12,12,12,13,14,15}</code> </dd></dl>
 
 </div>
@@ -2433,7 +2433,7 @@ template&lt;bool Increasing = true, size_t sz&gt; </div>
 <p>Horizontal partial sum of a <a class="el" href="#ad8be3ecb3135971b995b8f48337bdc00" title="epu8 stands for Extended Packed Unsigned, grouped by 8 bits; this is the low level type chosen by Int...">HPCombi::epu8</a>. </p>
 <dl class="section return"><dt>Returns</dt><dd>the partials min of the input </dd></dl>
 <dl class="section user"><dt>Example:</dt><dd><div class="fragment"><div class="line"><a class="code hl_function" href="#abad0634130ca5c6ceb618aeb8288b89d">partial_min</a>(<a class="code hl_typedef" href="#ad8be3ecb3135971b995b8f48337bdc00">epu8</a> { 5, 5, 2, 5, 1, 6,12, 4, 0, 3, 2,11,12,13,14,15});</div>
-<div class="ttc" id="anamespaceHPCombi_html_abad0634130ca5c6ceb618aeb8288b89d"><div class="ttname"><a href="#abad0634130ca5c6ceb618aeb8288b89d">HPCombi::partial_min</a></div><div class="ttdeci">epu8 partial_min(epu8 v) noexcept</div><div class="ttdoc">Horizontal partial sum of a HPCombi::epu8.</div><div class="ttdef"><b>Definition</b> epu8.hpp:437</div></div>
+<div class="ttc" id="anamespaceHPCombi_html_abad0634130ca5c6ceb618aeb8288b89d"><div class="ttname"><a href="#abad0634130ca5c6ceb618aeb8288b89d">HPCombi::partial_min</a></div><div class="ttdeci">epu8 partial_min(epu8 v) noexcept</div><div class="ttdoc">Horizontal partial sum of a HPCombi::epu8.</div><div class="ttdef"><b>Definition</b> epu8.hpp:444</div></div>
 </div><!-- fragment --> Returns <code>{ 5, 5, 2, 2, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0}</code> </dd></dl>
 
 </div>
@@ -2548,7 +2548,7 @@ template&lt;bool Increasing = true, size_t sz&gt; </div>
 <p>Horizontal partial sum of a <a class="el" href="#ad8be3ecb3135971b995b8f48337bdc00" title="epu8 stands for Extended Packed Unsigned, grouped by 8 bits; this is the low level type chosen by Int...">HPCombi::epu8</a>. </p>
 <dl class="section return"><dt>Returns</dt><dd>the partials sums of the input </dd></dl>
 <dl class="section user"><dt>Example:</dt><dd><div class="fragment"><div class="line"><a class="code hl_function" href="#a28889b97d949a58fe0a6f512a972448c">partial_sums</a>(<a class="code hl_typedef" href="#ad8be3ecb3135971b995b8f48337bdc00">epu8</a> { 5, 5, 2, 5, 1, 6,12, 4, 0, 3, 2,11,12,13,14,15});</div>
-<div class="ttc" id="anamespaceHPCombi_html_a28889b97d949a58fe0a6f512a972448c"><div class="ttname"><a href="#a28889b97d949a58fe0a6f512a972448c">HPCombi::partial_sums</a></div><div class="ttdeci">epu8 partial_sums(epu8 v) noexcept</div><div class="ttdoc">Horizontal partial sum of a HPCombi::epu8.</div><div class="ttdef"><b>Definition</b> epu8.hpp:287</div></div>
+<div class="ttc" id="anamespaceHPCombi_html_a28889b97d949a58fe0a6f512a972448c"><div class="ttname"><a href="#a28889b97d949a58fe0a6f512a972448c">HPCombi::partial_sums</a></div><div class="ttdeci">epu8 partial_sums(epu8 v) noexcept</div><div class="ttdoc">Horizontal partial sum of a HPCombi::epu8.</div><div class="ttdef"><b>Definition</b> epu8.hpp:294</div></div>
 </div><!-- fragment --> Returns <code>{ 5,10,12,17,18,24,36,40,40,43,45,56,68,81,95,110}</code> </dd></dl>
 
 </div>
