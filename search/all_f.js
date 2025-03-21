@@ -10,7 +10,7 @@ var searchData=
   ['s5_7',['s5',['../RD_8cpp.html#a401ac167d35facdbdfe4a7a5b99be6ea',1,'s5:&#160;RD.cpp'],['../Renner_8cpp.html#a401ac167d35facdbdfe4a7a5b99be6ea',1,'s5:&#160;Renner.cpp']]],
   ['s6_8',['s6',['../RD_8cpp.html#ac3764b20394357c6e6d81fa98b83feb9',1,'s6:&#160;RD.cpp'],['../Renner_8cpp.html#ac3764b20394357c6e6d81fa98b83feb9',1,'s6:&#160;Renner.cpp']]],
   ['s7_9',['s7',['../RD_8cpp.html#afee30f9098a333c32c5e094f47ded3f5',1,'s7:&#160;RD.cpp'],['../Renner_8cpp.html#afee30f9098a333c32c5e094f47ded3f5',1,'s7:&#160;Renner.cpp']]],
-  ['set_10',['set',['../classHPCombi_1_1BMat8.html#adfe928574d45e0cbaa41b4e715e57da6',1,'HPCombi::BMat8']]],
+  ['set_10',['set',['../classHPCombi_1_1BMat16.html#aae4e3fdd92c0417c21ed94d5a389a330',1,'HPCombi::BMat16::set()'],['../classHPCombi_1_1BMat8.html#adfe928574d45e0cbaa41b4e715e57da6',1,'HPCombi::BMat8::set()']]],
   ['shifted_5fleft_11',['shifted_left',['../namespaceHPCombi.html#adf326a8c4f538e9b8ffb1bfdc9b5c8fd',1,'HPCombi']]],
   ['shifted_5fright_12',['shifted_right',['../namespaceHPCombi.html#a24815578dbf9e6b6c59e8c0b212881b3',1,'HPCombi']]],
   ['size_13',['size',['../structHPCombi_1_1TPUBuild.html#afe4f9341e1e1d6838c33aaa628025046',1,'HPCombi::TPUBuild::size'],['../structHPCombi_1_1PTransf16.html#a313bad8c66a2f1b2b58a1b9fafb9a9e7',1,'HPCombi::PTransf16::size()'],['../structHPCombi_1_1PermGeneric.html#a8bcf352d4b329d249cdd5d500d447692',1,'HPCombi::PermGeneric::size()'],['../structHPCombi_1_1Vect16.html#a7842db0e44a976b42da11273b7ec0709',1,'HPCombi::Vect16::size()'],['../structHPCombi_1_1VectGeneric.html#a828e4d93e45b68e508cc39b35efbb6c1',1,'HPCombi::VectGeneric::size()'],['../structPTransf16.html#a313bad8c66a2f1b2b58a1b9fafb9a9e7',1,'PTransf16::size()']]],
@@ -34,6 +34,6 @@ var searchData=
   ['subsets_31',['subsets',['../pattern_8cpp.html#ab4ce0f0f017ac2394098404c54645458',1,'pattern.cpp']]],
   ['sum_32',['sum',['../structHPCombi_1_1Vect16.html#acfbb79a84125465f08a9a8a5ac5d606b',1,'HPCombi::Vect16']]],
   ['summing_5frounds_33',['summing_rounds',['../namespaceHPCombi.html#a48bf424600461a580daf0576711fcd69',1,'HPCombi']]],
-  ['swap_34',['swap',['../classHPCombi_1_1BMat8.html#ac3dc620abd1c33e02278f557f8e71c9d',1,'HPCombi::BMat8']]],
+  ['swap_34',['swap',['../classHPCombi_1_1BMat16.html#a1c47c1a9ced04566dbc4e28313771b07',1,'HPCombi::BMat16::swap()'],['../classHPCombi_1_1BMat8.html#ac3dc620abd1c33e02278f557f8e71c9d',1,'HPCombi::BMat8::swap()']]],
   ['sym_5frenner_35',['sym_renner',['../Renner_8cpp.html#a1717940b1d33669c95c5418afa29ab10',1,'Renner.cpp']]]
 ];

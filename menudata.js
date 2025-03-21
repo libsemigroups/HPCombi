@@ -40,7 +40,8 @@ var menudata={children:[
 {text:"p",url:"namespacemembers.html#index_p"},
 {text:"r",url:"namespacemembers.html#index_r"},
 {text:"s",url:"namespacemembers.html#index_s"},
-{text:"t",url:"namespacemembers.html#index_t"}]},
+{text:"t",url:"namespacemembers.html#index_t"},
+{text:"x",url:"namespacemembers.html#index_x"}]},
 {text:"Functions",url:"namespacemembers_func.html",children:[
 {text:"a",url:"namespacemembers_func.html#index_a"},
 {text:"e",url:"namespacemembers_func.html#index_e"},

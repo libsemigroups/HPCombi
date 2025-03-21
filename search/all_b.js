@@ -11,5 +11,5 @@ var searchData=
   ['not_5fequal_8',['not_equal',['../namespaceHPCombi.html#af15fa0a701cf19a906188cef47ff0369',1,'HPCombi']]],
   ['not_5fequal_5fto_3c_20hpcombi_3a_3aepu8_20_3e_9',['not_equal_to&lt; HPCombi::epu8 &gt;',['../structstd_1_1not__equal__to_3_01HPCombi_1_1epu8_01_4.html',1,'std']]],
   ['nprint_10',['nprint',['../Renner_8cpp.html#a6b84f9889bd0dce8d8e93221ff301d28',1,'Renner.cpp']]],
-  ['nr_5frows_11',['nr_rows',['../classHPCombi_1_1BMat8.html#adc18c527e7344c22637b4572834a5547',1,'HPCombi::BMat8']]]
+  ['nr_5frows_11',['nr_rows',['../classHPCombi_1_1BMat16.html#a1b3e49827e26eddbf4bb6d8a987afbd3',1,'HPCombi::BMat16::nr_rows()'],['../classHPCombi_1_1BMat8.html#adc18c527e7344c22637b4572834a5547',1,'HPCombi::BMat8::nr_rows()']]]
 ];

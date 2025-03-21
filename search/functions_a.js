@@ -9,5 +9,5 @@ var searchData=
   ['network_5fsort_6',['network_sort',['../namespaceHPCombi.html#a3680243ecce798cc11e87c57607271f0',1,'HPCombi']]],
   ['network_5fsort_5fperm_7',['network_sort_perm',['../namespaceHPCombi.html#a86b7437ea131f9e4f39fa48afe3c997a',1,'HPCombi']]],
   ['not_5fequal_8',['not_equal',['../namespaceHPCombi.html#af15fa0a701cf19a906188cef47ff0369',1,'HPCombi']]],
-  ['nr_5frows_9',['nr_rows',['../classHPCombi_1_1BMat8.html#adc18c527e7344c22637b4572834a5547',1,'HPCombi::BMat8']]]
+  ['nr_5frows_9',['nr_rows',['../classHPCombi_1_1BMat16.html#a1b3e49827e26eddbf4bb6d8a987afbd3',1,'HPCombi::BMat16::nr_rows()'],['../classHPCombi_1_1BMat8.html#adc18c527e7344c22637b4572834a5547',1,'HPCombi::BMat8::nr_rows()']]]
 ];

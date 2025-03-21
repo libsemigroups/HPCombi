@@ -111,6 +111,9 @@ Namespaces</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="nested-classes" name="nested-classes"></a>
 Classes</h2></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classHPCombi_1_1BMat16.html">BMat16</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Class for fast boolean matrices of dimension up to 16 x 16.  <a href="classHPCombi_1_1BMat16.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classHPCombi_1_1BMat8.html">BMat8</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Boolean matrices of dimension up to 8×8, stored as a single uint64; isomorph to binary relations with methods for composition.  <a href="classHPCombi_1_1BMat8.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -141,6 +144,10 @@ Classes</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="typedef-members" name="typedef-members"></a>
 Typedefs</h2></td></tr>
+<tr class="memitem:aa8094ec65ffb1d11ec283225d73e7079" id="r_aa8094ec65ffb1d11ec283225d73e7079"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa8094ec65ffb1d11ec283225d73e7079">xpu16</a> = uint16_t __attribute__((vector_size(32)))</td></tr>
+<tr class="separator:aa8094ec65ffb1d11ec283225d73e7079"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa4759765b4b00ed49614b424c96fb9a4" id="r_aa4759765b4b00ed49614b424c96fb9a4"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa4759765b4b00ed49614b424c96fb9a4">xpu64</a> = uint64_t __attribute__((vector_size(32)))</td></tr>
+<tr class="separator:aa4759765b4b00ed49614b424c96fb9a4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a140ebc088fd4e6e9701eca540ad612f0" id="r_a140ebc088fd4e6e9701eca540ad612f0"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a140ebc088fd4e6e9701eca540ad612f0">epu64</a> = uint64_t __attribute__((__vector_size__(16), __may_alias__))</td></tr>
 <tr class="separator:a140ebc088fd4e6e9701eca540ad612f0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad8be3ecb3135971b995b8f48337bdc00" id="r_ad8be3ecb3135971b995b8f48337bdc00"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad8be3ecb3135971b995b8f48337bdc00">epu8</a> = uint8_t __attribute__((vector_size(16)))</td></tr>
@@ -149,6 +156,12 @@ Typedefs</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
+<tr class="memitem:afb314c90a99bef6e7fb828c095d7bca7" id="r_afb314c90a99bef6e7fb828c095d7bca7"><td class="memItemLeft" align="right" valign="top"><a class="el" href="#aa4759765b4b00ed49614b424c96fb9a4">xpu64</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#afb314c90a99bef6e7fb828c095d7bca7">to_line</a> (<a class="el" href="#aa4759765b4b00ed49614b424c96fb9a4">xpu64</a> vect)</td></tr>
+<tr class="memdesc:afb314c90a99bef6e7fb828c095d7bca7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Converting storage type from blocks to rows of a <a class="el" href="#aa4759765b4b00ed49614b424c96fb9a4">xpu64</a> representing a 16x16 matrix (used in <a class="el" href="classHPCombi_1_1BMat16.html" title="Class for fast boolean matrices of dimension up to 16 x 16.">BMat16</a>).  <br /></td></tr>
+<tr class="separator:afb314c90a99bef6e7fb828c095d7bca7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2f26b50b0601e8f254bad00fd23023f6" id="r_a2f26b50b0601e8f254bad00fd23023f6"><td class="memItemLeft" align="right" valign="top"><a class="el" href="#aa4759765b4b00ed49614b424c96fb9a4">xpu64</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2f26b50b0601e8f254bad00fd23023f6">to_block</a> (<a class="el" href="#aa4759765b4b00ed49614b424c96fb9a4">xpu64</a> vect)</td></tr>
+<tr class="memdesc:a2f26b50b0601e8f254bad00fd23023f6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Converting storage type from rows to blocks of a <a class="el" href="#aa4759765b4b00ed49614b424c96fb9a4">xpu64</a> representing a 16x16 matrix (used in <a class="el" href="classHPCombi_1_1BMat16.html" title="Class for fast boolean matrices of dimension up to 16 x 16.">BMat16</a>).  <br /></td></tr>
+<tr class="separator:a2f26b50b0601e8f254bad00fd23023f6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aebc0094d95f9267b87fa93955d792051" id="r_aebc0094d95f9267b87fa93955d792051"><td class="memTemplParams" colspan="2">template&lt;class TPU&gt; </td></tr>
 <tr class="memitem:aebc0094d95f9267b87fa93955d792051"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="structHPCombi_1_1TPUBuild.html">TPUBuild</a>&lt; TPU &gt;::array &amp;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#aebc0094d95f9267b87fa93955d792051">as_array</a> (TPU &amp;v) noexcept</td></tr>
 <tr class="memdesc:aebc0094d95f9267b87fa93955d792051"><td class="mdescLeft">&#160;</td><td class="mdescRight">Cast a TPU to a c++ <code>std::array</code>.  <br /></td></tr>
@@ -472,6 +485,34 @@ Variables</h2></td></tr>
 
 <p><a class="el" href="#ad8be3ecb3135971b995b8f48337bdc00" title="epu8 stands for Extended Packed Unsigned, grouped by 8 bits; this is the low level type chosen by Int...">epu8</a> stands for <em>Extended Packed Unsigned, grouped by 8 bits</em>; this is the low level type chosen by Intel for their API to intrinsics, ie a SIMD vector of 16 unsigned bytes (16×8 = 128bits). </p>
 <p>Functions using this type use semantically equivalent types, eg a _m128 which is a vector containing 2 signed 64 bits integers. A flag tells the compiler to silently consider those types equivalent. </p>
+
+</div>
+</div>
+<a id="aa8094ec65ffb1d11ec283225d73e7079" name="aa8094ec65ffb1d11ec283225d73e7079"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa8094ec65ffb1d11ec283225d73e7079">&#9670;&#160;</a></span>xpu16</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">using <a class="el" href="#aa8094ec65ffb1d11ec283225d73e7079">HPCombi::xpu16</a> = uint16_t __attribute__((vector_size(32)))</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="aa4759765b4b00ed49614b424c96fb9a4" name="aa4759765b4b00ed49614b424c96fb9a4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa4759765b4b00ed49614b424c96fb9a4">&#9670;&#160;</a></span>xpu64</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">using <a class="el" href="#aa4759765b4b00ed49614b424c96fb9a4">HPCombi::xpu64</a> = uint64_t __attribute__((vector_size(32)))</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
 
 </div>
 </div>
@@ -3206,6 +3247,62 @@ template&lt;typename T, typename M = power_helper::Monoid&lt;T&gt;&gt; </div>
 
 </div>
 </div>
+<a id="a2f26b50b0601e8f254bad00fd23023f6" name="a2f26b50b0601e8f254bad00fd23023f6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2f26b50b0601e8f254bad00fd23023f6">&#9670;&#160;</a></span>to_block()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="#aa4759765b4b00ed49614b424c96fb9a4">xpu64</a> HPCombi::to_block </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="#aa4759765b4b00ed49614b424c96fb9a4">xpu64</a></td>          <td class="paramname"><span class="paramname"><em>vect</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel inline">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Converting storage type from rows to blocks of a <a class="el" href="#aa4759765b4b00ed49614b424c96fb9a4">xpu64</a> representing a 16x16 matrix (used in <a class="el" href="classHPCombi_1_1BMat16.html" title="Class for fast boolean matrices of dimension up to 16 x 16.">BMat16</a>). </p>
+<p>Each 64 bit unsigned int represents one of the four 8x8 matrix that make up a 16x16 when quartered. </p>
+
+</div>
+</div>
+<a id="afb314c90a99bef6e7fb828c095d7bca7" name="afb314c90a99bef6e7fb828c095d7bca7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#afb314c90a99bef6e7fb828c095d7bca7">&#9670;&#160;</a></span>to_line()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="#aa4759765b4b00ed49614b424c96fb9a4">xpu64</a> HPCombi::to_line </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="#aa4759765b4b00ed49614b424c96fb9a4">xpu64</a></td>          <td class="paramname"><span class="paramname"><em>vect</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel inline">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Converting storage type from blocks to rows of a <a class="el" href="#aa4759765b4b00ed49614b424c96fb9a4">xpu64</a> representing a 16x16 matrix (used in <a class="el" href="classHPCombi_1_1BMat16.html" title="Class for fast boolean matrices of dimension up to 16 x 16.">BMat16</a>). </p>
+<p>Each 64 bit unsigned int represents 4 lines of the matrix. </p>
+
+</div>
+</div>
 <h2 class="groupheader">Variable Documentation</h2>
 <a id="ab2d0adbafd0a6fad9e728e571ef2ec4e" name="ab2d0adbafd0a6fad9e728e571ef2ec4e"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ab2d0adbafd0a6fad9e728e571ef2ec4e">&#9670;&#160;</a></span>Epu8</h2>
@@ -3288,7 +3385,7 @@ template&lt;typename T, typename M = power_helper::Monoid&lt;T&gt;&gt; </div>
 <div class="line">      {<a class="code hl_define" href="bmat8__impl_8hpp.html#a201a0d2d698f67adfe3f4ca209a3c7ff">FF</a>,<a class="code hl_define" href="bmat8__impl_8hpp.html#a201a0d2d698f67adfe3f4ca209a3c7ff">FF</a>,<a class="code hl_define" href="bmat8__impl_8hpp.html#a201a0d2d698f67adfe3f4ca209a3c7ff">FF</a>,<a class="code hl_define" href="bmat8__impl_8hpp.html#a201a0d2d698f67adfe3f4ca209a3c7ff">FF</a>, 2, 2, 2, 2,<a class="code hl_define" href="bmat8__impl_8hpp.html#a201a0d2d698f67adfe3f4ca209a3c7ff">FF</a>,<a class="code hl_define" href="bmat8__impl_8hpp.html#a201a0d2d698f67adfe3f4ca209a3c7ff">FF</a>,<a class="code hl_define" href="bmat8__impl_8hpp.html#a201a0d2d698f67adfe3f4ca209a3c7ff">FF</a>,<a class="code hl_define" href="bmat8__impl_8hpp.html#a201a0d2d698f67adfe3f4ca209a3c7ff">FF</a>, 2, 2, 2, 2}, </div>
 <div class="line">      {<a class="code hl_define" href="bmat8__impl_8hpp.html#a201a0d2d698f67adfe3f4ca209a3c7ff">FF</a>,<a class="code hl_define" href="bmat8__impl_8hpp.html#a201a0d2d698f67adfe3f4ca209a3c7ff">FF</a>,<a class="code hl_define" href="bmat8__impl_8hpp.html#a201a0d2d698f67adfe3f4ca209a3c7ff">FF</a>,<a class="code hl_define" href="bmat8__impl_8hpp.html#a201a0d2d698f67adfe3f4ca209a3c7ff">FF</a>,<a class="code hl_define" href="bmat8__impl_8hpp.html#a201a0d2d698f67adfe3f4ca209a3c7ff">FF</a>,<a class="code hl_define" href="bmat8__impl_8hpp.html#a201a0d2d698f67adfe3f4ca209a3c7ff">FF</a>,<a class="code hl_define" href="bmat8__impl_8hpp.html#a201a0d2d698f67adfe3f4ca209a3c7ff">FF</a>,<a class="code hl_define" href="bmat8__impl_8hpp.html#a201a0d2d698f67adfe3f4ca209a3c7ff">FF</a>, 3, 3, 3, 3, 3, 3, 3, 3}  </div>
 <div class="line">    }}</div>
-<div class="ttc" id="abmat8__impl_8hpp_html_a201a0d2d698f67adfe3f4ca209a3c7ff"><div class="ttname"><a href="bmat8__impl_8hpp.html#a201a0d2d698f67adfe3f4ca209a3c7ff">FF</a></div><div class="ttdeci">#define FF</div><div class="ttdef"><b>Definition</b> bmat8_impl.hpp:247</div></div>
+<div class="ttc" id="abmat8__impl_8hpp_html_a201a0d2d698f67adfe3f4ca209a3c7ff"><div class="ttname"><a href="bmat8__impl_8hpp.html#a201a0d2d698f67adfe3f4ca209a3c7ff">FF</a></div><div class="ttdeci">#define FF</div><div class="ttdef"><b>Definition</b> bmat8_impl.hpp:297</div></div>
 </div><!-- fragment -->
 </div>
 </div>
