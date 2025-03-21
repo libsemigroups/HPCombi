@@ -34,8 +34,8 @@
 #include <utility>     // for pair, swap
 #include <vector>      // for vector
 
-#include "debug.hpp"   // for HPCOMBI_ASSERT
 #include "bmat8.hpp"
+#include "debug.hpp"  // for HPCOMBI_ASSERT
 
 #include "simde/x86/avx2.h"
 
@@ -51,12 +51,10 @@ xpu64 to_line(xpu64 vect);
 
 //! Converting storage type from rows to blocks of a xpu64
 //! representing a 16x16 matrix (used in BMat16).
-//! 
-//! Each 64 bit unsigned int represents one of the four 
+//!
+//! Each 64 bit unsigned int represents one of the four
 //! 8x8 matrix that make up a 16x16 when quartered.
 xpu64 to_block(xpu64 vect);
-
-
 
 //! Class for fast boolean matrices of dimension up to 16 x 16
 //!
@@ -77,17 +75,17 @@ class BMat16 {
     //! A constructor.
     //!
     //! This constructor initializes a matrix with a 256-bit register
-    //! The rows are equal to the 16 chunks, of 16 bits each, 
+    //! The rows are equal to the 16 chunks, of 16 bits each,
     //! of the binary representation of the matrix.
-    explicit BMat16(xpu64 mat) noexcept : 
-        _data{mat} {}
+    explicit BMat16(xpu64 mat) noexcept : _data{mat} {}
 
     //! A constructor.
     //!
     //! This constructor initializes a matrix with 4 64 bits unsigned int
     //! Each uint represents one of the four quarter (8x8 matrix).
-    explicit BMat16(uint64_t n0, uint64_t n1, uint64_t n2, uint64_t n3) noexcept;
-    
+    explicit BMat16(uint64_t n0, uint64_t n1, uint64_t n2,
+                    uint64_t n3) noexcept;
+
     //! A constructor.
     //!
     //! This constructor initializes a matrix where the rows of the matrix
@@ -162,7 +160,7 @@ class BMat16 {
     //!
     //! This method perform the bitwise operator on the matrices and
     //! returns the result as a BMat16.
-    BMat16 operator|(BMat16 const& that) const noexcept {
+    BMat16 operator|(BMat16 const &that) const noexcept {
         return BMat16(_data | that._data);
     }
 
@@ -189,8 +187,8 @@ class BMat16 {
     //! Returns the matrix product of \c this and \p that
     //!
     //! This method returns the standard matrix product (over the
-    //! boolean semiring) of two BMat16 objects. 
-    //! It comes down to 8 products of 8x8 matrices, 
+    //! boolean semiring) of two BMat16 objects.
+    //! It comes down to 8 products of 8x8 matrices,
     //! which make up a 16x16 when we cut it into 4.
     BMat16 mult_4bmat8(BMat16 const &that) const noexcept;
 
@@ -206,16 +204,17 @@ class BMat16 {
     //! Returns the matrix product of \c this and \p that
     //!
     //! This method returns the standard matrix product (over the
-    //! boolean semiring) of two BMat16 objects. It performs the most naive approach
-    //! by simply iterating through all entries using the access operator of BMat16
-    BMat16 mult_naive(BMat16 const& that) const noexcept;
+    //! boolean semiring) of two BMat16 objects. It performs the most naive
+    //! approach by simply iterating through all entries using the access
+    //! operator of BMat16
+    BMat16 mult_naive(BMat16 const &that) const noexcept;
 
     //! Returns the matrix product of \c this and \p that
     //!
     //! This method returns the standard matrix product (over the
-    //! boolean semiring) of two BMat16 objects. It performs the most naive approach
-    //! by simply iterating through all entries using array conversion.
-    BMat16 mult_naive_array(BMat16 const& that) const noexcept;
+    //! boolean semiring) of two BMat16 objects. It performs the most naive
+    //! approach by simply iterating through all entries using array conversion.
+    BMat16 mult_naive_array(BMat16 const &that) const noexcept;
 
     //! Returns the number of non-zero rows of \c this
     size_t nr_rows() const noexcept;
@@ -229,9 +228,17 @@ class BMat16 {
     //! This method returns the 16 x 16 BMat16 with 1s on the main diagonal.
     static BMat16 one(size_t dim = 16) noexcept {
         HPCOMBI_ASSERT(dim <= 16);
-        static std::array<uint64_t, 9> const ones = {
-            0, 1, 0x201, 0x40201, 0x8040201, 0x1008040201, 0x201008040201,  0x40201008040201, 0x8040201008040201};
-        return BMat16(ones[dim >= 8 ? 8 : dim], 0, 0, ones[dim >= 8 ? dim - 8 : 0]);
+        static std::array<uint64_t, 9> const ones = {0,
+                                                     1,
+                                                     0x201,
+                                                     0x40201,
+                                                     0x8040201,
+                                                     0x1008040201,
+                                                     0x201008040201,
+                                                     0x40201008040201,
+                                                     0x8040201008040201};
+        return BMat16(ones[dim >= 8 ? 8 : dim], 0, 0,
+                      ones[dim >= 8 ? dim - 8 : 0]);
     }
 
     //! Returns a random BMat16
@@ -253,14 +260,12 @@ class BMat16 {
     // Not noexcept
     std::ostream &write(std::ostream &os) const;
 
-
  private:
     xpu64 _data;
-
 };
 
 }  // namespace HPCombi
 
 #include "bmat16_impl.hpp"
 
-#endif
+#endif  // HPCOMBI_BMAT16_HPP_

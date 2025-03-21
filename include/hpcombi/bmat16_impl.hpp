@@ -22,6 +22,8 @@
 // This file contains an implementation of fast boolean matrices up to
 // dimension 16 x 16.
 
+// NOLINT(build/header_guard)
+
 namespace HPCombi {
 static_assert(std::is_trivial<BMat16>(), "BMat16 is not a trivial class!");
 

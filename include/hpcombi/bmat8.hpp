@@ -3,7 +3,7 @@
 //    Copyright (C) 2018-2024 James Mitchell <jdm3@st-andrews.ac.uk>          //
 //    Copyright (C) 2018-2024 Florent Hivert <Florent.Hivert@lisn.fr>,        //
 //                                                                            //
-//  This file is part of HP-Combi <https://github.com/libsemigroups/HPCombi>  //
+//  This file is part of HP-Combi <https://github.com//HPCombi>               //
 //                                                                            //
 //  HP-Combi is free software: you can redistribute it and/or modify it       //
 //  under the terms of the GNU General Public License as published by the     //
@@ -155,7 +155,7 @@ class BMat8 {
     //!
     //! This method perform the bitwise operator on the matrices and
     //! returns the result as a BMat8
-    BMat8 operator|(BMat8 const& that) const noexcept {
+    BMat8 operator|(BMat8 const &that) const noexcept {
         return BMat8(to_int() | that.to_int());
     }
 
@@ -209,16 +209,17 @@ class BMat8 {
     //! Returns the matrix product of \c this and \p that
     //!
     //! This method returns the standard matrix product (over the
-    //! boolean semiring) of two BMat8 objects. It performs the most naive approach
-    //! by simply iterating through all entries using the access operator of BMat8
-    BMat8 mult_naive(BMat8 const& that) const noexcept;
+    //! boolean semiring) of two BMat8 objects. It performs the most naive
+    //! approach by simply iterating through all entries using the access
+    //! operator of BMat8
+    BMat8 mult_naive(BMat8 const &that) const noexcept;
 
     //! Returns the matrix product of \c this and \p that
     //!
     //! This method returns the standard matrix product (over the
-    //! boolean semiring) of two BMat8 objects. It performs the most naive approach
-    //! by simply iterating through all entries using array conversion.
-    BMat8 mult_naive_array(BMat8 const& that) const noexcept;
+    //! boolean semiring) of two BMat8 objects. It performs the most naive
+    //! approach by simply iterating through all entries using array conversion.
+    BMat8 mult_naive_array(BMat8 const &that) const noexcept;
 
     //! Returns a canonical basis of the row space of \c this
     //!

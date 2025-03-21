@@ -118,7 +118,8 @@ inline std::array<std::array<bool, 8>, 8> BMat8::to_array() const noexcept {
     uint64_t a = to_int();
     std::array<std::array<bool, 8>, 8> res;
     for (int i = 0; i < 64; i++) {
-        res[7 - i/8][7 - i%8] = a % 2; a >>= 1;
+        res[7 - i / 8][7 - i % 8] = a % 2;
+        a >>= 1;
     }
     return res;
 }
@@ -150,7 +151,8 @@ inline BMat8 BMat8::random() {
 }
 
 inline BMat8 BMat8::random(size_t const dim) {
-    // TO DO : Instead of nulling all the cols/rows one by one, one could do that at once with the proper mask
+    // TODO : Instead of nulling all the cols/rows one by one, one could do
+    // that at once with the proper mask
     HPCOMBI_ASSERT(0 < dim && dim <= 8);
     BMat8 bm = BMat8::random();
     for (size_t i = dim; i < 8; ++i) {
@@ -257,7 +259,8 @@ inline BMat8 BMat8::mult_naive(BMat8 const &that) const noexcept {
 }
 
 inline BMat8 BMat8::mult_naive_array(BMat8 const &that) const noexcept {
-    std::array<std::array<bool, 8>, 8> tab1 = to_array(), tab2 = that.to_array();
+    std::array<std::array<bool, 8>, 8> tab1 = to_array(),
+                                       tab2 = that.to_array();
     uint64_t a = 0;
     for (int i = 0; i < 8; i++) {
         for (int j = 0; j < 8; j++) {
