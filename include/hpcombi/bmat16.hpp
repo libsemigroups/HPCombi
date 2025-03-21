@@ -24,17 +24,14 @@
 #ifndef HPCOMBI_BMAT16_HPP_
 #define HPCOMBI_BMAT16_HPP_
 
-#include <array>       // for array
-#include <bitset>      // for bitset
-#include <cstddef>     // for size_t
-#include <cstdint>     // for uint64_t, uint8_t
-#include <functional>  // for hash, __scalar_hash
-#include <iostream>    // for ostream
-#include <memory>      // for hash
-#include <utility>     // for pair, swap
-#include <vector>      // for vector
+#include <array>     // for array
+#include <cstddef>   // for size_t
+#include <cstdint>   // for uint64_t, uint8_t
+#include <iostream>  // for ostream
+#include <utility>   // for pair, swap
+#include <vector>    // for vector
 
-#include "bmat8.hpp"
+#include "bmat8.hpp"  // for BMat8
 #include "debug.hpp"  // for HPCOMBI_ASSERT
 
 #include "simde/x86/avx2.h"
