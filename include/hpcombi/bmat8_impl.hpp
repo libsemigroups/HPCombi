@@ -251,7 +251,7 @@ inline BMat8 BMat8::mult_naive(BMat8 const &that) const noexcept {
         for (int j = 0; j < 8; j++) {
             a <<= 1;
             for (int k = 0; k < 8; k++) {
-                a |= ((*this)(i, k) & that(k, j));
+                a |= ((*this)(i, k) && that(k, j));
             }
         }
     }
@@ -266,7 +266,7 @@ inline BMat8 BMat8::mult_naive_array(BMat8 const &that) const noexcept {
         for (int j = 0; j < 8; j++) {
             a <<= 1;
             for (int k = 0; k < 8; k++) {
-                a |= tab1[i][k] & tab2[k][j];
+                a |= tab1[i][k] && tab2[k][j];
             }
         }
     }

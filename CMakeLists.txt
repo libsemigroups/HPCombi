@@ -122,6 +122,8 @@ include_directories(
   ${CMAKE_SOURCE_DIR}/third_party
   ${PROJECT_BINARY_DIR})
 
+# add_compile_options(-Wall -Wextra -Wpedantic)
+
 #########
 # Testing
 

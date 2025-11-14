@@ -31,13 +31,13 @@ struct HPCombiListener : Catch::EventListenerBase {
         std::cout << testInfo.tagsAsString() << " " << testInfo.name
                   << std::endl;
     }
-    void testCaseEnded(Catch::TestCaseStats const &testInfo) override {}
-    void sectionStarting(Catch::SectionInfo const &sectionStats) override {}
-    void sectionEnded(Catch::SectionStats const &sectionStats) override {}
-    void testCasePartialStarting(Catch::TestCaseInfo const &testInfo,
-                                 uint64_t partNumber) override {}
-    void testCasePartialEnded(Catch::TestCaseStats const &testCaseStats,
-                              uint64_t partNumber) override {}
+    void testCaseEnded(Catch::TestCaseStats const &) override {}
+    void sectionStarting(Catch::SectionInfo const &) override {}
+    void sectionEnded(Catch::SectionStats const &) override {}
+    void testCasePartialStarting(Catch::TestCaseInfo const &,
+                                 uint64_t) override {}
+    void testCasePartialEnded(Catch::TestCaseStats const &, uint64_t) override {
+    }
 };
 
 CATCH_REGISTER_LISTENER(HPCombiListener)

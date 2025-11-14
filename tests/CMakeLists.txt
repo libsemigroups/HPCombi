@@ -17,8 +17,6 @@
 #  with HP-Combi. If not, see <https://www.gnu.org/licenses/>.               #
 #****************************************************************************#
 
-cmake_minimum_required(VERSION 4.0)
-
 find_package(Catch2 3 QUIET)
 
 if(NOT Catch2_FOUND)
