@@ -190,14 +190,14 @@ inline BMat16 BMat16::mult_naive(BMat16 const &that) const noexcept {
             c <<= 1;
             d <<= 1;
             for (size_t k = 0; k < 8; ++k) {
-                a |= ((*this)(i, k) & that(k, j)) |
-                     ((*this)(i, k + 8) & that(k + 8, j));
-                b |= ((*this)(i, k) & that(k, j + 8)) |
-                     ((*this)(i, k + 8) & that(k + 8, j + 8));
-                c |= ((*this)(i + 8, k) & that(k, j)) |
-                     ((*this)(i + 8, k + 8) & that(k + 8, j));
-                d |= ((*this)(i + 8, k) & that(k, j + 8)) |
-                     ((*this)(i + 8, k + 8) & that(k + 8, j + 8));
+                a |= ((*this)(i, k) && that(k, j)) ||
+                     ((*this)(i, k + 8) && that(k + 8, j));
+                b |= ((*this)(i, k) && that(k, j + 8)) ||
+                     ((*this)(i, k + 8) && that(k + 8, j + 8));
+                c |= ((*this)(i + 8, k) && that(k, j)) ||
+                     ((*this)(i + 8, k + 8) && that(k + 8, j));
+                d |= ((*this)(i + 8, k) && that(k, j + 8)) ||
+                     ((*this)(i + 8, k + 8) && that(k + 8, j + 8));
             }
         }
     }
@@ -215,10 +215,10 @@ inline BMat16 BMat16::mult_naive_array(BMat16 const &that) const noexcept {
             c <<= 1;
             d <<= 1;
             for (size_t k = 0; k < 16; ++k) {
-                a |= tab1[i][k] & tab2[k][j];
-                b |= tab1[i][k] & tab2[k][j + 8];
-                c |= tab1[i + 8][k] & tab2[k][j];
-                d |= tab1[i + 8][k] & tab2[k][j + 8];
+                a |= tab1[i][k] && tab2[k][j];
+                b |= tab1[i][k] && tab2[k][j + 8];
+                c |= tab1[i + 8][k] && tab2[k][j];
+                d |= tab1[i + 8][k] && tab2[k][j + 8];
             }
         }
     }
