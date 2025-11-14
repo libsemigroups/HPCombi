@@ -18,7 +18,7 @@
 #****************************************************************************#
 
 # Require at least 3.8 so that we can set cmake_policy CMP0067 below
-cmake_minimum_required(VERSION 3.8)
+cmake_minimum_required(VERSION 3.10)
 
 #####################
 # Project description
