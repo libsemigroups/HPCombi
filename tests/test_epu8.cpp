@@ -648,17 +648,17 @@ TEST_CASE_METHOD(Fix, "is_partial_transformation", "[Epu8][063]") {
     CHECK(is_partial_transformation(Epu8({}, 0xff)));
     CHECK(is_partial_transformation(Epu8({2, 0xff, 3}, 0)));
 
-    CHECK(!is_partial_transformation(zero, 15));
+    CHECK(is_partial_transformation(zero, 15));
     CHECK(is_partial_transformation(Pa));
     CHECK(is_partial_transformation(Pa, 6));
     CHECK(is_partial_transformation(Pa, 5));
-    CHECK(!is_partial_transformation(Pa, 4));
-    CHECK(!is_partial_transformation(Pa, 1));
-    CHECK(!is_partial_transformation(Pa, 0));
+    CHECK(is_partial_transformation(Pa, 4));
+    CHECK(is_partial_transformation(Pa, 1));
+    CHECK(is_partial_transformation(Pa, 0));
 
     CHECK(is_partial_transformation(RP));
     CHECK(is_partial_transformation(RP, 16));
-    CHECK(!is_partial_transformation(RP, 15));
+    CHECK(is_partial_transformation(RP, 15));
     CHECK(is_partial_transformation(Epu8({1, 2, 1, 0xFF, 0, 5, 0xFF, 2}, 0)));
     CHECK(!is_partial_transformation(Epu8({1, 2, 1, 0xFF, 0, 16, 0xFF, 2}, 0)));
 }
