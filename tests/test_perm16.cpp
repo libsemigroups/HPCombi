@@ -535,4 +535,32 @@ TEST_CASE_METHOD(Perm16Fixture, "Perm16::left_weak_leq", "[Perm16][044]") {
         }
     }
 }
+
+TEST_CASE("PTransf16::validate", "[PTransf16][045]") {
+    PTransf16 x({0, 1, 255});
+    REQUIRE(x.validate(16));
+    REQUIRE(x.validate(2));
+    REQUIRE(x.validate(3));
+
+    x  = PTransf16({0, 1});
+    REQUIRE(x.validate(16));
+    REQUIRE(x.validate(2));
+    REQUIRE(x.validate(3));
+
+    x = PTransf16({1, 0});
+    REQUIRE(x.validate(16));
+    REQUIRE(x.validate(2));
+    REQUIRE(x.validate(3));
+
+    x = PTransf16({0xFF, 0});
+    REQUIRE(x.validate(16));
+    REQUIRE(x.validate(1));
+    REQUIRE(x.validate(2));
+    REQUIRE(x.validate(3));
+
+    x = PTransf16({0, 1, 2, 17});
+    REQUIRE(x.validate(3));
+    REQUIRE(!x.validate(4));
+    REQUIRE(!x.validate());
+}
 }  // namespace HPCombi
