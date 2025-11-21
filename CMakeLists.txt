@@ -159,7 +159,7 @@ install (
   DESTINATION include
   FILES_MATCHING PATTERN "*.hpp")
 install (
-  DIRECTORY ${CMAKE_SOURCE_DIR}/third_party/simde
+  DIRECTORY ${CMAKE_SOURCE_DIR}/third_party/simde-0.8.2
   DESTINATION include/${HPCOMBI_INSTALL_DIR})
 install (
   FILES ${CMAKE_CURRENT_BINARY_DIR}/hpcombi.pc

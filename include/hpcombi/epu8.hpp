@@ -45,8 +45,8 @@ eg simde_mm_testz_si128(a,a) → is_all_zero(a) */
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wbitwise-instead-of-logical"
 #endif
-#include "simde/x86/sse4.1.h"  // for simde_mm_max_epu8, simde...
-#include "simde/x86/sse4.2.h"  // for ???
+#include "simde-0.8.2/x86/sse4.1.h"  // for simde_mm_max_epu8, simde...
+#include "simde-0.8.2/x86/sse4.2.h"  // for ???
 #if defined(__clang__)
 #pragma clang diagnostic pop
 #endif
