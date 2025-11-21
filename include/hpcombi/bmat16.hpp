@@ -34,7 +34,7 @@
 #include "bmat8.hpp"  // for BMat8
 #include "debug.hpp"  // for HPCOMBI_ASSERT
 
-#include "simde/x86/avx2.h"
+#include "simde-0.8.2/x86/avx2.h"
 
 namespace HPCombi {
 using xpu16 = uint16_t __attribute__((vector_size(32)));

@@ -31,9 +31,8 @@
 #include <unordered_map>
 #endif
 
-#include "simde/x86/sse4.1.h"  // for simde_mm_max_epu8, simde...
 #include "hpcombi/perm16.hpp"
-
+#include "simde-0.8.2/x86/sse4.1.h"  // for simde_mm_max_epu8, simde...
 
 template <typename T>
 std::ostream &operator<<(std::ostream &out, const std::vector<T> &v) {

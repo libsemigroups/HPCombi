@@ -48,8 +48,8 @@
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wbitwise-instead-of-logical"
 #endif
-#include "simde/x86/sse4.1.h"
-#include "simde/x86/sse4.2.h"
+#include "simde-0.8.2/x86/sse4.1.h"
+#include "simde-0.8.2/x86/sse4.2.h"
 #if defined(__clang__)
 #pragma clang diagnostic pop
 #endif
