@@ -1,5 +1,6 @@
 # HPCombi
-High Performance Combinatorics in C++ using vector instructions v1.1.0
+
+High Performance Combinatorics in C++ using vector instructions v1.1.1
 
 HPCombi is a C++17 header-only library using the SSE and AVX instruction sets,
 and some equivalents, for very fast manipulation of small combinatorial objects
@@ -13,6 +14,7 @@ HPCombi supports processors with other instruction sets also, via
 are achieved on processors supporting the SSE and AVX instruction sets, but the
 HPCombi benchmarks indicate that there are also still significant gains on
 other processors too.
+
 <!-- TODO add link to HPCombi wiki with benchmark graphs -->
 
 ## Authors
@@ -23,7 +25,7 @@ other processors too.
 ## Contributors
 
 - Victorin Brunel <victorin.brunel@universite-paris-saclay.fr> : wrote the
-  BMat16 code 
+  BMat16 code
 - Reinis Cirpons <rc234@st-andrews.ac.uk> : CI
 - Jean-Baptiste Rouquier <jrouquie@gmail.com> : improvements to the doc
 - Joe Edwards <jde1@st-andrews.ac.uk> : improvements to the CI
