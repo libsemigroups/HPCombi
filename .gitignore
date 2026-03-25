@@ -34,6 +34,14 @@
 # Python byte code files
 *.pyc
 
+# Mac OS files
+.DS_Store
+
+# Generated files
+HPCOMBI_VERSION
+hpcombi.pc
+
 TAGS
 build*
 gh-pages
+
