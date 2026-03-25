@@ -185,12 +185,18 @@ set(CPACK_SOURCE_PACKAGE_VERSION_PATCH "${VERSION_PATCH}")
 SET(CPACK_SOURCE_PACKAGE_FILE_NAME
   "HPCombi-${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}")
 set(CPACK_SOURCE_IGNORE_FILES
-  ".circleci"
+  "/\\.DS_Store"
+  "/\\.circleci/"
   "/\\.git/"
+  "/\\.github/"
+  "/\\.gitignore"
+  "/\\.mailmap"
+  "/TODO.txt"
   "/build/"
   "/doc.html"
   "/experiments/"
   "/gh-pages/"
+  "/release.toml"
 )
 include(CPack)
 
